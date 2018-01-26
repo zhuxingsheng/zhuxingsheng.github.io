@@ -1,0 +1,821 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="MXFRoVpC6c" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="motan," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="RPC的本质方法调用对于程序员来讲是再正常不过的事了，object.method()，RPC的使用也一样，但底层对这一过程又切分开，有client和server两端，也就是调用者与实现者
+因为他们不再在同一进程中，需要通过网络跨JVM实现这一调用过程
+在java中的实现手法：动态代理+socket通信；这就是个套路，上层怎么封装实现，但底层就是这样，概莫能外
+请求过程motan的调用实现先画个简单">
+<meta property="og:type" content="article">
+<meta property="og:title" content="motan客户端">
+<meta property="og:url" content="https://zhuxingsheng.github.io/2017/01/23/motan-client/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="RPC的本质方法调用对于程序员来讲是再正常不过的事了，object.method()，RPC的使用也一样，但底层对这一过程又切分开，有client和server两端，也就是调用者与实现者
+因为他们不再在同一进程中，需要通过网络跨JVM实现这一调用过程
+在java中的实现手法：动态代理+socket通信；这就是个套路，上层怎么封装实现，但底层就是这样，概莫能外
+请求过程motan的调用实现先画个简单">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/motan-proxy-handle.png?watermark/2/text/aHR0cHM6Ly96aHV4aW5nc2hlbmcuZ2l0aHViLmlvLw==/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/motan-ha-loadbalance.jpg">
+<meta property="og:updated_time" content="2017-12-17T13:01:31.230Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="motan客户端">
+<meta name="twitter:description" content="RPC的本质方法调用对于程序员来讲是再正常不过的事了，object.method()，RPC的使用也一样，但底层对这一过程又切分开，有client和server两端，也就是调用者与实现者
+因为他们不再在同一进程中，需要通过网络跨JVM实现这一调用过程
+在java中的实现手法：动态代理+socket通信；这就是个套路，上层怎么封装实现，但底层就是这样，概莫能外
+请求过程motan的调用实现先画个简单">
+<meta name="twitter:image" content="http://oirwmbp4e.bkt.clouddn.com/motan-proxy-handle.png?watermark/2/text/aHR0cHM6Ly96aHV4aW5nc2hlbmcuZ2l0aHViLmlvLw==/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhuxingsheng.github.io/2017/01/23/motan-client/"/>
+
+
+
+
+
+  <title> motan客户端 | 码农戏码 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?48897be5dd7a377cc247d8870a476fb8";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">码农戏码</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://zhuxingsheng.github.io/2017/01/23/motan-client/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="朱兴生">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/6222636?v=3&s=460">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="码农戏码">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="码农戏码" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                motan客户端
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-01-23T20:09:25+08:00">
+                2017-01-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+	
+	  
+	  <span class="post-letters-count">
+	    &nbsp; | &nbsp;
+	    <span>1,526 字</span>
+	    &nbsp; | &nbsp;
+	    <span>7 min</span>
+	  </span>
+	  
+
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="RPC的本质"><a href="#RPC的本质" class="headerlink" title="RPC的本质"></a>RPC的本质</h1><p>方法调用对于程序员来讲是再正常不过的事了，object.method()，RPC的使用也一样，但底层对这一过程又切分开，有client和server两端，也就是调用者与实现者</p>
+<p>因为他们不再在同一进程中，需要通过网络跨JVM实现这一调用过程</p>
+<p>在java中的实现手法：动态代理+socket通信；这就是个套路，上层怎么封装实现，但底层就是这样，概莫能外</p>
+<h1 id="请求过程"><a href="#请求过程" class="headerlink" title="请求过程"></a>请求过程</h1><h2 id="motan的调用实现"><a href="#motan的调用实现" class="headerlink" title="motan的调用实现"></a>motan的调用实现</h2><p>先画个简单的序列图，理清一下调用过程<br><img src="http://oirwmbp4e.bkt.clouddn.com/motan-proxy-handle.png?watermark/2/text/aHR0cHM6Ly96aHV4aW5nc2hlbmcuZ2l0aHViLmlvLw==/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="image"></p>
+<a id="more"></a>
+<p>motan与spring的结合，后面再写了，spring的扩展也很简单。</p>
+<p>基于对RPC本质的认识，可以先找到InvocationHandler的实现类RefererInvocationHandler</p>
+<p>这个接口就一个方法<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">public Object invoke(Object proxy, Method method, Object[] args)</div><div class="line">        throws Throwable;</div></pre></td></tr></table></figure></p>
+<p>在这个方法里面就是去构造socket传输的request对象，request主要就是方法的签名信息与参数，传输到server端，去执行对应的实现方法</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div></pre></td><td class="code"><pre><div class="line">public Object invoke(Object proxy, Method method, Object[] args) throws Throwable &#123;</div><div class="line">        if(isLocalMethod(method))&#123;</div><div class="line">            if(&quot;toString&quot;.equals(method.getName()))&#123;</div><div class="line">                return clustersToString();</div><div class="line">            &#125;</div><div class="line">            throw new MotanServiceException(&quot;can not invoke local method:&quot; + method.getName());</div><div class="line">        &#125;</div><div class="line">        DefaultRequest request = new DefaultRequest();</div><div class="line"></div><div class="line">        request.setRequestId(RequestIdGenerator.getRequestId());</div><div class="line">        request.setArguments(args);</div><div class="line">        request.setMethodName(method.getName());</div><div class="line">        request.setParamtersDesc(ReflectUtil.getMethodParamDesc(method));</div><div class="line">        request.setInterfaceName(clz.getName());</div><div class="line">        request.setAttachment(URLParamType.requestIdFromClient.getName(), String.valueOf(RequestIdGenerator.getRequestIdFromClient()));</div><div class="line"></div><div class="line">        // 当 referer配置多个protocol的时候，比如A,B,C，</div><div class="line">        // 那么正常情况下只会使用A，如果A被开关降级，那么就会使用B，B也被降级，那么会使用C</div><div class="line">        for (Cluster&lt;T&gt; cluster : clusters) &#123;</div><div class="line">            String protocolSwitcher = MotanConstants.PROTOCOL_SWITCHER_PREFIX + cluster.getUrl().getProtocol();</div><div class="line"></div><div class="line">            Switcher switcher = switcherService.getSwitcher(protocolSwitcher);</div><div class="line"></div><div class="line">            if (switcher != null &amp;&amp; !switcher.isOn()) &#123;</div><div class="line">                continue;</div><div class="line">            &#125;</div><div class="line"></div><div class="line">            request.setAttachment(URLParamType.version.getName(), cluster.getUrl().getVersion());</div><div class="line">            request.setAttachment(URLParamType.clientGroup.getName(), cluster.getUrl().getGroup());</div><div class="line">            // 带上client的application和module</div><div class="line">            request.setAttachment(URLParamType.application.getName(), ApplicationInfo.getApplication(cluster.getUrl()).getApplication());</div><div class="line">            request.setAttachment(URLParamType.module.getName(), ApplicationInfo.getApplication(cluster.getUrl()).getModule());</div><div class="line">            Response response = null;</div><div class="line">            boolean throwException =</div><div class="line">                    Boolean.parseBoolean(cluster.getUrl().getParameter(URLParamType.throwException.getName(),</div><div class="line">                            URLParamType.throwException.getValue()));</div><div class="line">            try &#123;</div><div class="line">                //真正执行</div><div class="line">                response = cluster.call(request);</div><div class="line">                return response.getValue();</div><div class="line">            &#125;</div></pre></td></tr></table></figure>
+<p>invoke交给了Cluster.call，而Cluster又给了HAStragy.call，HA策略通过loadbalance选择负载均衡策略得到Referer</p>
+<h2 id="Cluster是什么"><a href="#Cluster是什么" class="headerlink" title="Cluster是什么"></a>Cluster是什么</h2><p>在InvocationHandler里面,调用了Cluster的call方法，从代码上看，它的本质就是Referer的集合，并且提供了HA服务以及负载均衡。而Referer是提供服务的一个抽象</p>
+<h2 id="HA与LoadBalance"><a href="#HA与LoadBalance" class="headerlink" title="HA与LoadBalance"></a>HA与LoadBalance</h2><p><img src="http://oirwmbp4e.bkt.clouddn.com/motan-ha-loadbalance.jpg" alt="image"></p>
+<h3 id="HA"><a href="#HA" class="headerlink" title="HA"></a>HA</h3><p>HA策略，就提供了两种，</p>
+<h4 id="fail-fast"><a href="#fail-fast" class="headerlink" title="fail-fast"></a>fail-fast</h4><p>fail-fast很简单，调用失败就抛异常；</p>
+<h4 id="fail-over"><a href="#fail-over" class="headerlink" title="fail-over"></a>fail-over</h4><p>fail-over相对fail-fast多了重试次数，如果失败，就重试一个referer</p>
+<h3 id="LoadBalance"><a href="#LoadBalance" class="headerlink" title="LoadBalance"></a>LoadBalance</h3><p>这倒提供了不少</p>
+<h4 id="Round-Robin"><a href="#Round-Robin" class="headerlink" title="Round-Robin"></a>Round-Robin</h4><p>这个很简单，一个一个往下轮询就行了，<br>但需要记住上一次的位置</p>
+<h4 id="random"><a href="#random" class="headerlink" title="random"></a>random</h4><p>随机</p>
+<h4 id="Least-Load"><a href="#Least-Load" class="headerlink" title="Least Load"></a>Least Load</h4><p>这个motan实现有点意思</p>
+<blockquote>
+<p>由于Referer List可能很多，比如上百台，如果每次都要从这上百个Referer或者最低并发的几个，性能有些损耗，因此 random.nextInt(list.size())获取一个起始的index，然后获取最多不超过MAX_REFERER_COUNT的 状态是isAvailable的referer进行判断activeCount.</p>
+</blockquote>
+<h4 id="localFirst"><a href="#localFirst" class="headerlink" title="localFirst"></a>localFirst</h4><blockquote>
+<p>本地服务优先获取策略：对referers根据ip顺序查找本地服务，多存在多个本地服务，获取Active最小的本地服务进行服务。当不存在本地服务，但是存在远程RPC服务，则根据ActivWeight获取远程RPC服务;当两者都存在，所有本地服务都应优先于远程服务，本地RPC服务与远程RPC服务内部则根据ActiveWeight进行</p>
+</blockquote>
+<h2 id="NettyClient"><a href="#NettyClient" class="headerlink" title="NettyClient"></a>NettyClient</h2><p>上层不管怎么选择服务，最后都需要传输层去传输，nettyclient就是传输作用。</p>
+<p>在DefaultRpcReferer中创建了一个nettyClient。向server发送远程调用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">private Response request(Request request, boolean async) throws TransportException &#123;</div><div class="line">		Channel channel = null;</div><div class="line"></div><div class="line">		Response response = null;</div><div class="line"></div><div class="line">		try &#123;</div><div class="line">			// return channel or throw exception(timeout or connection_fail)</div><div class="line">			channel = borrowObject();</div><div class="line"></div><div class="line">			if (channel == null) &#123;</div><div class="line">				LoggerUtil.error(&quot;NettyClient borrowObject null: url=&quot; + url.getUri() + &quot; &quot;</div><div class="line">						+ MotanFrameworkUtil.toString(request));</div><div class="line">				return null;</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			// async request</div><div class="line">			response = channel.request(request);</div><div class="line">			// return channel to pool</div><div class="line">			returnObject(channel);</div></pre></td></tr></table></figure></p>
+<p>使用了common-pool连接池</p>
+<p>在这儿是委托给了nettychannel.request()，nettyclient与nettychannel是什么关系呢？<br>client有server地址,channel就是这个地址连接的通道。<br>在nettychannel中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">public Response request(Request request) throws TransportException &#123;</div><div class="line">	    int timeout = nettyClient.getUrl().getMethodParameter(request.getMethodName(), request.getParamtersDesc(),</div><div class="line">	            URLParamType.requestTimeout.getName(), URLParamType.requestTimeout.getIntValue());</div><div class="line">		if (timeout &lt;= 0) &#123;</div><div class="line">               throw new MotanFrameworkException(&quot;NettyClient init Error: timeout(&quot; + timeout + &quot;) &lt;= 0 is forbid.&quot;,</div><div class="line">                       MotanErrorMsgConstant.FRAMEWORK_INIT_ERROR);</div><div class="line">           &#125;</div><div class="line">		NettyResponseFuture response = new NettyResponseFuture(request, timeout, this.nettyClient);</div><div class="line">		this.nettyClient.registerCallback(request.getRequestId(), response);</div><div class="line"></div><div class="line">		ChannelFuture writeFuture = this.channel.write(request);</div><div class="line"></div><div class="line">		boolean result = writeFuture.awaitUninterruptibly(timeout, TimeUnit.MILLISECONDS);</div><div class="line"></div><div class="line">		if (result &amp;&amp; writeFuture.isSuccess()) &#123;</div><div class="line">			response.addListener(new FutureListener() &#123;</div><div class="line">				@Override</div><div class="line">				public void operationComplete(Future future) throws Exception &#123;</div><div class="line">					if (future.isSuccess() || (future.isDone() &amp;&amp; ExceptionUtil.isBizException(future.getException()))) &#123;</div><div class="line">						// 成功的调用 </div><div class="line">						nettyClient.resetErrorCount();</div><div class="line">					&#125; else &#123;</div><div class="line">						// 失败的调用 </div><div class="line">						nettyClient.incrErrorCount();</div><div class="line">					&#125;</div><div class="line">				&#125;</div><div class="line">			&#125;);</div><div class="line">			return response;</div><div class="line">		&#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<p>到此，整个请求过程已经完成。</p>
+<h1 id="返回处理"><a href="#返回处理" class="headerlink" title="返回处理"></a>返回处理</h1><p>调用完成之后，总得得到结果才行</p>
+<h2 id="motan返回过程"><a href="#motan返回过程" class="headerlink" title="motan返回过程"></a>motan返回过程</h2><p>在上面nettychannel.request方法，会返回一个response，NettyResponseFuture这个类名就说明了一切，使用了Future模式。</p>
+<p>在返回response时，构造真实response<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private Response asyncResponse(Response response, boolean async) &#123;</div><div class="line">		if (async || !(response instanceof NettyResponseFuture)) &#123;</div><div class="line">			return response;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		return new DefaultResponse(response);</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>真实response里面，使用futureresponse去取值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public DefaultResponse(Response response) &#123;</div><div class="line">        this.value = response.getValue();</div><div class="line">        this.exception = response.getException();</div><div class="line">        this.requestId = response.getRequestId();</div><div class="line">        this.processTime = response.getProcessTime();</div><div class="line">        this.timeout = response.getTimeout();</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>在futureresponse里面：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div></pre></td><td class="code"><pre><div class="line">public Object getValue() &#123;</div><div class="line">		synchronized (lock) &#123;</div><div class="line">			if (!isDoing()) &#123;</div><div class="line">				return getValueOrThrowable();</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			if (timeout &lt;= 0) &#123;</div><div class="line">				try &#123;</div><div class="line">					lock.wait();</div><div class="line">				&#125; catch (Exception e) &#123;</div><div class="line">					cancel(new MotanServiceException(&quot;NettyResponseFuture getValue InterruptedException : &quot;</div><div class="line">							+ MotanFrameworkUtil.toString(request) + &quot; cost=&quot;</div><div class="line">							+ (System.currentTimeMillis() - createTime), e));</div><div class="line">				&#125;</div><div class="line"></div><div class="line">				// don&apos;t need to notifylisteners, because onSuccess or</div><div class="line">				// onFailure or cancel method already call notifylisteners</div><div class="line">				return getValueOrThrowable();</div><div class="line">			&#125; else &#123;</div><div class="line">				long waitTime = timeout - (System.currentTimeMillis() - createTime);</div><div class="line"></div><div class="line">				if (waitTime &gt; 0) &#123;</div><div class="line">					for (;;) &#123;</div><div class="line">						try &#123;</div><div class="line">							lock.wait(waitTime);</div><div class="line">						&#125; catch (InterruptedException e) &#123;</div><div class="line">						&#125;</div><div class="line"></div><div class="line">						if (!isDoing()) &#123;</div><div class="line">							break;</div><div class="line">						&#125; else &#123;</div><div class="line">							waitTime = timeout - (System.currentTimeMillis() - createTime);</div><div class="line">							if (waitTime &lt;= 0) &#123;</div><div class="line">								break;</div><div class="line">							&#125;</div><div class="line">						&#125;</div><div class="line">					&#125;</div><div class="line">				&#125;</div><div class="line"></div><div class="line">				if (isDoing()) &#123;</div><div class="line">					timeoutSoCancel();</div><div class="line">				&#125;</div><div class="line">			&#125;</div><div class="line">			return getValueOrThrowable();</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<p>没有使用java.util.concurrent包中Condition,CountDownLatch之类的工具类，而是使用原始的wait,notify组合</p>
+<p>在NettyClient中,得到返回对象后，对responsefuter进行赋值<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">pipeline.addLast(&quot;handler&quot;, new NettyChannelHandler(NettyClient.this, new MessageHandler() &#123;</div><div class="line">					@Override</div><div class="line">					public Object handle(Channel channel, Object message) &#123;</div><div class="line">					    //得到返回对象</div><div class="line">						Response response = (Response) message;</div><div class="line">                        //得到对应request的future</div><div class="line">						NettyResponseFuture responseFuture = NettyClient.this.removeCallback(response.getRequestId());</div><div class="line"></div><div class="line">						if (responseFuture == null) &#123;</div><div class="line">							LoggerUtil.warn(</div><div class="line">									&quot;NettyClient has response from server, but resonseFuture not exist,  requestId=&#123;&#125;&quot;,</div><div class="line">									response.getRequestId());</div><div class="line">							return null;</div><div class="line">						&#125;</div><div class="line"></div><div class="line">						if (response.getException() != null) &#123;</div><div class="line">							responseFuture.onFailure(response);</div><div class="line">						&#125; else &#123;</div><div class="line">							responseFuture.onSuccess(response);</div><div class="line">						&#125;</div><div class="line"></div><div class="line">						return null;</div><div class="line">					&#125;</div><div class="line">				&#125;));</div></pre></td></tr></table></figure></p>
+<p>responseFuture的onsuccess方法,进行赋值并notify<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">public void onSuccess(Response response) &#123;</div><div class="line">		this.result = response.getValue();</div><div class="line">		this.processTime = response.getProcessTime();</div><div class="line"></div><div class="line">		done();</div><div class="line">	&#125;</div><div class="line">private boolean done() &#123;</div><div class="line">		synchronized (lock) &#123;</div><div class="line">			if (!isDoing()) &#123;</div><div class="line">				return false;</div><div class="line">			&#125;</div><div class="line"></div><div class="line">			state = FutureState.DONE;</div><div class="line">			lock.notifyAll();</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		notifyListeners();</div><div class="line">		return true;</div><div class="line">	&#125;</div></pre></td></tr></table></figure></p>
+<hr>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>到此，客户端部分已经完成，主要就是两方面</p>
+<ol>
+<li>调用请求</li>
+<li>返回处理</li>
+</ol>
+<p>还有一些问题：</p>
+<ol>
+<li>客户端怎么服务发现的？</li>
+<li>服务降低怎么处理的？</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/motan/" rel="tag"># motan</a>
+          
+        </div>
+      
+      <! -- 添加微信图标 -->
+    
+    
+    <div>
+    <span>
+    
+    <br>
+    </span>
+    <br>
+    
+    <a href="http://oirwmbp4e.bkt.clouddn.com/weixin.jpg" class="fancybox" rel="article0"  style="float:left;margin-left:30%;margin-right:2px;">
+    <img src="http://oirwmbp4e.bkt.clouddn.com/weixin.jpg" title="欢迎大家关注：码农戏码微信公众号" height="164px" width="164px">
+    </a>
+    
+    </div>
+    
+    
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/21/a-preliminary-study-of-spring-bot/" rel="next" title="spring boot初探">
+                <i class="fa fa-chevron-left"></i> spring boot初探
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/07/motan-server/" rel="prev" title="motan服务端">
+                motan服务端 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a>
+<a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+<a class="bds_count" data-cmd="count"></a>
+</div>
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{},"image":{"viewList":["tsina","weixin","youdao","evernotecn","tqq","qzone","renren","copy"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["tsina","weixin","youdao","evernotecn","tqq","qzone","renren","copy"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars0.githubusercontent.com/u/6222636?v=3&s=460"
+               alt="朱兴生" />
+          <p class="site-author-name" itemprop="name">朱兴生</p>
+          <p class="site-description motion-element" itemprop="description">彪悍的人生需要书写</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">31</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhuxingsheng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RPC的本质"><span class="nav-number">1.</span> <span class="nav-text">RPC的本质</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#请求过程"><span class="nav-number">2.</span> <span class="nav-text">请求过程</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#motan的调用实现"><span class="nav-number">2.1.</span> <span class="nav-text">motan的调用实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cluster是什么"><span class="nav-number">2.2.</span> <span class="nav-text">Cluster是什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HA与LoadBalance"><span class="nav-number">2.3.</span> <span class="nav-text">HA与LoadBalance</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HA"><span class="nav-number">2.3.1.</span> <span class="nav-text">HA</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#fail-fast"><span class="nav-number">2.3.1.1.</span> <span class="nav-text">fail-fast</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fail-over"><span class="nav-number">2.3.1.2.</span> <span class="nav-text">fail-over</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LoadBalance"><span class="nav-number">2.3.2.</span> <span class="nav-text">LoadBalance</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Round-Robin"><span class="nav-number">2.3.2.1.</span> <span class="nav-text">Round-Robin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#random"><span class="nav-number">2.3.2.2.</span> <span class="nav-text">random</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Least-Load"><span class="nav-number">2.3.2.3.</span> <span class="nav-text">Least Load</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#localFirst"><span class="nav-number">2.3.2.4.</span> <span class="nav-text">localFirst</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NettyClient"><span class="nav-number">2.4.</span> <span class="nav-text">NettyClient</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#返回处理"><span class="nav-number">3.</span> <span class="nav-text">返回处理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#motan返回过程"><span class="nav-number">3.1.</span> <span class="nav-text">motan返回过程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">共85.6k字</span>
+</div>
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+</body>
+</html>

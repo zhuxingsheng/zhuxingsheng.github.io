@@ -1,0 +1,894 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="MXFRoVpC6c" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="配置中心" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="常识系列,作为一名互联网门外汉的科普系列
+
+本来这篇文章想谈一下zookeeper，现在已经家喻户晓了。结果看到江南白衣的文章
+
+提到配置中心就跟你讲zk,etcd的，可能是个空想玩家，或者他家系统很小；
+
+不由得冒了两滴冷汗，高人总是一针见血。
+所以还是多关注一下互联网的架构，而不是技术的细枝末节
+本篇涉及到的内容包括：
+
+
+游戏中配置中心的进化
+什么样的配置中心才叫好
+流行架构
+zookee">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常识五配置中心">
+<meta property="og:url" content="https://zhuxingsheng.github.io/2018/01/25/常识五配置中心/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="常识系列,作为一名互联网门外汉的科普系列
+
+本来这篇文章想谈一下zookeeper，现在已经家喻户晓了。结果看到江南白衣的文章
+
+提到配置中心就跟你讲zk,etcd的，可能是个空想玩家，或者他家系统很小；
+
+不由得冒了两滴冷汗，高人总是一针见血。
+所以还是多关注一下互联网的架构，而不是技术的细枝末节
+本篇涉及到的内容包括：
+
+
+游戏中配置中心的进化
+什么样的配置中心才叫好
+流行架构
+zookee">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/config-center/configserver-pull.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/config-center/configserver-push.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/config-center/config-server.png">
+<meta property="og:updated_time" content="2018-01-25T12:27:57.140Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="常识五配置中心">
+<meta name="twitter:description" content="常识系列,作为一名互联网门外汉的科普系列
+
+本来这篇文章想谈一下zookeeper，现在已经家喻户晓了。结果看到江南白衣的文章
+
+提到配置中心就跟你讲zk,etcd的，可能是个空想玩家，或者他家系统很小；
+
+不由得冒了两滴冷汗，高人总是一针见血。
+所以还是多关注一下互联网的架构，而不是技术的细枝末节
+本篇涉及到的内容包括：
+
+
+游戏中配置中心的进化
+什么样的配置中心才叫好
+流行架构
+zookee">
+<meta name="twitter:image" content="http://oirwmbp4e.bkt.clouddn.com/config-center/configserver-pull.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhuxingsheng.github.io/2018/01/25/常识五配置中心/"/>
+
+
+
+
+
+  <title> 常识五配置中心 | 码农戏码 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?48897be5dd7a377cc247d8870a476fb8";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">码农戏码</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://zhuxingsheng.github.io/2018/01/25/常识五配置中心/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="朱兴生">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/6222636?v=3&s=460">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="码农戏码">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="码农戏码" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                常识五配置中心
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-01-25T20:25:59+08:00">
+                2018-01-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/互联网研发/" itemprop="url" rel="index">
+                    <span itemprop="name">互联网研发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+	
+	  
+	  <span class="post-letters-count">
+	    &nbsp; | &nbsp;
+	    <span>2,614 字</span>
+	    &nbsp; | &nbsp;
+	    <span>9 min</span>
+	  </span>
+	  
+
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>常识系列,作为一名互联网门外汉的科普系列</p>
+</blockquote>
+<p>本来这篇文章想谈一下zookeeper，现在已经家喻户晓了。结果看到江南白衣的文章</p>
+<blockquote>
+<p>提到配置中心就跟你讲zk,etcd的，可能是个空想玩家，或者他家系统很小；</p>
+</blockquote>
+<p>不由得冒了两滴冷汗，高人总是一针见血。</p>
+<p>所以还是多关注一下互联网的架构，而不是技术的细枝末节</p>
+<p>本篇涉及到的内容包括：</p>
+<blockquote>
+<ol>
+<li>游戏中配置中心的进化</li>
+<li>什么样的配置中心才叫好</li>
+<li>流行架构</li>
+<li>zookeeper</li>
+</ol>
+</blockquote>
+<h1 id="配置中心"><a href="#配置中心" class="headerlink" title="配置中心"></a>配置中心</h1><p>什么是配置中心？简单来说，就是一种统一管理各种应用配置的基础服务组件</p>
+<p>服务一般有很多依赖配置，例如访问数据库有连接字符串配置，连接池大小和连接超时配置，这些配置在不同环境(开发/测试/生产)一般不同，比如生产环境需要配连接池，而开发测试环境可能不配，另外有些参数配置在运行期可能还要动态调整，例如，运行时根据流量状况动态调整限流和熔断阀值。</p>
+<p>传统配置文件方式虽然把配置项分离到单独的配置文件，但是修改一个配置项，需要提交版本管理，发布，重启。整个过程比较麻烦，特别是发布多台机器。整个配置上线流程跟修改代码没有太大区别。不利于集中式管理和动态调整。</p>
+<p>现在一般架构中都有个配置中心了，不管是独立还是集成，都有这么一块空间，尤其在微服务流行之后，服务之间有着错综复杂的依赖关系，更是必不可少。</p>
+<h1 id="配置中心进化史"><a href="#配置中心进化史" class="headerlink" title="配置中心进化史"></a>配置中心进化史</h1><p>这儿谈的进化史，是一款月流水过亿的游戏配置中心填坑的过程。当然，那时我们还不叫配置中心，也不知这世上还有个配置中心的术语。不要笑，我们那时就是这么的无知无敌。</p>
+<p>游戏开发中，除了基础的技术配置文件，如数据库连接配置，连接池配置；有很多的业务配置文件，如各个道具信息，怪物信息，活动信息</p>
+<p>这此配置信息，可能是动态的，也有些是静态的。</p>
+<blockquote>
+<p>动态配置和静态配置的区别</p>
+<p>曾经我也傻傻分不清楚其区别是啥，这很正常。动态和静态这是一个相对的概念，海枯石烂，永远不变的那不叫配置，可能是撩妹的鬼话,即使这个配置可能是放在一个看起来很像配置文件的文本里，配置一定是可能修改其值的，而是否是动态配置主要是看这个配置是不是跟应用的版本构建发布(build-deploy lifetime)强绑定的。如果一个配置项，跟软件的版本构建是不耦合的，在应用进程运行时，可能需要变更配置值的就是动态配置，哪怕是变更频率可能非常低，也许你设计了一个配置项，发现最后下来3年也没变更过一次，那也是动态配置，相反，配置变更只发生在软件版本构建和发布的那个点，那么就是静态配置，哪怕你构建很频繁，1个小时就来一回，那也是个静态配置，举个简单的例子:</p>
+<p>build-version = 3.4.6-1569965<br>这个配置项，永远只在某个软件版本被构建出来时会变更其值，一旦这个版本被构建出来，并且在程序运行时，是一定没有变更诉求的，这就是一个跟构建绑定的静态配置。而文章开始时举得logLevel的例子，则是一个动态配置的例子。</p>
+<p>所以看一下你的系统的配置项，你会发现动态配置其实更多，而跟行为演进相关的几乎都是动态配置。</p>
+</blockquote>
+<h2 id="第一版本"><a href="#第一版本" class="headerlink" title="第一版本"></a>第一版本</h2><p>大体的架构如下：<br><img src="http://oirwmbp4e.bkt.clouddn.com/config-center/configserver-pull.png" alt="pull"></p>
+<p>这是一个pull模型</p>
+<p>组成部分：</p>
+<ol>
+<li>配置服务器</li>
+<li>游戏服务器</li>
+</ol>
+<p>首先配置服务器提供上传文件功能，以及被配置文件下载的能力。</p>
+<p>比如寻宝活动 xunbaoconfig<br>上传时会选择对应的游戏区服，会产生两个文件</p>
+<ol>
+<li><p>xunbaoconfig，配置参数文件</p>
+<p>文件中保持了文件md5值，游戏区服与文件对应关系<br>[gameserver1,md5,xunbaocinfig-xxxx.conf]</p>
+</li>
+<li><p>xunbaoconfig-xxxx.conf  配置文件</p>
+<p>这就是上传的最新配置文件</p>
+</li>
+</ol>
+<p>其次，游戏服务器需要提供支持动态配置的能力。并且定时去拉取远程配置文件，比对远程文件与当前内存中的是否一致，若不一致，重新加载配置文件</p>
+<p>伪代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">//配置文件MD5值与配置的对应关系</div><div class="line">configMap&lt;cofingFileMd5,Config&gt;</div></pre></td></tr></table></figure></p>
+<p>游戏服务器定时去拉取相应的配置参数文件，xunbaoconfig，获取当前区服配置文件的md5值以及文件名。</p>
+<p>若md5值与缓存数据不一致，就拉取真实的xunbaoconfig-xxx.conf文件</p>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>此版本，看似一切正常。</p>
+<p>在韩服开到十几个区的时候，出现了一个问题</p>
+<p><strong>文件下载不完整</strong></p>
+<h4 id="更换tomcat"><a href="#更换tomcat" class="headerlink" title="更换tomcat"></a>更换tomcat</h4><p>这儿使用的web容器是tomcat，其中的原因当时没有细究了。后来让运维换成了ngnix，静态资源一律走ngnix就没有问题了</p>
+<p>国服开到几百个区时，也出现了类似问题，每次维护后，几百个区一起开启，会有部分区，启动失败，因为加载不到配置文件；或者是没有加载到新配置，使用了老的配置。</p>
+<p>分析下来，几百个区服几乎在同一时刻去配置服务器拉取文件，配置服务器压力即大，这也就是单点瓶颈故障。</p>
+<p>就算没有这次的故障，后面开到几千个区服时，也会出现带宽瓶颈。大一点配置如果有5M，那一千个服就是5G，不仅是单台服务器的带宽，可能会严重阻塞整个机架的带宽。</p>
+<h4 id="动静分离"><a href="#动静分离" class="headerlink" title="动静分离"></a>动静分离</h4><p>为了解决这个问题，不能把所有文件都放在配置中心了，需要分离，把静态的配置文件直接放到区服上，不用再去拉取。</p>
+<p>虽然动静分离，但也只是减轻了这种状况，并没有彻底解决。</p>
+<h2 id="第二版本"><a href="#第二版本" class="headerlink" title="第二版本"></a>第二版本</h2><p><img src="http://oirwmbp4e.bkt.clouddn.com/config-center/configserver-push.png" alt="push"></p>
+<p>这是push模型</p>
+<p>第一版本，每个区服都去拉取配置，给配置服务器带来了很大的压力</p>
+<p>现在配置不再以每个区服为单位，而是以物理服务器为单位推送配置文件。</p>
+<p>首先，上传配置文件，与pull模型一致。</p>
+<p>再使用rsync同步到每个区服的物理机上，原先一台物理机上会开设八台逻辑服，现在以物理机为单位，配置中心的压力大大的下降。</p>
+<p>而且rsync不再是定时去同步，而是当配置变动时，再去主动触发</p>
+<h1 id="配置中心标准"><a href="#配置中心标准" class="headerlink" title="配置中心标准"></a>配置中心标准</h1><p>什么样的配置中心才是好的配置中心</p>
+<ol>
+<li>不能单点，以上面的进化实例，明显如果配置中心挂了，那整个游戏就失去了动态能力，如果本地没有动态配置文件备份，就完全丧失服务能力</li>
+<li>支持web界面，可视化操作；这是很多技术人员的通病，直接上个shell命令，多专业，其实这降低真个系统的可用性，可维护性</li>
+<li>权限管理、发布审核、操作审计；1、应用和配置的管理都有完善的权限管理机制，对配置的管理还分为了编辑和发布两个环节，从而减少人为的错误，2、所有的操作都有审计日志，可以方便地追踪问题，回滚也方便</li>
+<li>灰度发布</li>
+<li>版本发布管理；所有的配置发布都有版本概念，从而可以方便地支持配置的回滚</li>
+<li>实时推送；现在很多配置中心使用zk之类框架，主要就是用它的发布订阅实现实时推送能力</li>
+</ol>
+<h2 id="客户端支持"><a href="#客户端支持" class="headerlink" title="客户端支持"></a>客户端支持</h2><p>配置中心拥有这些能力，还需要客户端的支持</p>
+<ol>
+<li><p>配合配置中心的实时/灰度推送，在参数变化时调用客户端自行实现的回调接口，不需要重启应用。</p>
+</li>
+<li><p>支持环境变量，JVM启动参数，配置文件，配置中心等多种来源按优先级互相覆盖，并有接口暴露最后的参数选择。</p>
+</li>
+<li><p>配置文件中支持多套profile，如开发，单元测试，集成测试，生产。</p>
+</li>
+</ol>
+<h1 id="流行框架"><a href="#流行框架" class="headerlink" title="流行框架"></a>流行框架</h1><p>配置中心，这么重要的组件，众目聚集，也就诞生了很多开源产品</p>
+<p>业界也有很多比较成熟的开源项目：</p>
+<ul>
+<li>disconf: 百度开源的分布式配置管理平台。项目文档上说百度、滴滴打车、银联、网易、拉勾网等知名互联网公司在使用。挺新的项目，并且目前只支持Java语言。</li>
+<li>QConf: 360开源的分布式配置管理平台。跟disconf一样使用了zookeeper做配置存储，不同在于QConf使用了agent和共享内存的方式，并且支持多种语言。</li>
+<li>Diamond 淘宝开源的持久配置的管理系统，支持各种持久信息（比如各种规则，数据库配置等）的发布和订阅。特点是简单，存储是MySQL，并且是拉模式。</li>
+<li>Spring Cloud Config: 特点就是与Spring完美结合</li>
+</ul>
+<p>不管是何产品，架构都可以简化为：<br><img src="http://oirwmbp4e.bkt.clouddn.com/config-center/config-server.png" alt="pull-push"></p>
+<h1 id="zookeeper"><a href="#zookeeper" class="headerlink" title="zookeeper"></a>zookeeper</h1><p>Zookeeper有两篇论文：</p>
+<p>一篇是Zab，就是介绍Zookeeper背后使用的一致性协议的(Zookeeper atomic broadcast protocol)</p>
+<p>一篇就是介绍Zookeeper本身的。在这两篇论文里都提到Zookeeper是一个分布式协调服务(a service for coordinating processes of distributed applications)。</p>
+<p>这下次再开一篇，内容不少！</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="http://calvin1978.blogcn.com/articles/serviceconfig.html" target="_blank" rel="external">服务化体系之－配置中心，在ZK或etcd之外</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+      <! -- 添加微信图标 -->
+    
+    
+    <div>
+    <span>
+    
+    <br>
+    </span>
+    <br>
+    
+    <a href="http://oirwmbp4e.bkt.clouddn.com/weixin.jpg" class="fancybox" rel="article0"  style="float:left;margin-left:30%;margin-right:2px;">
+    <img src="http://oirwmbp4e.bkt.clouddn.com/weixin.jpg" title="欢迎大家关注：码农戏码微信公众号" height="164px" width="164px">
+    </a>
+    
+    </div>
+    
+    
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/31/常识四堆外内存/" rel="next" title="常识四堆外内存">
+                <i class="fa fa-chevron-left"></i> 常识四堆外内存
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a>
+<a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+<a class="bds_count" data-cmd="count"></a>
+</div>
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{},"image":{"viewList":["tsina","weixin","youdao","evernotecn","tqq","qzone","renren","copy"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["tsina","weixin","youdao","evernotecn","tqq","qzone","renren","copy"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars0.githubusercontent.com/u/6222636?v=3&s=460"
+               alt="朱兴生" />
+          <p class="site-author-name" itemprop="name">朱兴生</p>
+          <p class="site-description motion-element" itemprop="description">彪悍的人生需要书写</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">31</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhuxingsheng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#配置中心"><span class="nav-number">1.</span> <span class="nav-text">配置中心</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置中心进化史"><span class="nav-number">2.</span> <span class="nav-text">配置中心进化史</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#第一版本"><span class="nav-number">2.1.</span> <span class="nav-text">第一版本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#问题"><span class="nav-number">2.1.1.</span> <span class="nav-text">问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#更换tomcat"><span class="nav-number">2.1.1.1.</span> <span class="nav-text">更换tomcat</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动静分离"><span class="nav-number">2.1.1.2.</span> <span class="nav-text">动静分离</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#第二版本"><span class="nav-number">2.2.</span> <span class="nav-text">第二版本</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#配置中心标准"><span class="nav-number">3.</span> <span class="nav-text">配置中心标准</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#客户端支持"><span class="nav-number">3.1.</span> <span class="nav-text">客户端支持</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#流行框架"><span class="nav-number">4.</span> <span class="nav-text">流行框架</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#zookeeper"><span class="nav-number">5.</span> <span class="nav-text">zookeeper</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考资料"><span class="nav-number">6.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">共85.6k字</span>
+</div>
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+</body>
+</html>

@@ -1,0 +1,1135 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="MXFRoVpC6c" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="JVM,GC," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="前言这段时间懈怠了，罪过！
+最近看到有同事也开始用上了微信公众号写博客了，挺好的~给他们点赞，这博客我也不推广，默默的静静的，主要是担心自己坚持不了。以前写过时间事件日志现在也不写了；写过博客也不写了；月记也不写了。
+坚持平凡事就是伟大，本来计划一周一篇的，这次没有严格执行。懈怠了
+这个GC跟JVM内容太多了，理论性东西多些，少年时还能记个八九成，好久没弄，都忘记了。这次权当整理温习,再看看《深入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GC及JVM参数">
+<meta property="og:url" content="https://zhuxingsheng.github.io/2017/02/27/gc-and-jvm-parameters/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="前言这段时间懈怠了，罪过！
+最近看到有同事也开始用上了微信公众号写博客了，挺好的~给他们点赞，这博客我也不推广，默默的静静的，主要是担心自己坚持不了。以前写过时间事件日志现在也不写了；写过博客也不写了；月记也不写了。
+坚持平凡事就是伟大，本来计划一周一篇的，这次没有严格执行。懈怠了
+这个GC跟JVM内容太多了，理论性东西多些，少年时还能记个八九成，好久没弄，都忘记了。这次权当整理温习,再看看《深入">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F.jpg">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/finalize.jpg">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/finalize-state.jpg">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/Mark-Sweep.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/Copying.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/Mark-Compact.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/GenerationalGC.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/gc.jpg">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/gc-thread.jpg">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/Serial.jpg">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/ParNew.jpg">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/Parallel.jpg">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/cms.jpg">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/g1.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/g1-3.jpg">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/g1-5.jpg">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/g1-6.jpg">
+<meta property="og:updated_time" content="2017-12-17T13:01:31.293Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="GC及JVM参数">
+<meta name="twitter:description" content="前言这段时间懈怠了，罪过！
+最近看到有同事也开始用上了微信公众号写博客了，挺好的~给他们点赞，这博客我也不推广，默默的静静的，主要是担心自己坚持不了。以前写过时间事件日志现在也不写了；写过博客也不写了；月记也不写了。
+坚持平凡事就是伟大，本来计划一周一篇的，这次没有严格执行。懈怠了
+这个GC跟JVM内容太多了，理论性东西多些，少年时还能记个八九成，好久没弄，都忘记了。这次权当整理温习,再看看《深入">
+<meta name="twitter:image" content="http://oirwmbp4e.bkt.clouddn.com/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhuxingsheng.github.io/2017/02/27/gc-and-jvm-parameters/"/>
+
+
+
+
+
+  <title> GC及JVM参数 | 码农戏码 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?48897be5dd7a377cc247d8870a476fb8";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">码农戏码</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://zhuxingsheng.github.io/2017/02/27/gc-and-jvm-parameters/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="朱兴生">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/6222636?v=3&s=460">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="码农戏码">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="码农戏码" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                GC及JVM参数
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-02-27T23:08:36+08:00">
+                2017-02-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index">
+                    <span itemprop="name">java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+	
+	  
+	  <span class="post-letters-count">
+	    &nbsp; | &nbsp;
+	    <span>13,884 字</span>
+	    &nbsp; | &nbsp;
+	    <span>52 min</span>
+	  </span>
+	  
+
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>这段时间懈怠了，罪过！</p>
+<p>最近看到有同事也开始用上了微信公众号写博客了，挺好的~给他们点赞，这博客我也不推广，默默的静静的，主要是担心自己坚持不了。以前写过时间事件日志现在也不写了；写过博客也不写了；月记也不写了。</p>
+<p>坚持平凡事就是伟大，本来计划一周一篇的，这次没有严格执行。懈怠了</p>
+<p>这个GC跟JVM内容太多了，理论性东西多些，少年时还能记个八九成，好久没弄，都忘记了。这次权当整理温习,再看看《深入理解JVM虚拟机》，找些过去写的博客挖点东西过来！</p>
+<h1 id="GC"><a href="#GC" class="headerlink" title="GC"></a>GC</h1><p>Java GC（Garbage Collection，垃圾收集，垃圾回收）机制，是Java与C++/C的主要区别之一，作为Java开发者，一般不需要专门编写内存回收和垃圾清理代码，对内存泄露和溢出的问题，也不需要像C程序员那样战战兢兢。这是因为在Java虚拟机中，存在自动内存管理和垃圾清扫机制。概括地说，该机制对虚拟机中的内存进行标记，并确定哪些内存需要回收，根据一定的回收策略，自动的回收内存，永不停息（Nerver Stop）的保证虚拟机中的内存空间，防止出现内存泄露和溢出问题。</p>
+<p>主要从这几个问题入手，就差不多了</p>
+<ol>
+<li>Java内存区域</li>
+<li>哪些内存需要回收？</li>
+<li>什么时候回收</li>
+<li>如何回收</li>
+<li>监控和优化GC</li>
+</ol>
+<h2 id="Java内存区域"><a href="#Java内存区域" class="headerlink" title="Java内存区域"></a>Java内存区域</h2><p><img src="http://oirwmbp4e.bkt.clouddn.com/Java%E5%86%85%E5%AD%98%E5%8C%BA%E5%9F%9F.jpg" alt="image"></p>
+<a id="more"></a>
+<ol>
+<li>程序计数器（Program Counter Register）</li>
+</ol>
+<p>程序计数器是一个比较小的内存区域，用于指示当前线程所执行的字节码执行到了第几行，可以理解为是当前线程的行号指示器。字节码解释器在工作时，会通过改变这个计数器的值来取下一条语句指令。每个程序计数器只用来记录一个线程的行号，所以它是线程私有（一个线程就有一个程序计数器）的。<br>如果程序执行的是一个Java方法，则计数器记录的是正在执行的虚拟机字节码指令地址；如果正在执行的是一个本地（native，由C语言编写完成）方法，则计数器的值为Undefined，由于程序计数器只是记录当前指令地址，所以不存在内存溢出的情况，因此，程序计数器也是所有JVM内存区 域中唯一一个没有定义OutOfMemoryError的区域。</p>
+<ol>
+<li>虚拟机栈（JVM Stack）</li>
+</ol>
+<p>一个线程的每个方法在执行的同时，都会创建一个栈帧（Statck Frame），栈帧中存储的有局部变量表、操作站、动态链接、方法出口等，当方法被调用时，栈帧在JVM栈中入栈，当方法执行完成时，栈帧出栈。局部变量表中存储着方法的相关局部变量，包括各种基本数据类型，对象的引用，返回地址等。在局部变量表中，只有long和double类型会占用2个局部变量空间（Slot，对于32位机器，一个Slot就是32个bit），其它都是1个Slot。需要注意的是，局部变量表是在编译时就已经确定 好的，方法运行所需要分配的空间在栈帧中是完全确定的，在方法的生命周期内都不会改变。虚拟机栈中定义了两种异常，如果线程调用的栈深度大于虚拟机允许的最大深度，则抛出StatckOverFlowError（栈溢出）；不过多 数Java虚拟机都允许动态扩展虚拟机栈的大小(有少部分是固定长度的)，所以线程可以一直申请栈，知道内存不足，此时，会抛出 OutOfMemoryError（内存溢出）。每个线程对应着一个虚拟机栈，因此虚拟机栈也是线程私有的。</p>
+<ol>
+<li>本地方法栈（Native Method Statck）：</li>
+</ol>
+<p>本地方法栈在作用，运行机制，异常类型等方面都与虚拟机栈相同，唯一的区别是：虚拟机栈是执行Java方法的，而本地方法栈是用来执行native方法的，在很多虚拟机中（如Sun的JDK默认的HotSpot虚拟机），会将本地方法栈与虚拟机栈放在一起使用。本地方法栈也是线程私有的。</p>
+<ol>
+<li>堆区（Heap）</li>
+</ol>
+<p>堆区是理解Java GC机制最重要的区域，没有之一。在JVM所管理的内存中，堆区是最大的一块，堆区也是Java GC机制所管理的主要内存区域，堆区由所有线程共享，在虚拟机启动时创建。堆区的存在是为了存储对象实例，原则上讲，所有的对象都在堆区上分配内存（不过现代技术里，也不是这么绝对的，也有栈上直接分配的）。一般的，根据Java虚拟机规范规定，堆内存需要在逻辑上是连续的（在物理上不需要），在实现时，可以是固定大小的，也可以是可扩展的，目前主流的虚拟机都是可扩展的。如果在执行垃圾回收之后，仍没有足够的内存分配，也不能再扩展，将会抛出OutOfMemoryError:Java heap space异常。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">-Xms 参数设置最小值</div><div class="line"></div><div class="line">-Xmx 参数设置最大值 </div><div class="line">例：VM Args: -Xms20m -Xmx20m -XX:+HeapDumpOnOutOfMemoryError</div><div class="line"></div><div class="line">若-Xms=-Xmx,则可避免堆自动扩展。</div><div class="line">-XX:+HeapDumpOnOutOfMemoryError 可以让虚拟机在出现内存溢出是dump出当前的内存堆转储快照。</div></pre></td></tr></table></figure></p>
+<ol>
+<li>方法区（Method Area）</li>
+</ol>
+<p>在Java虚拟机规范中，将方法区作为堆的一个逻辑部分来对待，但事实上，方法区并不是堆（Non-Heap）；另外，不少人的博客中，将Java GC的分代收集机制分为3个代：青年代，老年代，永久代，这些作者将方法区定义为“永久代”，这是因为，对于之前的HotSpot Java虚拟机的实现方式中，将分代收集的思想扩展到了方法区，并将方法区设计成了永久代。不过，除HotSpot之外的多数虚拟机，并不将方法区当做永久代，HotSpot本身，也计划取消永久代。<br>方法区是各个线程共享的区域，用于存储已经被虚拟机加载的类信息（即加载类时需要加载的信息，包括版本、field、方法、接口等信息）、final常量、静态变量、编译器即时编译的代码等。方法区在物理上也不需要是连续的，可以选择固定大小或可扩展大小，并且方法区比堆还多了一个限制：可以选择是否执行垃圾收集。一般的，方法区上 执行的垃圾收集是很少的，这也是方法区被称为永久代的原因之一（HotSpot），但这也不代表着在方法区上完全没有垃圾收集，其上的垃圾收集主要是针对常量池的内存回收和对已加载类的卸载。在方法区上进行垃圾收集，条件苛刻而且相当困难，效果也不令人满意，所以一般不做太多考虑，可以留作以后进一步深入研究时使用。在方法区上定义了OutOfMemoryError:PermGen space异常，<br>在内存不足时抛出。<br>运行时常量池（Runtime Constant Pool）是方法区的一部分，用于存储编译期就生成的字面常量、符号引用、翻译出来的直接引用（符号引用就是编码是用字符串表示某个变量、接口的位置，直接引用就是根据符号引用翻译出来的地址，将在类链接阶段完成翻译）；运行时常量池除了存储编译期常量外，也可以存储在运行时间产生的常量（比如String类的intern()方法，作用是String维护了一个常量池，如果调用的字符“abc”已经在常量池中，则返回池中的字符串地址，否则，新建一个常量加入池中，并返回地址）。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">-XX:MaxPermSize 设置上限</div><div class="line">-XX:PermSize 设置最小值 </div><div class="line">例：VM Args: -XX:PermSize=10M -XX:MaxPermSize=10M</div></pre></td></tr></table></figure></p>
+<ol>
+<li>直接内存（Direct Memory）</li>
+</ol>
+<p>直接内存（Direct Memory）并不是虚拟机运行时数据区的一部分，也不是Java虚拟机规范中定义的内存区域，但是这部分内存也被频繁地使用，而且也可能导致OutOfMemoryError异常出现，所以我们放到这里一起讲解。</p>
+<p>Direct Memory满了之后，系统不会自动回收这段内存； 而是要等Tenured Generation满触发GC时，Direct Memory才会被跟着回收。</p>
+<p>在JDK 1.4中新加入了NIO（New Input/Output）类，引入了一种基于通道（Channel）与缓冲区（Buffer）的I/O方式，它可以使用Native函数库直接分配堆外内存，然后通过一个存储在Java堆里面的DirectByteBuffer对象作为这块内存的引用进行操作。这样能在一些场景中显著提高性能，因为避免了在Java堆和Native堆中来回复制数据。</p>
+<p>显然，本机直接内存的分配不会受到Java堆大小的限制，但是，既然是内存，则肯定还是会受到本机总内存（包括RAM及SWAP区或者分页文件）的大小及处理器寻址空间的限制。服务器管理员配置虚拟机参数时，一般会根据实际内存设置-Xmx等参数信息，但经常会忽略掉直接内存，使得各个内存区域的总和大于物理内存限制（包括物理上的和操作系统级的限制），从而导致动态扩展时出现OutOfMemoryError异常。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">-XX:MaxDirectMemorySize 设置最大值，默认与java堆最大值一样。</div><div class="line"></div><div class="line">例 ：-XX:MaxDirectMemorySize=10M -Xmx20M</div></pre></td></tr></table></figure>
+<h2 id="哪些内存被回收"><a href="#哪些内存被回收" class="headerlink" title="哪些内存被回收"></a>哪些内存被回收</h2><p>根据运行时数据区域的各个部分，程序计数器、虚拟机栈、本地方法栈三个区域随着线程而生，<strong>随线程灭而灭</strong>。栈中的栈帧随着方法的进入和退出而进栈出栈。每个栈帧分配多少内存在类结构确定下来的时候就基本已经确定。所以这个三个区域内存回收时方法或者线程结束而回收的，不需要太多关注；而java堆和方法区则不一样，一个接口不同实现类，一个方法中不同的分支，在具体运行的时候才能确定创建那些对象，所以这部分内存是动态的，也是需要垃圾回收机制来回收处理的。</p>
+<ol>
+<li>堆内存</li>
+</ol>
+<p>判断堆内的对象是否可以回收，要判断这个对象实例是否确实没用，判断算法有两种：引用计数法和根搜索算法。</p>
+<ul>
+<li><p>引用计数法：就是给每个对象加一个计数器，如果有一个地方引用就加1，当引用失效就减1；当计数器为0，则认为对象是无用的。这种算法最大的问题在于不能解决相互引用的对象，如：A.b=B;B.a=A，在没有其他引用的情况下，应该回收；但按照引用计数法来计算，他们的引用都不为0，显然不能回收。</p>
+</li>
+<li><p>根搜索算法：这个算法的思路是通过一系列名为“GC Roots”的对象作为起点，<br>从这个节点向下搜索，搜索所经过的路径称为引用链（Reference Chain），当一个对象到GC Roots没有任何引用链相连(图论的不可达)时，则证明该对象不可用。</p>
+</li>
+</ul>
+<p>java等一大部分商用语言是用根搜索算法来管理内存的，java中可以做为GC Roots的对象有如下几种：</p>
+<p><em>虚拟机栈（栈帧中的本地变量表）中的引用的对象；</em></p>
+<p><em>方法区中的类静态属性引用的对象；</em></p>
+<p><em>方法区中常量引用的对象；</em></p>
+<p><em>本地方法栈JNI(Native)的引用对象；</em></p>
+<p>无论是通过引用计数算法判断对象的引用数量，还是通过可达性分析算法判断对象的引用链是否可达，判定对象是否存活都与“引用”有关。在JDK1.2以前，Java中的引用的定义很传统<strong>如果reference类型的数据中存储的数值代表的是另外一块内存的起始地址，就称这块内存代表着一个引用</strong>。这种定义很纯粹，但是太过狭隘，一个对象在这种定义下只有被引用或者没有被引用两种状态，对于如何描述一些“食之无味，弃之可惜”的对象就显得无能为力。我们希望能描述这样一类对象：当内存空间还足够时，则能保留在内存之中；如果内存空间在进行垃圾收集后还是非常紧张，则可以抛弃这些对象。很多系统的缓存功能都符合这样的应用场景。</p>
+<p>在JDK 1.2之后，Java对引用的概念进行了扩充，将引用分为强引用（Strong Reference）、软引用（Soft Reference）、弱引用（Weak Reference）、虚引用（Phantom Reference）4种，这4种引用强度依次逐渐减弱。</p>
+<ul>
+<li>强引用 </li>
+</ul>
+<p>只要强引用还存在，垃圾收集器永远不会收掉被引用的对象</p>
+<ul>
+<li>软引用 </li>
+</ul>
+<p>在系统将要发生内存异常之前，将会把这些对象列进回收范围之中进行第二次回收。</p>
+<ul>
+<li>弱引用 </li>
+</ul>
+<p>被弱引用关联的对象只能生存道下一次垃圾收集发生之前。</p>
+<ul>
+<li>虚引用 </li>
+</ul>
+<p>一个对象是否有虚引用的存在，完全不会对其生存时间构成影响，也无法通过虚引用来取得一个对象的实例。</p>
+<h3 id="finalize-方法"><a href="#finalize-方法" class="headerlink" title="finalize()方法"></a>finalize()方法</h3><p>在Object类中<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">protected void finalize() throws Throwable &#123; &#125;</div></pre></td></tr></table></figure></p>
+<p><strong>注意下这个访问控制符是protected</strong></p>
+<h4 id="finalize-在什么时候被调用"><a href="#finalize-在什么时候被调用" class="headerlink" title="finalize()在什么时候被调用?"></a>finalize()在什么时候被调用?</h4><p>有三种情况</p>
+<ol>
+<li>所有对象被Garbage Collection时自动调用,比如运行System.gc()的时候.</li>
+<li>程序退出时为每个对象调用一次finalize方法。</li>
+<li>显式的调用finalize方法</li>
+</ol>
+<p>当一个对象不可到达时，并不是马上就被回收的。</p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/finalize.jpg" alt="image"></p>
+<p><strong>当对象没有覆盖finalize()方法，或者finalized()已经被JVM调用过，那就是没有必要执行finalzied()<br>;Finalizer线程执行它，但并不保证等待它执行结束，这主要是防止finalize()出现问题，导致Finalizer线程无限等待，整个内存回收系统崩溃</strong></p>
+<h4 id="具体的finalize流程："><a href="#具体的finalize流程：" class="headerlink" title="具体的finalize流程："></a>具体的finalize流程：</h4><p>对象可由两种状态，涉及到两类状态空间，一是终结状态空间 F = {unfinalized, finalizable, finalized}；二是可达状态空间 R = {reachable, finalizer-reachable, unreachable}。各状态含义如下：<br>unfinalized: 新建对象会先进入此状态，GC并未准备执行其finalize方法，因为该对象是可达的<br>finalizable: 表示GC可对该对象执行finalize方法，GC已检测到该对象不可达。正如前面所述，GC通过F-Queue队列和一专用线程完成finalize的执行<br>finalized: 表示GC已经对该对象执行过finalize方法<br>reachable: 表示GC Roots引用可达<br>finalizer-reachable(f-reachable)：表示不是reachable，但可通过某个finalizable对象可达<br>unreachable：对象不可通过上面两种途径可达<br><img src="http://oirwmbp4e.bkt.clouddn.com/finalize-state.jpg" alt="image"></p>
+<ol>
+<li>新建对象首先处于[reachable, unfinalized]状态(A)</li>
+<li>随着程序的运行，一些引用关系会消失，导致状态变迁，从reachable状态变迁到f-reachable(B, C, D)或unreachable(E, F)状态</li>
+<li>若JVM检测到处于unfinalized状态的对象变成f-reachable或unreachable，JVM会将其标记为finalizable状态(G,H)。若对象原处于[unreachable, unfinalized]状态，则同时将其标记为f-reachable(H)。</li>
+<li>在某个时刻，JVM取出某个finalizable对象，将其标记为finalized并在某个线程中执行其finalize方法。由于是在活动线程中引用了该对象，该对象将变迁到(reachable, finalized)状态(K或J)。该动作将影响某些其他对象从f-reachable状态重新回到reachable状态(L, M, N), 这就是对象重生</li>
+<li>处于finalizable状态的对象不能同时是unreahable的，由第4点可知，将对象finalizable对象标记为finalized时会由某个线程执行该对象的finalize方法，致使其变成reachable。这也是图中只有八个状态点的原因</li>
+<li>程序员手动调用finalize方法并不会影响到上述内部标记的变化，因此JVM只会至多调用finalize一次，即使该对象“复活”也是如此。程序员手动调用多少次不影响JVM的行为</li>
+<li>若JVM检测到finalized状态的对象变成unreachable，回收其内存(I)</li>
+<li>若对象并未覆盖finalize方法，JVM会进行优化，直接回收对象（O）</li>
+</ol>
+<p>注：System.runFinalizersOnExit()等方法可以使对象即使处于reachable状态，JVM仍对其执行finalize方法</p>
+<p>对finalize()的一句话概括：<br><strong><em>JVM能够保证一个对象在回收以前一定会调用一次它的finalize()方法。这句话中两个陷阱：回收以前一定和一次</em></strong></p>
+<p>但有很多地方是讲，JVM不承诺这一定调用finalize()，这就是上面的陷阱造成的</p>
+<p>你永远不知道它什么时候被调用甚至会不会调用（因为有些对象是永远不会被回收的，或者被回收以前程序就结束了）,但如果他是有必要执行finalize()的，那在GC前一定调用一次且仅一次，如果在第一次GC时没有被回收，那以后再GC时，就不再调用finalize()</p>
+<ol>
+<li>方法区</li>
+</ol>
+<p>很多人认为方法区（或者HotSpot虚拟机中的永久代）是没有垃圾收集的，Java虚拟机规范中确实说过可以不要求虚拟机在方法区实现垃圾收集，而且在方法区进行垃圾收集的“性价比”一般比较低：在堆中，尤其是在新生代中，常规应用进行一次垃圾收集*++一般可以回收70%~95%的空间++，而永久代的垃圾收集效率远低于此。</p>
+<p>方法区回收主要有两部分：废弃的常量和无用的类。废弃的常量判断方法和堆中的对象类似，只要判断没有地方引用就可以回收。相比之下，判断一个类是否无用，条件就比较苛刻，需要同时满足下面3个条件才能算是“无用的类”：</p>
+<ul>
+<li>该类的所有实例都已经被回收，也就是java堆中不存在该类的任何实例；</li>
+<li>加载该类的ClassLoader已经被回收；</li>
+<li>该类对应的java.lang.Class对象没有在任何地方被引用，无法在任何地方通过反射访问该类的方法。</li>
+</ul>
+<p>虚拟机可以对满足上述3个条件的无用类进行回收，这里说的仅仅是“可以”，而不是和对象一样，不使用了就必然会回收。是否对类进行回收，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">HotSpot虚拟机提供了</div><div class="line">-Xnoclassgc参数进行控制，</div><div class="line">还可以使用</div><div class="line">-verbose:class</div><div class="line">-XX:+TraceClassLoading</div><div class="line">-XX:+TraceClassUnLoading查看类的加载和卸载信息。</div></pre></td></tr></table></figure></p>
+<p>在大量使用反射、动态代理、CGLib等bytecode框架的场景，以及动态生成JSP和OSGi这类频繁自定义ClassLoader的场景都需要虚拟机具备类卸载的功能，以保证永久代不会溢出</p>
+<h2 id="如何回收"><a href="#如何回收" class="headerlink" title="如何回收"></a>如何回收</h2><p>选择合适的GC collector是JVM调优最重要的一项，前提是先了解回收算法</p>
+<h3 id="“标记-清除”（Mark-Sweep）"><a href="#“标记-清除”（Mark-Sweep）" class="headerlink" title="“标记-清除”（Mark-Sweep）"></a>“标记-清除”（Mark-Sweep）</h3><p><img src="http://oirwmbp4e.bkt.clouddn.com/Mark-Sweep.png" alt="image"></p>
+<p>算法分为“标记”和“清除”两个阶段：<br>首先标记出所有需要回收的对象，在标记完成后统一回收掉所有被标记的对象</p>
+<p>主要缺点有两个</p>
+<ol>
+<li>一个是效率问题，标记和清除过程的效率都不高</li>
+<li>一个是空间问题，标记清除之后会产生大量不连续的内存碎片，空间碎片太多可能会导致，当程序在以后的运行过程中需要分配较大对象时无法找到足够的连续内存而不得不提前触发另一次垃圾收集动作</li>
+</ol>
+<h3 id="“复制”（Copying）"><a href="#“复制”（Copying）" class="headerlink" title="“复制”（Copying）"></a>“复制”（Copying）</h3><p><img src="http://oirwmbp4e.bkt.clouddn.com/Copying.png" alt="image"></p>
+<p>它将可用内存按容量划分为大小相等的两块，每次只使用其中的一块。当这一块的内存用完了，就将还存活着的对象复制到另外一块上面，然后再把已使用过的内存空间一次清理掉。这样使得每次都是对其中的一块进行内存回收，内存分配时也就不用考虑内存碎片等复杂情况，只要移动堆顶指针，按顺序分配内存即可，实现简单，运行高效。</p>
+<p>只是这种算法的代价是将内存缩小为原来的一半，未免太高了一点</p>
+<p>现在的商业虚拟机都采用这种收集算法来回收新生代，IBM的专门研究表明，新生代中的对象98%是朝生夕死的，所以并不需要按照1∶1的比例来划分内存空间，而是将内存分为一块较大的Eden空间和两块较小的Survivor空间，每次使用Eden和其中的一块Survivor。当回收时，将Eden和Survivor中还存活着的对象一次性地拷贝到另外一块Survivor空间上，最后清理掉Eden和刚才用过的Survivor的空间。HotSpot虚拟机默认Eden和Survivor的大小比例是8∶1，也就是每次新生代中可用内存空间为整个新生代容量的90%（80%+10%），只有10%的内存是会被“浪费”的。当然，98%的对象可回收只是一般场景下的数据，我们没有办法保证每次回收都只有不多于10%的对象存活，当Survivor空间不够用时，需要依赖其他内存（这里指老年代）进行分配担保（Handle Promotion）。</p>
+<p>在对象存活率较高时就要执行较多的复制操作，效率将会变低。更关键的是，如果不想浪费50%的空间，就需要有额外的空间进行分配担保，以应对被使用的内存中所有对象都100%存活的极端情况，所以在老年代一般不能直接选用这种算法。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">-XX:SurvivorRatio=4</div><div class="line">设置年轻代中Eden区与Survivor区的大小比值。</div><div class="line">设置为4，则Eden区与两个Survivor区的比值为4:1:1，一个Survivor区占整个年轻代的1/6</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>为什么新生代有两个survivor?<br>StackOverflow上面给出的解释是：</p>
+<p>The reason for the HotSpot JVM’s two survivor spaces is to reduce the need to deal with fragmentation. New objects are allocated in eden space. All well and good. When that’s full, you need a GC, so kill stale objects and move live ones to a survivor space, where they can mature for a while before being promoted to the old generation. Still good so far. The next time we run out of eden space, though, we have a conundrum. The next GC comes along and clears out some space in both eden and our survivor space, but the spaces aren’t contiguous. So is it better to</p>
+<ol>
+<li>Try to fit the survivors from eden into the holes in the survivor space that were cleared by the GC?</li>
+<li>Shift all the objects in the survivor space down to eliminate the fragmentation, and then move the survivors into it?</li>
+<li>Just say “screw it, we’re moving everything around anyway,” and copy all of the survivors from both spaces into a completely separate space–the second survivor space–thus leaving you with a clean eden and survivor space where you can repeat the sequence on the next GC?</li>
+</ol>
+<p>Sun’s answer to the question is obvious.</p>
+</blockquote>
+<h3 id="“标记-整理”（Mark-Compact）"><a href="#“标记-整理”（Mark-Compact）" class="headerlink" title="“标记-整理”（Mark-Compact）"></a>“标记-整理”（Mark-Compact）</h3><p><img src="http://oirwmbp4e.bkt.clouddn.com/Mark-Compact.png" alt="image"></p>
+<p>此算法结合了“标记-清除”和“复制”两个算法的优点。也是分两阶段，</p>
+<ol>
+<li>第一阶段从根节点开始标记所有被引用对象，</li>
+<li>第二阶段遍历整个堆，把清除未标记对象并且把存活对象“压缩”到堆的其中一块，按顺序排放。此算法避免了“标记-清除”的碎片问题，同时也避免了“复制”算法的空间问题。</li>
+</ol>
+<h3 id="“分代收集”（Generational-Collection）"><a href="#“分代收集”（Generational-Collection）" class="headerlink" title="“分代收集”（Generational Collection）"></a>“分代收集”（Generational Collection）</h3><p>当前商业虚拟机的垃圾收集都采用“分代收集”（Generational Collection）算法，<br>这种算法并没有什么新的思想，只是根据对象的存活周期的不同将内存划分为几块。<br>一般是把Java堆分为新生代和老年代，这样就可以根据各个年代的特点采用最适当的收集算法。在新生代中，每次垃圾收集时都发现有大批对象死去，只有少量存活，那就选用复制算法，只需要付出少量存活对象的复制成本就可以完成收集。而老年代中因为对象存活率高、没有额外空间对它进行分配担保，就必须使用“标记-清理”或“标记-整理”算法来进行回收。</p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/GenerationalGC.png" alt="image"></p>
+<ul>
+<li><p>新生代 GC（Minor GC）：指发生在新生代的垃圾收集动作，因为 Java 对象大多都具<br>备朝生夕灭的特性，所以 Minor GC 非常频繁，一般回收速度也比较快。</p>
+</li>
+<li><p>老年代 GC（Major GC）：指发生在老年代的 GC，出现了 Major GC，经常<br>会伴随至少一次的 Minor GC（但非绝对的，在 ParallelScavenge 收集器的收集策略里<br>就有直接进行 Major GC 的策略选择过程） 。MajorGC 的速度一般会比 Minor GC 慢 10<br>倍以上。<br>虚拟机给每个对象定义了一个对象年龄（Age）计数器。如果对象在 Eden 出生并经过第一次 Minor GC 后仍然存活，并且能被 Survivor 容纳的话，将被移动到 Survivor 空间中，并将对象年龄设为 1。对象在 Survivor 区中每熬过一次 Minor GC，年龄就增加 1 岁，当它的年龄增加到一定程度（默认为 15 岁）时，就会被晋升到老年代中。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">对象晋升老年代的年龄阈值，可以通过参数 -XX:MaxTenuringThreshold 来设置。</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="垃圾收集器"><a href="#垃圾收集器" class="headerlink" title="垃圾收集器"></a>垃圾收集器</h2><p><img src="http://oirwmbp4e.bkt.clouddn.com/gc.jpg" alt="image"></p>
+<h3 id="按系统线程分"><a href="#按系统线程分" class="headerlink" title="按系统线程分"></a>按系统线程分</h3><p><img src="http://oirwmbp4e.bkt.clouddn.com/gc-thread.jpg" alt="image"></p>
+<p><strong>注意并发（Concurrent）和并行（Parallel）的区别</strong>：</p>
+<ol>
+<li>并发是指用户线程与GC线程同时执行（不一定是并行，可能交替，但总体上是在同时执行的），不需要停顿用户线程（其实在CMS中用户线程还是需要停顿的，只是非常短，GC线程在另一个CPU上执行）；</li>
+<li>并行收集是指多个GC线程并行工作，但此时用户线程是暂停的；</li>
+</ol>
+<blockquote>
+<p>这个跟传统的并发并行概念不同<br>并行是物理的，并发是逻辑的。<br>并行是和串行对立。</p>
+</blockquote>
+<h4 id="Serial收集器"><a href="#Serial收集器" class="headerlink" title="Serial收集器"></a>Serial收集器</h4><p><img src="http://oirwmbp4e.bkt.clouddn.com/Serial.jpg" alt="image"><br>Serial是最基本、历史最悠久的垃圾收集器，使用复制算法，曾经是JDK1.3.1之前新生代唯一的垃圾收集器。目前也是ClientVM下 ServerVM 4核4GB以下机器的默认垃圾回收器。<br>串行收集器并不是只能使用一个CPU进行收集，而是当JVM需要进行垃圾回收的时候，需要中断所有的用户线程，知道它回收结束为止，因此又号称“Stop The World” 的垃圾回收器。注意，JVM中文名称为java虚拟机，因此它就像一台虚拟的电脑一样在工作，而其中的每一个线程就被认为是JVM的一个处理器，因此大家看到图中的CPU0、CPU1实际为用户的线程，而不是真正机器的CPU，大家不要误解哦。</p>
+<p>串行回收方式适合低端机器，是<strong>Client模式下的默认收集器</strong>，对CPU和内存的消耗不高，适合用户交互比较少，后台任务较多的系统。</p>
+<p>Serial收集器默认新旧生代的回收器搭配为Serial+ SerialOld</p>
+<p>新生代、老年代使用串行回收；新生代复制算法、老年代标记-压缩<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">在J2SE5.0上，在非server模式下，JVM自动选择串行收集器。</div><div class="line">也可以显示进行选择，在Java启动参数中增加： </div><div class="line">-XX:+UseSerialGC</div></pre></td></tr></table></figure></p>
+<h4 id="Serial-Old收集器"><a href="#Serial-Old收集器" class="headerlink" title="Serial Old收集器"></a>Serial Old收集器</h4><p>SerialOld是旧生代Client模式下的默认收集器，单线程执行，使用“标记-整理”算法<br>在Server模式下，主要有两个用途：</p>
+<ol>
+<li>在JDK1.5之前版本中与新生代的Parallel Scavenge收集器搭配使用。</li>
+<li>作为年老代中使用CMS收集器的后备垃圾收集方案。</li>
+</ol>
+<h4 id="ParNew收集器"><a href="#ParNew收集器" class="headerlink" title="ParNew收集器"></a>ParNew收集器</h4><p><img src="http://oirwmbp4e.bkt.clouddn.com/ParNew.jpg" alt="image"><br>ParNew收集器其实就是多线程版本的Serial收集器,</p>
+<p>Stop The World</p>
+<p>他是多CPU模式下的首选回收器（该回收器在单CPU的环境下回收效率远远低于Serial收集器，所以一定要注意场景哦）</p>
+<p>Server模式下的默认收集器。</p>
+<p>新生代并行，老年代串行；新生代复制算法、老年代标记-压缩</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">-XX:+UseParNewGC  ParNew收集器</div><div class="line"></div><div class="line">ParNew收集器默认开启和CPU数目相同的线程数</div><div class="line">-XX:ParallelGCThreads 限制线程数量</div></pre></td></tr></table></figure>
+<h4 id="Parallel-Scavenge收集器"><a href="#Parallel-Scavenge收集器" class="headerlink" title="Parallel Scavenge收集器"></a>Parallel Scavenge收集器</h4><p>Parallel Scavenge收集器也是一个新生代垃圾收集器，同样使用复制算法，也是一个多线程的垃圾收集器,也称吞吐量优先的收集器</p>
+<p>所提到的<strong>吞吐量=程序运行时间/(JVM执行回收的时间+程序运行时间)</strong>,假设程序运行了100分钟，JVM的垃圾回收占用1分钟，那么吞吐量就是99%。在当今网络告诉发达的今天，良好的响应速度是提升用户体验的一个重要指标，多核并行云计算的发展要求程序尽可能的使用CPU和内存资源，尽快的计算出最终结果，因此在交互不多的云端，比较适合使用该回收器。</p>
+<p>可以通过参数来打开自适应调节策略，虚拟机会根据当前系统的运行情况收集性能监控信息，动态调整这些参数以提供最合适的停顿时间或最大的吞吐量；也可以通过参数控制GC的时间不大于多少毫秒或者比例</p>
+<p>新生代复制算法、老年代标记-压缩</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">-XX:+UseParallelGC  使用Parallel收集器+ 老年代串行</div><div class="line"></div><div class="line">Parallel Scavenge收集器提供了两个参数用于精准控制吞吐量：</div><div class="line">a.-XX:MaxGCPauseMillis：控制最大垃圾收集停顿时间，是一个大于0的毫秒数。</div><div class="line">b.-XX:GCTimeRation：直接设置吞吐量大小，是一个大于0小于100的整数，</div><div class="line">也就是程序运行时间占总时间的比率，默认值是99，即垃圾收集运行最大1%（1/(1+99)）的垃圾收集时间</div><div class="line"></div><div class="line">-XX:+UseAdaptiveSizePolicy，这是个开关参数，</div><div class="line">打开之后就不需要手动指定新生代大小(-Xmn)、Eden与Survivor区的比例(-XX:SurvivorRation)、</div><div class="line">新生代晋升年老代对象年龄(-XX:PretenureSizeThreshold)等细节参数</div></pre></td></tr></table></figure>
+<h4 id="Parallel-Old"><a href="#Parallel-Old" class="headerlink" title="Parallel Old"></a>Parallel Old</h4><p>Parallel Old是Parallel Scavenge收集器的老年代版本，使用多线程和“标记－整理”算法。这个收集器是在JDK 1.6中才开始提供</p>
+<p>在JDK1.6之前，新生代使用ParallelScavenge收集器只能搭配年老代的Serial Old收集器，只能保证新生代的吞吐量优先，无法保证整体的吞吐量，Parallel Old正是为了在年老代同样提供吞吐量优先的垃圾收集器，如果系统对吞吐量要求比较高，可以优先考虑新生代Parallel Scavenge和年老代Parallel Old收集器的搭配策略</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">参数控制： -XX:+UseParallelOldGC 使用Parallel收集器+ 老年代并行</div></pre></td></tr></table></figure>
+<p>新生代Parallel Scavenge和年老代Parallel Old收集器搭配运行过程图：<br><img src="http://oirwmbp4e.bkt.clouddn.com/Parallel.jpg" alt="image"></p>
+<h4 id="CMS收集器"><a href="#CMS收集器" class="headerlink" title="CMS收集器"></a>CMS收集器</h4><p>CMS（Concurrent Mark Sweep）收集器是一种以获取<strong>最短回收停顿时间为目标</strong>的收集器。目前很大一部分的Java应用都集中在互联网站或B/S系统的服务端上，这类应用尤其重视服务的响应速度，希望系统停顿时间最短，以给用户带来较好的体验。</p>
+<p>由于整个过程中耗时最长的并发标记和并发清除过程中，收集器线程都可以与用户线程一起工作，所以总体上来说，CMS收集器的内存回收过程是与用户线程一起并发地执行。老年代收集器（新生代使用ParNew）</p>
+<p>优点:并发收集、低停顿 </p>
+<p>缺点：产生大量空间碎片、并发阶段会降低吞吐量</p>
+<p>从名字（包含“Mark Sweep”）上就可以看出CMS收集器是基于“标记-清除”算法实现的，它的运作过程相对于前面几种收集器来说要更复杂一些，整个过程分为4个步骤，包括： </p>
+<ol>
+<li><p>初始标记（CMS initial mark）</p>
+</li>
+<li><p>并发标记（CMS concurrent mark）</p>
+</li>
+<li><p>重新标记（CMS remark）</p>
+</li>
+<li><p>并发清除（CMS concurrent sweep）</p>
+</li>
+</ol>
+<p>a.初始标记：只是标记一下GC Roots能直接关联的对象，速度很快，仍然需要暂停所有的工作线程。</p>
+<p>b.并发标记：进行GC Roots跟踪的过程，和用户线程一起工作，不需要暂停工作线程。</p>
+<p>c.重新标记：为了修正在并发标记期间，因用户程序继续运行而导致标记产生变动的那一部分对象的标记记录，仍然需要暂停所有的工作线程。</p>
+<p>d.并发清除：清除GC Roots不可达对象，和用户线程一起工作，不需要暂停工作线程。<br>由于耗时最长的并发标记和并发清除过程中，垃圾收集线程可以和用户现在一起并发工作，所以总体上来看CMS收集器的内存回收和用户线程是一起并发地执行。</p>
+<p>CMS收集器工作过程：</p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/cms.jpg" alt="image"></p>
+<p>其中初始标记、重新标记这两个步骤仍然需要“Stop The World”。</p>
+<p>CMS收集器有以下三个不足：</p>
+<ul>
+<li><p>CMS收集器对CPU资源非常敏感，其默认启动的收集线程数=(CPU数量+3)/4，在用户程序本来CPU负荷已经比较高的情况下，如果还要分出CPU资源用来运行垃圾收集器线程，会使得CPU负载加重。</p>
+</li>
+<li><p>CMS无法处理浮动垃圾(Floating Garbage)，可能会导致Concurrent ModeFailure失败而导致另一次Full GC。由于CMS收集器和用户线程并发运行，因此在收集过程中不断有新的垃圾产生，这些垃圾出现在标记过程之后，CMS无法在本次收集中处理掉它们，只好等待下一次GC时再将其清理掉，这些垃圾就称为浮动垃圾。<br>CMS垃圾收集器不能像其他垃圾收集器那样等待年老代机会完全被填满之后再进行收集，需要预留一部分空间供并发收集时的使用，可以通过参数-XX:CMSInitiatingOccupancyFraction来设置年老代空间达到多少的百分比时触发CMS进行垃圾收集，默认是68%。<br>如果在CMS运行期间，预留的内存无法满足程序需要，就会出现一次ConcurrentMode Failure失败，此时虚拟机将启动预备方案，使用Serial Old收集器重新进行年老代垃圾回收。</p>
+</li>
+<li><p>CMS收集器是基于标记-清除算法，因此不可避免会产生大量不连续的内存碎片，如果无法找到一块足够大的连续内存存放对象时，将会触发因此Full GC。CMS提供一个开关参数-XX:+UseCMSCompactAtFullCollection，用于指定在Full GC之后进行内存整理，内存整理会使得垃圾收集停顿时间变长，CMS提供了另外一个参数-XX:CMSFullGCsBeforeCompaction，用于设置在执行多少次不压缩的Full GC之后，跟着再来一次内存整理</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">-XX:+UseConcMarkSweepGC  使用CMS收集器</div><div class="line">-XX:+ UseCMSCompactAtFullCollection Full GC后，进行一次碎片整理；整理过程是独占的，会引起停顿时间变长</div><div class="line">-XX:+CMSFullGCsBeforeCompaction  设置进行几次Full GC后，进行一次碎片整理</div><div class="line">-XX:ParallelCMSThreads  设定CMS的线程数量（一般情况约等于可用CPU数量）</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h4 id="G1收集器"><a href="#G1收集器" class="headerlink" title="G1收集器"></a>G1收集器</h4><p>G1可谓博采众家之长，力求到达一种完美。他吸取了增量收集优点，把整个堆划分为一个一个等大小的区域（region）。内存的回收和划分都以region为单位；同时，他也吸取了CMS的特点，把这个垃圾回收过程分为几个阶段，分散一个垃圾回收过程；而且，G1也认同分代垃圾回收的思想，认为不同对象的生命周期不同，可以采取不同收集方式，因此，它也支持分代的垃圾回收。为了达到对回收时间的可预计性，G1在扫描了region以后，对其中的活跃对象的大小进行排序，首先会收集那些活跃对象小的region，以便快速回收空间（要复制的活跃对象少了），因为活跃对象小，里面可以认为多数都是垃圾，所以这种方式被称为Garbage First（G1）的垃圾回收算法，即：垃圾优先的回收。</p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/g1.png" alt="image"></p>
+<p>与CMS收集器相比G1收集器有以下特点：</p>
+<ol>
+<li><p>空间整合，G1收集器采用标记整理算法，不会产生内存空间碎片。分配大对象时不会因为无法找到连续空间而提前触发下一次GC。</p>
+</li>
+<li><p>可预测停顿，这是G1的另一大优势，降低停顿时间是G1和CMS的共同关注点，但G1除了追求低停顿外，还能建立可预测的停顿时间模型，能让使用者明确指定在一个长度为N毫秒的时间片段内，消耗在垃圾收集上的时间不得超过N毫秒，这几乎已经是实时Java（RTSJ）的垃圾收集器的特征了。</p>
+</li>
+</ol>
+<p>收集的范围都是整个新生代或者老年代，而G1不再是这样。使用G1收集器时，Java堆的内存布局与其他收集器有很大差别，它将整个Java堆划分为多个大小相等的独立区域（Region），虽然还保留有新生代和老年代的概念，但新生代和老年代不再是物理隔阂了，它们都是一部分（可以不连续）Region的集合。</p>
+<p>G1的新生代收集跟ParNew类似，当新生代占用达到一定比例的时候，开始出发收集。</p>
+<p>和CMS类似，G1收集器收集老年代对象会有短暂停顿。</p>
+<ol>
+<li><p>标记阶段，首先初始标记(Initial-Mark),这个阶段是停顿的(Stop the World Event)，并且会触发一次普通Mintor GC。对应GC log:GC pause (young) (inital-mark)</p>
+</li>
+<li><p>Root Region Scanning，程序运行过程中会回收survivor区(存活到老年代)，这一过程必须在young GC之前完成。</p>
+</li>
+<li><p>Concurrent Marking，在整个堆中进行并发标记(和应用程序并发执行)，此过程可能被young GC中断。在并发标记阶段，若发现区域对象中的所有对象都是垃圾，那个这个区域会被立即回收(图中打X)。同时，并发标记过程中，会计算每个区域的对象活性(区域中存活对象的比例)。<br><img src="http://oirwmbp4e.bkt.clouddn.com/g1-3.jpg" alt="image"></p>
+</li>
+<li><p>Remark, 再标记，会有短暂停顿(STW)。再标记阶段是用来收集 并发标记阶段 产生新的垃圾(并发阶段和应用程序一同运行)；G1中采用了比CMS更快的初始快照算法:snapshot-at-the-beginning (SATB)。</p>
+</li>
+<li><p>Copy/Clean up，多线程清除失活对象，会有STW。G1将回收区域的存活对象拷贝到新区域，清除Remember Sets，并发清空回收区域并把它返回到空闲区域链表中。<br><img src="http://oirwmbp4e.bkt.clouddn.com/g1-5.jpg" alt="image"></p>
+</li>
+<li><p>复制/清除过程后。回收区域的活性对象已经被集中回收到深蓝色和深绿色区域。<br><img src="http://oirwmbp4e.bkt.clouddn.com/g1-6.jpg" alt="image"></p>
+</li>
+</ol>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">-XX:+UnlockExperimentalVMOptions -XX:+UseG1GC        #开启</div><div class="line">-XX:MaxGCPauseMillis =50                  #暂停时间目标</div><div class="line">-XX:GCPauseIntervalMillis =200          #暂停间隔目标</div><div class="line">-XX:+G1YoungGenSize=512m            #年轻代大小</div><div class="line">-XX:SurvivorRatio=6                            #幸存区比例</div></pre></td></tr></table></figure>
+<h2 id="什么时候回收"><a href="#什么时候回收" class="headerlink" title="什么时候回收"></a>什么时候回收</h2><h3 id="Minor-GC触发"><a href="#Minor-GC触发" class="headerlink" title="Minor GC触发"></a>Minor GC触发</h3><ol>
+<li>Eden区域满了，或者新创建的对象大小 &gt; Eden所剩空间</li>
+<li>CMS设置了CMSScavengeBeforeRemark参数，这样在CMS的Remark之前会先做一次Minor GC来清理新生代，加速之后的Remark的速度。这样整体的stop-the world时间反而短</li>
+<li>Full GC的时候会先触发Minor GC</li>
+</ol>
+<h3 id="啥时候会触发CMS-GC？"><a href="#啥时候会触发CMS-GC？" class="headerlink" title="啥时候会触发CMS GC？"></a>啥时候会触发CMS GC？</h3><p>CMS不等于Full GC，很多人会认为CMS肯定会引发Minor GC。CMS是针对老年代的GC策略，原则上它不会去清理新生代，只有设置CMSScavengeBeforeRemark优化时，或者是concurrent mode failure的时候才会去做Minor GC</p>
+<p>1、旧生代或者持久代已经使用的空间达到设定的百分比时（CMSInitiatingOccupancyFraction这个设置old区，perm区也可以设置）；</p>
+<p>2、JVM自动触发(JVM的动态策略，也就是悲观策略)（基于之前GC的频率以及旧生代的增长趋势来评估决定什么时候开始执行），如果不希望JVM自行决定，可以通过-XX：UseCMSInitiatingOccupancyOnly=true来制定；</p>
+<p>3、设置了 -XX：CMSClassUnloadingEnabled 这个则考虑Perm区；</p>
+<h3 id="啥时候会触发Full-GC？"><a href="#啥时候会触发Full-GC？" class="headerlink" title="啥时候会触发Full GC？"></a>啥时候会触发Full GC？</h3><p>一、旧生代空间不足：java.lang.outOfMemoryError：java heap space；</p>
+<p>二、Perm空间满：java.lang.outOfMemoryError：PermGen space；</p>
+<p>三、CMS GC时出现promotion failed  和concurrent  mode failure（Concurrent mode failure发生的原因一般是CMS正在进行，但是由于old区内存不足，需要尽快回收old区里面的死的java对象，这个时候foreground gc需要被触发，停止所有的java线程，同时终止CMS，直接进行MSC。）；</p>
+<p>四、统计得到的minor GC晋升到旧生代的平均大小大于旧生代的剩余空间；</p>
+<p>五、主动触发Full GC（执行jmap -histo:live [pid]）来避免碎片问题；</p>
+<p>六、调用System.gc时，系统建议执行Full GC，但是不必然执行,-XX:+DisableExplicitGC 禁用System.gc()调用</p>
+<h2 id="GC策略选择总结"><a href="#GC策略选择总结" class="headerlink" title="GC策略选择总结"></a>GC策略选择总结</h2><p>jvm有client和server两种模式，这两种模式的gc默认方式是不同的：</p>
+<p>client模式下，新生代选择的是串行gc，旧生代选择的是串行gc</p>
+<p>server模式下，新生代选择的是并行回收gc，旧生代选择的是并行gc</p>
+<p>一般来说我们系统应用选择有两种方式：<strong>吞吐量优先和暂停时间优先</strong>，对于吞吐量优先的采用server默认的并行gc方式，对于暂停时间优先的选用并发gc（CMS）方式。</p>
+<h2 id="监控与调优"><a href="#监控与调优" class="headerlink" title="监控与调优"></a>监控与调优</h2><h3 id="GC日志"><a href="#GC日志" class="headerlink" title="GC日志"></a>GC日志</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">-XX:+PrintGC 输出GC日志</div><div class="line">-XX:+PrintGCDetails 输出GC的详细日志</div><div class="line">-XX:+PrintGCTimeStamps 输出GC的时间戳（以基准时间的形式）</div><div class="line">-XX:+PrintGCDateStamps 输出GC的时间戳（以日期的形式，如 2013-05-04T21:53:59.234+0800）</div><div class="line">-XX:+PrintHeapAtGC 在进行GC的前后打印出堆的信息</div><div class="line">-Xloggc:../logs/gc.log 日志文件的输出路径</div><div class="line">-verbose.gc开关可显示GC的操作内容。</div><div class="line">打开它，可以显示最忙和最空闲收集行为发生的时间、收集前后的内存大小、收集需要的时间等</div></pre></td></tr></table></figure>
+<p><strong>-XX:+PrintGCTimeStamps和-XX:+PrintGCDateStamps</strong></p>
+<p>使用-XX:+PrintGCTimeStamps可以将时间和日期也加到GC日志中。表示自JVM启动至今的时间戳会被添加到每一行中。例子如下：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">1 0.185: [GC 66048K-&gt;53077K(251392K), 0.0977580 secs]</div><div class="line">2 0.323: [GC 119125K-&gt;114661K(317440K), 0.1448850 secs]</div><div class="line">3 0.603: [GC 246757K-&gt;243133K(375296K), 0.2860800 secs]</div></pre></td></tr></table></figure></p>
+<p>如果指定了-XX:+PrintGCDateStamps，每一行就添加上了绝对的日期和时间。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">1 2014-01-03T12:08:38.102-0100: [GC 66048K-&gt;53077K(251392K), 0.0959470 secs]</div><div class="line">2 2014-01-03T12:08:38.239-0100: [GC 119125K-&gt;114661K(317440K), 0.1421720 secs]</div><div class="line">3 2014-01-03T12:08:38.513-0100: [GC 246757K-&gt;243133K(375296K), 0.2761000 secs]</div></pre></td></tr></table></figure></p>
+<p>如果需要也可以同时使用两个参数。推荐同时使用这两个参数，因为这样在关联不同来源的GC日志时很有帮助</p>
+<p>每一种收集器的日志形式都是由它们自身的实现所决定的，换而言之，每个收集器的日志格式都可以不一样。</p>
+<p>但虚拟机设计者为了方便用户阅读，将各个收集器的日志都维持一定的共性，</p>
+<p>例如以下两段典型的GC日志：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">33.125: [GC [DefNew: 3324K-&gt;152K(3712K), 0.0025925 secs] 3324K-&gt;152K(11904K), 0.0031680 secs]</div><div class="line">100.667: [Full GC [Tenured: 0K-&gt;210K(10240K), 0.0149142 secs] 4603K-&gt;210K(19456K), </div><div class="line">[Perm : 2999K-&gt;2999K(21248K)], 0.0150007 secs] [Times: user=0.01 sys=0.00, real=0.02 secs]</div></pre></td></tr></table></figure></p>
+<p>最前面的数字“33.125：”和“100.667：”代表了GC发生的时间，这个数字的含义是从Java虚拟机启动以来经过的秒数。</p>
+<p>GC日志开头的“［GC”和“［Full GC”说明了这次垃圾收集的停顿类型，</p>
+<p>而不是用来区分新生代GC还是老年代GC的。</p>
+<p>如果有“Full”，说明这次GC是发生了Stop-The-World的，</p>
+<p>例如下面这段新生代收集器ParNew的日志也会出现“［Full GC”（这一般是因为出现了分配担保失败之类的问题，所以才导致STW）。</p>
+<p>如果是调用System.gc()方法所触发的收集，那么在这里将显示“［Full GC (System)”。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">[Full GC 283.736: [ParNew: 261599K-&gt;261599K(261952K), 0.0000288 secs]</div></pre></td></tr></table></figure></p>
+<p>接下来的“［DefNew”、“［Tenured”、“［Perm”表示GC发生的区域，这里显示的区域名称与使用的GC收集器是密切相关的</p>
+<p>例如上面样例所使用的Serial收集器中的新生代名为“Default New Generation”，所以显示的是“［DefNew”。</p>
+<p>如果是ParNew收集器，新生代名称就会变为“［ParNew”，意为“Parallel New Generation”。</p>
+<p>如果采用Parallel Scavenge收集器，那它配套的新生代称为“PSYoungGen”，老年代和永久代同理，名称也是由收集器决定的。</p>
+<p>后面方括号内部的“3324K-&gt;152K(3712K)”含义是“GC前该内存区域已使用容量-&gt; GC后该内存区域已使用容量 (该内存区域总容量)”。</p>
+<p>而在方括号之外的“3324K-&gt;152K(11904K)”表示“GC前Java堆已使用容量 -&gt; GC后Java堆已使用容量 (Java堆总容量)”。</p>
+<p>再往后，“0.0025925 secs”表示该内存区域GC所占用的时间，单位是秒。</p>
+<p>有的收集器会给出更具体的时间数据</p>
+<p>如“［Times： user=0.01 sys=0.00， real=0.02 secs］”，<br>这里面的user、sys和real与Linux的time命令所输出的时间含义一致，分别代表用户态消耗的CPU时间、内核态消耗的CPU事件和操作从开始到结束所经过的墙钟时间（Wall Clock Time）。</p>
+<p>CPU时间与墙钟时间的区别是，墙钟时间包括各种非运算的等待耗时，例如等待磁盘I/O、等待线程阻塞，而CPU时间不包括这些耗时，但当系统有多CPU或者多核的话，多线程操作会叠加这些CPU时间，所以读者看到user或sys时间超过real时间是完全正常的。</p>
+<h3 id="分析工具"><a href="#分析工具" class="headerlink" title="分析工具"></a>分析工具</h3><p>可以使用一些离线的工具来对GC日志进行分析</p>
+<p>比如sun的gchisto( <a href="https://java.net/projects/gchisto" target="_blank" rel="external">https://java.net/projects/gchisto</a>)</p>
+<p>gcviewer（ <a href="https://github.com/chewiebug/GCViewer" target="_blank" rel="external">https://github.com/chewiebug/GCViewer</a> ），</p>
+<p>这些都是开源的工具，用户可以直接通过版本控制工具下载其源码，进行离线分析
+　　</p>
+<h3 id="JVM参数"><a href="#JVM参数" class="headerlink" title="JVM参数"></a>JVM参数</h3><p>HotSpot JVM 提供了三类参数。<br>第一类包括了标准参数。顾名思义，标准参数中包括功能和输出的参数都是很稳定的，很可能在将来的JVM版本中不会改变。你可以用java命令（或者是用 java -help）检索出所有标准参数。我们在第一部分中已经见到过一些标准参数，例如：-server。</p>
+<p>第二类是X参数，非标准化的参数在将来的版本中可能会改变。所有的这类参数都以-X开始，并且可以用java -X来检索。注意，不能保证所有参数都可以被检索出来，其中就没有-Xcomp。</p>
+<p>第三类是包含XX参数（到目前为止最多的），它们同样不是标准的，甚至很长一段时间内不被列出来（最近，这种情况有改变 ，我们将在本系列的第三部分中讨论它们）。然而，在实际情况中X参数和XX参数并没有什么不同。X参数的功能是十分稳定的，然而很多XX参数仍在实验当中（主要是JVM的开发者用于debugging和调优JVM自身的实现）。值的一读的介绍非标准参数的文档 HotSpot JVM documentation，其中明确的指出XX参数不应该在不了解的情况下使用。这是真的，并且我认为这个建议同样适用于X参数（同样一些标准参数也是）。不管类别是什么，在使用参数之前应该先了解它可能产生的影响。<br>用一句话来说明XX参数的语法。所有的XX参数都以”-XX:”开始，但是随后的语法不同，取决于参数的类型。</p>
+<ul>
+<li>对于布尔类型的参数，我们有”+”或”-“，然后才设置JVM选项的实际名称。例如，-XX:+<name>用于激活<name>选项，而-XX:-<name>用于注销选项。</name></name></name></li>
+<li>对于需要非布尔值的参数，如string或者integer，我们先写参数的名称，后面加上”=”，最后赋值。例如，  -XX:<name>=<value>给<name>赋值<value>。</value></name></value></name></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-XX:+PrintFlagsFinal and -XX:+PrintFlagsInitial</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">[Global flags]</div><div class="line">uintx AdaptivePermSizeWeight               = 20               &#123;product&#125;</div><div class="line">uintx AdaptiveSizeDecrementScaleFactor     = 4                &#123;product&#125;</div><div class="line">uintx AdaptiveSizeMajorGCDecayTimeScale    = 10               &#123;product&#125;</div><div class="line">uintx AdaptiveSizePausePolicy              = 0                &#123;product&#125;[...]</div><div class="line">uintx YoungGenerationSizeSupplementDecay   = 8                &#123;product&#125;</div><div class="line">uintx YoungPLABSize                        = 4096             &#123;product&#125;</div><div class="line"> bool ZeroTLAB                             = false            &#123;product&#125;</div><div class="line"> intx hashCode                             = 0                &#123;product&#125;</div></pre></td></tr></table></figure>
+<p>表格的每一行包括五列，来表示一个XX参数。第一列表示参数的数据类型，第二列是名称，第四列为值，第五列是参数的类别。第三列”=”表示第四列是参数的默认值，而”:=” 表明了参数被用户或者JVM赋值了。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">-XX:+PrintCommandLineFlags</div></pre></td></tr></table></figure>
+<p>这个参数让JVM打印出那些已经被用户或者JVM设置过的详细的XX参数的名称和值。</p>
+<p>换句话说，它列举出 -XX:+PrintFlagsFinal的结果中第三列有”:=”的参数。</p>
+<p>以这种方式，我们可以用-XX:+PrintCommandLineFlags作为快捷方式来查看修改过的参数</p>
+<h3 id="监控jvm"><a href="#监控jvm" class="headerlink" title="监控jvm"></a>监控jvm</h3><p>使用自带工具就行，jstat,jmap,jstack</p>
+<ul>
+<li>jstack主要用来查看某个Java进程内的线程堆栈信息</li>
+<li>jmap用来查看堆内存使用状况，一般结合jhat使用</li>
+<li>jstat利用JVM内建的指令对Java应用程序的资源和性能进行实时的命令行的监控，包括了对进程的classloader，compiler，gc情况</li>
+</ul>
+<h3 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h3><ol>
+<li>选择合适的GC collector</li>
+<li>整个JVM heap的大小</li>
+<li>young generation在整个JVM heap中所占的比重</li>
+</ol>
+<h3 id="参数实例"><a href="#参数实例" class="headerlink" title="参数实例"></a>参数实例</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public static void main(String[] args) throws InterruptedException&#123;</div><div class="line">       //通过allocateDirect分配128MB直接内存</div><div class="line">       ByteBuffer bb = ByteBuffer.allocateDirect(1024*1024*128);</div><div class="line">        </div><div class="line">       TimeUnit.SECONDS.sleep(10);</div><div class="line">       System.out.println(&quot;ok&quot;);</div><div class="line">   &#125;</div></pre></td></tr></table></figure>
+<p>测试用例1：设置JVM参数-Xmx100m，运行异常，因为如果没设置-XX:MaxDirectMemorySize，则默认与-Xmx参数值相同，分配128M直接内存超出限制范围<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Direct buffer memory</div><div class="line">    at java.nio.Bits.reserveMemory(Bits.java:658)</div><div class="line">    at java.nio.DirectByteBuffer.&lt;init&gt;(DirectByteBuffer.java:123)</div><div class="line">    at java.nio.ByteBuffer.allocateDirect(ByteBuffer.java:306)</div><div class="line">    at com.stevex.app.nio.DirectByteBufferTest.main(DirectByteBufferTest.java:8)</div></pre></td></tr></table></figure></p>
+<p>#<br>#<br>为了避免Perm区满引起的full gc，建议开启CMS回收Perm区选项：</p>
+<p>+CMSPermGenSweepingEnabled -XX:+CMSClassUnloadingEnabled</p>
+<p>默认CMS是在tenured generation沾满68%的时候开始进行CMS收集，如果你的年老代增长不是那么快，并且希望降低CMS次数的话，可以适当调高此值：</p>
+<p>-XX:CMSInitiatingOccupancyFraction=80</p>
+<p>遇到两种fail引起full gc：</p>
+<p>Prommotion failed和Concurrent mode failed时：</p>
+<p>promotion failed是在进行Minor GC时，survivor space放不下、<br>对象只能放入旧生代，而此时old gen 的碎片太多为进行过内存重组和压缩，无法提供一块较大的、连续的内存空间存放来自新生代对象</p>
+<p>Prommotion failed的日志输出大概是这样：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">42576.951: [ParNew (promotion failed): 320138K-&gt;320138K(353920K), 0.2365970 secs]</div><div class="line">42576.951: [CMS: 1139969K-&gt;1120688K( 166784K), 9.2214860 secs] 1458785K-&gt;1120688K(2520704K), 9.4584090 secs]</div></pre></td></tr></table></figure>
+<p>因为<br>解决这个问题的办法有两种完全相反的倾向：增大救助空间、增大年老代或者去掉救助空间。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">解决方法可以通过设置参数</div><div class="line">-XX:+UseCMSCompactAtFullCollection（打开对年老代的压缩）</div><div class="line">-XX:CMSFullGCsBeforeCompaction（设置运行多少次FULL GC以后对内存空间进行压缩、整理）</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">直接关了servivor空间</div><div class="line">-XX:SurvivorRatio=65536 -XX:MaxTenuringThreshold=0</div></pre></td></tr></table></figure>
+<p>concurrent mode failure</p>
+<p>发生在当CMS已经在工作并处于concurrent阶段中，而Java堆的内存不够用需要做major GC（full GC）的时候。换句话说，old gen内存的消耗速度比CMS的收集速度要高，CMS收集器跟不上分配速度的时候会发生concurrent mode failure</p>
+<p>Concurrent mode failed的日志大概是这样的：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">(concurrent mode failure): 1228795K-&gt;1228598K(1228800K), 7.6748280 secs] 1911483K-&gt;1681165K(1911488K), </div><div class="line">[CMS Perm : 225407K-&gt;225394K(262144K)], 7.6751800 secs]</div></pre></td></tr></table></figure></p>
+<p>避免这个现象的产生就是调小-XX:CMSInitiatingOccupancyFraction参数的值，<br>让CMS更早更频繁的触发，降低年老代被沾满的可能。</p>
+<p>#<br>#<br>full gc频繁说明old区很快满了。</p>
+<p>如果是一次full gc后，剩余对象不多。那么说明你eden区设置太小，导致短生命周期的对象进入了old区</p>
+<p>如果一次full gc后，old区回收率不大，那么说明old区太小</p>
+<p>#<br>#<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">已知虚拟机的一些参数设置如下： </div><div class="line">-Xms：1G； </div><div class="line">-Xmx：2G； </div><div class="line">-Xmn：500M； </div><div class="line">-XX:MaxPermSize：64M； </div><div class="line">-XX:+UseConcMarkSweepGC； </div><div class="line">-XX:SurvivorRatio=3； </div><div class="line">求Eden区域的大小？</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">分析这是网易2016年在线笔试题中的一道选择题。 </div><div class="line">先分析一下里面各个参数的含义： </div><div class="line">-Xms：1G ， 就是说初始堆大小为1G </div><div class="line">-Xmx：2G ， 就是说最大堆大小为2G </div><div class="line">-Xmn：500M ，就是说年轻代大小是500M（包括一个Eden和两个Survivor） </div><div class="line">-XX:MaxPermSize：64M ， 就是说设置持久代最大值为64M </div><div class="line">-XX:+UseConcMarkSweepGC ， 就是说使用使用CMS内存收集算法 </div><div class="line">-XX:SurvivorRatio=3 ， 就是说Eden区与Survivor区的大小比值为3：1：1</div><div class="line"></div><div class="line">题目中所问的Eden区的大小是指年轻代的大小，直接根据-Xmn：500M和-XX:SurvivorRatio=3可以直接计算得出</div><div class="line">解500M*(3/(3+1+1)) </div><div class="line">=500M*（3/5） </div><div class="line">=500M*0.6 </div><div class="line">=300M </div><div class="line">所以Eden区域的大小为300M。</div></pre></td></tr></table></figure>
+<p>#<br>#<br>-Xmn200m -server<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">jmap -heap pid</div><div class="line"></div><div class="line">Heap Configuration:</div><div class="line">   MinHeapFreeRatio         = 0</div><div class="line">   MaxHeapFreeRatio         = 100</div><div class="line">   MaxHeapSize              = 4282384384 (4084.0MB)</div><div class="line">   NewSize                  = 209715200 (200.0MB)</div><div class="line">   MaxNewSize               = 209715200 (200.0MB)</div><div class="line">   OldSize                  = 58720256 (56.0MB)</div><div class="line">   NewRatio                 = 2</div><div class="line">   SurvivorRatio            = 8</div><div class="line">   MetaspaceSize            = 21807104 (20.796875MB)</div><div class="line">   CompressedClassSpaceSize = 1073741824 (1024.0MB)</div><div class="line">   MaxMetaspaceSize         = 17592186044415 MB</div><div class="line">   G1HeapRegionSize         = 0 (0.0MB)</div><div class="line"></div><div class="line">Heap Usage:</div><div class="line">PS Young Generation</div><div class="line">Eden Space:</div><div class="line">   capacity = 92274688 (88.0MB)</div><div class="line">   used     = 37931936 (36.174713134765625MB)</div><div class="line">   free     = 54342752 (51.825286865234375MB)</div><div class="line">   41.107628562233664% used</div><div class="line">From Space:</div><div class="line">   capacity = 58720256 (56.0MB)</div><div class="line">   used     = 20305320 (19.364662170410156MB)</div><div class="line">   free     = 38414936 (36.635337829589844MB)</div><div class="line">   34.57975387573242% used</div><div class="line">To Space:</div><div class="line">   capacity = 56623104 (54.0MB)</div><div class="line">   used     = 0 (0.0MB)</div><div class="line">   free     = 56623104 (54.0MB)</div><div class="line">   0.0% used</div><div class="line">PS Old Generation</div><div class="line">   capacity = 176160768 (168.0MB)</div><div class="line">   used     = 65785064 (62.737525939941406MB)</div><div class="line">   free     = 110375704 (105.2624740600586MB)</div><div class="line">   37.34376544044132% used</div></pre></td></tr></table></figure></p>
+<p>发现为什么from space与to space不对呢。应该是20M才对</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">-server默认使用ParallelScavenge系的GC</div><div class="line"></div><div class="line">HotSpot VM里，ParallelScavenge系的GC（UseParallelGC / UseParallelOldGC）</div><div class="line">默认行为是SurvivorRatio如果不显式设置就没啥用。</div><div class="line">显式设置到跟默认值一样的值则会有效果</div><div class="line"></div><div class="line">因为ParallelScavenge系的GC最初设计就是默认打开AdaptiveSizePolicy的，</div><div class="line">它会自动、自适应的调整各种参数</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">需要显示配置 -XX:SurvivorRatio=8</div></pre></td></tr></table></figure>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a href="http://yinwufeng.iteye.com/blog/2157787" target="_blank" rel="external">http://yinwufeng.iteye.com/blog/2157787</a></p>
+<p><a href="http://itindex.net/detail/47030-cms-gc-%E9%97%AE%E9%A2%98" target="_blank" rel="external">http://itindex.net/detail/47030-cms-gc-%E9%97%AE%E9%A2%98</a></p>
+<p><a href="http://www.cnblogs.com/ityouknow/p/5614961.html" target="_blank" rel="external">http://www.cnblogs.com/ityouknow/p/5614961.html</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+            <a href="/tags/GC/" rel="tag"># GC</a>
+          
+        </div>
+      
+      <! -- 添加微信图标 -->
+    
+    
+    <div>
+    <span>
+    
+    <br>
+    </span>
+    <br>
+    
+    <a href="http://oirwmbp4e.bkt.clouddn.com/weixin.jpg" class="fancybox" rel="article0"  style="float:left;margin-left:30%;margin-right:2px;">
+    <img src="http://oirwmbp4e.bkt.clouddn.com/weixin.jpg" title="欢迎大家关注：码农戏码微信公众号" height="164px" width="164px">
+    </a>
+    
+    </div>
+    
+    
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/02/07/motan-server/" rel="next" title="motan服务端">
+                <i class="fa fa-chevron-left"></i> motan服务端
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/28/threadlocal-parsing/" rel="prev" title="ThreadLocal解析">
+                ThreadLocal解析 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a>
+<a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+<a class="bds_count" data-cmd="count"></a>
+</div>
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{},"image":{"viewList":["tsina","weixin","youdao","evernotecn","tqq","qzone","renren","copy"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["tsina","weixin","youdao","evernotecn","tqq","qzone","renren","copy"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars0.githubusercontent.com/u/6222636?v=3&s=460"
+               alt="朱兴生" />
+          <p class="site-author-name" itemprop="name">朱兴生</p>
+          <p class="site-description motion-element" itemprop="description">彪悍的人生需要书写</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">31</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhuxingsheng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#GC"><span class="nav-number">2.</span> <span class="nav-text">GC</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java内存区域"><span class="nav-number">2.1.</span> <span class="nav-text">Java内存区域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#哪些内存被回收"><span class="nav-number">2.2.</span> <span class="nav-text">哪些内存被回收</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#finalize-方法"><span class="nav-number">2.2.1.</span> <span class="nav-text">finalize()方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#finalize-在什么时候被调用"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">finalize()在什么时候被调用?</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#具体的finalize流程："><span class="nav-number">2.2.1.2.</span> <span class="nav-text">具体的finalize流程：</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#如何回收"><span class="nav-number">2.3.</span> <span class="nav-text">如何回收</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#“标记-清除”（Mark-Sweep）"><span class="nav-number">2.3.1.</span> <span class="nav-text">“标记-清除”（Mark-Sweep）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#“复制”（Copying）"><span class="nav-number">2.3.2.</span> <span class="nav-text">“复制”（Copying）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#“标记-整理”（Mark-Compact）"><span class="nav-number">2.3.3.</span> <span class="nav-text">“标记-整理”（Mark-Compact）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#“分代收集”（Generational-Collection）"><span class="nav-number">2.3.4.</span> <span class="nav-text">“分代收集”（Generational Collection）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#垃圾收集器"><span class="nav-number">2.4.</span> <span class="nav-text">垃圾收集器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#按系统线程分"><span class="nav-number">2.4.1.</span> <span class="nav-text">按系统线程分</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Serial收集器"><span class="nav-number">2.4.1.1.</span> <span class="nav-text">Serial收集器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Serial-Old收集器"><span class="nav-number">2.4.1.2.</span> <span class="nav-text">Serial Old收集器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ParNew收集器"><span class="nav-number">2.4.1.3.</span> <span class="nav-text">ParNew收集器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Parallel-Scavenge收集器"><span class="nav-number">2.4.1.4.</span> <span class="nav-text">Parallel Scavenge收集器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Parallel-Old"><span class="nav-number">2.4.1.5.</span> <span class="nav-text">Parallel Old</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#CMS收集器"><span class="nav-number">2.4.1.6.</span> <span class="nav-text">CMS收集器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#G1收集器"><span class="nav-number">2.4.1.7.</span> <span class="nav-text">G1收集器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么时候回收"><span class="nav-number">2.5.</span> <span class="nav-text">什么时候回收</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Minor-GC触发"><span class="nav-number">2.5.1.</span> <span class="nav-text">Minor GC触发</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#啥时候会触发CMS-GC？"><span class="nav-number">2.5.2.</span> <span class="nav-text">啥时候会触发CMS GC？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#啥时候会触发Full-GC？"><span class="nav-number">2.5.3.</span> <span class="nav-text">啥时候会触发Full GC？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GC策略选择总结"><span class="nav-number">2.6.</span> <span class="nav-text">GC策略选择总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#监控与调优"><span class="nav-number">2.7.</span> <span class="nav-text">监控与调优</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#GC日志"><span class="nav-number">2.7.1.</span> <span class="nav-text">GC日志</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析工具"><span class="nav-number">2.7.2.</span> <span class="nav-text">分析工具</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM参数"><span class="nav-number">2.7.3.</span> <span class="nav-text">JVM参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#监控jvm"><span class="nav-number">2.7.4.</span> <span class="nav-text">监控jvm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优化"><span class="nav-number">2.7.5.</span> <span class="nav-text">优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参数实例"><span class="nav-number">2.7.6.</span> <span class="nav-text">参数实例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">2.8.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">共85.6k字</span>
+</div>
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+</body>
+</html>

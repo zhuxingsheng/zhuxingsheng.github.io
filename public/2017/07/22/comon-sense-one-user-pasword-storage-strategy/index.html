@@ -1,0 +1,994 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="MXFRoVpC6c" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="密码存储,加密,彩虹表" />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="常识系列,作为一名互联网门外汉的科普系列
+
+用户安全进化史明文存储曾经也开发过网站，知道用户密码信息不能直接明文存储，这样处理的风险来自两方面
+
+一是来自网站维护人员，可能直接盗用用户帐户
+二是来自外部入侵者，下载了整个数据库
+
+所以明文存储是肯定不可行的。
+加密存储升级方案就是对密码进行加密后存储，这样就避免了明文存储的问题。使用什么方式加密呢？比如我们常使用的MD5算法，但这样就是安全的了吗">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常识一用户密码存储策略">
+<meta property="og:url" content="https://zhuxingsheng.github.io/2017/07/22/comon-sense-one-user-pasword-storage-strategy/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="常识系列,作为一名互联网门外汉的科普系列
+
+用户安全进化史明文存储曾经也开发过网站，知道用户密码信息不能直接明文存储，这样处理的风险来自两方面
+
+一是来自网站维护人员，可能直接盗用用户帐户
+二是来自外部入侵者，下载了整个数据库
+
+所以明文存储是肯定不可行的。
+加密存储升级方案就是对密码进行加密后存储，这样就避免了明文存储的问题。使用什么方式加密呢？比如我们常使用的MD5算法，但这样就是安全的了吗">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/h.gif">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/h1.gif">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/e.gif">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/e1.gif">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/he.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/hs1hs2.gif">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/hp.png?watermark/2/text/aHR0cHM6Ly96aHV4aW5nc2hlbmcuZ2l0aHViLmlvLw==/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/pojie.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/lookuptables.jpg">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/hr.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/rpeng.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/rgaijing.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/ph1.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/ph2.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/caihong.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/caihongfind.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/regsalt.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/eqsalt.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/clientslowhash.png">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/network/slowhashhack.png">
+<meta property="og:updated_time" content="2017-12-17T13:01:31.196Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="常识一用户密码存储策略">
+<meta name="twitter:description" content="常识系列,作为一名互联网门外汉的科普系列
+
+用户安全进化史明文存储曾经也开发过网站，知道用户密码信息不能直接明文存储，这样处理的风险来自两方面
+
+一是来自网站维护人员，可能直接盗用用户帐户
+二是来自外部入侵者，下载了整个数据库
+
+所以明文存储是肯定不可行的。
+加密存储升级方案就是对密码进行加密后存储，这样就避免了明文存储的问题。使用什么方式加密呢？比如我们常使用的MD5算法，但这样就是安全的了吗">
+<meta name="twitter:image" content="http://oirwmbp4e.bkt.clouddn.com/network/h.gif">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhuxingsheng.github.io/2017/07/22/comon-sense-one-user-pasword-storage-strategy/"/>
+
+
+
+
+
+  <title> 常识一用户密码存储策略 | 码农戏码 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?48897be5dd7a377cc247d8870a476fb8";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">码农戏码</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://zhuxingsheng.github.io/2017/07/22/comon-sense-one-user-pasword-storage-strategy/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="朱兴生">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/6222636?v=3&s=460">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="码农戏码">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="码农戏码" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                常识一用户密码存储策略
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-22T08:27:44+08:00">
+                2017-07-22
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/互联网研发/" itemprop="url" rel="index">
+                    <span itemprop="name">互联网研发</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+	
+	  
+	  <span class="post-letters-count">
+	    &nbsp; | &nbsp;
+	    <span>9,602 字</span>
+	    &nbsp; | &nbsp;
+	    <span>34 min</span>
+	  </span>
+	  
+
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>常识系列,作为一名互联网门外汉的科普系列</p>
+</blockquote>
+<h1 id="用户安全进化史"><a href="#用户安全进化史" class="headerlink" title="用户安全进化史"></a>用户安全进化史</h1><h2 id="明文存储"><a href="#明文存储" class="headerlink" title="明文存储"></a>明文存储</h2><p>曾经也开发过网站，知道用户密码信息不能直接明文存储，这样处理的风险来自两方面</p>
+<ol>
+<li>一是来自网站维护人员，可能直接盗用用户帐户</li>
+<li>二是来自外部入侵者，下载了整个数据库</li>
+</ol>
+<p>所以明文存储是肯定不可行的。</p>
+<h2 id="加密存储"><a href="#加密存储" class="headerlink" title="加密存储"></a>加密存储</h2><p>升级方案就是对密码进行加密后存储，这样就避免了明文存储的问题。使用什么方式加密呢？比如我们常使用的MD5算法，但这样就是安全的了吗？此处需要再了解几个概念</p>
+<h3 id="哈希（Hash）与加密（Encrypt）的区别"><a href="#哈希（Hash）与加密（Encrypt）的区别" class="headerlink" title="哈希（Hash）与加密（Encrypt）的区别"></a>哈希（Hash）与加密（Encrypt）的区别</h3><p>首先从直观层面阐述<a href="https://en.wikipedia.org/wiki/Cryptographic_hash_function" target="_blank" rel="external">哈希（Hash）</a>和<a href="http://en.wikipedia.org/wiki/Cryptography" target="_blank" rel="external">加密（Encrypt）</a>的区别，因为我见过很多朋友对这两个概念不是很清晰，容易混淆两者。而正确区别两者是正确选择和使用哈希与加密的基础。</p>
+<p>概括来说，<strong>哈希（Hash）是将目标文本转换成具有相同长度的、不可逆的杂凑字符串（或叫做消息摘要），而加密（Encrypt）是将目标文本转换成具有不同长度的、可逆的密文。</strong></p>
+<p>具体来说，两者有如下重要区别：</p>
+<ol>
+<li>哈希算法往往被设计成生成具有相同长度的文本，而加密算法生成的文本长度与明文本身的长度有关。</li>
+</ol>
+<p>例如，设我们有两段文本：“Microsoft”和“Google”。<br>两者使用某种哈希算法得到的结果分别为：“140864078AECA1C7C35B4BEB33C53C34”和“8B36E9207C24C76E6719268E49201D94”，</p>
+<p>而使用某种加密算法的到的结果分别为“Njdsptpgu”和“Hpphmf”。</p>
+<p>可以看到，哈希的结果具有相同的长度，而加密的结果则长度不同。</p>
+<p>实际上，如果使用相同的哈希算法，不论你的输入有多么长，得到的结果长度是一个常数，而加密算法往往与明文的长度成正比。</p>
+<ol>
+<li>哈希算法是不可逆的，而加密算法是可逆的。</li>
+</ol>
+<p>这里的不可逆有两层含义，</p>
+<ul>
+<li><p>一是“给定一个哈希结果R，没有方法将E转换成原目标文本S”</p>
+</li>
+<li><p>二是“给定哈希结果R，即使知道一段文本S的哈希结果为R，也不能断言当初的目标文本就是S”。</p>
+</li>
+</ul>
+<p>其实稍微想想就知道，哈希是不可能可逆的，因为如果可逆，那么哈希就是世界上最强悍的压缩方式了——能将任意大小的文件压缩成固定大小。</p>
+<p>加密则不同，给定加密后的密文R，存在一种方法可以将R确定的转换为加密前的明文S。</p>
+<p>这里先从直观层面简单介绍两者的区别，等下文从数学角度对两者做严谨描述后，读者朋友就知道为什么会有这两个区别了。</p>
+<a id="more"></a>
+<h3 id="哈希（Hash）与加密（Encrypt）的数学基础"><a href="#哈希（Hash）与加密（Encrypt）的数学基础" class="headerlink" title="哈希（Hash）与加密（Encrypt）的数学基础"></a>哈希（Hash）与加密（Encrypt）的数学基础</h3><p>从数学角度讲，哈希和加密都是一个映射。下面正式定义两者：</p>
+<p>==一个哈希算法<img src="http://oirwmbp4e.bkt.clouddn.com/network/h.gif" alt="R=H(S)">是一个多对一映射，给定目标文本S，H可以将其唯一映射为R，并且对于所有S，R具有相同的长度。由于是多对一映射，所以H不存在逆映射<img src="http://oirwmbp4e.bkt.clouddn.com/network/h1.gif" alt="image"><br>使得R转换为唯一的S。==</p>
+<p>==一个加密算法<img src="http://oirwmbp4e.bkt.clouddn.com/network/e.gif" alt="R=E(S,K)">是一个一一映射，其中第二个参数叫做加密密钥，E可以将给定的明文S结合加密密钥Ke唯一映射为密文R，并且存在另一个一一映射<img src="http://oirwmbp4e.bkt.clouddn.com/network/e1.gif" alt="image">，可以结合Kd将密文R唯一映射为对应明文S，其中Kd叫做解密密钥。==</p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/network/he.png" alt="哈希和加密过程的图示"></p>
+<p>有了以上定义，就很清楚为什么会存在上文提到的两个区别了。由于哈希算法的定义域是一个无限集合，而值域是一个有限集合，将无限集合映射到有限集合，根据“<a href="http://en.wikipedia.org/wiki/Pigeonhole_principle" target="_blank" rel="external">鸽笼原理</a>(Pigeonhole principle)”，每个哈希结果都存在无数个可能的目标文本，因此哈希不是一一映射，是不可逆的。</p>
+<p>而加密算法是一一映射，因此理论上来说是可逆的。</p>
+<p>但是，符合上面两个定义的映射仅仅可以被叫做哈希算法和加密算法，但未必是好的哈希和加密，好的哈希和加密往往需要一些附加条件，下面介绍这些内容。</p>
+<p><em>一个设计良好的哈希算法应该很难从哈希结果找到哈希目标文本的碰撞（Collision）。</em>那么什么是碰撞呢？对于一个哈希算法H，如果 <img src="http://oirwmbp4e.bkt.clouddn.com/network/hs1hs2.gif" alt="image">，则S1和S2互为碰撞。</p>
+<p>另外，好的哈希算法应该对于输入的改变极其敏感，即使输入有很小的改动，如一亿个字符变了一个字符，那么结果应该截然不同。这就是为什么哈希可以用来检测软件的完整性。</p>
+<p><em>一个设计良好的加密算法应该是一个“单向陷门函数(Trapdoor one-way function)”</em>，</p>
+<p><a href="http://en.wikipedia.org/wiki/Trapdoor_one-way_function" target="_blank" rel="external">单向陷门函数</a>的特点是一般情况下即使知道函数本身也很难将函数的值转换回函数的自变量，具体到加密也就是说很难从密文得到明文，虽然从理论上这是可行的，而“陷门”是一个特殊的元素，一旦知道了陷门，则这种逆转换则非常容易进行，具体到加密算法，陷门就是密钥。</p>
+<p>顺便提一句，在加密中，应该保密的仅仅是明文和密钥。也就是说我们通常假设攻击者对加密算法和密文了如指掌，因此加密的安全性应该仅仅依赖于密钥而不是依赖于假设攻击者不知道加密算法。</p>
+<h3 id="哈希（Hash）与加密（Encrypt）的选择"><a href="#哈希（Hash）与加密（Encrypt）的选择" class="headerlink" title="哈希（Hash）与加密（Encrypt）的选择"></a>哈希（Hash）与加密（Encrypt）的选择</h3><p>要实现上述的数据保护，可以选择使用哈希或加密两种方式。那么在什么时候该选择哈希、什么时候该选择加密呢？</p>
+<p><strong>基本原则是</strong>：++如果被保护数据仅仅用作比较验证，在以后不需要还原成明文形式，则使用哈希；如果被保护数据在以后需要被还原成明文，则需要使用加密。++</p>
+<p>例如，你正在做一个系统，你打算当用户忘记自己的登录口令时，重置此用户口令为一个随机口令，而后将此随机口令发给用户，让用户下次使用此口令登录，则适合使用哈希。实际上很多网站都是这么做的，想想你以前登录过的很多网站，是不是当你忘记口令的时候，网站并不是将你忘记的口令发送给你，而是发送给你一个新的、随机的口令，然后让你用这个新口令登录。这是因为你在注册时输入的口令被哈希后存储在数据库里，而哈希算法不可逆，所以即使是网站管理员也不可能通过哈希结果复原你的口令，而只能重置口令。<br>相反，如果你做的系统要求在用户忘记口令的时候必须将原口令发送给用户，而不是重置其口令，则必须选择加密而不是哈希。</p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/network/hp.png?watermark/2/text/aHR0cHM6Ly96aHV4aW5nc2hlbmcuZ2l0aHViLmlvLw==/font/5a6L5L2T/fontsize/500/fill/I0VGRUZFRg==/dissolve/100/gravity/SouthEast/dx/10/dy/10" alt="image"></p>
+<h2 id="破解哈希"><a href="#破解哈希" class="headerlink" title="破解哈希"></a>破解哈希</h2><p>如果以为使用哈希就能安全，那真是too young  too sample。来看看现在破解的哈希的方法</p>
+<h3 id="字典破解（Dictionary-Attack）和暴力破解（Brute-Force-Attack）方式"><a href="#字典破解（Dictionary-Attack）和暴力破解（Brute-Force-Attack）方式" class="headerlink" title="字典破解（Dictionary Attack）和暴力破解（Brute Force Attack）方式"></a>字典破解（Dictionary Attack）和暴力破解（Brute Force Attack）方式</h3><p>最简单、常见的破解方式当属这两种，这两种方法说白了就是猜密码。</p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/network/pojie.png" alt="image"></p>
+<p><strong>字典攻击</strong>使用包含单词、短语、常用密码和其他可能用做密码的字符串的字典文件。对文件中的每个词都进行哈希加密，将这些哈希值和要破解的密码哈希值比较。如果它们相同，这个词就是密码。字典文件是通过大段文本中提取的单词构成，甚至还包括一些数据库中真实的密码。还可以对字典文件进一步处理以使其更为有效：如单词 “hello” 按网络用语写法转成 “h3110” 。</p>
+<p><strong>暴力攻击</strong>是对于给定的密码长度，尝试每一种可能的字符组合。这种方式会消耗大量的计算，也是破解哈希加密效率最低的办法，但最终会找出正确的密码。因此密码应该足够长，以至于遍历所有可能的字符组合，耗费的时间太长令人无法承受，从而放弃破解。</p>
+<h3 id="查表法（-Lookup-Tables）"><a href="#查表法（-Lookup-Tables）" class="headerlink" title="查表法（ Lookup Tables）"></a>查表法（ Lookup Tables）</h3><p>查表法不像字典破解和暴力破解那样猜密码，查表法是一种非常高效的方式。主要理念是预先计算（ pre-compute）<br>出密码字典中的每个密码的哈希值，然后把他们相应的密码存储到一个表里。一个设计良好的查询表结构，即使包含了数十亿个哈希值，仍然可以实现每秒钟查询数百次哈希。</p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/network/lookuptables.jpg" alt="image"></p>
+<h3 id="反向查表法（-Reverse-Lookup-Tabs）"><a href="#反向查表法（-Reverse-Lookup-Tabs）" class="headerlink" title="反向查表法（ Reverse Lookup Tabs）"></a>反向查表法（ Reverse Lookup Tabs）</h3><p>这种攻击允许攻击者无需预先计算好查询表的情况下同时对多个哈希值发起字典攻击或暴力攻击。</p>
+<p>首先，攻击者从被黑的用户帐号数据库创建一个用户名和对应的密码哈希表，然后，攻击者猜测一系列哈希值并使用该查询表来查找使用此密码的用户。通常许多用户都会使用相同的密码，因此这种攻击方式特别有效。</p>
+<hr>
+<p>这些方法，要么需要海量的时间，要么需要海量的存储空间，以至于以目前的人类资源无法实现。目前没有办法来组织字典攻击或暴力攻击。</p>
+<p>我们可以简单的算一下，对于14位的大小写加数字（先不算特殊字符了）组成的密码的集合有多大？自然就是（26x2+10）^14 = 62^14 = 1.24x10^25，<br>这个就约等于12亿亿亿，即使我们每纳秒可以校验一个p(一秒钟10亿次，目前PC做不到)，暴力破解法也大概需要4亿年；如果我们采用查表法，假定Hash的结果是128Bit即16字节的，光存放Hash（不存放明文P）就需要10^26字节的存储空间。什么？现在硬盘很便宜？没错现在1GB硬盘大概是五毛钱，那么按这个来算光存储这个Hash大概需要5亿亿人民币来买硬盘。所以有些文章说彩虹表就是依赖查一个巨大的表来破解Hash，简直是个无知的玩笑。 </p>
+<h3 id="彩虹表（-Rainbow-Tables）"><a href="#彩虹表（-Rainbow-Tables）" class="headerlink" title="彩虹表（ Rainbow Tables）"></a>彩虹表（ Rainbow Tables）</h3><p>彩虹表（Rainbow Table）是一种破解哈希算法的技术，它的性能非常让人震惊，在一台普通PC上辅以NVidia CUDA技术，对于NTLM算法可以达到最高每秒103,820,000,000次明文尝试（超过一千亿次），对于广泛使用的MD5也接近一千亿次。更神奇的是，彩虹表技术并非针对某种哈希算法的漏洞进行攻击，而是类似暴力破解，对于任何哈希算法都有效。</p>
+<p>彩虹表的根本原理就是组合了暴力法和查表法，并在这两者之中取得一个折中，用我们可以承受的时间和存储空间进行破解</p>
+<h4 id="彩虹表的前身"><a href="#彩虹表的前身" class="headerlink" title="彩虹表的前身"></a>彩虹表的前身</h4><p>在彩虹表之前，已经出现了对哈希函数的破解算法，被称为“预计算的哈希链集”（Precomputed hash chains）。</p>
+<p>当面对要破解的哈希函数H，首先要定义一个约简函数（reduction function）R，该函数的定义域和值域需要和哈希函数相反，通过该函数可以将哈希值约简为一个与原文相同格式的值（”plain text” value）。需要强调的是，由于哈希函数H是不可逆的，所以对于密文进行R运算几乎不可能得到明文原文。例如，五位字母明文“zhihu”进行H运算后得到了“D2A82C9A”，而对“D2A82C9A”进行R运算后得到另一个五位字母格式的值“vfkkd”。因为这个值落在H的定义域中，因此可以对它继续进行H运算。</p>
+<p>就这样，将H运算、R运算、H运算……这个过程反复地重复下去，重复一个特定的次数k以后，就得到一条哈希链，例如k为2时得到：<br><img src="http://oirwmbp4e.bkt.clouddn.com/network/hr.png" alt="image"></p>
+<p>这条链条并不需要完整地保存下来，只需要保存其起节点和末节点即可，例如上例中只需要保存起节点“zhihu”和末节点“crepa”。以大量的随机明文作为起节点，通过上述步骤计算出哈希链并将终节点进行储存，即可得到一张哈希链集。</p>
+<p>这张集合需要如何使用呢？例如，我们知道哈希运算后的密文为“0CAFC376”，则先对其进行一次R运算，得到“crepa”。0CAFC376-&gt;R-&gt;crepa</p>
+<p>正巧在本例中，它等于集合中的一个末节点，因此我们可以猜测，明文有极大的可能存在于以起节点“zhihu”开头、末节点“crepa”结尾的这条哈希链中。（注意可能性并不是100%，因为函数H和R均有可能发生碰撞，从不同的输入值得到相同的输出值。）<br>为了验证我们的猜测，可以从起节点“zhihu”开始重复哈希链的计算过程：<br>zhihu-&gt;H-&gt;D2A82C9A-&gt;R-&gt;vfkkd-&gt;H-&gt;0CAFC376</p>
+<p>算到这里我们发现，“vfkkd”进行哈希运算的结果正是密文“0CAFC376”，这样就找到了所需的明文。</p>
+<p>如果密文不是“0CAFC376”而是“D2A82C9A”，第一次R运算后的结果并未在末节点中找到，则再重复一次H运算+R运算，这时又得到了末节点中的值“crepa”，则我们还是从起节点“zhihu”开始计算，这次可得到“D2A82C9A”对应的明文为“zhihu”。</p>
+<p>如果如是重复了k（=2）次之后，仍然没有在末节点中找到对应的值，则可以断定，所需的明文不在这张集合中——集合中并未储存长度大于k的哈希链，因此再计算也没有意义了。</p>
+<p>如果让我来解释哈希链的意义，我认为，每一条哈希链实际上是代表了属性相同的一组明文：每一个明文都可以通过起节点迅速的计算得出，计算次数不大于k，因而可以大大节约时间。对每一组明文，只需要保存其特征值（起节点和末节点），储存空间只需约1/k，因而大大节约了空间。</p>
+<h4 id="R的问题"><a href="#R的问题" class="headerlink" title="R的问题"></a>R的问题</h4><p>在构造哈希链的时候，一个优秀的函数R功不可没。首先R需要能将值域限定在固定的范围——例如给定的长度范围、给定的字符取值范围等等——之内，否则的话，哈希链中大量的计算结果并不在可接受的取值范围内，一条链条无法对应多个明文，链条就失去了意义；其次R必须同哈希函数一样，尽量保证输出值在值域中的均匀分布，减少碰撞的概率。<br>然而实际上，很难找到能满足这些需求的完美的R函数。当计算中发生碰撞时，就会出现如下的情况：<br><img src="http://oirwmbp4e.bkt.clouddn.com/network/rpeng.png" alt="image"></p>
+<p>图中加粗的部分，所涉及到的明文是完全重复的，因此这两条哈希链能解密的明文数量就远小于理论上的明文数2×k。不幸的是，由于集合只保存链条的首末节点，因此这样的重复链条并不能被迅速地发现。随着碰撞的增加，这样的重复链条会逐渐造成严重的冗余和浪费。</p>
+<h4 id="彩虹表的改进点"><a href="#彩虹表的改进点" class="headerlink" title="彩虹表的改进点"></a>彩虹表的改进点</h4><p>对于这个问题，2003年提出的彩虹表算法进行了针对性的改进。它在各步的运算中，并不使用统一的R函数，而是分别使用R1…Rk共k个不同的R函数（下划线表示下标）。这样生成的哈希链集即被称为彩虹表。（在不同的运算位置使用不同的R函数，就像彩虹由内而外的不同位置上显示出不同的颜色一样。）这样一来，如果发生碰撞，通常会是下图的情况：<br><img src="http://oirwmbp4e.bkt.clouddn.com/network/rgaijing.png" alt="image"></p>
+<p>不难发现，当两个链条发生碰撞的位置并非相同的序列位置时，后续的R函数的不一致使得链条的后续部分也不相同，从而最大程度地减小了链条中的重复节点，保证了链条的有效性。</p>
+<p>同时，如果在极端情况下，两个链条有1/k的概率在同一序列位置上发生碰撞，导致后续链条完全一致，这样的链条也会因为末节点相同而检测出来，可以丢弃其中一条而不浪费存储空间。</p>
+<p>彩虹表的使用比哈希链集稍微麻烦一些。首先，假设要破解的密文位于任一链条的k-1位置处，对其进行Rk运算，看是否能够在末节点中找到对应的值。如果找到，则可以如前所述，使用起节点验证其正确性。否则，需要继续假设密文位于k-2位置处，这时就需要进行Rk-1、H、Rk两步运算，然后在末节点中查找结果。如是反复，最不利条件下需要将密文进行完整的R1、H、…Rk运算后，才能得知密文是否存在于彩虹表之中。</p>
+<h4 id="时间、空间的平衡"><a href="#时间、空间的平衡" class="headerlink" title="时间、空间的平衡"></a>时间、空间的平衡</h4><p>通过彩虹表的使用方法可以明显地看出，一条哈希链实际代表的是一组明文的解密规则：<br><img src="http://oirwmbp4e.bkt.clouddn.com/network/ph1.png" alt="image"><br>等价于k条子规则：<br><img src="http://oirwmbp4e.bkt.clouddn.com/network/ph2.png" alt="image"></p>
+<p>类似的，前述的哈希链集也可以进行这样的拆解，只不过其拆解后的子规则的运算过程中有很多中间结果可以复用，因此其最大计算次数为k，平均计算次数为k/2 而彩虹表的最大计算次数为k<em>(k+1)/2,平均计算次数为<br>(k+2)</em>(k+1)/2。</p>
+<p>可见，要解相同个数的明文，彩虹表的代价会高于哈希链集。不过，因为彩虹表可以节省不少重复链条的存储和计算的代价，所以还是值得的。</p>
+<p>同时，对于相同个数的明文，当k越大时，破解的期望时间就越长，但彩虹表所占用的空间就越小；相反，k越小时，彩虹表本身就越大，相应的破解时间就越短。这正是保持空间、时间二者平衡的精髓所在。RainbowCrack中rtgen工具使用的默认k值好像是2100。极端的，令k=1，简化函数R(x)=x，这样的彩虹表就变成了通常的错误理解，即将明文、密文对应关系全部保存的表。此时由于k极小，因而得到的表的体积极大，甚至可能超出储存能力。（当然，对于范围较小的明文，如6位以下数字英文的组合，或是全世界常用密码的集合，生成k=1的表还是不费什么事的。）</p>
+<h4 id="彩虹表总结"><a href="#彩虹表总结" class="headerlink" title="彩虹表总结"></a>彩虹表总结</h4><ol>
+<li>彩虹表的制作过程</li>
+</ol>
+<p>彩虹表可以处理的hash算法很多，进行的hash运算我们就记为H，函数族Rk（k=1、2、3、4……）都可以自定义，最初开始处理的明文再多选取一些，如图1中第一列的wikipedia、abcdefgh…passwd等，依次计算就得到了图1中的几条字符串链</p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/network/caihong.png" alt="image"></p>
+<ol>
+<li>彩虹表的查找</li>
+</ol>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/network/caihongfind.png" alt="image"></p>
+<p>怎样找到hash函数H的一条密文re3xes对应的明文呢？解释这个破解过程需要明确一点：如果re3xes对应的明文属于彩虹表中的某条链，那么就有可能找到其对应的明文，注意这里的“属于某条链”不仅仅是指属于彩虹表的一条链中存放的头尾两个字符串，还包括这两个字符串中的中间数据，上图彩虹表中间计算的明文数据secret、jimbo也算是属于彩虹表的第一条链中，同理bernie、zurich属于第二条链，culture、crypto属于最后一条链，虽然彩虹表中只保存了每条链的链首链尾两个字符串，但是这些中间数据是可以根据链首字符串重新计算出来的。</p>
+<p>来看一下re3xes的破解过程，先猜测下密码re3xes对应的明文数据是某条链中间计算出数据的最后一个，注意第一、二条链的中间数据中的最后一个明文口令jimbo、zurich，依次经过H-R3运算得到保存的链尾字符串rootroot、myname，那么密文re3xes经过R3转换之后得到的数据就是某条链的链尾字符串，这点应该不难理解，如密文v0d$x对应的明文jimbo是第一条链最后一个中间明文数据，则v0d$x经过R3转换得到链尾字符串rootroot，但是密文re3xes经过R3函数转换之后得到的rambo并不是表中保存的任一条链的链尾字符串，这就说明re3xes对应的明文数据并不是某条链中间计算出数据的最后一个，猜测不成立，继续猜测re3xes对应的明文数据可能是某条链中间计算出数据的倒数第二个，同样可以很容易推出re3xes依次经过R2-H-R3转换之后得到的数据是某条链的链尾字符串，计算出re3xes经R2-H-R3转换的结果为linux23，通过搜索彩虹中存放的链尾字符串，得到linux23恰好是最后一条链的链尾，O(∩_∩)O~，</p>
+<p>到了这一步已经成功了一大半，下面就来根据存储的最后一条链链首的passwd重新计算出密文re3xes对应的明文吧，既然re3xes经R2-H-R3转换之后得到链尾的linux23，那么链首的passwd经H-R1-H运算后的结果culture就是re3xes对应的明文啦</p>
+<h2 id="防御"><a href="#防御" class="headerlink" title="防御"></a>防御</h2><h3 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h3><ol>
+<li>首先保障数据很难被拖库。</li>
+<li>即使数据被拖库，攻击者也无法从中破解出用户的密码。</li>
+<li>即使数据被拖库，攻击者也无法伪造登录请求通过验证。</li>
+<li>即使数据被拖库，攻击者劫持了用户的请求数据，也无法破解出用户的密码。</li>
+</ol>
+<h3 id="防彩虹表-加盐"><a href="#防彩虹表-加盐" class="headerlink" title="防彩虹表-加盐"></a>防彩虹表-加盐</h3><p>关于彩虹表的防御方式，大多与彩虹表的原理，即其生成步骤中用到的函数H有关。</p>
+<p>最常用的方法，在其它的答案中也提到了，那就是加盐（salt）</p>
+<p>计算密码Hash时，会在待处理的明文字符串后面加上一串随机的字符串再进行加密操作，开始密码验证时会先在用户输入的密码后加上相同的随机字串进行加密，结果再与存储的Hash进行比较。如明文口令是qshud，则附加上一段随机字符串再计算hash，正确口令的hash存储时也是这样的处理过程，这样做的一个好处就是可以在一定程度上防止彩虹表破译，假设随机字符串为“！@#￥”之类的特殊符号，在造表的过程中设计R函数就需要考虑到映射回这些特殊符号，这就大大增大了造表的空间和难度。</p>
+<p><strong>md5(md5(password)+salt)</strong></p>
+<p>常用的哈希函数中，SHA-256、SHA-512 会比 md5 更安全，更难破解，出于更高安全性的考虑，我的这个方案中，会使用 SHA-512 代替 md5</p>
+<p><strong>SHA512(SHA512(password)+salt)</strong></p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/network/regsalt.png" alt="image"></p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/network/eqsalt.png" alt="image"></p>
+<h3 id="防暴力-慢哈希"><a href="#防暴力-慢哈希" class="headerlink" title="防暴力-慢哈希"></a>防暴力-慢哈希</h3><p>虽然加盐可以有效防范彩虹表，但并不能100%保证安全</p>
+<p>通过上面的加盐哈希运算，即使攻击者拿到了最终结果，也很难反推出原始的密码。不能反推，但可以正着推，假设攻击者将 salt值也拿到了，那么他可以枚举遍历所有 6位数的简单密码，加盐哈希，计算出一个结果对照表，从而破解出简单的密码。这就是通常所说的暴力破解。</p>
+<p>天下武功，唯快不破。但在密码学中则不同。算法越快，越容易破。</p>
+<p>穷举的速度有多快？这和算法有关。Hash 一次有多快，猜一次也这么快。</p>
+<p>例如 MD5 就非常快的，若每次 Hash 耗费 1 微秒，那破解时猜一个词组，也只需 1 微秒（假设机器都性能一样，词组长度相近），攻击者一秒钟就能猜 100 万个！（而且这还只是单线程的速度）</p>
+<p>如果能提高 Hash 时间，显然也能增加破解时间。如果 Hash 一次提高到 10 毫秒，那么攻击者每秒只能猜 100 个，破解速度就慢了一万倍。</p>
+<p>怎样才能让 Hash 变慢？最简单的，就是对 Hash 后的结果再 Hash，反复多次。例如原本 1 微秒，重复一万次，就慢一万倍了：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">function slow_md5(x)</div><div class="line">    for i = 0 to 10000</div><div class="line">        x = md5(x)</div><div class="line">    return x</div><div class="line">end</div></pre></td></tr></table></figure></p>
+<p>攻击者破解时，也必须用这套算法跑字典。于是，破解时间就大幅增加了。</p>
+<p>事实上，这样的「慢 Hash」算法早有现成的方案，例如 bcrypt、PBKDF2 等等。它们都有一个难度系数因子，可以控制 Hash 次数，想多慢就多慢。</p>
+<p>所以 Hash 过程越慢，破解也就越费劲。</p>
+<p>所以，Hash 算法越快，破解起来就越容易。</p>
+<p>用了慢 Hash，结果可能就不一样了。如果把 Hash 时间提高 100 倍，破解时间就得长达数月，变得难以接受。</p>
+<p>即使数据泄露，也能保障「明文口令」这最后一道隐私</p>
+<h4 id="慢哈希的缺点"><a href="#慢哈希的缺点" class="headerlink" title="慢哈希的缺点"></a>慢哈希的缺点</h4><p><strong>消耗大量计算资源</strong></p>
+<p>使用慢 Hash 的网站，如果同时来了多个用户，服务器 CPU 可能就不够用了。要是遇到恶意用户，发起大量的登录请求，甚至造成资源被耗尽。</p>
+<p>性能和安全总是难以兼得。所以，一般也不会使用太高的强度。</p>
+<p>一些大型网站，甚至为此投入集群，用来处理大量的 Hash 计算。但这需要不少的成本。</p>
+<p>有没有什么方法，可以让我们使用算力强劲、同时又免费的计算资源？</p>
+<h4 id="前端哈希"><a href="#前端哈希" class="headerlink" title="前端哈希"></a>前端哈希</h4><p>在过去，个人电脑和服务器的速度，还是有较大差距的。但如今，随着硬件发展进入瓶颈，这个差距正缩小。在单线任务处理上，甚至不相上下。</p>
+<p>客户端拥有强大的算力，能不能分担一些服务器的工作？</p>
+<p>尤其像「慢 Hash」这种算法开源、但计算沉重的任务，为何不交给客户端来完成？</p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/network/clientslowhash.png" alt="image"></p>
+<p>传统方案，提交的几乎是明文口令；现在，提交的则是明文口令的「Hash 结果」。（无论是注册，还是登陆）</p>
+<p>而服务端则无需任何改动。先前是怎么保存的，现在还是怎么保存。</p>
+<p>这样就算被拖库，攻击者破解出来的也只是「Hash 结果」，还需再破解一次，才能还原出「明文口令」。</p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/network/slowhashhack.png" alt="image"></p>
+<p>事实上，这个「Hash结果」是不可能还原出来的。为什么这么说呢？因为它是毫无规律的随机串，而字典都是有意义的词组，几乎不可能跑到它！除非字节逐个穷举，但这将是个天文数字。</p>
+<p>所以中间值，是无法通过数据库泄露的数据「跑」出来的！</p>
+<p>当然，即使不知道这个中间值，也没影响明文的破解。攻击者可以把前端 Hash + 后端的 Hash，组合成一个新的函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">f(x) = back_hash( front_hash(x) )</div></pre></td></tr></table></figure></p>
+<p>然后使用这个新函数来跑字典。这样，理论上还是可以跑出来的。但是，有 front_hash 这个重量级的函数存在，跑字典的速度就大幅降低了，于是就能增加攻击者的破解成本！</p>
+<h4 id="对抗预先计算"><a href="#对抗预先计算" class="headerlink" title="对抗预先计算"></a>对抗预先计算</h4><p>不过前端的一切都是公开的，所以 front_hash 的算法大家都知道。</p>
+<p>攻击者可以用这套算法，把常用词组的「慢 Hash 结果」提前算出来，制作成一个「新字典」。将来拖库后，就可以直接跑这个新字典了。</p>
+<p>对抗这种方法，还得用经典的手段：加盐。最简单的，将用户名作为盐值：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">front_hash(password, username)</div></pre></td></tr></table></figure></p>
+<p>这样即使相同的口令，对于不同的用户，「Hash 结果」也变得不一样了。</p>
+<p>除了用户名，还可以将网站的域名、或者其他固定信息，也加入到盐值中，这样不同的网站也不能共享同个彩虹表了。使得破解方案更不通用。</p>
+<h4 id="强度策略"><a href="#强度策略" class="headerlink" title="强度策略"></a>强度策略</h4><p>密码学上的问题到此结束，下面讨论实现上的问题。现实中，用户的算力是不均衡的。有人用的是神级配置，也有的是古董机。这样，Hash 的次数就很难设定。如果古董机用户登录会卡上几十秒，那肯定是不行的。因此必要得有控制强度的方案。</p>
+<h5 id="强度固定"><a href="#强度固定" class="headerlink" title="强度固定"></a>强度固定</h5><p>据大众的配置，制定一个适中的强度，绝大多数用户都可接受。</p>
+<p>但如果超过规定时间还没完成，就把算到一半的 Hash 和步数提交上来，剩余部分让服务器来完成。</p>
+<p>[前端] 完成 70% —-&gt; [后端] 计算 30%</p>
+<p>不过，这需要「可序列化」的算法，才能在服务端还原进度。如果计算过程涉及大量的内存，这种方案就不可行了。</p>
+<p>相比过去 100% 后端慢 Hash，这种少量用户「前后参半」的方式，可以节省不少服务器资源。</p>
+<h5 id="强度可变"><a href="#强度可变" class="headerlink" title="强度可变"></a>强度可变</h5><p>如果后端不提供任何协助，那只能根据自身条件做取舍了。配置差的用户，Hash 次数少一点。</p>
+<p>用户注册时，算法不限步数放开跑，看看特定时间里能算到多少步：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[注册阶段] 算力评估（线程 1 秒后中止）</div><div class="line">while</div><div class="line">    x = hash(x)</div><div class="line">    iter = iter + 1</div><div class="line">end</div></pre></td></tr></table></figure></p>
+<p>这个步数，就是 Hash 强度，会保存到账号信息里。之后每次登录时，先获取这个强度值，然后再做相应次数的 Hash：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">先获取用户的强度值</div><div class="line">...</div><div class="line"></div><div class="line"># 重复 Hash 相应次数</div><div class="line">for i = 0 to iter</div><div class="line">    x = hash(x)</div><div class="line">end</div></pre></td></tr></table></figure></p>
+<p>使用这个方案，可以让 高配置的用户享受更高的安全性；低配置的用户，也不会影响基本使用。（用上好电脑还能提升安全性，很有优越感吧~）</p>
+<p>但这有个重要的前提：注册和登录，必须在性能相近的设备上 —— 如果是在高配置电脑上注册的账号，某天去古董机登录，那就悲剧了，可能半天都算不出来。。。</p>
+<h5 id="动态调整方案"><a href="#动态调整方案" class="headerlink" title="动态调整方案"></a>动态调整方案</h5><p>上述情况，现实中是普遍存在的。比如 PC 端注册的账号，在移动端登录，算力可能就不够用。</p>
+<p>如果没有后端协助，那只能等。要是经常在低端设备上登陆，那每次都得干等吗？</p>
+<p>等一两次就算了，如果每次都等，不如重新估量下自己的能力吧。把强度动态调低，更好的适应当前环境。</p>
+<p>将来如果不用低端设备了，再自动的调整回来。让强度值，能动态适应常用的设备的算力。</p>
+<h4 id="前端hash的意义"><a href="#前端hash的意义" class="headerlink" title="前端hash的意义"></a>前端hash的意义</h4><p>前端一切都是透明的，有什么意义呢？</p>
+<p>前端加密可以：</p>
+<ol>
+<li>避免明文密码在传输中被获取</li>
+<li>保证后端日志等不会记录明文密码（也可以防止内鬼盗窃）</li>
+<li>保证后端内存中无用户明文密码，在 dump 等情况发生时不会出现泄露问题</li>
+</ol>
+<p>我们再说一下成本问题：</p>
+<ol>
+<li>前端加密在不影响后端性能的情况下满足对用户密码的保护</li>
+<li>前端执行一个散列运算对前端来说真心不是事，密码这么短，不会影响性能。</li>
+<li>与 HTTPS 的流程相比，在前端散列一下几乎不影响网站响应速度和用户体验</li>
+</ol>
+<p>最后，我们来说一下误区：</p>
+<ol>
+<li>前端散列不意味着后端可以减少安全工作量，前端散列一般会采用较为“低功耗”的弱加密实现，而不会使用 RSA 等方法（有人使用短密钥的 RSA 依然是不安全的）。</li>
+<li>前端加密不可以防范中间人攻击，中间人依然可以实施重放攻击。</li>
+</ol>
+<h3 id="慢比较"><a href="#慢比较" class="headerlink" title="慢比较"></a>慢比较</h3><p>使用固定的时间来比较哈希值可以防止攻击者在在线系统使用基于时间差的攻击，以此获取密码的哈希值，然后进行本地破解。</p>
+<p>比较两个字节序列（字符串）是否相同的标准做法是，从第一个字节开始，每个字节逐一顺序比较。只要发现某个字节不同，就可以知道它们是不同的，立即返回false。如果遍历整个字符串没有找到不同的字节，可以确认两个字符串就是相同的，可以返回true。这意味着比较两个字符串，如果它们相同的长度不一样，花费的时间不一样。开始部分相同的长度越长，花费的时间也就越长。</p>
+<p>例如，字符串 “XYZABC” 和 “abcxyz” 的标准比较，会立即看到，第一个字符是不同的，就不需要检查字符串的其余部分。相反，当字符串 “aaaaaaaaaaB” 和 “aaaaaaaaaaZ” 进行比较时，比较算法就需要遍历最后一位前所有的 “a” ，然后才能知道他们是不同的。</p>
+<p>假设攻击者试图入侵一个在线系统，这个系统限制了每秒只能尝试一次用户认证。还假设攻击者已经知道密码哈希所有的参数（盐值、哈希函数的类型等），除了密码的哈希值和密码本身。如果攻击者能精确测量在线系统耗时多久去比较他猜测的密码和真实密码，那么他就能使用时序攻击获取密码的哈希值，然后进行离线破解，从而绕过系统对认证频率的限制。</p>
+<p>首先攻击者准备256个字符串，它们的哈希值的第一字节包含了所有可能的情况。他将每个字符串发送给在线系统尝试登陆，并记录系统响应所消耗的时间。耗时最长的字符串就是第一字节相匹配的。攻击者知道第一字节后，并可以用同样的方式继续猜测第二字节、第三字节等等。一旦攻击者获得足够长的哈希值片段，他就可以在自己的机器上来破解，不受在线系统的限制。</p>
+<p>在网络上进行这种攻击似乎不可能。然而，有人已经实现了，并已证明是实用的。这就是为什么本文提到的代码，它利用固定时间去比较字符串，而不管有多大的字符串。</p>
+<h4 id="慢函数工作原理"><a href="#慢函数工作原理" class="headerlink" title="慢函数工作原理"></a>慢函数工作原理</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">private static boolean slowEquals(byte[] a, byte[] b)</div><div class="line">&#123;</div><div class="line">int diff = a.length ^ b.length;</div><div class="line">for(int i = 0; i &lt; a.length &amp;&amp; i &lt; b.length; i++)</div><div class="line">diff |= a[i] ^ b[i];</div><div class="line">return diff == 0;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>代码中使用了异或运算符“^”（XOR）来比较两个整数是否相等，而不是“==”。当且仅当两位相等时，异或的结果才是0。因为0 XOR 0 = 0, 1 XOR 1 = 0, 0 XOR 1 = 1, 1 XOR 0 = 1。应用到整数中每一位就是说，当且仅当字节两个整数各位都相等，结果才是0。</p>
+<p>代码中的第一行，比较a.length和b.length，相同的话diff是0，否则diff非0。然后使用异或比较数组中各字节，并且将结果和diff求或。如果有任何一个字节不相同，diff就会变成非0的值。因为或运算没有“置0”的功能，所以循环结束后diff是0的话只有一种可能，那就是循环前两个数组长度相等（a.length == b.length），并且数组中每一个字节都相同（每次异或的结果都非0）。</p>
+<p>我们使用XOR而不是“==”来比较整数的原因是：“==”通常被翻译/编译/解释为带有分支的语句。例如C语言中的“diff &amp;= a == b”可能在x86机器成被编译为如下汇编语言：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">MOV EAX, [A]</div><div class="line">CMP [B], EAX</div><div class="line">JZ equal</div><div class="line">JMP done</div><div class="line">equal:</div><div class="line">AND [VALID], 1</div><div class="line">done:</div><div class="line">AND [VALID], 0</div></pre></td></tr></table></figure></p>
+<p>其中的分支导致代码运行的时间不固定，决定于两个整数相等的程度和CPU内部的跳转预测机制（branch prediction）。</p>
+<p>而C语言代码“diff |=a ^ b”会被编译为下面的样子，它执行的时间和两个整数是什么样的情况无关。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">MOV EAX, [A]</div><div class="line">XOR EAX, [B]</div><div class="line">OR [DIFF], EAX</div></pre></td></tr></table></figure></p>
+<h1 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h1><p><a href="http://www.cnblogs.com/jfzhu/p/4023439.html" target="_blank" rel="external">http://www.cnblogs.com/jfzhu/p/4023439.html</a></p>
+<p><a href="http://blog.csdn.net/u011339231/article/details/50616921" target="_blank" rel="external">http://blog.csdn.net/u011339231/article/details/50616921</a></p>
+<p><a href="https://www.zhihu.com/question/19790488" target="_blank" rel="external">https://www.zhihu.com/question/19790488</a></p>
+<p><a href="http://www.91ri.org/7593.html" target="_blank" rel="external">http://www.91ri.org/7593.html</a></p>
+<p><a href="https://www.cnblogs.com/index-html/archive/2015/11/27/4999897.html" target="_blank" rel="external">https://www.cnblogs.com/index-html/archive/2015/11/27/4999897.html</a></p>
+<p><a href="https://stackoverflow.com/questions/6340105/how-can-we-create-a-fairly-secure-password-hash-in-php" target="_blank" rel="external">https://stackoverflow.com/questions/6340105/how-can-we-create-a-fairly-secure-password-hash-in-php</a></p>
+<p><a href="https://blog.coderzh.com/2016/01/10/a-password-security-design-example/" target="_blank" rel="external">https://blog.coderzh.com/2016/01/10/a-password-security-design-example/</a></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+      <! -- 添加微信图标 -->
+    
+    
+    <div>
+    <span>
+    
+    <br>
+    </span>
+    <br>
+    
+    <a href="http://oirwmbp4e.bkt.clouddn.com/weixin.jpg" class="fancybox" rel="article0"  style="float:left;margin-left:30%;margin-right:2px;">
+    <img src="http://oirwmbp4e.bkt.clouddn.com/weixin.jpg" title="欢迎大家关注：码农戏码微信公众号" height="164px" width="164px">
+    </a>
+    
+    </div>
+    
+    
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/10/beanpostprocesor-learning/" rel="next" title="BeanPostProcessor学习">
+                <i class="fa fa-chevron-left"></i> BeanPostProcessor学习
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/30/comon-sense-two-oauth2.0-introduction-and-security-precautions/" rel="prev" title="常识二Oauth2.0介绍及安全防范">
+                常识二Oauth2.0介绍及安全防范 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a>
+<a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+<a class="bds_count" data-cmd="count"></a>
+</div>
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{},"image":{"viewList":["tsina","weixin","youdao","evernotecn","tqq","qzone","renren","copy"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["tsina","weixin","youdao","evernotecn","tqq","qzone","renren","copy"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars0.githubusercontent.com/u/6222636?v=3&s=460"
+               alt="朱兴生" />
+          <p class="site-author-name" itemprop="name">朱兴生</p>
+          <p class="site-description motion-element" itemprop="description">彪悍的人生需要书写</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">31</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhuxingsheng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#用户安全进化史"><span class="nav-number">1.</span> <span class="nav-text">用户安全进化史</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#明文存储"><span class="nav-number">1.1.</span> <span class="nav-text">明文存储</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#加密存储"><span class="nav-number">1.2.</span> <span class="nav-text">加密存储</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#哈希（Hash）与加密（Encrypt）的区别"><span class="nav-number">1.2.1.</span> <span class="nav-text">哈希（Hash）与加密（Encrypt）的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#哈希（Hash）与加密（Encrypt）的数学基础"><span class="nav-number">1.2.2.</span> <span class="nav-text">哈希（Hash）与加密（Encrypt）的数学基础</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#哈希（Hash）与加密（Encrypt）的选择"><span class="nav-number">1.2.3.</span> <span class="nav-text">哈希（Hash）与加密（Encrypt）的选择</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#破解哈希"><span class="nav-number">1.3.</span> <span class="nav-text">破解哈希</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#字典破解（Dictionary-Attack）和暴力破解（Brute-Force-Attack）方式"><span class="nav-number">1.3.1.</span> <span class="nav-text">字典破解（Dictionary Attack）和暴力破解（Brute Force Attack）方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查表法（-Lookup-Tables）"><span class="nav-number">1.3.2.</span> <span class="nav-text">查表法（ Lookup Tables）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#反向查表法（-Reverse-Lookup-Tabs）"><span class="nav-number">1.3.3.</span> <span class="nav-text">反向查表法（ Reverse Lookup Tabs）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#彩虹表（-Rainbow-Tables）"><span class="nav-number">1.3.4.</span> <span class="nav-text">彩虹表（ Rainbow Tables）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#彩虹表的前身"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">彩虹表的前身</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#R的问题"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">R的问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#彩虹表的改进点"><span class="nav-number">1.3.4.3.</span> <span class="nav-text">彩虹表的改进点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#时间、空间的平衡"><span class="nav-number">1.3.4.4.</span> <span class="nav-text">时间、空间的平衡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#彩虹表总结"><span class="nav-number">1.3.4.5.</span> <span class="nav-text">彩虹表总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#防御"><span class="nav-number">1.4.</span> <span class="nav-text">防御</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#目标"><span class="nav-number">1.4.1.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防彩虹表-加盐"><span class="nav-number">1.4.2.</span> <span class="nav-text">防彩虹表-加盐</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#防暴力-慢哈希"><span class="nav-number">1.4.3.</span> <span class="nav-text">防暴力-慢哈希</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#慢哈希的缺点"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">慢哈希的缺点</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#前端哈希"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">前端哈希</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#对抗预先计算"><span class="nav-number">1.4.3.3.</span> <span class="nav-text">对抗预先计算</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#强度策略"><span class="nav-number">1.4.3.4.</span> <span class="nav-text">强度策略</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#强度固定"><span class="nav-number">1.4.3.4.1.</span> <span class="nav-text">强度固定</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#强度可变"><span class="nav-number">1.4.3.4.2.</span> <span class="nav-text">强度可变</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#动态调整方案"><span class="nav-number">1.4.3.4.3.</span> <span class="nav-text">动态调整方案</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#前端hash的意义"><span class="nav-number">1.4.3.5.</span> <span class="nav-text">前端hash的意义</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#慢比较"><span class="nav-number">1.4.4.</span> <span class="nav-text">慢比较</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#慢函数工作原理"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">慢函数工作原理</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考文献"><span class="nav-number">2.</span> <span class="nav-text">参考文献</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">共85.6k字</span>
+</div>
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+</body>
+</html>

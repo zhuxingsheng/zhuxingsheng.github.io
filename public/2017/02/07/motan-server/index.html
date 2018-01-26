@@ -1,0 +1,834 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+  <meta name="baidu-site-verification" content="MXFRoVpC6c" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="motan," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="前引新年回来上班，记录下服务端的处理过程，就当热个身
+服务端的处理也有套路，不管上层怎么玩，最后还得是通过反射得到Method对象，再调用invoke()
+根据这张序列图，可以把服务端分为两部分
+
+NettyServer前面的算一部分，搭基础构建Exporter对象
+nettyserver后面的算一部分，找到对应method，invoke,通过网络返回">
+<meta property="og:type" content="article">
+<meta property="og:title" content="motan服务端">
+<meta property="og:url" content="https://zhuxingsheng.github.io/2017/02/07/motan-server/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="前引新年回来上班，记录下服务端的处理过程，就当热个身
+服务端的处理也有套路，不管上层怎么玩，最后还得是通过反射得到Method对象，再调用invoke()
+根据这张序列图，可以把服务端分为两部分
+
+NettyServer前面的算一部分，搭基础构建Exporter对象
+nettyserver后面的算一部分，找到对应method，invoke,通过网络返回">
+<meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/motan-server.png">
+<meta property="og:updated_time" content="2017-12-17T13:01:31.175Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="motan服务端">
+<meta name="twitter:description" content="前引新年回来上班，记录下服务端的处理过程，就当热个身
+服务端的处理也有套路，不管上层怎么玩，最后还得是通过反射得到Method对象，再调用invoke()
+根据这张序列图，可以把服务端分为两部分
+
+NettyServer前面的算一部分，搭基础构建Exporter对象
+nettyserver后面的算一部分，找到对应method，invoke,通过网络返回">
+<meta name="twitter:image" content="http://oirwmbp4e.bkt.clouddn.com/motan-server.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://zhuxingsheng.github.io/2017/02/07/motan-server/"/>
+
+
+
+
+
+  <title> motan服务端 | 码农戏码 </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?48897be5dd7a377cc247d8870a476fb8";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">码农戏码</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+  <link itemprop="mainEntityOfPage" href="https://zhuxingsheng.github.io/2017/02/07/motan-server/">
+
+  <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <meta itemprop="name" content="朱兴生">
+    <meta itemprop="description" content="">
+    <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/6222636?v=3&s=460">
+  </span>
+
+  <span style="display:none" itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+    <meta itemprop="name" content="码农戏码">
+    <span style="display:none" itemprop="logo" itemscope itemtype="http://schema.org/ImageObject">
+      <img style="display:none;" itemprop="url image" alt="码农戏码" src="">
+    </span>
+  </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                motan服务端
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-02-07T19:27:03+08:00">
+                2017-02-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+              <span class="post-meta-divider">|</span>
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/源码解读/" itemprop="url" rel="index">
+                    <span itemprop="name">源码解读</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+	
+	  
+	  <span class="post-letters-count">
+	    &nbsp; | &nbsp;
+	    <span>1,641 字</span>
+	    &nbsp; | &nbsp;
+	    <span>8 min</span>
+	  </span>
+	  
+
+          
+
+          
+          
+
+          
+            <span class="post-meta-divider">|</span>
+            <span class="page-pv"><i class="fa fa-file-o"></i>
+            <span class="busuanzi-value" id="busuanzi_value_page_pv" ></span>
+            </span>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前引"><a href="#前引" class="headerlink" title="前引"></a>前引</h1><p>新年回来上班，记录下服务端的处理过程，就当热个身</p>
+<p>服务端的处理也有套路，不管上层怎么玩，最后还得是通过反射得到Method对象，再调用invoke()</p>
+<p><img src="http://oirwmbp4e.bkt.clouddn.com/motan-server.png" alt="image"><br>根据这张序列图，可以把服务端分为两部分</p>
+<ol>
+<li>NettyServer前面的算一部分，搭基础构建Exporter对象</li>
+<li>nettyserver后面的算一部分，找到对应method，invoke,通过网络返回</li>
+</ol>
+<a id="more"></a>
+<h1 id="构建Exporter对象"><a href="#构建Exporter对象" class="headerlink" title="构建Exporter对象"></a>构建Exporter对象</h1><h2 id="结合spring"><a href="#结合spring" class="headerlink" title="结合spring"></a>结合spring</h2><p>其实在《motan客户端》时有提过，但没有深究；spring扩展自定义xml是个很老的技术了<br><a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/xml-custom.html#extensible-xml-using" target="_blank" rel="external">spring扩展xml文档</a></p>
+<blockquote>
+<p>spring通过XML解析程序将其解析为DOM树，通过NamespaceHandler指定对应的Namespace的BeanDefinitionParser将其转换成BeanDefinition。再通过Spring自身的功能对BeanDefinition实例化对象。</p>
+<p>在期间，Spring还会加载两项资料：</p>
+<ol>
+<li>META-INF/spring.handlers </li>
+</ol>
+<p>指定NamespaceHandler(实现org.springframework.beans.factory.xml.NamespaceHandler)接口，或使用org.springframework.beans.factory.xml.NamespaceHandlerSupport的子类。</p>
+<ol>
+<li>META-INF/spring.schemas </li>
+</ol>
+<p>在解析XML文件时将XSD重定向到本地文件，避免在解析XML文件时需要上网下载XSD文件。通过现实org.xml.sax.EntityResolver接口来实现该功能。</p>
+</blockquote>
+<h2 id="ConfigHandler"><a href="#ConfigHandler" class="headerlink" title="ConfigHandler"></a>ConfigHandler</h2><p>解析完xml后，服务器通过ServiceConfigBean来监听spring容器加载完成。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">    public void onApplicationEvent(ContextRefreshedEvent event) &#123;</div><div class="line">        if (!getExported().get()) &#123;</div><div class="line">            export();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>调用export()，构建Exporter；<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">public synchronized void export() &#123;</div><div class="line">        if (exported.get()) &#123;</div><div class="line">            LoggerUtil.warn(String.format(&quot;%s has already been expoted, so ignore the export request!&quot;, interfaceClass.getName()));</div><div class="line">            return;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        checkInterfaceAndMethods(interfaceClass, methods);</div><div class="line"></div><div class="line">        List&lt;URL&gt; registryUrls = loadRegistryUrls();</div><div class="line">        if (registryUrls == null || registryUrls.size() == 0) &#123;</div><div class="line">            throw new IllegalStateException(&quot;Should set registry config for service:&quot; + interfaceClass.getName());</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        Map&lt;String, Integer&gt; protocolPorts = getProtocolAndPort();</div><div class="line">        for (ProtocolConfig protocolConfig : protocols) &#123;</div><div class="line">            Integer port = protocolPorts.get(protocolConfig.getId());</div><div class="line">            if (port == null) &#123;</div><div class="line">                throw new MotanServiceException(String.format(&quot;Unknow port in service:%s, protocol:%s&quot;, interfaceClass.getName(),</div><div class="line">                        protocolConfig.getId()));</div><div class="line">            &#125;</div><div class="line">            doExport(protocolConfig, port, registryUrls);</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        afterExport();</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>这个方法主要就做了两件事</p>
+<ol>
+<li>loadRegistryUrls()，根据<motan:registry>,生成URL对象。URL也算是整个框架的核心，一个url包含了配置中的所有内容。就像一个领域对象一样。</motan:registry></li>
+</ol>
+<p>如果使用的是zookeeper，对就的URL就是：zookeeper://127.0.0.1:2181/com.weibo.api.motan.registry.RegistryService?group=default_rpc</p>
+<p>这是注册中心的URL</p>
+<p>而服务URL是以参数为embed为key包含在里面，里面包含了所有的服务参数</p>
+<p>motan://127.0.0.1:8002/com.share.rpc.service.DEMOService?module=match-rpc&amp;loadbalance=activeWeight&amp;nodeType=service&amp;accessLog=true&amp;minWorkerThread=2&amp;protocol=motan&amp;isDefault=true&amp;maxWorkerThread=10&amp;refreshTimestamp=1486448597095&amp;id=com.weibo.api.motan.config.springsupport.ServiceConfigBean&amp;export=protocolMatch:8002&amp;requestTimeout=60000&amp;group=match-rpc&amp;</p>
+<ol>
+<li>doExport()<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ConfigHandler configHandler = ExtensionLoader.getExtensionLoader(ConfigHandler.class).getExtension(MotanConstants.DEFAULT_VALUE);</div><div class="line"> exporters.add(configHandler.export(interfaceClass, ref, urls));</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>到这儿就是委托给ConfigHandler处理了。</p>
+<p>默认的实现类：SimpleConfigHandler</p>
+<p>这个类里面有两个重要的方法：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">@Override</div><div class="line">    public &lt;T&gt; T refer(Class&lt;T&gt; interfaceClass, List&lt;Cluster&lt;T&gt;&gt; clusters, String proxyType) &#123;</div><div class="line">        ProxyFactory proxyFactory = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getExtension(proxyType);</div><div class="line">        return proxyFactory.getProxy(interfaceClass, new RefererInvocationHandler&lt;T&gt;(interfaceClass, clusters));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public &lt;T&gt; Exporter&lt;T&gt; export(Class&lt;T&gt; interfaceClass, T ref, List&lt;URL&gt; registryUrls) &#123;</div><div class="line"></div><div class="line">        String serviceStr = StringTools.urlDecode(registryUrls.get(0).getParameter(URLParamType.embed.getName()));</div><div class="line">        URL serviceUrl = URL.valueOf(serviceStr);</div><div class="line"></div><div class="line">        // export service</div><div class="line">        // 利用protocol decorator来增加filter特性</div><div class="line">        String protocolName = serviceUrl.getParameter(URLParamType.protocol.getName(), URLParamType.protocol.getValue());</div><div class="line">        Protocol protocol = new ProtocolFilterDecorator(ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(protocolName));</div><div class="line">        Provider&lt;T&gt; provider = new DefaultProvider&lt;T&gt;(ref, serviceUrl, interfaceClass);</div><div class="line">        Exporter&lt;T&gt; exporter = protocol.export(provider, serviceUrl);</div><div class="line"></div><div class="line">        // register service</div><div class="line">        register(registryUrls, serviceUrl);</div><div class="line"></div><div class="line">        return exporter;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>refer()就是RefererConfig配置完后的调用的方法，就看到了客户端的核心类RefererInvocationHandler</p>
+<p>export()就是服务端使用的方法了。</p>
+<p>构造provider<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public interface Provider&lt;T&gt; extends Caller&lt;T&gt; &#123;</div><div class="line"></div><div class="line">    Class&lt;T&gt; getInterface();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>其实就是外面服务类的代理类,里面就一个服务类的引用。在初始化时，把所有的方法全部缓存<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">private void initMethodMap(Class&lt;T&gt; clz) &#123;</div><div class="line">        Method[] methods = clz.getMethods();</div><div class="line"></div><div class="line">        for (Method method : methods) &#123;</div><div class="line">            String methodDesc = ReflectUtil.getMethodDesc(method);</div><div class="line">            methodMap.put(methodDesc, method);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>Protocol的export就是启动一个netty server，提供对外服务。</p>
+<h2 id="register-注册服务"><a href="#register-注册服务" class="headerlink" title="register 注册服务"></a>register 注册服务</h2><p>按上面export()，先启动一个netty server，服务一切就绪后，再向注册中心进行注册了。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">private void register(List&lt;URL&gt; registryUrls, URL serviceUrl) &#123;</div><div class="line"></div><div class="line">        for (URL url : registryUrls) &#123;</div><div class="line">            // 根据check参数的设置，register失败可能会抛异常，上层应该知晓</div><div class="line">            RegistryFactory registryFactory = ExtensionLoader.getExtensionLoader(RegistryFactory.class).getExtension(url.getProtocol());</div><div class="line">            if (registryFactory == null) &#123;</div><div class="line">                throw new MotanFrameworkException(new MotanErrorMsg(500, MotanErrorMsgConstant.FRAMEWORK_REGISTER_ERROR_CODE,</div><div class="line">                        &quot;register error! Could not find extension for registry protocol:&quot; + url.getProtocol()</div><div class="line">                                + &quot;, make sure registry module for &quot; + url.getProtocol() + &quot; is in classpath!&quot;));</div><div class="line">            &#125;</div><div class="line">            Registry registry = registryFactory.getRegistry(url);</div><div class="line">            registry.register(serviceUrl);</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>根据注册协议选择注册中心<br>RegistryFacotry有三种：1. direct 2.local 3.zookeeper</p>
+<p>对应的registry也是这三种</p>
+<p>在zookeeperregistry里面，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">protected void doRegister(URL url) &#123;</div><div class="line">        try &#123;</div><div class="line">            serverLock.lock();</div><div class="line">            // 防止旧节点未正常注销</div><div class="line">            removeNode(url, ZkNodeType.AVAILABLE_SERVER);</div><div class="line">            removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);</div><div class="line">            createNode(url, ZkNodeType.UNAVAILABLE_SERVER);</div><div class="line">        &#125; catch (Throwable e) &#123;</div><div class="line">            throw new MotanFrameworkException(String.format(&quot;Failed to register %s to zookeeper(%s), cause: %s&quot;, url, getUrl(), e.getMessage()), e);</div><div class="line">        &#125; finally &#123;</div><div class="line">            serverLock.unlock();</div><div class="line">        &#125;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<p>这儿注册后，这个服务还是unavailable，需要调用<br>MotanSwitcherUtil.setSwitcherValue(MotanConstants.REGISTRY_HEARTBEAT_SWITCHER, true);才能变成available</p>
+<h1 id="NettyServer"><a href="#NettyServer" class="headerlink" title="NettyServer"></a>NettyServer</h1><p>一样的套路，有一个默认ChannelHandler，其实什么事都不干，只是包装一下自定义Handler<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">final NettyChannelHandler handler = new NettyChannelHandler(NettyServer.this, messageHandler,</div><div class="line">				standardThreadExecutor);</div><div class="line"></div><div class="line">		bootstrap.setPipelineFactory(new ChannelPipelineFactory() &#123;</div><div class="line">			// FrameDecoder非线程安全，每个连接一个 Pipeline</div><div class="line">			public ChannelPipeline getPipeline() &#123;</div><div class="line">				ChannelPipeline pipeline = Channels.pipeline();</div><div class="line">				pipeline.addLast(&quot;channel_manage&quot;, channelManage);</div><div class="line">				pipeline.addLast(&quot;decoder&quot;, new NettyDecoder(codec, NettyServer.this, maxContentLength));</div><div class="line">				pipeline.addLast(&quot;encoder&quot;, new NettyEncoder(codec, NettyServer.this));</div><div class="line">				pipeline.addLast(&quot;handler&quot;, handler);</div><div class="line">				return pipeline;</div><div class="line">			&#125;</div><div class="line">		&#125;);</div></pre></td></tr></table></figure></p>
+<p>这儿有个有意思的MessageHandler:ProviderProtectedMessageRouter<br>从名字看，有保护功能</p>
+<blockquote>
+<p>1) 如果接口只有一个方法，那么直接return true<br>2) 如果接口有多个方法，那么如果单个method超过 maxThread / 2 &amp;&amp; totalCount &gt;  (maxThread <em> 3 / 4)，那么return false;<br>3) 如果接口有多个方法(4个)，同时总的请求数超过 maxThread </em> 3 / 4，同时该method的请求数超过 maxThead * 1 / 4， 那么return false<br>4) 其他场景return true</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">protected boolean isAllowRequest(int requestCounter, int totalCounter, int maxThread, Request request) &#123;</div><div class="line">        if (methodCounter.get() == 1) &#123;</div><div class="line">            return true;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // 该方法第一次请求，直接return true</div><div class="line">        if (requestCounter == 1) &#123;</div><div class="line">            return true;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // 不简单判断 requsetCount &gt; (maxThread / 2) ，因为假如有2或者3个method对外提供，</div><div class="line">        // 但是只有一个接口很大调用量，而其他接口很空闲，那么这个时候允许单个method的极限到 maxThread * 3 / 4</div><div class="line">        if (requestCounter &gt; (maxThread / 2) &amp;&amp; totalCounter &gt; (maxThread * 3 / 4)) &#123;</div><div class="line">            return false;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        // 如果总体线程数超过 maxThread * 3 / 4个，并且对外的method比较多，那么意味着这个时候整体压力比较大，</div><div class="line">        // 那么这个时候如果单method超过 maxThread * 1 / 4，那么reject</div><div class="line">        return !(methodCounter.get() &gt;= 4 &amp;&amp; totalCounter &gt; (maxThread * 3 / 4) &amp;&amp; requestCounter &gt; (maxThread * 1 / 4));</div><div class="line"></div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>拒绝的结果就是放一个异常：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">private Response reject(String method, int requestCounter, int totalCounter, int maxThread) &#123;</div><div class="line">        DefaultResponse response = new DefaultResponse();</div><div class="line">        MotanServiceException exception =</div><div class="line">                new MotanServiceException(&quot;ThreadProtectedRequestRouter reject request: request_counter=&quot; + requestCounter</div><div class="line">                        + &quot; total_counter=&quot; + totalCounter + &quot; max_thread=&quot; + maxThread, MotanErrorMsgConstant.SERVICE_REJECT);</div><div class="line">        exception.setStackTrace(new StackTraceElement[0]);</div><div class="line">        response.setException(exception);</div><div class="line">        LoggerUtil.error(&quot;ThreadProtectedRequestRouter reject request: request_method=&quot; + method + &quot; request_counter=&quot; + requestCounter</div><div class="line">                + &quot; =&quot; + totalCounter + &quot; max_thread=&quot; + maxThread);</div><div class="line">        return response;</div><div class="line">    &#125;</div></pre></td></tr></table></figure></p>
+<h1 id="other"><a href="#other" class="headerlink" title="other"></a>other</h1><h2 id="RpcContext"><a href="#RpcContext" class="headerlink" title="RpcContext"></a>RpcContext</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">private static final ThreadLocal&lt;RpcContext&gt; localContext = new ThreadLocal&lt;RpcContext&gt;() &#123;</div><div class="line">        protected RpcContext initialValue() &#123;</div><div class="line">            return new RpcContext();</div><div class="line">        &#125;</div><div class="line">    &#125;;</div><div class="line"></div><div class="line">    public static RpcContext getContext() &#123;</div><div class="line">        return localContext.get();</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>这个ThreadLocal尽然还可以设置默认初始值，以前尽然没用过</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>服务端相对客户端还是很简单的。</p>
+<p>没有ha,loadbalance，就是原生netty就把请求处理完了。</p>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/motan/" rel="tag"># motan</a>
+          
+        </div>
+      
+      <! -- 添加微信图标 -->
+    
+    
+    <div>
+    <span>
+    
+    <br>
+    </span>
+    <br>
+    
+    <a href="http://oirwmbp4e.bkt.clouddn.com/weixin.jpg" class="fancybox" rel="article0"  style="float:left;margin-left:30%;margin-right:2px;">
+    <img src="http://oirwmbp4e.bkt.clouddn.com/weixin.jpg" title="欢迎大家关注：码农戏码微信公众号" height="164px" width="164px">
+    </a>
+    
+    </div>
+    
+    
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/01/23/motan-client/" rel="next" title="motan客户端">
+                <i class="fa fa-chevron-left"></i> motan客户端
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/02/27/gc-and-jvm-parameters/" rel="prev" title="GC及JVM参数">
+                GC及JVM参数 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"></a><a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a><a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a><a href="#" class="bds_youdao" data-cmd="youdao" title="分享到有道云笔记"></a><a href="#" class="bds_evernotecn" data-cmd="evernotecn" title="分享到印象笔记"></a><a href="#" class="bds_tqq" data-cmd="tqq" title="分享到腾讯微博"></a><a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a><a href="#" class="bds_renren" data-cmd="renren" title="分享到人人网"></a>
+<a href="#" class="bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+<a class="bds_count" data-cmd="count"></a>
+</div>
+
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"0","bdSize":"24"},"share":{},"image":{"viewList":["tsina","weixin","youdao","evernotecn","tqq","qzone","renren","copy"],"viewText":"分享到：","viewSize":"16"},"selectShare":{"bdContainerClass":null,"bdSelectMiniList":["tsina","weixin","youdao","evernotecn","tqq","qzone","renren","copy"]}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="https://avatars0.githubusercontent.com/u/6222636?v=3&s=460"
+               alt="朱兴生" />
+          <p class="site-author-name" itemprop="name">朱兴生</p>
+          <p class="site-description motion-element" itemprop="description">彪悍的人生需要书写</p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">31</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">17</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/zhuxingsheng" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                  GitHub
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前引"><span class="nav-number">1.</span> <span class="nav-text">前引</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#构建Exporter对象"><span class="nav-number">2.</span> <span class="nav-text">构建Exporter对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#结合spring"><span class="nav-number">2.1.</span> <span class="nav-text">结合spring</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConfigHandler"><span class="nav-number">2.2.</span> <span class="nav-text">ConfigHandler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#register-注册服务"><span class="nav-number">2.3.</span> <span class="nav-text">register 注册服务</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NettyServer"><span class="nav-number">3.</span> <span class="nav-text">NettyServer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#other"><span class="nav-number">4.</span> <span class="nav-text">other</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RpcContext"><span class="nav-number">4.1.</span> <span class="nav-text">RpcContext</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+<div class="theme-info">
+  <div class="powered-by"></div>
+  <span class="post-count">共85.6k字</span>
+</div>
+
+
+        
+
+<div class="busuanzi-count">
+
+  <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
+  
+    <span class="site-uv"><i class="fa fa-user"></i><span class="busuanzi-value" id="busuanzi_value_site_uv"></span></span>
+  
+
+  
+    <span class="site-pv"><i class="fa fa-eye"></i><span class="busuanzi-value" id="busuanzi_value_site_pv"></span></span>
+  
+  
+</div>
+
+
+
+        
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+
+  
+
+
+
+
+	
+
+
+
+
+  
+  
+
+  
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+
+</body>
+</html>
