@@ -15,7 +15,8 @@ avatar: https://avatars0.githubusercontent.com/u/6222636?v=3&s=460
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
 url: https://zhuxingsheng.github.io/
 root: /
-permalink: :year/:month/:day/:title/
+# permalink: :year/:month/:day/:title/
+permalink: blog/:translate_title.html
 permalink_defaults:
 
 # Directory
@@ -47,6 +48,9 @@ highlight:
 # Category & Tag
 default_category: uncategorized
 category_map:
+  源码解读: source
+  互联网: internet
+  其他: other
 tag_map:
 
 # Date / Time format
@@ -82,11 +86,19 @@ deploy:
 
 weixin:
   enable: true
-  public: http://oirwmbp4e.bkt.clouddn.com/weixin.jpg
+  public: http://oirwmbp4e.bkt.clouddn.com/weixin.jpg?f
 
 translate_title:
-  translate_way: baidu    #google | baidu | youdao
+  translate_way: baidu_with_appid    #google | baidu | youdao
   youdao_api_key: XXX
   youdao_keyfrom: XXX
   is_need_proxy: false     #true | false
   proxy_url: http://localhost:8123
+  baidu_appid: '20171231000110878' # Your baidu_appid
+  baidu_appkey: 'qzbvtY13TbZYiJjRaJuj' # Your baidu_appkey
+
+backup:
+    type: git
+    message: backup xxx
+    repository:
+       github: git@github.com:zhuxingsheng/zhuxingsheng.github.io.git,hexo

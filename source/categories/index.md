@@ -1,6 +1,7 @@
 ---
 title: 分类
-date: 2016-12-11 21:32:57
-type: "categories"
+type: categories
 comments: false
+translate_title: classification
+date: 2016-12-11 21:32:57
 ---

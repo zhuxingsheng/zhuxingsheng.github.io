@@ -1,5 +1,6 @@
 ---
 title: About me
+translate_title: about-me
 date: 2016-12-11 21:36:10
 ---
 

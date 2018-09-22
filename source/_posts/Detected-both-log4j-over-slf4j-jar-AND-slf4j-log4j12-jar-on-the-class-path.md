@@ -1,2 +1,0 @@
----
-{"from":"zh","to":"en","trans_result":[{"src":"Detected both log4j-over-slf4j.jar AND slf4j-log4j12.jar on the class path","dst":"Detected both log4j-over-slf4j.jar AND slf4j-log4j12.jar on the class path"}]}
