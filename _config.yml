@@ -100,5 +100,5 @@ translate_title:
 backup:
     type: git
     message: backup xxx
-    repository: git@github.com:zhuxingsheng/zhuxingsheng.github.io.git
-    branch: hexo
+    repository: 
+      github: git@github.com:zhuxingsheng/zhuxingsheng.github.io.git,hexo
