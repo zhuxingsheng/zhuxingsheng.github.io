@@ -7,6 +7,11 @@
 
 <html class="{{ html_class | lower }}" lang="{{ config.language }}">
 <head>
+<script type="text/javascript">
+    var host = "zhuxingsheng.github.io";
+    if ((host == window.location.host) && (window.location.protocol != "https:"))
+        window.location = window.location.toString().replace(/^http:/, "https:");
+</script>
   {% include '_partials/head.swig' %}
   <title>{% block title %}{% endblock %}</title>
 </head>
