@@ -100,13 +100,13 @@
 <meta property="og:description" content="java执行过程先回顾一下要执行java程序，需要经过哪些步骤   编写java代码 通过javac把源代码编译成class 把class载入JVM  1、2两步是需要开发人员参与的，而第3步是JVM的行为，对开发人员透明 JVM类加载详细看下第三点，class载入JVM过程 从内存空间视角,会分配到各个空间：  每个内存空间详情可参考：《GC及JVM参数》 从类生命周期角度，分阶段：  其中类加">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://oirwmbp4e.bkt.clouddn.com/jit/compile.png">
-<meta property="og:image" content="http://p7c3y4vhx.bkt.clouddn.com/201809261932_365.png">
-<meta property="og:image" content="http://p7c3y4vhx.bkt.clouddn.com/201809261921_783.png">
-<meta property="og:image" content="http://p7c3y4vhx.bkt.clouddn.com/201809281128_30.png">
-<meta property="og:image" content="http://p7c3y4vhx.bkt.clouddn.com/201809281552_12.png">
+<meta property="og:image" content="http://hexo.qnimages.zhuxingsheng.com/201809261932_365.png">
+<meta property="og:image" content="http://hexo.qnimages.zhuxingsheng.com/201809261921_783.png">
+<meta property="og:image" content="http://hexo.qnimages.zhuxingsheng.com/201809281128_30.png">
+<meta property="og:image" content="http://hexo.qnimages.zhuxingsheng.com/201809281552_12.png">
 <meta property="og:image" content="http://p7c3y4vhx.bkt.clouddn.com/201809251755_835.png">
-<meta property="og:image" content="http://p7c3y4vhx.bkt.clouddn.com/201809260947_799.png">
-<meta property="og:updated_time" content="2018-10-10T13:29:57.485Z">
+<meta property="og:image" content="http://hexo.qnimages.zhuxingsheng.com/201809260947_799.png">
+<meta property="og:updated_time" content="2018-10-30T12:40:38.398Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="类加载器">
 <meta name="twitter:description" content="java执行过程先回顾一下要执行java程序，需要经过哪些步骤   编写java代码 通过javac把源代码编译成class 把class载入JVM  1、2两步是需要开发人员参与的，而第3步是JVM的行为，对开发人员透明 JVM类加载详细看下第三点，class载入JVM过程 从内存空间视角,会分配到各个空间：  每个内存空间详情可参考：《GC及JVM参数》 从类生命周期角度，分阶段：  其中类加">
@@ -399,10 +399,10 @@
 <p>1、2两步是需要开发人员参与的，而第3步是JVM的行为，对开发人员透明</p>
 <h2 id="JVM类加载"><a href="#JVM类加载" class="headerlink" title="JVM类加载"></a>JVM类加载</h2><p>详细看下第三点，class载入JVM过程</p>
 <p>从内存空间视角,会分配到各个空间：</p>
-<p><img src="http://p7c3y4vhx.bkt.clouddn.com/201809261932_365.png" alt="内存结构"></p>
+<p><img src="http://hexo.qnimages.zhuxingsheng.com/201809261932_365.png" alt="内存结构"></p>
 <p>每个内存空间详情可参考：《GC及JVM参数》</p>
 <p>从类生命周期角度，分阶段：</p>
-<p><img src="http://p7c3y4vhx.bkt.clouddn.com/201809261921_783.png" alt="类生命周期"></p>
+<p><img src="http://hexo.qnimages.zhuxingsheng.com/201809261921_783.png" alt="类生命周期"></p>
 <p>其中类加载的过程包括了<strong>加载</strong>、<strong>验证</strong>、<strong>准备</strong>、<strong>解析</strong>、<strong>初始化</strong>五个阶段。在这五个阶段中，加载、验证、准备和初始化这四个阶段发生的顺序是确定的，而解析阶段则不一定，它在某些情况下可以在初始化阶段之后开始，这是为了支持Java语言的运行时绑定（也成为动态绑定或晚期绑定）。另外注意这里的几个阶段是按顺序开始，而不是按顺序进行或完成，因为这些阶段通常都是互相交叉地混合进行的，通常在一个阶段执行的过程中调用或激活另一个阶段。</p>
 <h3 id="1-加载"><a href="#1-加载" class="headerlink" title="1.加载"></a>1.加载</h3><p>类的加载指的是将类的.class文件中的二进制数据读入到内存中，将其放在运行时数据区的方法区内，然后在堆区创建一个java.lang.Class对象，用来封装类在方法区内的数据结构。类的加载的最终产品是位于堆区中的Class对象，Class对象封装了类在方法区内的数据结构，并且向Java程序员提供了访问方法区内的数据结构的接口</p>
 <p>在加载阶段，虚拟机需要完成以下3件事情：</p>
@@ -460,7 +460,7 @@
 <li>字面量：比较接近Java语言层面，如String字符串,声明final的常量等</li>
 <li>符号引用：属于编译原理方面的概念:1、包括类和接口的全限定名 2、字段的名称和描述符3.方法的名称和描述符</li>
 </ol>
-<h6 id="常量项结构"><a href="#常量项结构" class="headerlink" title="常量项结构"></a>常量项结构</h6><p><img src="http://p7c3y4vhx.bkt.clouddn.com/201809281128_30.png" alt="常量项结构"></p>
+<h6 id="常量项结构"><a href="#常量项结构" class="headerlink" title="常量项结构"></a>常量项结构</h6><p><img src="http://hexo.qnimages.zhuxingsheng.com/201809281128_30.png" alt="常量项结构"></p>
 <p>这些内容，需要再去分析class文件详细结构，后续再学习了</p>
 <h3 id="3-初始化，为类的静态变量赋予正确的初始值"><a href="#3-初始化，为类的静态变量赋予正确的初始值" class="headerlink" title="3.初始化，为类的静态变量赋予正确的初始值"></a>3.初始化，为类的静态变量赋予正确的初始值</h3><p>类加载的最后一个阶段，除了加载阶段我们可以通过自定义类加载器参与之外，其余完全又JVM主导。到了初始化阶段，才真正开始执行程序，也就是由java转换成的class</p>
 <p>JVM负责对类进行初始化，主要对类变量进行初始化。</p>
@@ -551,7 +551,7 @@
 </ol>
 <hr>
 <p>以上，就是一个类的生命周期，这篇重点就是加载部分，如上面所说，加载阶段相对别的阶段，对开发人员而言有更强的可控性;下面学习一下类加载器相关知识</p>
-<h1 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h1><p><img src="http://p7c3y4vhx.bkt.clouddn.com/201809281552_12.png" alt="类加载器"></p>
+<h1 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h1><p><img src="http://hexo.qnimages.zhuxingsheng.com/201809281552_12.png" alt="类加载器"></p>
 <blockquote>
 <ol>
 <li><p>BootstrapClassLoader:加载路径: System.getProperty(“java.class.path”) 或直接通过 -Xbootclasspath 指定</p>
@@ -579,7 +579,7 @@
 <li><strong>缓存机制</strong>，缓存机制将会保证所有加载过的Class都会被缓存，当程序中需要使用某个Class时，类加载器先从缓存区寻找该Class，只有缓存区不存在，系统才会读取该类对应的二进制数据，并将其转换成Class对象，存入缓存区。这就是为什么修改了Class后，必须重启JVM，程序的修改才会生效</li>
 </ol>
 <h3 id="双亲委托模型"><a href="#双亲委托模型" class="headerlink" title="双亲委托模型"></a>双亲委托模型</h3><p>双亲委托的工作过程：如果一个类加载器收到了一个类加载请求，它首先不会自己去加载这个类，而是把这个请求委托给父类加载器去完成，每一个层次的类加载器都是如此，因此所有的加载请求最终都应该传送到顶层的启动类加载器中，只有当父类加载器反馈自己无法完成加载请求(它管理的范围之中没有这个类)时，子加载器才会尝试着自己去加载</p>
-<p><img src="http://p7c3y4vhx.bkt.clouddn.com/201809260947_799.png" alt=""></p>
+<p><img src="http://hexo.qnimages.zhuxingsheng.com/201809260947_799.png" alt=""></p>
 <ol>
 <li><p>当AppClassLoader加载一个class时，它首先不会自己去尝试加载这个类，而是把类加载请求委派给父类加载器ExtClassLoader去完成。</p>
 </li>
@@ -613,7 +613,7 @@
 <p>测试类<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public class ClassLoaderTest &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[]args) throws Exception &#123;</span><br><span class="line">        ClassLoaderTest test = new ClassLoaderTest();</span><br><span class="line"></span><br><span class="line">        System.out.println(test.getClass().getClassLoader());//输出sun.misc.Launcher$AppClassLoader</span><br><span class="line"></span><br><span class="line">        System.out.println(test.getClass().getClassLoader().getParent());//输出sun.misc.Launcher$ExtClassLoader</span><br><span class="line"></span><br><span class="line">        System.out.println(test.getClass().getClassLoader().getParent().getParent());//输出null</span><br><span class="line"></span><br><span class="line">        //=====测试重复加载，类路径中LoaderClass.class存在=================</span><br><span class="line">        //======虽然指定了classloader，但依然输出的是LoaderClass:sun.misc.Launcher$AppClassLoader</span><br><span class="line">        //==删除类路径下的LoaderClass.class,才会输出LoaderClass:com.jack.classloader.MyClassLoader</span><br><span class="line">        //并且loaderclass中创建的对象类加载器也是MyClassLoader</span><br><span class="line">        MyClassLoader classLoader = new MyClassLoader();</span><br><span class="line">        Class&lt;?&gt; loadClass = Class.forName(&quot;com.jack.classloader.LoaderClass&quot;, true, classLoader);</span><br><span class="line">        Method startMethod = loadClass.getMethod(&quot;loader&quot;);</span><br><span class="line">        startMethod.invoke(loadClass.newInstance());</span><br><span class="line"></span><br><span class="line">        //===当类加载器不一样时，两个class不相等</span><br><span class="line">        MyClassLoader classLoader1 = new MyClassLoader();</span><br><span class="line">        Class&lt;?&gt; loadClass1 = Class.forName(&quot;com.jack.classloader.LoaderClass&quot;, true, classLoader1);</span><br><span class="line">        System.out.println(loadClass.equals(loadClass1));//输出false</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
 <h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://blog.csdn.net/jiyiqinlovexx/article/details/51090751" target="_blank" rel="noopener">class加载时机及两种显示加载的区别</a></p>
 <p><a href="https://www.cnblogs.com/hunterCecil/p/6379197.html" target="_blank" rel="noopener">JVM类加载机制—类加载的过程</a></p>
-<p><a href="https://blog.csdn.net/w425006762/article/details/50452469" target="_blank" rel="noopener"><init>和<cinit></cinit></init></a></p>
+<p><a href="https://blog.csdn.net/w425006762/article/details/50452469" target="_blank" rel="noopener">&lt;init&gt;和&lt;clinit&gt;</a></p>
 <p><a href="https://www.jianshu.com/p/0b1dba1a1e95" target="_blank" rel="noopener">类加载原理分析&amp;动态加载Jar/Dex</a></p>
 <p><a href="https://blog.csdn.net/mweibiao/article/details/79516708" target="_blank" rel="noopener">java类的主动使用/被动使用</a></p>
 
@@ -762,7 +762,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">4</span>
+              <span class="site-state-item-count">5</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -866,7 +866,7 @@
 </div>
 <div class="theme-info">
   <div class="powered-by"></div>
-  <span class="post-count">共12.4k字</span>
+  <span class="post-count">共13.5k字</span>
 </div>
 
 
