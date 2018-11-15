@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://blog.zhuxingsheng.com/blog/a-simple-explanation-of-spring-transaction.html</loc>
+    
+    <lastmod>2018-11-11T13:29:20.856Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://blog.zhuxingsheng.com/blog/classloader.html</loc>
     
     <lastmod>2018-10-30T12:40:38.398Z</lastmod>
