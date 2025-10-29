@@ -1,0 +1,138 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <title>各种排序算法的动画比较动态演示</title>
+    <meta name="keywords" content="排序算法的动画比较动态演示,排序算法动态演示,在线格式化,在线工具,在线工具库" />
+    <meta name="description" content="排序算法的动画比较动态演示,排序算法动态演示,在线格式化,在线工具,在线工具库" />
+
+    <link rel="icon" href="http://www.zhuxingsheng.com/favicon.ico" mce_href="/favicon.ico" type="image/x-icon" />
+    <link href="../Style/css/bootstrap3.5min.css" rel="stylesheet" type="text/css" />
+    <link href="../Style/css/mainmin.css~201608142240.css" rel="stylesheet" type="text/css" />
+    <!--[if lt IE 9]>
+      <script type="text/javascript" src="../Style/js/html5shiv.min.js"></script>
+      <script type="text/javascript" src="../Style/js/respond.min.js"></script>
+    <![endif]-->
+    
+
+</head>
+<body onload="init();" class="VisualizationMainPage">
+
+
+<!-- Copyright � 2005. Spidersoft Ltd -->
+<style>
+A.applink:hover {border: 2px dotted #DCE6F4;padding:2px;background-color:#ffff00;color:green;text-decoration:none}
+A.applink       {border: 2px dotted #DCE6F4;padding:2px;color:#2F5BFF;background:transparent;text-decoration:none}
+A.info          {color:#2F5BFF;background:transparent;text-decoration:none}
+A.info:hover    {color:green;background:transparent;text-decoration:underline}
+</style>
+
+<!-- /Copyright � 2005. Spidersoft Ltd -->
+<!-- header start -->
+<div class="navbar navbar-default navbar-static-top navbar-fixed-top">
+    <div class="jz container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/tools">在线工具</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse" role="navigation">
+            <span style="float: right"><a href="/tools"><strong>返回工具列表</strong></a>
+	</span>
+        </div>
+    </div>
+</div>
+<!-- header end -->
+
+    <!--内容开始-->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12 col10main">
+                
+    <div class="accordion" id="accordion2">
+        <div class="accordion-group">
+            
+            
+<ul class="nav nav-tabs hbflag">
+    <li role="presentation" class="active"><a>排序算法演示</a></li>
+</ul>
+
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span></button>
+                各种排序算法的动画比较动态演示（排序算法动态演示功能，让你对各种排序算法有更深刻的了解）
+            </div>
+            
+            <div class="panel">
+                <div class="panel-body">
+                    <form id="form1" class="form-horizontal" action="/sort/" method="post">
+                    <div class="form-group">
+                        <label class="col-sm-12 control-label">
+                            <div id="container">
+                                <div id="mainContent">
+                                    <div id="algoControlSection">
+                                        <table id="AlgorithmSpecificControls">
+                                        </table>
+                                    </div>
+                                    <canvas id="canvas" width="1000" height="300"></canvas>
+                                    <div id="generalAnimationControlSection">
+                                        <table id="GeneralAnimationControls">
+                                        </table>
+                                    </div>
+                                </div>
+                                <div id="footer">
+                                    <p>
+                                    </p>
+                                </div>
+                            </div>
+                        </label>
+                    </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+            </div>
+        </div>
+    </div>
+
+
+<div class="copyright" id="FootLinkStr">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <span>Copyright ©  <a href="http://www.zhuxingsheng.com/">zhuxingsheng.com - 码农戏码</a></span> |
+                <span>Java技术交流群：17567462 </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a class="gotop" href="#" title="返回顶部" style="display: none;"><span class="arrow"></span>
+    <span class="arrow lit"></span></a>
+    
+    <script src="../Style/js/jquery-1.11.3.min.js" type="text/javascript"></script>
+    <script src="../Style/js/bootstrap3.5min.js" type="text/javascript"></script>
+    
+    <script src="../Style/js/js/sort/jquery-1.5.2.min.js" type="text/javascript"></script>
+    <script type="application/javascript" src="../Style/js/js/sort/jquery-ui-1.8.11.custom.min.js"></script>
+    <script type="application/javascript" src="../Style/js/js/sort/CustomEvents.js"> </script>
+    <script type="application/javascript" src="../Style/js/js/sort/UndoFunctions.js"> </script>
+    <script type="application/javascript" src="../Style/js/js/sort/AnimatedObject.js"> </script>
+    <script type="application/javascript" src="../Style/js/js/sort/AnimatedLabel.js"> </script>
+    <script type="application/javascript" src="../Style/js/js/sort/AnimatedCircle.js"> </script>
+    <script type="application/javascript" src="../Style/js/js/sort/AnimatedRectangle.js"> </script>
+    <script type="application/javascript" src="../Style/js/js/sort/AnimatedLinkedList.js"> </script>
+    <script type="application/javascript" src="../Style/js/js/sort/HighlightCircle.js"> </script>
+    <script type="application/javascript" src="../Style/js/js/sort/Line.js"> </script>
+    <script type="application/javascript" src="../Style/js/js/sort/ObjectManager.js"> </script>
+    <script type="application/javascript" src="../Style/js/js/sort/AnimationMain.js"> </script>
+    <script type="application/javascript" src="../Style/js/js/sort/Algorithm.js"> </script>
+    <script type="application/javascript" src="../Style/js/js/sort/ComparisonSort.js"> </script>
+
+    <script src="../Style/js/ZeroClipboard.min.js" type="text/javascript"></script>
+    <script src="../Style/js/mainjs.js~20160814" type="text/javascript"></script>
+</body>
+</html>

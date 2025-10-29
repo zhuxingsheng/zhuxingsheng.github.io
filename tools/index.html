@@ -1,0 +1,247 @@
+
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="generator" content="Movable Type 5.2.2" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="description" content="彪悍的人生需要书写">
+<meta name="keywords" content="motain源码,spring源码,码农,游戏开发,源码分析,java互联网,排序算法动态演示,在线格式化,在线工具,在线工具库">
+<meta property="og:type" content="website">
+<meta property="og:title" content="码农戏码">
+<meta property="og:url" content="http://www.zhuxingsheng.com/tools/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="彪悍的人生需要书写">
+<meta property="og:locale" content="zh-Hans">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="码农戏码">
+<meta name="twitter:description" content="彪悍的人生需要书写">
+    
+    <title>在线解析格式化工具 - 码农戏码</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.ico?v=5.1.4">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon16.ico?v=5.1.4">
+
+    <link href="Style/css/bootstrap3.5min.css" rel="stylesheet" type="text/css" />
+    <link href="Style/css/mainmin.css~201608142240.css" rel="stylesheet" type="text/css" />
+    <!--[if lt IE 9]>
+      <script type="text/javascript" src="Style/js/html5shiv.min.js"></script>
+      <script type="text/javascript" src="Style/js/respond.min.js"></script>
+    <![endif]-->
+    
+
+</head>
+<body onload="init();" class="VisualizationMainPage">
+<!-- header start -->
+<div class="navbar navbar-default navbar-static-top navbar-fixed-top">
+    <div class="jz container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/tools">在线工具</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse" role="navigation">
+            <span style="float: right"><a href="http://www.zhuxingsheng.com/blog"><strong>返回首页</strong></a>
+	</span>
+        </div>
+    </div>
+</div>
+<!-- header end -->
+<!--内容开始-->
+<div class="container">
+<div class="row">
+    <div class="col-md-12 col10main" id="footermaps">
+        <div class="widget">
+            <h4 class="title">在线工具导航</h4>
+            <div class="typetags">
+                <div class="footermap">
+                    <!--<ul class="list-inline">-->
+                        <!--<li><b>Json在线工具</b>：<a href="http://www.zhuxingsheng.com/" class="hottag">Json格式化</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/jsoncheck/" class="greentag"-->
+                            <!--target="_blank">Json在线视图</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/jsontomodel/" class="hottag"-->
+                            <!--target="_blank">Json生成C#实体类</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/json/" target="_blank">Json高亮视图</a></li><li>-->
+                            <!-- - </li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/json2java/" class="hottag"-->
+                            <!--target="_blank">Json生成Java实体类</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/jsonzip/" class="greentag"-->
+                            <!--target="_blank">Json压缩转义</a></li><li>- </li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/xmltojson/" class="greentag"-->
+                            <!--target="_blank">Json/Xml格式互转</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/jsondiff/" target="_blank">Json解析对比</a></li>-->
+                    <!--</ul>-->
+                    <!--<ul class="list-inline">-->
+                        <!--<li><b>在线生成器</b>：<a href="http://www.zhuxingsheng.com/qc/" class="greentag"-->
+                            <!--target="_blank">二维码生成器</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/qclogo/" target="_blank">带Logo二维码</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/qcdecode/" class="hottag" target="_blank">-->
+                            <!--二维码解码器</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/tshorturl/" target="_blank">新浪短网址</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/urlcode/" class="greentag"-->
+                            <!--target="_blank">Url网址16进制加密</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/htpasswd/" target="_blank">htpasswd生成器</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/openjs/" target="_blank">Open参数生成器</a></li>-->
+                    <!--</ul>-->
+                    <!--<ul class="list-inline">-->
+                        <!--<li><b>在线查询工具</b>：<a href="http://www.zhuxingsheng.com/phone/" target="_blank">手机号码归属地</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/ip/" target="_blank" class="hottag">-->
+                            <!--IP地址归属地</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/idcard/" class="greentag" target="_blank">-->
+                            <!--身份证信息查询</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/urlsafe/" target="_blank">网址安全性检测</a></li>-->
+                    <!--</ul>-->
+                    <ul class="list-inline">
+                        <li><b>代码压缩、格式化</b>：<a href="http://www.zhuxingsheng.com/tools/online-markdown/"
+                            class="greentag" target="_blank">微信公众号格式化工具</a></li>
+                        <!--<li>-</li><li><a href="http://www.zhuxingsheng.com/cssforamt/" class="greentag"-->
+                            <!--target="_blank">Css压缩/格式化</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/sqlforamt/" target="_blank">Sql压缩/格式化</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/xmlformat/" target="_blank">Xml压缩/格式化</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/htmlfilter/" target="_blank">Html/Js/Css过滤</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/exceltojson/" class="greentag"-->
+                            <!--target="_blank">Excel/Csv转Json格式</a></li>-->
+                    </ul>
+                    <!--<ul class="list-inline">-->
+                        <!--<li><b>Html脚本转换</b>：<a href="http://www.zhuxingsheng.com/htmltojs/"-->
+                            <!--class="hottag" target="_blank">Html/Js拼接转换</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/jstohtml/" target="_blank">Html/Js输出转换</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/htmltojsp/" target="_blank"-->
+                            <!--class="hottag">Html/C#/JSP代码转换</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/csv2tb/" target="_blank">Csv转成Html表格</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/ubbhtml/" target="_blank">Html/UBB转换</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/htmltoall/" class="greentag"-->
+                            <!--target="_blank">Html转其他语言脚本</a></li>-->
+                    <!--</ul>-->
+                    <!--<ul class="list-inline">-->
+                        <!--<li><b>常用转换工具</b>：<a href="http://www.zhuxingsheng.com/wordspell/" target="_blank">汉字转拼音</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/simpletotra/" target="_blank">-->
+                            <!--简繁体相互转换</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/unix/" class="greentag" target="_blank">-->
+                            <!--Unix时间戳</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/mars/" target="_blank">火星文转换</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/hexcon/" target="_blank">进制转换</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/fullhalf/" target="_blank">全角半角转换</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/money/" class="greentag" target="_blank">-->
+                            <!--人民币大写转换</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/ensmall/" target="_blank">字母大小写转换</a></li>-->
+                        <!--<li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/rgbhex/" target="_blank" class="hottag">-->
+                            <!--HEX16色与RGB互转</a></li>-->
+                    <!--</ul>-->
+                    <!--<ul class="list-inline">-->
+                        <!--<li><b>在线排版转换</b>：<a href="http://www.zhuxingsheng.com/colortext/" target="_blank">Html特效汉字</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/ennum/" class="hottag" target="_blank">-->
+                            <!--在线字数统计</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/styleformat/" target="_blank">-->
+                            <!--传统中文排版</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/distinct/" target="_blank">字符去重工具</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/quality/" target="_blank">分解质因数</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/editor/" target="_blank">Html在线编辑器</a></li>-->
+                    <!--</ul>-->
+                    <!--<ul class="list-inline">-->
+                        <!--<li><b>站长工具</b>：<a href="http://www.zhuxingsheng.com/htmldebug/" class="greentag"-->
+                            <!--target="_blank">在线执行JS</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/reg/" class="greentag" target="_blank">-->
+                            <!--正则验证</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/httpurl/" target="_blank">Post抓取</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/meta/" class="greentag" target="_blank">-->
+                            <!--网页Meta标签</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/robots/" class="greentag" target="_blank">-->
+                            <!--Robots文件生成</a></li>-->
+                        <!--<li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/client/" class="greentag" target="_blank">-->
+                            <!--获取浏览器信息</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/reurl/" target="_blank">定时刷新网址</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/ping/" class="hottag" target="_blank">-->
+                            <!--Ping在线检测</a></li>-->
+                        <!--<li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/whois/" class="hottag" target="_blank">-->
+                            <!--Whois查询</a></li>-->
+                        <!--<li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/alexa/" target="_blank">Alexa查询</a></li>-->
+                    <!--</ul>-->
+                    <!--<ul class="list-inline">-->
+                        <!--<li><b>编码、解码</b>：<a href="http://www.zhuxingsheng.com/utf8/" class="greentag"-->
+                            <!--target="_blank">UTF-8编码转换</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/unicode/" target="_blank">Unicode/ASCII编码互转</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/urlencode/" class="greentag"-->
+                            <!--target="_blank">URL编码/解码</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/img2base64/" class="hottag"-->
+                            <!--target="_blank">图片/Base64编码转换</a></li>-->
+                    <!--</ul>-->
+                    <!--<ul class="list-inline">-->
+                        <!--<li><b>加密、解密</b>：<a href="http://www.zhuxingsheng.com/md5/" target="_blank">MD5加密</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/escape/" target="_blank">Escape加密/解密</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/base64/" class="greentag" target="_blank">-->
+                            <!--Base64加密/解密</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/textencrypt/" target="_blank">-->
+                            <!--散列、哈希加/解密</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/sha/" target="_blank">SHA1加密</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/thunder/" target="_blank">迅雷快车URL加/解密</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/allencrypt/" class="greentag"-->
+                            <!--target="_blank">最全的加解密工具</a></li>-->
+                    <!--</ul>-->
+                    <!--<ul class="list-inline">-->
+                        <!--<li><b>在线对照表</b>：<a href="http://www.zhuxingsheng.com/useragent/" class="hottag"-->
+                            <!--target="_blank">浏览器User-Agent</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/contenttype/" class="greentag"-->
+                            <!--target="_blank">Content-Type文件扩展名</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/httpcode/" class="greentag"-->
+                            <!--target="_blank">HTTP状态码</a></li><li>-</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/portcode/" target="_blank">HTTP/TCP/UDP端口</a></li><li>-->
+                            <!-- -</li>-->
+                        <!--<li><a href="http://www.zhuxingsheng.com/asciilist/" target="_blank">Ascii码对照表</a></li>-->
+                        <!--<li>-</li><li><a href="http://www.zhuxingsheng.com/escapechar/" target="_blank">-->
+                            <!--HTML特殊字符转义表</a></li>-->
+                        <!--<li>-</li><li><a href="http://www.zhuxingsheng.com/httprequest/" target="_blank">-->
+                            <!--Http请求方法</a></li>-->
+                    <!--</ul>-->
+                    <ul class="list-inline">
+                        <li><b>其他在线工具</b>：
+                        <li><a href="/tools/sort/sort.html" target="_blank">排序算法演示</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<div class="copyright" id="FootLinkStr">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <span>Copyright ©  <a href="http://www.zhuxingsheng.com/">zhuxingsheng.com - 码农戏码</a></span> |
+                <span>Java技术交流群：17567462 </span>
+            </div>
+        </div>
+    </div>
+</div>
+<a class="gotop" href="#" title="返回顶部" style="display: none;"><span class="arrow"></span>
+    <span class="arrow lit"></span></a>
+    <script src="Style/js/jquery-1.11.3.min.js" type="text/javascript"></script>
+</body>
+</html>
