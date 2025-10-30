@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="七牛CEO许式伟讲：架构的本质是业务的正交分解。 好独特的见解。 做架构到底是做什么？在《首席架构师的打怪升级之路》中提到：架构师是具备架构能力的人，架构能力是指为相对复杂的场景设计并引导一个或多个研发团队，来实施结构化软件系统的能力。 关键信息：复杂场景结构化 在《软件设计之美》中总结了软件复杂性来自业务复杂性和技术复杂性。应对的办法是通过分而治之，控制规模大小；保持结构清晰与一致性来降低认知负">
+<meta property="og:type" content="article">
+<meta property="og:title" content="架构的本质是业务的正交分解">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/the-essence-of-architecture-is-orthogonal-decomposition-of-services.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="七牛CEO许式伟讲：架构的本质是业务的正交分解。 好独特的见解。 做架构到底是做什么？在《首席架构师的打怪升级之路》中提到：架构师是具备架构能力的人，架构能力是指为相对复杂的场景设计并引导一个或多个研发团队，来实施结构化软件系统的能力。 关键信息：复杂场景结构化 在《软件设计之美》中总结了软件复杂性来自业务复杂性和技术复杂性。应对的办法是通过分而治之，控制规模大小；保持结构清晰与一致性来降低认知负">
+<meta property="og:locale">
+<meta property="article:published_time" content="2022-12-11T06:00:00.000Z">
+<meta property="article:modified_time" content="2023-02-11T06:00:38.142Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="架构">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/the-essence-of-architecture-is-orthogonal-decomposition-of-services.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>架构的本质是业务的正交分解 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/the-essence-of-architecture-is-orthogonal-decomposition-of-services.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          架构的本质是业务的正交分解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-12-11 14:00:00" itemprop="dateCreated datePublished" datetime="2022-12-11T14:00:00+08:00">2022-12-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-02-11 14:00:38" itemprop="dateModified" datetime="2023-02-11T14:00:38+08:00">2023-02-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a href="https://note.youdao.com/">七牛CEO许式伟</a>讲：<strong>架构的本质是业务的正交分解。</strong></p>
+<p>好独特的见解。</p>
+<h1 id="做架构到底是做什么？"><a href="#做架构到底是做什么？" class="headerlink" title="做架构到底是做什么？"></a>做架构到底是做什么？</h1><p>在<a href="http://www.zhuxingsheng.com/blog/the-way-to-become-the-chief-architect.html">《首席架构师的打怪升级之路<br>》</a>中提到：架构师是具备架构能力的人，架构能力是指为相对复杂的场景设计并引导一个或多个研发团队，来实施结构化软件系统的能力。</p>
+<p>关键信息：<strong>复杂场景结构化</strong></p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/how-to-make-software-design-beautiful.html">《软件设计之美》</a>中总结了软件复杂性来自业务复杂性和技术复杂性。应对的办法是通过分而治之，控制规模大小；保持结构清晰与一致性来降低认知负荷。并且要有一定的前瞻性，拥有可扩展性，能应对变化。</p>
+<p>关键信息：<strong>规模可控、结构清晰、应对变化</strong></p>
+<p>总结以上两篇的关键信息：做架构就是<strong>通过规模可控、结构清晰的小模块去组合成大模块，进而形成更复杂的软件系统。并且拥有足够的扩展性应对未来的变化。</strong></p>
+<p>架构的核心就是【组合与应对变化】；简洁点，三个字：<strong>“分、合、变”</strong>。</p>
+<p>这些其实与“业务的正交分解”方法是一脉相承的。</p>
+<h1 id="正交分解"><a href="#正交分解" class="headerlink" title="正交分解"></a>正交分解</h1><p>既然是业务的正交分解，自然得理解正交是什么意思？</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/coping-with-change.html">《应对变化》</a>详细介绍过正交设计。</p>
+<p>简而言之，主要是三个要点：</p>
+<p>1、消除重复</p>
+<p>2、分离关注点</p>
+<p>3、管理依赖：缩小依赖的范围和向稳定的方向依赖</p>
+<p>想要把一个复杂的系统拆解成一个一个可被理解掌控、并且又能被结构化地合并成大模块的小模块。正交设计是必须的。</p>
+<p>这考验了架构的拆解能力，拆解的合理性就是解耦的合理性；并能在合并时每一个模块保持高内聚。</p>
+<h1 id="开闭原则"><a href="#开闭原则" class="headerlink" title="开闭原则"></a>开闭原则</h1><p>正交设计主要应对的是“分、合”，那么怎么应对“变”？</p>
+<p>就得提到著名的开闭原则。开闭原则是架构治理的根本哲学。</p>
+<p>之前也整理了下OCP原则，<a href="http://www.zhuxingsheng.com/blog/ocp-of-solid.html">《SOLID之OCP》</a>，只要我们面向接口编程，就能大概率的符合开闭原则。当时的理解回头看还是比较肤浅的。</p>
+<p>一些人对开闭原则的错误解读，认为开闭原则不鼓励修改软件的代码来响应新需求。这显然比较极端。</p>
+<p>一个软件产品只要在其生命周期内，就会不断发生变化。变化是一个事实，需要让软件去适应变化。我们应该在设计时尽量适应这些变化，以提高项目的稳定性和灵活性，真正实现“拥抱变化”。</p>
+<p>其实，开闭原则的背后，是<strong>推崇模块业务的确定性</strong>。可以修改模块代码的缺陷，但不要去随意调整模块的业务范畴，增加功能或减小功能都不鼓励。这意味着模块的业务变更是需要极其谨慎的，需要经得起推敲的。</p>
+<p>开闭原则指出尽量通过扩展软件实体的行为来应对变化，满足新的需求，而不是通过修改现有代码来完成变化，<strong>它是为软件实体的未来事件而制定的对现行开发设计进行约束的一个原则。</strong></p>
+<p>总结一下，开闭原则就两点：</p>
+<p>1、模块的业务要稳定。当要修改模块业务时，不如实现一个新业务模块。而实现一个新的业务模块来完成新的业务范畴，是一件轻松的事。这个角度，鼓励写“只读”的业务模块，一经设计不可修改。需要变化不如把它归档，放弃掉。这种模块业务只读的思想，是架构治理的基础哲学。</p>
+<p>2、模块的业务变化点，简单一点，通过回调函数或者接口开放出去，交给其他业务模块。复杂一点，通过引入插件机制把系统分解为“最小化的核心系统+多个彼此正交的周边系统”。</p>
+<blockquote>
+<p>将开闭原则应用到业务系统。业务对外只读，意味着不可变，但不变的业务生命周期是很短暂的，所以要可扩展。要扩展还要不变，就你倒逼着要做兼容，而兼容可能导致现有的功能职责不单一，这又倒逼着要对现有的功能做再抽象，以适应更广的“单一职责”。</p>
+</blockquote>
+<blockquote>
+<p>所以不改是不可能的，只是改的结果应当是让项目往更稳定方向发展，而这很难。无论是新的抽象还是职责范围的扩张，需要强大的分析能力和精湛的设计。</p>
+</blockquote>
+<p>这种不变与变其实也印证了架构第一定律：<strong>一切都是权衡</strong></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/several-package-styles-of-ddd-project-code-model.html" rel="prev" title="DDD工程代码模型的几种包风格">
+      <i class="fa fa-chevron-left"></i> DDD工程代码模型的几种包风格
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/complexity-brought-by-interface-isolation-principle.html" rel="next" title="接口隔离原则带来的复杂性">
+      接口隔离原则带来的复杂性 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%81%9A%E6%9E%B6%E6%9E%84%E5%88%B0%E5%BA%95%E6%98%AF%E5%81%9A%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">做架构到底是做什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%A3%E4%BA%A4%E5%88%86%E8%A7%A3"><span class="nav-number">2.</span> <span class="nav-text">正交分解</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E9%97%AD%E5%8E%9F%E5%88%99"><span class="nav-number">3.</span> <span class="nav-text">开闭原则</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

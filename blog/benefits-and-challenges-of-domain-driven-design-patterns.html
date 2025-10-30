@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="《软件学报》在2021年第32卷第9期刊登了一篇论文：《领域驱动设计模式的收益与挑战:系统综述》。这篇论文是学术界在这一领域开山之作。 论文是对2003~2019年之间发表的相关文献进行识别、筛选、汇总和分析。 揭示DDDP的应用情况，即哪些DDDP被应用到了软件开发中，以及其所带来的收益、挑战及相应的缓解挑战方法。 对于长期在DDD中折腾的人，值得一读。 一是可以看看学术界的研究成果 二是对比自">
+<meta property="og:type" content="article">
+<meta property="og:title" content="领域驱动设计模式的收益与挑战">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/benefits-and-challenges-of-domain-driven-design-patterns.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="《软件学报》在2021年第32卷第9期刊登了一篇论文：《领域驱动设计模式的收益与挑战:系统综述》。这篇论文是学术界在这一领域开山之作。 论文是对2003~2019年之间发表的相关文献进行识别、筛选、汇总和分析。 揭示DDDP的应用情况，即哪些DDDP被应用到了软件开发中，以及其所带来的收益、挑战及相应的缓解挑战方法。 对于长期在DDD中折腾的人，值得一读。 一是可以看看学术界的研究成果 二是对比自">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211113145601_1636786561.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211113161210_1636791130.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211113162647_1636792007.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211113163048_1636792248.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211113211041_1636809041.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211113211103_1636809063.jpg?imageMogr2/thumbnail/!50p">
+<meta property="article:published_time" content="2021-11-11T06:21:00.000Z">
+<meta property="article:modified_time" content="2021-11-17T06:22:07.849Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20211113145601_1636786561.jpg?imageMogr2/thumbnail/!50p">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/benefits-and-challenges-of-domain-driven-design-patterns.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>领域驱动设计模式的收益与挑战 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/benefits-and-challenges-of-domain-driven-design-patterns.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          领域驱动设计模式的收益与挑战
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-11-11 14:21:00" itemprop="dateCreated datePublished" datetime="2021-11-11T14:21:00+08:00">2021-11-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-17 14:22:07" itemprop="dateModified" datetime="2021-11-17T14:22:07+08:00">2021-11-17</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>《软件学报》在2021年第32卷第9期刊登了一篇论文：<a href="http://www.jos.org.cn/jos/article/abstract/6275?st=article_issue">《领域驱动设计模式的收益与挑战:系统综述》</a>。这篇论文是学术界在这一领域开山之作。</p>
+<p>论文是对2003~2019年之间发表的相关文献进行识别、筛选、汇总和分析。</p>
+<p>揭示DDDP的应用情况，即哪些DDDP被应用到了软件开发中，以及其所带来的收益、挑战及相应的缓解挑战方法。</p>
+<p>对于长期在DDD中折腾的人，值得一读。</p>
+<p>一是可以看看学术界的研究成果</p>
+<p>二是对比自己实践，是否在康庄大道上</p>
+<p>如果你对学术性论文不感兴趣，可以仔细阅读这篇文章，我对论文做些简单摘抄，对比一下自己实践感悟</p>
+<h1 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h1><p>论文先对DDD的一些概念、特性作了介绍</p>
+<p>定义：</p>
+<blockquote>
+<p>DDD是一种软件设计中应该遵循的思维方式，其目标在于加快具有复杂需求的软件项目的研发速度</p>
+</blockquote>
+<p>理论：</p>
+<blockquote>
+<p>通过构建领域模型来解决软件开发的复杂性问题。因为在大多数软件项目中，最困难的往往是解决业务领域复杂性，而非技术复杂性</p>
+</blockquote>
+<p>特征：</p>
+<blockquote>
+<p>设计与开发的绑定，DDD强调软件设计概念必须在开发过程中得以成功实现</p>
+</blockquote>
+<p>DDDP:</p>
+<blockquote>
+<p>DDD方法中，将一组设计实践、技术和原则合并为标准模式，即所谓的领域驱动设计模式(domain driven design pattern，简称DDDP)</p>
+</blockquote>
+<h2 id="基本原则"><a href="#基本原则" class="headerlink" title="基本原则"></a>基本原则</h2><ul>
+<li>Evans强调设计概念必须在代码中成功实现，否则它们将会变成抽象的讨论。DDD通过引入模型驱动设计建模范式及其构造块，弥补模型与可运行软件之间的差距</li>
+<li>DDD提倡迭代开发，领域驱动设计与具体实现过程间紧密关系，使得DDD比其他软件设计方法更具实用性</li>
+<li>DDD追求领域模型需要依靠头脑风暴的创造性和对领域的深入了解，因此在实践过程中，开发人员与领域专家之间需要展开紧密协作</li>
+<li>DDD是一种软件设计方法，而任何设计出来的领域模型都应该与架构无关。也就是除了领域模型，在软件开发过程中仍然需要架构设计，比如微服务架构或六边形架构</li>
+</ul>
+<h2 id="DDD设计模式概览"><a href="#DDD设计模式概览" class="headerlink" title="DDD设计模式概览"></a>DDD设计模式概览</h2><p>DDD由Evans作为一种大型模式语言引入，其由一组相互关联的模式组成。</p>
+<p>模式语言提供了讨论问题的交流术语，它定义了特定场景、特定问题的解决方案，其主要目的是帮助开发者解决在设计和编程中遇到的通用问题。</p>
+<p>模式语言在软件工程中被广泛地应用，比如设计模式、企业架构模式等。</p>
+<p>DDD与DDDP的关系，正如同OOD与面向对象设计模式的关系。</p>
+<p>对于DDD，最基本的模式是通用语言，它是一种供不同涉众（如开发人员和领域专家）共同使用的语言，主要用来辅助领域建模，，</p>
+<p>一种通用语言只适用于单个限界上下文，后者作为一个电焊工的模型边界来维护模型的完整性。</p>
+<p>根据Vernon的观点，除了通用语言之外的DDDP，要么属于战略设计模式，要么属于战术设计模式。</p>
+<h3 id="战略设计模式"><a href="#战略设计模式" class="headerlink" title="战略设计模式"></a>战略设计模式</h3><p>旨在应对具有多个领域模型的大型软件开发项目的复杂性，其中，每个领域模型都属于单独的限界上下文。</p>
+<p>限界上下文以外的其他战略设计模式关注如何管理不同限界上下文之间的关系</p>
+<p>比如上下文映射负责描述不同领域模型间的通信，而职责分层则站在更高的抽象层级来组织不同领域模型间的概念依赖关系</p>
+<h3 id="战术设计模式"><a href="#战术设计模式" class="headerlink" title="战术设计模式"></a>战术设计模式</h3><p>负责根据通用语言对单个限界上下文进行领域建模，并结合面向对象原则绑定领域建模和编码实现。包括实体、值对象、聚合、服务、资源库等。</p>
+<p>实体和值对象用于对具有不同领域特征的领域对象进行建模；</p>
+<p>聚合将一组领域对象绑定为一个整体，以控制事务；</p>
+<p>服务则充当领域模型接口，具有无状态特点；</p>
+<p>资源库用于封装领域对象的数据库访问操作</p>
+<hr>
+<p><strong>感悟</strong></p>
+<p>对于基础信息的介绍，可以说基本是符合当前DDD的理论知识，只是表述方式有所差异。但鉴于每个人认知差距，可能抓住的重点信息不同，从我个人认知角度，我来点评一下：</p>
+<p>首先是定义，论文指出<strong>DDD是一种思维方式</strong>。</p>
+<p>这是种很新颖的定义。在DDD系列文章中，我们也去追寻过DDD定义。但这种定义是第一次听说。</p>
+<p><strong>软件设计中最困难的是什么？</strong></p>
+<p>论文指出是解决业务领域复杂性，而非技术复杂性。</p>
+<p>这个应该会随着软件复杂性越来越高，人们的认知会越来越深。现在技术人员还是过于看重技术，甚至对技术驱动业务深信不疑。现实是怎么样？现在工具人的流行说法已经足以说明，<em>驱动业务是少见的，而跟随业务是常态，成就业务已经了不得</em>。</p>
+<p>为什么瀑布模型不适合软件行业，就因为隐藏的业务知识太多。不可能一次性就把所有业务知识提取出来，而且在软件开发进程中，业务可能还在变化中发展。</p>
+<p>借助敏捷中迭代式开发，一次次与领域专家交流的深入，才能慢慢挖掘出隐藏在业务知识中的复杂性。</p>
+<p>而DDD正是通过模型去捕获领域知识，对领域复杂性进行简化和提炼。</p>
+<p>所以整合起来看，DDD是一种迭代改进试错法，还不知道什么时候该停止，甚至停止的时候你也不知道得到的到底是垃圾还是宝藏。</p>
+<p><strong>设计与开发绑定</strong></p>
+<p>这一点，是相当重要。是DDD与别的分析方法重要区别。</p>
+<p>为什么DDD如此流行，可能跟很多技术大词一样，正如之前在中台文章所说，可能是应激者怕掉队，也可能是投机者想上位，很多人还是把它当成一种分析方法。</p>
+<p>如果只是一种分析法，我们之前使用的ER分析，OOA，都已经够用了。</p>
+<p>对于现流行说的DDD帮助微服务划分，那只是DDD中界限上下文这一个点，而且服务划分也不能只考虑领域界限，还有其它因素。</p>
+<p>因此需要多思考，为什么需要DDD，DDD到底有什么独到之处？</p>
+<p>我个人认为理由在Evans著作中提到的知识消化。学习者过多的精力放在了战术部分，什么是实体、领域服务、repository等等这些元素上。</p>
+<p>在编程实践中，我们希望实实在在的用上DDD元素，才表示我们是在进行DDD，而其实没有DDD，对OO的深刻理解，充血模型是自然而然的。</p>
+<p>然而，如果没有DDD战略部分，只有DDD战术元素，那只是<strong>DDD编码风格</strong>，而编码风格，没有高低之下，贫贱之分。</p>
+<p>何为知识消化？我特此画张图：</p>
+<p><img src="http://images.zhuxingsheng.com/20211113145601_1636786561.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>业务方与技术方沟通业务需求，在交流中，对部分业务知识达到共识，这部分交流语言被标准化为统一语言；</p>
+<p>在不断地交流中，对于双方达成共识部分，凝炼成到模型中，对模型review，以确定描述了业务实际情况，发现缺乏或不适当概念时，进行修正，指取新的统一语言；</p>
+<p>当模型确认后，以模型为样本，使用代码实现它；</p>
+<p>上面是正向流程，技术方在重构代码时，也会同步修改模型，进来提取出新的统一语言，反哺业务方。</p>
+<p>通过正逆流程，达到修改统一语言就是修改模型，修改模型也就是修改代码；修改代码也是修改模型，修改模型也相继修改统一语言。</p>
+<p>这样打破了知识壁垒，给予业务方与技术方一种更好的协同方式。这就是DDD的精髓。让分析模型与实现模型融合了，不再像以前的方法一样分裂。</p>
+<hr>
+<h1 id="研究结果"><a href="#研究结果" class="headerlink" title="研究结果"></a>研究结果</h1><p><img src="http://images.zhuxingsheng.com/20211113161210_1636791130.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>如上图所示，应用DDDP的相关活动主要分为4类：领域分析、领域设计、领域模型实现和普适性活动。</p>
+<p>领域分析：与领域专家一起探索领域知识的过程。经过领域，将得到初始的领域模型；</p>
+<p>领域设计：指将模型分成不同部分（每个部分对应着独立的限界上下文），然后扩展和细化每个限界上下文的过程，以此为开发实现做准备</p>
+<p>领域模型实现：将模型转换为可运行代码，这一过程还通过检查模型为模型设计提供反馈</p>
+<p>普适性活动：在应用DDDP时，可能在领域分析，领域设计，领域模型实现这3个阶段都会发生的模切活动，比如构建和更新通用语言</p>
+<h2 id="应用情况"><a href="#应用情况" class="headerlink" title="应用情况"></a>应用情况</h2><p>在基础研究集合中，出现频次到达3次以上的DDDP，以及对应的描述和提及这些模式的研究文献</p>
+<p><img src="http://images.zhuxingsheng.com/20211113162647_1636792007.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>这些模式出现的频次并不平衡，战术设计模式被提及的频次明显高于战略设计，表明开发人员更容易注意到领域驱动设计的战术设计模式。</p>
+<p>总体而言，目前只有31.1%的DDDP在基础研究中得到探讨，这也表明当前学术界对DDDP的研究存在不足。</p>
+<h2 id="应用DDDP的收益"><a href="#应用DDDP的收益" class="headerlink" title="应用DDDP的收益"></a>应用DDDP的收益</h2><p>下图展示了应用DDDP所带来的收益在领域分析、领域模型实现以及普适性活动中的体现情况</p>
+<p><img src="http://images.zhuxingsheng.com/20211113163048_1636792248.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>对每个阶段带来的收益细节详述一下</p>
+<h3 id="领域设计"><a href="#领域设计" class="headerlink" title="领域设计"></a>领域设计</h3><p>应用DDDP收益在于使各个领域之间依赖关系更加明确，上下文映射和职责分层用于组织系统的不同部分：</p>
+<p>前者表示不同限界上下文之间的关系，每个上下文表示一个特定的领域；</p>
+<p>后者根据领域对象职责，将它们组织成具有清晰依赖关系的层次结构</p>
+<p>帮助开发人员更加深入地了解系统，降低认知复杂性，有助于分析系统架构</p>
+<h3 id="领域模型实现"><a href="#领域模型实现" class="headerlink" title="领域模型实现"></a>领域模型实现</h3><p>应用DDDP有助于领域模型的落地实现。</p>
+<h3 id="普适性活动"><a href="#普适性活动" class="headerlink" title="普适性活动"></a>普适性活动</h3><p>可以提升软件架构的质量属性，如可维护性、可扩展性、可重用性和可测试性等</p>
+<h2 id="应用DDDP的挑战"><a href="#应用DDDP的挑战" class="headerlink" title="应用DDDP的挑战"></a>应用DDDP的挑战</h2><p>下图列出了在领域分析、领域设计、领域模型实现和普适性活动中，应用DDDP可能面临的挑战以及相应的缓解方法</p>
+<p><img src="http://images.zhuxingsheng.com/20211113211041_1636809041.jpg?imageMogr2/thumbnail/!50p"></p>
+<p><img src="http://images.zhuxingsheng.com/20211113211103_1636809063.jpg?imageMogr2/thumbnail/!50p"></p>
+<hr>
+<p><strong>感悟</strong></p>
+<p>可以看出论文对DDDP应用的收益和挑战阐述得很详细。在现实实践中，挑战远比论文中提到的还要多。我觉得主要是两方面：</p>
+<p>一是对理论研究的不够深入，没有系统性学习</p>
+<p>二是过于关注战术问题，不深入战略部分而不知所以然，又对OO的理解不深入使其难以落地，从而抱怨DDD</p>
+<p>对于第一条</p>
+<p>1、从个人学习者角度，只能自己多看看市面上已经出版的书籍，碎片化时间系统性学习，而不是随便看看几篇文章，就以为理解DDD了，现在DDD就像个筐，什么东西都在往里装，就算是Evans开山之作，也有很多时代局限性；</p>
+<p>2、从团队角度讲，不要奢求团队每个人都去理解DDD，毕竟它的本身门槛就高，作为TL，需要自身内化DDD，制定规范，团队执行就可以，向有兴趣的同学传输背后理论。</p>
+<p>对于第二条</p>
+<p>3、除了需要系统性学习外，要明白DDD精髓与DDD编码风格是两码事，在实践DDD过程中，也带有个人经验特征，不仅要有自我理论作为背后支撑，也要认识到不是使用了战术元素，我们就是DDD了，而是要有DDD的知识消化过程。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>软件工程中是“没有银弹”的，任何理论方法都会存在一定的局限性和缺点，DDDP也是如此。因此应用各种DDDP带来的局限或者挑战，仍需要未来进一步探索和反思。</p>
+<p>也希望我的感悟能帮助到你，如果有兴趣可以再看看论文原稿。对于高阶程序员来讲，困难的不是能不能干出来，而是怎么干才舒坦。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/architecture-and-architect-3.html" rel="prev" title="架构与架构师3">
+      <i class="fa fa-chevron-left"></i> 架构与架构师3
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/do-not-study-inefficiently-all-your-life.html" rel="next" title="不要终身低效学习">
+      不要终身低效学习 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">基本介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8E%9F%E5%88%99"><span class="nav-number">1.1.</span> <span class="nav-text">基本原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DDD%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F%E6%A6%82%E8%A7%88"><span class="nav-number">1.2.</span> <span class="nav-text">DDD设计模式概览</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%98%E7%95%A5%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.1.</span> <span class="nav-text">战略设计模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%98%E6%9C%AF%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.2.</span> <span class="nav-text">战术设计模式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A0%94%E7%A9%B6%E7%BB%93%E6%9E%9C"><span class="nav-number">2.</span> <span class="nav-text">研究结果</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E6%83%85%E5%86%B5"><span class="nav-number">2.1.</span> <span class="nav-text">应用情况</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8DDDP%E7%9A%84%E6%94%B6%E7%9B%8A"><span class="nav-number">2.2.</span> <span class="nav-text">应用DDDP的收益</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.2.1.</span> <span class="nav-text">领域设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E6%A8%A1%E5%9E%8B%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.2.2.</span> <span class="nav-text">领域模型实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%99%AE%E9%80%82%E6%80%A7%E6%B4%BB%E5%8A%A8"><span class="nav-number">2.2.3.</span> <span class="nav-text">普适性活动</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8DDDP%E7%9A%84%E6%8C%91%E6%88%98"><span class="nav-number">2.3.</span> <span class="nav-text">应用DDDP的挑战</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

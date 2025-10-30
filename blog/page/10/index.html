@@ -1,0 +1,1476 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="彪悍的人生需要书写">
+<meta property="og:type" content="website">
+<meta property="og:title" content="码农戏码">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/page/10/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="彪悍的人生需要书写">
+<meta property="og:locale">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/page/10/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/threadlocal-review.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/threadlocal-review.html" class="post-title-link" itemprop="url">threadlocal再温习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-06-03 23:01:00" itemprop="dateCreated datePublished" datetime="2020-06-03T23:01:00+08:00">2020-06-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-07-23 11:55:19" itemprop="dateModified" datetime="2022-07-23T11:55:19+08:00">2022-07-23</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>早时总结过<a href="http://www.zhuxingsheng.com/blog/threadlocal-analysis.html">《ThreadLocal解析》</a>、<a href="http://www.zhuxingsheng.com/blog/fastthreadlocal-analysis.html">《FastThreadLocal解析》</a></p>
+<p>最近看些资料时，又注意到这个类，不尽想再重温下，很多知识点，之前已经总结了，此篇主要有两个问题：</p>
+<p>1、弱引用的意义</p>
+<p>2、如何防key冲突</p>
+<h1 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h1><p>ThreadLocal底层使用的ThreadLocalMap一直在进化中，早在JDK1.3时代还是使用的普通的HashMap，后来才改写成ThreadLocalMap</p>
+<p>这个ThreadLocalMap有两个特殊之处，一是使用了线性探索法，详情见<a href="http://www.zhuxingsheng.com/blog/hashmap-source-code-analysis.html">《Hashmap源码解析》</a>；二是key使用了弱引用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * ThreadLocalMap is a customized hash map suitable only for</span><br><span class="line"> * maintaining thread local values. No operations are exported</span><br><span class="line"> * outside of the ThreadLocal class. The class is package private to</span><br><span class="line"> * allow declaration of fields in class Thread.  To help deal with</span><br><span class="line"> * very large and long-lived usages, the hash table entries use</span><br><span class="line"> * WeakReferences for keys. However, since reference queues are not</span><br><span class="line"> * used, stale entries are guaranteed to be removed only when</span><br><span class="line"> * the table starts running out of space.</span><br><span class="line"> */</span><br><span class="line">static class ThreadLocalMap&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从注释可以看出作者为什么使用弱引用，为了处理大对象和长周期对象，在GC时可以主动回收</p>
+<p><strong>一直感觉这儿的弱引用设计是个鸡肋</strong></p>
+<p>在实际使用中，还是会出现内存泄漏，何必使用弱引用呢？</p>
+<p>在ThreadLocal的类注释中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">This class provides thread-local variables.  These variables differ from</span><br><span class="line"> * their normal counterparts in that each thread that accesses one (via its</span><br><span class="line"> * &#123;@code get&#125; or &#123;@code set&#125; method) has its own, independently initialized</span><br><span class="line"> * copy of the variable.  &#123;@code ThreadLocal&#125; instances are typically private</span><br><span class="line"> * static fields in classes that wish to associate state with a thread (e.g.,</span><br><span class="line"> * a user ID or Transaction ID).</span><br></pre></td></tr></table></figure>
+<p>建议使用static修饰</p>
+<p>阿里规范也有此建议：</p>
+<blockquote>
+<p>【参考】ThreadLocal 对象使用 static 修饰，ThreadLocal 无法解决共享对象的更新问题。 说明:这个变量是针对一个线程内所有操作共享的，所以设置为静态变量，所有此类实例共享此静态变量， 也就是说在类第一次被使用时装载，只分配一块存储空间，所有此类的对象(只要是这个线程内定义的)都可 以操控这个变量。</p>
+</blockquote>
+<p>在 stackflow上点赞比较多的回答：</p>
+<blockquote>
+<p>Because if it were an instance level field, then it would actually be “Per Thread - Per Instance”, not just a guaranteed “Per Thread.” That isn’t normally the semantic you’re looking for.</p>
+</blockquote>
+<blockquote>
+<p>Usually it’s holding something like objects that are scoped to a User Conversation, Web Request, etc. You don’t want them also sub-scoped to the instance of the class.<br>One web request &#x3D;&gt; one Persistence session.<br>Not one web request &#x3D;&gt; one persistence session per object.</p>
+</blockquote>
+<p>结合实际项目中都是使用线程池的，所以线程基本也是常驻内存的，根据建议使用static修饰，根本没有被回收的机会，虽是弱引用，但一直被强引用</p>
+<p>所以何必呢，还让这个点成为一个常备的面试题，同是程序员，非得难为自己人呢！</p>
+<hr>
+<p>上面的结论其实还是从大多数人的思维方式思考的，就是提到ThreadLocal都会与线程联系上，在线程的背景里讨论ThreadLocal</p>
+<p>但从类注释上看，它是个变量：This class provides thread-local variables，所以还是从变量角度考虑</p>
+<p>从变量范围讲，有类变量，局部变量，那ThreadLocal就是线程范围内的变量</p>
+<blockquote>
+<p>根据变量的作用域，可以将变量分为全局变量，局部变量。简单的说，类里面定义的变量是全局变量，函数里面定义的变量是局部变量。</p>
+</blockquote>
+<blockquote>
+<p>还有一种作用域是线程作用域，线程一般是跨越几个函数的。为了在几个函数之间共用一个变量，所以才出现：线程变量，这种变量在Java中就是ThreadLocal变量。</p>
+</blockquote>
+<blockquote>
+<p>全局变量，范围很大；局部变量，范围很小。无论是大还是小，其实都是定死的。而线程变量，调用几个函数，则决定了它的作用域有多大。</p>
+</blockquote>
+<blockquote>
+<p>ThreadLocal是跨函数的，虽然全局变量也是跨函数的，但是跨所有的函数，而且不是动态的。</p>
+</blockquote>
+<blockquote>
+<p>ThreadLocal是跨函数的，但是跨哪些函数呢，由线程来定，更灵活</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class ThreadLocalDemo</span><br><span class="line">&#123;</span><br><span class="line">	public static void main(String[] args)</span><br><span class="line">	&#123;</span><br><span class="line">		ThreadLocal&lt;Integer&gt; count = new ThreadLocal&lt;Integer&gt;();</span><br><span class="line">		//使用count</span><br><span class="line">		count.set(10);</span><br><span class="line">		// count不再被使用，可以进行内存回收</span><br><span class="line">		System.out.println(&quot;&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个示例中，count要不要被回收</p>
+<blockquote>
+<p>我想，此时JDK的作者也是左右为难，从眼见为实的角度来说，变量不用了就应该进行回收，实现内存的自动回收，这是Java给人最大的特点。</p>
+</blockquote>
+<blockquote>
+<p>但是，此时不能回收count，因为它与10绑定到了一块，而且只能通过count才能读写10。最后JDK作者耍了一个小聪明，用弱引用包装了count，没有干脆利索的进行内存回收，而是拖拖拉拉的进行回收，反正，最后实现了变量不用就回收的基本原则，与Java的传统思想一脉相承</p>
+</blockquote>
+<hr>
+<p>到此，应该是知道为什么作者要设计为弱引用了，按建议使用ThreadLocal,修饰为static,就不是为了防内存泄漏，而只是为了达到java变量不使用就回收的基本原则，只是在线程范围时，只能曲线救国了</p>
+<h1 id="防碰撞"><a href="#防碰撞" class="headerlink" title="防碰撞"></a>防碰撞</h1><p>在hash数据结构中，最重要的一点就是如何更好地设计，尽量避免key的冲突</p>
+<p>普通的hashmap使用的是拉链法，把长度设置成2的N次方，还有负载因子</p>
+<p>ThreadLocalMap使用的线程探索法，作者使用了哪些奇技淫巧</p>
+<h2 id="map的长度"><a href="#map的长度" class="headerlink" title="map的长度"></a>map的长度</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * The initial capacity -- MUST be a power of two.</span><br><span class="line"> */</span><br><span class="line">private static final int INITIAL_CAPACITY = 16;</span><br></pre></td></tr></table></figure>
+<p>ThreadLocalMap没有设置容量的方法，一般情况下，也不会实例化那么多ThreadLocal实例</p>
+<p>必须是2的N次方，这个特性在HashMap中一样，就不解释了，详情见<a href="http://www.zhuxingsheng.com/blog/hashmap-source-code-analysis.html">《Hashmap源码解析》</a></p>
+<h2 id="负载因子"><a href="#负载因子" class="headerlink" title="负载因子"></a>负载因子</h2><p>在hashmap中，默认负载因子为了0.75，在ThreadLocal中呢？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Set the resize threshold to maintain at worst a 2/3 load factor.</span><br><span class="line"> */</span><br><span class="line">private void setThreshold(int len) &#123;</span><br><span class="line">    threshold = len * 2 / 3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看出负载因子为2&#x2F;3</p>
+<p>但threadlocalmap还有特别的地方，就是弱引用，key可能变成null，所以在get,set都会清理key为null的Entry</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tab[i] = new Entry(key, value);</span><br><span class="line">int sz = ++size;</span><br><span class="line">if (!cleanSomeSlots(i, sz) &amp;&amp; sz &gt;= threshold)</span><br><span class="line">    rehash();</span><br></pre></td></tr></table></figure>
+
+<p>再看rehash();</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Re-pack and/or re-size the table. First scan the entire</span><br><span class="line"> * table removing stale entries. If this doesn&#x27;t sufficiently</span><br><span class="line"> * shrink the size of the table, double the table size.</span><br><span class="line"> */</span><br><span class="line">private void rehash() &#123;</span><br><span class="line">    expungeStaleEntries();</span><br><span class="line"></span><br><span class="line">    // Use lower threshold for doubling to avoid hysteresis</span><br><span class="line">    if (size &gt;= threshold - threshold / 4)</span><br><span class="line">        resize();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>rehash方法并不是直接就rehash了，会先清理过期元素，再判断size&gt;&#x3D; threshold-threshold&#x2F;4</p>
+<p>threshold&#x3D;len * 2 &#x2F; 3</p>
+<p>threshold-threshold&#x2F;4&#x3D;len * 2 &#x2F; 3-(len * 2 &#x2F; 3)&#x2F;4&#x3D; len&#x2F;2</p>
+<p>所以最终是在清理过期元素后，元素数量超过len&#x2F;2时，就会正式扩容两倍</p>
+<h2 id="0x61c88647"><a href="#0x61c88647" class="headerlink" title="0x61c88647"></a>0x61c88647</h2><p>hash函数的设计是hash类数据结构的一个重点，空间与时间的平衡是关键</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * ThreadLocals rely on per-thread linear-probe hash maps attached</span><br><span class="line"> * to each thread (Thread.threadLocals and</span><br><span class="line"> * inheritableThreadLocals).  The ThreadLocal objects act as keys,</span><br><span class="line"> * searched via threadLocalHashCode.  This is a custom hash code</span><br><span class="line"> * (useful only within ThreadLocalMaps) that eliminates collisions</span><br><span class="line"> * in the common case where consecutively constructed ThreadLocals</span><br><span class="line"> * are used by the same threads, while remaining well-behaved in</span><br><span class="line"> * less common cases.</span><br><span class="line"> */</span><br><span class="line">private final int threadLocalHashCode = nextHashCode();</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * The next hash code to be given out. Updated atomically. Starts at</span><br><span class="line"> * zero.</span><br><span class="line"> */</span><br><span class="line">private static AtomicInteger nextHashCode =</span><br><span class="line">    new AtomicInteger();</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * The difference between successively generated hash codes - turns</span><br><span class="line"> * implicit sequential thread-local IDs into near-optimally spread</span><br><span class="line"> * multiplicative hash values for power-of-two-sized tables.</span><br><span class="line"> */</span><br><span class="line">private static final int HASH_INCREMENT = 0x61c88647;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Returns the next hash code.</span><br><span class="line"> */</span><br><span class="line">private static int nextHashCode() &#123;</span><br><span class="line">    return nextHashCode.getAndAdd(HASH_INCREMENT);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每当创建ThreadLocal实例时这个值都会累加 0x61c88647</p>
+<p><img src="http://images.zhuxingsheng.com/20200706235459_1594050899.jpg"></p>
+<p>0x61c88647转化成十进制：2654435769为32位无符号整数的黄金分割值，而-1640531527就是32位带符号整数的黄金分割值</p>
+<p>当容量为2的N次方，并且使用上这个魔法值后，元素经过散列算法后恰好填充满了整个容器，也就是实现了完美散列</p>
+<p>对于这个数字由来，我也大致搜索了些资料，这已经超出作为一名码农的能力范围，只能反思数学老师讲的：不是数学用不上，而是你没有用上的能力</p>
+<h2 id="环形"><a href="#环形" class="headerlink" title="环形"></a>环形</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Increment i modulo len.</span><br><span class="line"> */</span><br><span class="line">private static int nextIndex(int i, int len) &#123;</span><br><span class="line">    return ((i + 1 &lt; len) ? i + 1 : 0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Decrement i modulo len.</span><br><span class="line"> */</span><br><span class="line">private static int prevIndex(int i, int len) &#123;</span><br><span class="line">    return ((i - 1 &gt;= 0) ? i - 1 : len - 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在寻找下一个位置时，虽然threadlocalmap是线性探索，但逻辑上使用环形结构，这个与防冲突关系不大，但也是个知识点，一并罗列下</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://threadlocal.cn/">一针见血 ThreadLocal</a></p>
+<p><a href="https://www.javaspecialists.eu/archive/Issue164.html">Why 0x61c88647?</a></p>
+<p><a href="https://www.jianshu.com/p/48eca67fb790">ThreadLocal源码——黄金分割数的使用</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/entropy-of-ddd.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/entropy-of-ddd.html" class="post-title-link" itemprop="url">DDD之熵</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-28 20:11:00" itemprop="dateCreated datePublished" datetime="2020-04-28T20:11:00+08:00">2020-04-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>《DDD之形》把当前一些流行的架构给通览了一篇，那是不是万事大吉，随便挑一个形态实践就行呢？</p>
+<p>正常情况对于有追求的程序员来讲，肯定不行，有两个原因</p>
+<p>一因为完美，人人都是想要完美，每个架构实践都不是完美的，尤其离开业务场景去探讨架构，会使架构没法落地；因此你小抄的时候会变形，想把原先至少不太好的地方改得相对好些，但这样可能造成四不像</p>
+<p>二因为没有意的形，只知其形，不得其意，必然会东施效颦；类似于第一点，完美，何为完美，还是得根据自身经验理解程序得出的结论，如果高度不够必然会画蛇添足</p>
+<h2 id="标准形态"><a href="#标准形态" class="headerlink" title="标准形态"></a>标准形态</h2><p>根据DDD的理论，或者说DDD带来的优势，将三层架构进行演化，把业务逻辑层再细拆分成三层：应用层、领域层和基础设施层</p>
+<p>分离业务逻辑与技术细节</p>
+<p><img src="http://images.zhuxingsheng.com/20200423202423_1587644663.jpg"></p>
+<p>DDD的标准形态</p>
+<p><img src="http://images.zhuxingsheng.com/20200315195302_1584273182.jpg"></p>
+<p>分层架构分为两种：严格分层架构和松散分层架构</p>
+<p>严格分层，某层只能与直接位于其下方的层发生耦合；松散分层，允许任意上方层与任意下方层发生耦合</p>
+<ol>
+<li>User Interface是用户接口层，主要用于处理用户发送的Restful请求和解析用户输入的配置文件等，并将信息传递给Application层的接口</li>
+<li>Application层是应用层，负责多进程管理及调度、多线程管理及调度、多协程调度和维护业务实例的状态模型。当调度层收到用户接口层的请求后，委托Context层与本次业务相关的上下文进行处理</li>
+<li>Domain层是领域层，定义领域模型，不仅包括领域对象及其之间关系的建模，还包括对象的角色role的显式建模</li>
+<li>Infrastructure层是基础实施层，为其他层提供通用的技术能力：业务平台，编程框架，持久化机制，消息机制，第三方库的封装，通用算法，等等</li>
+</ol>
+<h3 id="DIP"><a href="#DIP" class="headerlink" title="DIP"></a>DIP</h3><p>上面的标准形态图形的左半边图，跟以往的很不一样，但从DIP角度看，低层服务应该依赖于高层组件</p>
+<p><img src="http://images.zhuxingsheng.com/202003151738_845.png"></p>
+<p>这是COLA2.0的分层，作者利用DIP对1.0版本进行了优化</p>
+<blockquote>
+<p>1、核心业务逻辑和技术细节相分离，使用DIP，让Infrastructure反向依赖Domain</p>
+</blockquote>
+<blockquote>
+<p>2、将repository上移到application层，把组装entity的责任转移到application</p>
+</blockquote>
+<hr>
+<p>到此一切都很常规，很标准，但在落地时有几个问题：</p>
+<p>一、Controller是哪一层，user interface层？还是infrastructure层？</p>
+<p>这好像不是个问题，一般都放在user interface层，负责向用户展现信息以及解释用户命令；但细想一下，我们的controller都是基于底层框架，是框架提供的能力，那理论上放在infrastructure更合理一些。</p>
+<p>二、再细化的架构元素放哪里？</p>
+<p>其实这只是分层的大体方向，还有更细节的元素，在实践DDD的过程中，最常见的问题就是元素到底放在哪儿，比如Event,有各样的event，eventHandler，应用层、领域层都有，怎么区分呢？貌似回到了怎么区分应用服务与领域服务；还有各处javabean，哪些层能复用，谁复用谁</p>
+<p>再比如COLA2.0，单从层次依赖图明显形成了循环依赖，落地不了；但作者把repository上移到了application层，又有些走不寻常路，一般来讲repository是放在domain层</p>
+<p>如何办呢？大方向有了，但到小细节时，又有各种困惑，《SOLID之DIP》文中提到，分层至少有两层，一是业务领域层，二是其它层</p>
+<p><img src="http://images.zhuxingsheng.com/20200319171211_1584609131.jpg"></p>
+<p>这就是端口和适配器架构，可以算是六边形的简化版，但也从整体方向分成了两层，对应用层与用户接口层以及基础设施层进行了合并，无论是接受请求，还是输出数据都是gateway</p>
+<p>但六边形架构仅仅区分了内外边界，提炼了端口与适配器角色，并没有规划限界上下文内部各个层次与各个对象之间的关系；怎么破？</p>
+<hr>
+<p>这似乎是两个矛盾体，标准的层次分明了，但还是有些不确定性，对象放在哪个包不明确；而端口与适配器架构又太粗放；如何平衡？</p>
+<p>本质上，领域驱动设计的限界上下文同样是对软件系统的切割，依据的关注点主要是根据领域知识的语境，从而体现业务能力的差异。在进入限界上下文内部，我们又可以针对限界上下文进行关注点的切割，并在其内部体现出清晰的层次结构，这个层次遵循整洁架构</p>
+<p><img src="http://images.zhuxingsheng.com/202001181240_593.png"></p>
+<p>根据张逸老师DDD课程中的案例</p>
+<p><img src="http://images.zhuxingsheng.com/20200426001431_1587831271.jpg"></p>
+<ul>
+<li>领域层：包含 PlaceOrderService、Order、Notification、OrderConfirmed 与抽象的 OrderRepository，封装了纯粹的业务逻辑，不掺杂任何与业务无关的技术实现。</li>
+<li>应用层：包含 OrderAppService 以及抽象的 EventBus 与 NotificationService，提供对外体现业务价值的统一接口，同时还包含了基础设施功能的抽象接口。</li>
+<li>基础设施层：包含 OrderMapper、RabbitEventBus 与 EmailSender，为业务实现提供对应的技术功能支撑，但真正的基础设施访问则委派给系统边界之外的外部框架或驱动器</li>
+</ul>
+<hr>
+<p>重新审视六边形架构，匹配分层架构，两者可以融合</p>
+<p><img src="http://images.zhuxingsheng.com/20200427203135_1587990695.jpg"></p>
+<p>位于六边形边线之上的出口端口就应该既不属于领域层，又不属于基础设施层。它的职责与属于应用层的入口端口也不同，因为应用层的应用服务是对外部请求的封装，相当于是一个业务用例的外观</p>
+<p>DDD引入repository放在了领域层，一是对应聚合根的概念，二是抽象了数据库访问，，但DDD限界上下文可能不仅限于访问数据库，还可能访问同样属于外部设备的文件、网络与消息队列。为了隔离领域模型与外部设备，同样需要为它们定义抽象的出口端口，这些出口端口该放在哪里呢？如果依然放在领域层，就很难自圆其说。例如，出口端口EventPublisher支持将事件消息发布到消息队列，要将这样的接口放在领域层，就显得不伦不类了。倘若不放在位于内部核心的领域层，就只能放在领域层外部，这又违背了整洁架构思想</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/dip-of-solid.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/dip-of-solid.html" class="post-title-link" itemprop="url">SOLID之DIP</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-25 22:49:00" itemprop="dateCreated datePublished" datetime="2020-04-25T22:49:00+08:00">2020-04-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>依赖反转原则 DIP, Dependency inversion principle</p>
+<blockquote>
+<ol>
+<li>高层模块不应该依赖于低层模块。二者都应该依赖于抽象</li>
+<li>抽象不应该依赖于细节。细节应该依赖于抽象</li>
+</ol>
+</blockquote>
+<h1 id="高低层"><a href="#高低层" class="headerlink" title="高低层"></a>高低层</h1><p>首先理解一下什么高层和低层</p>
+<h2 id="高层"><a href="#高层" class="headerlink" title="高层"></a>高层</h2><p>高层包含了一个应用程序中的重要策略选择和业务模型</p>
+<p>也就是业务逻辑是高层</p>
+<h2 id="低层"><a href="#低层" class="headerlink" title="低层"></a>低层</h2><p>相对于高层，低层包括框架、数据库、消息队列等其它系统部分</p>
+<hr>
+<p>这也符合我们的预期，不管数据库，还是框架改变时，不应该影响到业务逻辑；也就是说业务逻辑不应该依赖于具体实现技术细节</p>
+<h1 id="反转"><a href="#反转" class="headerlink" title="反转"></a>反转</h1><p>反转想起了IOC，之前总结了一篇《IOC理解》</p>
+<p>DIP里面指的反转是什么？</p>
+<p><img src="http://images.zhuxingsheng.com/202001180905_746.png"></p>
+<p>这是一个典型的调用树例子，main函数调用了一些高层函数，这些高层函数又调用了一些中层函数，中层函数继续调用低层函数。<strong>源代码层面的依赖不可避免地要跟随程序的控制流</strong></p>
+<p>这造成了程序耦合性特别的高，若程序需要改变实现方式，那就是灾难，也违反了OCP</p>
+<p>也导致了在软件架构上别无选择。系统行为决定了控制流，而控制流则决定了源代码依赖关系</p>
+<hr>
+<p>有这么多的问题，怎么办呢？ <strong>反转</strong></p>
+<p><img src="http://images.zhuxingsheng.com/202001182107_569.png"></p>
+<p>反转依赖方向</p>
+<p><img src="http://images.zhuxingsheng.com/202001182036_254.png"></p>
+<p>如何达到呢？利用面向对象的多态特性，这是面向对象编程的好处，也是面向对象的核心本质，<strong>无论面向怎么样的源代码级别的依赖关系，都可以将其反转</strong></p>
+<p><img src="http://images.zhuxingsheng.com/202001181401_298.png"></p>
+<p>控制流是从高层到低层，但低层模块与接口抽象类的方向正好相反</p>
+<p><strong>面向对象编程就是以多态为手段来对源代码中的依赖关系进行控制能力</strong></p>
+<p>架构师可以完全采用面向对象系统中所有源代码依赖关系，而不再受到系统控制流的限制。不管哪个模块调用或者被调用，架构师都可以随意更改源代码依赖关系</p>
+<p><img src="http://images.zhuxingsheng.com/202001181155_560.png"></p>
+<p>业务逻辑控制用户界面与数据库，但源代码依赖关系相反，这样业务逻辑模块的源代码不需要引入用户界面和数据库两个模块，于是业务逻辑组件就可以独立于用户界面和数据库独立部署，不会对业务逻辑产生任何影响</p>
+<p><strong>反转</strong>：<em>控制流方向与源代码依赖关系方向相反，源代码依赖方向永远是控制流方向的反转</em></p>
+<h1 id="分层"><a href="#分层" class="headerlink" title="分层"></a>分层</h1><p>延伸一下DIP，探讨一下分层架构</p>
+<p>架构模式有很多种，分层、六边形等等，分层架构是运用最为广泛的架构模式</p>
+<h2 id="为什么要分层"><a href="#为什么要分层" class="headerlink" title="为什么要分层"></a>为什么要分层</h2><p>虽然分层架构很流行，尤其常用的MVC，但为什么需要分层呢？</p>
+<p>对系统的结构分层，把系统中相关联的部分被集中放在一个独立的层内，分而治之，这正好是SRP，每一层只能有一个引起他变化的原因</p>
+<p>如何分层呢？变化原因可以有多个维度</p>
+<p>一、基于关注点,如MVC，其上面向用户的体验与交互，中间面向应用与业务逻辑，其下面向各种外部资源与设备</p>
+<p>二、基于变化，针对不同变化原因确定层次边界，如数据库结构的修改自然会影响到基础设施的数据模型以及领域层的领域模型，但当我们仅修改数据库访问实现时，就不应该影响到领域层</p>
+<p>不管以何种原因将软件切割成不同的层，至少有一层是只包含该软件的业务逻辑的，而用户接口、系统接口则属于其他层</p>
+<p><img src="http://images.zhuxingsheng.com/202001181240_593.png"></p>
+<blockquote>
+<p>源码中的依赖关系必须只指向同心圆的内层，即由低层机制指向高层策略</p>
+</blockquote>
+<p>Entities业务实体：封装了整个系统的关键业务逻辑，一个业务实体既可以是一个带有方法的对象，也可以是一组数据结构和函数集合。</p>
+<p>如果我们写的不是一个大型系统，而是一个单一应用的话，那么我们的业务实体就是该应用的业务对象。这些对象封装了该应用中最通用、最高层的业务逻辑</p>
+<p>而分层也不必为经典的三层架构又或是DDD的四层的固有思维，<strong>而是将分层视为关注点分离的水平抽象层次的体现</strong>。层太少可能导致关注点不够分离，导致系统的结构不合理；层太多则引入太多的间接而增加不必要的开支</p>
+<h2 id="层协作"><a href="#层协作" class="headerlink" title="层协作"></a>层协作</h2><p>在固有认知中，分层架构的依赖都是自顶向下传递的</p>
+<p>比如：Controller依赖Service，Service依赖Dao;如此控制流决定了源代码的依赖关系，也就是没有反转，是违背DIP的</p>
+<p>从DIP定义，为什么要依赖抽象呢？除了能反转从而解耦，还有别的原因吗？</p>
+<p>我们每次修改接口时，一定会去修改实现；但修改实现时不一定修改接口；也就是抽象比实现稳定，抽象层相对是个稳定的层次；抓住不变的，控制住变化的，是我们的目标，优秀工程师就得多花时间在设计接口上，减少未来对其改动，争取在不修改接口的情况下增加新功能</p>
+<p>其实除了自顶向下的请求也有自底向上的通信：通知，观察者模式，在上层定义Observer接口，提供update()方法供下层在感知状态发生变更时高用</p>
+<p>层与层之间的协作，就得借助DIP，打破高层依赖低层的固有思维，从解除耦合的角度探索层之间可能的协作关系，再配合IOC，具体依赖关系由IOC框架实现，更好地解除了高层对低层的依赖</p>
+<h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><ol>
+<li>在代码中多使用抽象接口，尽量避免使用那些多变的具体实现类</li>
+<li>不要在具体实现类上创建子类</li>
+<li>不要override包含具体实现的函数</li>
+<li>应避免在代码中写入与任何具体实现相关的名字，或者是其它容易变动的事物的名字</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/form-of-ddd.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/form-of-ddd.html" class="post-title-link" itemprop="url">DDD之形</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-21 22:58:00" itemprop="dateCreated datePublished" datetime="2020-04-21T22:58:00+08:00">2020-04-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>DDD现在已然变成哲学，正因为是哲学，所以法无定法，到底怎么具体怎么实施，各显神通，心法固然重要，但心法有几人能真正领悟，一说就懂，一问就不会，一讨论就吵架；所以还是从外形看看，收集一些实践后的形态，由表入里，以形学形，慢慢品</p>
+<p>看下面两个分层，左边是Vaughn Vernon 在《实现领域驱动设计》一书中给出了改良版的分层架构，他将基础设施层奇怪地放在了整个架构的最上面；右边就是DDD最标准的分层形态</p>
+<p><img src="http://images.zhuxingsheng.com/20200315195302_1584273182.jpg"></p>
+<h2 id="形一"><a href="#形一" class="headerlink" title="形一"></a>形一</h2><p>这是DDD专家张逸老师形态之一，除了controller在gateway中，其它还算常态</p>
+<ul>
+<li>ecommerce<ul>
+<li>core<ul>
+<li>Identity</li>
+<li>ValueObject</li>
+<li>Entity</li>
+<li>DomainEvent</li>
+<li>AggregateRoot</li>
+</ul>
+</li>
+<li>controllers<ul>
+<li>HealthController</li>
+<li>MonitorController</li>
+</ul>
+</li>
+<li>application（视具体情况而定）</li>
+<li>interfaces<ul>
+<li>io</li>
+<li>telnet</li>
+<li>message</li>
+</ul>
+</li>
+<li>gateways<ul>
+<li>io</li>
+<li>telnet</li>
+<li>message</li>
+</ul>
+</li>
+<li>ordercontext<ul>
+<li>application</li>
+<li>interfaces</li>
+<li>domain</li>
+<li>repositories</li>
+<li>gateways</li>
+</ul>
+</li>
+<li>productcontext<ul>
+<li>application</li>
+<li>interfaces</li>
+<li>domain</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<blockquote>
+<p>除了限界上下文自身需要的基础设施之外，在系统架构层面仍然可能需要为这些限界上下文提供公共的基础设施组件，例如对 Excel 或 CSV 文件的导入导出，消息的发布与订阅、Telnet 通信等。这些组件往往是通用的，许多限界上下文都会使用它们，因而应该放在系统的基础设施层而被限界上下文重用，又或者定义为完全独立的与第三方框架同等级别的公共组件。理想状态下，这些公共组件的调用应由属于限界上下文自己的基础设施实现调用。倘若它们被限界上下文的领域对象或应用服务直接调用（即绕开自身的基础设施层），则应该遵循整洁架构思想，在系统架构层引入 interfaces 包，为这些具体实现定义抽象接口</p>
+</blockquote>
+<p><img src="http://images.zhuxingsheng.com/20200318234357_1584546237.jpg"></p>
+<p>controller被放到了gateway中，包含远程调用，数据库；所有对外的接口都属于一种网关</p>
+<h2 id="形二"><a href="#形二" class="headerlink" title="形二"></a>形二</h2><p>cola在github开源，作者模块与包划分，每个架构元素都很明确</p>
+<p><img src="http://images.zhuxingsheng.com/202003151738_845.png"></p>
+<p><img src="http://images.zhuxingsheng.com/20200315195850_1584273530.jpg"></p>
+<h3 id="controller"><a href="#controller" class="headerlink" title="controller"></a>controller</h3><p>这是一个可选层，正如《分层架构》所讲，现在的框架都已经帮助从底层的具体HttpRequest转换成了requestDto，很多时候都是透传service，而像thrift类的框架，为了透明化入口，需要转换一下，</p>
+<h4 id="包"><a href="#包" class="headerlink" title="包"></a>包</h4><p>xxx.controller</p>
+<h3 id="client"><a href="#client" class="headerlink" title="client"></a>client</h3><p>二方库，里面存放RPC调用的DTO</p>
+<h4 id="包-1"><a href="#包-1" class="headerlink" title="包"></a>包</h4><p>xxx.api:存放应用对外接口</p>
+<p>xxx.dto.domainmodel：数据传输的轻量级领域对象</p>
+<p>xxx.dto.domainevent:数据传输的领域事件</p>
+<h3 id="application"><a href="#application" class="headerlink" title="application"></a>application</h3><p>应用层</p>
+<h4 id="包-2"><a href="#包-2" class="headerlink" title="包"></a>包</h4><p>xxx.service：接口实现的facade，没有业务逻辑，可以对应不同的adapter</p>
+<p>xxx.event.handler:处理领域事件</p>
+<p>xxx.interceptor:对所有请求的AOP处理机制</p>
+<h3 id="domain"><a href="#domain" class="headerlink" title="domain"></a>domain</h3><p>领域层</p>
+<h4 id="包-3"><a href="#包-3" class="headerlink" title="包"></a>包</h4><p>xxx.domain:领域实现</p>
+<p>xxx.service:领域服务，用来提供更粗粒度的领域能力</p>
+<p>xxx.gateway:对外依赖的网关接口，包括存储、RPC等</p>
+<h3 id="infrastructure"><a href="#infrastructure" class="headerlink" title="infrastructure"></a>infrastructure</h3><p>基础层</p>
+<h4 id="包-4"><a href="#包-4" class="headerlink" title="包"></a>包</h4><p>xxx.config:配置信息相关</p>
+<p>xxx.message:消息处理相关</p>
+<p>xxx.repository:存储相关，gateway的实现类，主要用来做数据的CRUD操作</p>
+<p>xxx.gateway:对外依赖网关接口(domain里面的gateway)的实现</p>
+<h3 id="形三"><a href="#形三" class="headerlink" title="形三"></a>形三</h3><p>这是张逸老师课程的又一形态</p>
+<blockquote>
+<p>六边形架构仅仅区分了内外边界，提炼了端口与适配器角色，并没有规划限界上下文内部各个层次与各个对象之间的关系；而整洁架构又过于通用，提炼的是企业系统架构设计的基本规则与主题。因此，当我们将六边形架构与整洁架构思想引入到领域驱动设计的限界上下文时，还需要引入分层架构给出更为细致的设计指导，即确定层、模块与角色构造型之间的关系</p>
+</blockquote>
+<p><img src="http://images.zhuxingsheng.com/20200319211832_1584623912.jpg"></p>
+<p><img src="http://images.zhuxingsheng.com/20200319222655_1584628015.jpg"></p>
+<hr>
+<p>这是老师最新总结的菱形对称架构</p>
+<p><img src="http://images.zhuxingsheng.com/20200319222902_1584628142.jpg"></p>
+<p>南向网关引入了抽象的端口来隔离内部领域模型对外部环境的访问。这一价值等同于上下文映射的防腐层（Anti-Corruption Layer，简称为 ACL） 模式，只是它扩大了防腐层隔离的范围</p>
+<h3 id="形态四"><a href="#形态四" class="headerlink" title="形态四"></a>形态四</h3><p><img src="http://images.zhuxingsheng.com/20200319171211_1584609131.jpg"></p>
+<p>该架构由端口和适配器组成，所谓端口是应用的入口和出口，在许多语言中，它以接口的形式存在</p>
+<p>Martin Fowler将“封装访问外部系统或资源行为的对象”定义为网关（Gateway），在限界上下文的内部架构中，它代表了领域层与外部环境之间交互的出入口，即：</p>
+<p><strong>gateway &#x3D; port + adapter</strong></p>
+<p>这个形态，简单入里，算是菱形对称架构的简易形，甚至可以说是菱形的初形</p>
+<p>driving adapter + domain + driven adapter</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>形态之多，背后的理论支撑之丰富，可见DDD的博大精深，谁能说是正宗，就算是Eric Evans都要怀疑人生，但不迷信，没有银弹。自己实践的才是最合适的</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/instanceof-lsp.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/instanceof-lsp.html" class="post-title-link" itemprop="url">LSP之instanceof</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-11 19:53:00" itemprop="dateCreated datePublished" datetime="2020-04-11T19:53:00+08:00">2020-04-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>从年初就开始温习SOLID原则，原则看似很简单，有些其实就是一句话，但对照这些原则去观看自己的过往代码，还是很多违背这些原则的，诚然，没有完美的实践，但需要保持在走向完美的路上</p>
+<p>当然，如果你说天天在CRUD，从没有用到过这些原则，这就是另一个话题了</p>
+<p>最近就写了一段很臭的代码，反省一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public AbstractInvoice(InvoiceCode invoiceCode, InvoiceNo invoiceNo, PaperDrewDate paperDrewDate, CheckCode checkCode) &#123;</span><br><span class="line">    this.invoiceCode = invoiceCode;</span><br><span class="line">    this.invoiceNo = invoiceNo;</span><br><span class="line">    this.paperDrewDate = paperDrewDate;</span><br><span class="line">    if (checkCode instanceof VerifyCheckCode) &#123;</span><br><span class="line">        this.checkCode = checkCode.toNormal();</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        this.checkCode = checkCode;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码很简单，业务是发票，一张发票由基本的几个要素组成：发票代码、发票号码、开票时间、检验码、金额</p>
+<p>形象点，找个平常普通发票的票样</p>
+<p><img src="http://images.zhuxingsheng.com/20200409235404_1586447644.jpg"></p>
+<p>其次，这是一个抽象类，构建时带有发票几票素，这些InvoiceCode,InvoiceNo,PaperDrewDate,CheckCode都是简单的Primitive Domain(不了解这个概念也没关系，下回分解；简单讲就是业务自包含的基本类型)</p>
+<p>完整的抽象类关系</p>
+<p><img src="http://images.zhuxingsheng.com/20200408234609_1586360769.jpg"></p>
+<p>但代码里面用到了instanceof，当用到这个关键字，而且是在抽象实体时，基本上可以断定是抽象的层次不够，<br>可能违背了LSP</p>
+<p>LSP原则很明了：子类可以随时替换父类；这儿用了instanceof，说明有不可替换的成份在</p>
+<p>再追看CheckCode的层次</p>
+<p><img src="http://images.zhuxingsheng.com/20200408234942_1586360982.jpg"></p>
+<p>一个简单的校验码，为什么也要抽象成这样？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public abstract class CheckCode &#123;</span><br><span class="line"></span><br><span class="line">    protected String checkCode;</span><br><span class="line"></span><br><span class="line">    public CheckCode(String checkCode) &#123;</span><br><span class="line">        this.checkCode = checkCode;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    public CheckCode(int length, String checkCode, boolean isNumeric) &#123;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>校验码有几种形式</p>
+<ol>
+<li>标准的20位长度的完整检验码</li>
+<li>后6位简短的检验码，发票做验真业务时使用</li>
+<li>区块链发票的检验码，5位长度，字母数字组合</li>
+</ol>
+<p>因为有三种形态，不同的长度就是不同的类型；验真时只需要简短检验码；查看完整信息时需要完整的检验码</p>
+<p>在发票接口中，也有相应的获取行为，也正因为有这种形为，需要在创建发票对象时，把VerifyCheckCode转换成NormalCheckCode</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public interface Invoice &#123;</span><br><span class="line"></span><br><span class="line">    public CheckCode getCheckCode();</span><br><span class="line">    </span><br><span class="line">    public String getVerifyCheckCode();</span><br></pre></td></tr></table></figure>
+
+<p>这儿有个疑问，为什么不在构建发票前，把verifyCheckCode转成normalCheckCode，而不是到Invoice的构建内部再转化，那也就没有instanceof的事</p>
+<hr>
+<p>但再细想，对于发票来讲，其实只有一个checkCode属性，没有VerifyCheckCode，那只是在请求验真时的一种形态，所以在发票对象中，不应该有verifyCheckCode属性</p>
+<p>所以Invoice对象应该是这样</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public interface Invoice &#123;</span><br><span class="line"></span><br><span class="line">    public CheckCode getCheckCode();</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public AbstractInvoice(InvoiceCode invoiceCode, InvoiceNo invoiceNo, PaperDrewDate paperDrewDate, CheckCode checkCode) &#123;</span><br><span class="line">        this.invoiceCode = invoiceCode;</span><br><span class="line">        this.invoiceNo = invoiceNo;</span><br><span class="line">        this.paperDrewDate = paperDrewDate;</span><br><span class="line">        this.checkCode = checkCode;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>对于primitive domain,CheckCode自包含中应该带有verifyCheckCode</p>
+<p><img src="http://images.zhuxingsheng.com/20200411113614_1586576174.jpg"></p>
+<p>每一种CheckCode都有各自不同的行为</p>
+<hr>
+<p>一般通过instanceof判断子类型时，都有不满足LSP的嫌疑；在这个场景中也差不多，但抓住了这一点，重新思考一下，类层次与结构行为可以设计得更合理</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/solid-isp.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/solid-isp.html" class="post-title-link" itemprop="url">SOLID之ISP</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-06 16:54:00" itemprop="dateCreated datePublished" datetime="2020-04-06T16:54:00+08:00">2020-04-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>接口隔离原则，ISP，Interface Segregation Principle</p>
+<p>用于处理胖接口（fat interface）所带来的问题。如果类的接口定义暴露了过多的行为，则说明这个类的接口定义内聚程度不够好</p>
+<p>第一种定义: Clients should not beforced to depend upon interfaces that they don’t use.</p>
+<p><strong>客户端不应该依赖它不需用的接口</strong></p>
+<p>第二种定义：The dependency of oneclass to another one should depend on the smallest possible interface。</p>
+<p><strong>类间的依赖关系应该建立在最小的接口上</strong></p>
+<hr>
+<p>ISP还是比较简单的，通过行为分离，达到高内聚效果</p>
+<h4 id="不遵循ISP"><a href="#不遵循ISP" class="headerlink" title="不遵循ISP"></a>不遵循ISP</h4><p><img src="http://images.zhuxingsheng.com/20200406141121_1586153481.jpg"></p>
+<p>类A依赖接口I中的方法1、方法2、方法3，类B是对类A依赖的实现。类C依赖接口I中的方法1、方法4、方法5，类D是对类C依赖的实现。</p>
+<p>对于类B和类D来说，虽然他们都存在着用不到的方法（也就是图中红色字体标记的方法），但由于实现了接口I，所以也必须要实现这些用不到的方法</p>
+<p>显然接口I是个胖接口，客户端依赖了他不需要用的接口方法</p>
+<h4 id="遵循ISP"><a href="#遵循ISP" class="headerlink" title="遵循ISP"></a>遵循ISP</h4><p><img src="http://images.zhuxingsheng.com/20200406141146_1586153506.jpg"></p>
+<p>将原有的接口I拆分为三个接口，类A不需要用到“方法4”和“方法5”，就可以选择不依赖接口I3</p>
+<h4 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h4><p><img src="http://images.zhuxingsheng.com/20200406135013_1586152213.jpg"></p>
+<p>设计一个门接口，它包含了一款自动门所需要的功能，开关，自动关闭等。</p>
+<p>但是并不是每个门都有自动关闭的功能，所以timeOut超时这个方法放在该接口中，就会导致所有实现这个接口的子类都会默认的继承了这个方法，哪怕子类中不对这个方法做处理。</p>
+<p><img src="http://images.zhuxingsheng.com/20200406142209_1586154129.jpg"></p>
+<p>把接口拆分成2个，拆分成Door和TimeClient，2个接口，这样Door就只保持原有的基本功能，而timeOut超时的方法则放到TimeClient接口中，这样就可以解决上述中接口臃肿的问题</p>
+<h4 id="VS-SRP"><a href="#VS-SRP" class="headerlink" title="VS SRP"></a>VS SRP</h4><p>很多人会觉的接口隔离原则跟之前的单一职责原则很相似，其实不然</p>
+<p>其一，单一职责原则原注重的是职责；而接口隔离原则注重对接口依赖的隔离。</p>
+<p>其二，单一职责原则主要是约束类，其次才是接口和方法，它针对的是程序中的实现和细节；而接口隔离原则主要约束接口接口，主要针对抽象，针对程序整体框架的构建</p>
+<hr>
+<p>在单一职责原则中，一个接口可能有多个方法，提供给多种不同的调用者所调用，但是它们始终完成同一种功能，因此它们符合单一职责原则，却不符合接口隔离原则，因为这个接口存在着多种角色，因此可以拆分成更多的子接口，以供不同的调用者所调用。</p>
+<p>比如说，项目中我们通常有一个Web服务管理的类，接口定义中，我们可能会将所有模块的数据调用方法都在接口中进行定义，因为它们都完成的是同一种功能：和服务器进行数据交互；但是对于具体的业务功能模块来说，其他模块的数据调用方法它们从来不会使用，因此不符合接口隔离原则</p>
+<h4 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h4><p>在一般情况下，任何层次的软件设计如果依赖于不需要的东西，都会是有害。</p>
+<p>从源代码层次来说，这亲的依赖关系会导致不必要的重新编译和重新部署</p>
+<p>对更高层次的软件架构设计来说，问题也类似</p>
+<p><img src="http://images.zhuxingsheng.com/20200406163825_1586162305.jpg"></p>
+<p>如果D中包含了F不需要的功能，那么这些功能同样也会是S不需要的。对D中这些功能的修改会导致F需要被重新部署，后者又会导致S的重新部署。</p>
+<p>更糟糕的是，D中一个无关功能的错误也可能会导致F和S运行出错</p>
+<h4 id="TIPS"><a href="#TIPS" class="headerlink" title="TIPS"></a>TIPS</h4><p>采用接口隔离原则对接口进行约束时，要注意以下几点：</p>
+<ul>
+<li>接口尽量小，但是要有限度。对接口进行细化可以提高程序设计灵活性是不挣的事实，但是如果过小，则会造成接口数量过多，使设计复杂化。所以一定要适度。</li>
+<li>为依赖接口的类定制服务，只暴露给调用的类它需要的方法，它不需要的方法则隐藏起来。只有专注地为一个模块提供定制服务，才能建立最小的依赖关系。</li>
+<li>提高内聚，减少对外交互。使接口用最少的方法去完成最多的事情。</li>
+</ul>
+<p>运用接口隔离原则，一定要适度，接口设计的过大或过小都不好。设计接口的时候，只有多花些时间去思考和筹划，才能准确地实践这一原则</p>
+<h4 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h4><p>《整洁架构之道》</p>
+<p><a href="https://www.cnblogs.com/yysbolg/p/7444831.html">Interface Segregation Principle(ISP)–接口隔离原则</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/layered-architecture.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/layered-architecture.html" class="post-title-link" itemprop="url">分层架构</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-03-02 17:44:00" itemprop="dateCreated datePublished" datetime="2020-03-02T17:44:00+08:00">2020-03-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近连续做了两个新项目，借着新项目的机会，重新审视一下之前一些实践方法，进而寻求一下背后的理论支撑</p>
+<p>新项目开始，首先一个就是会新建一个project，那么这个project怎么分层，怎么创建module，怎么分包呢？</p>
+<h1 id="经典分层"><a href="#经典分层" class="headerlink" title="经典分层"></a>经典分层</h1><p>以传统方式，经典的MVC分层，就controller,service,model</p>
+<p><img src="http://images.zhuxingsheng.com/202003011454_718.png"></p>
+<p>找来一张servlet时代的经典处理流程，虽然技术手段日益更新，但处理流程是一样的</p>
+<p><img src="http://images.zhuxingsheng.com/202003011457_184.png"></p>
+<p>抽象一下，经典的分层就是：</p>
+<p><img src="http://images.zhuxingsheng.com/202003011615_287.png"></p>
+<p>现在大多数系统都是这种分层结构。JavaBean里面只有简单的get和set方法，被很多人鄙视的“贫血模型”；业务逻辑变得复杂时，service会变得很臃肿，出现很多的“上帝类”</p>
+<p>回想一下，我们的所有的代码都写在ServiceImpl里面，前几行代码是做validation的事，接下来几行是做convert的事，然后是几行业务处理逻辑的代码，穿插着，我们需要通过RPC或者DAO获取更多的数据，拿到数据后，又是几行convert的代码，在接上一段业务逻辑代码，然后还要落库，发消息…等等</p>
+<p>这也是事务脚本开发方式，横行于世。数据与行为被分离。</p>
+<p>简单业务这样开发是合适的，但业务一复杂起来，需求频繁变更后，就没人能理解任何一段代码,业务逻辑和技术细节糅杂在一起，业务领域模型没法清晰表达出来,开发人员只知道怎么处理了数据，但背后的业务语义完全不知道</p>
+<p>其实呢？还有很多的包，如config,common,core等等，<br>如果使用了一些中间件，如rabbitmq，还会相应创建上对应的包，简单点可能就被放在了service包下</p>
+<p>从有了maven之，module概念更加显现化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;modules&gt;</span><br><span class="line">    &lt;module&gt;service&lt;/module&gt;</span><br><span class="line">	&lt;module&gt;common&lt;/module&gt;</span><br><span class="line">	&lt;module&gt;core&lt;/module&gt;</span><br><span class="line">	&lt;module&gt;test&lt;/module&gt;</span><br><span class="line">&lt;/modules&gt;</span><br></pre></td></tr></table></figure>
+
+<p>我们的那么多包有了更加明确的地方放置，不再是直接放置在工程目录下</p>
+<p>由于上面的这些问题 ，我们似乎可以指出经典的三层架构的弱点：</p>
+<ul>
+<li>架构被过分简化，如果解决方案中包含发送邮件通知，代码应该放置在哪些层？</li>
+<li>它虽然提出了业务逻辑隔离，但没有明确的架构元素指导我们如何隔离</li>
+</ul>
+<hr>
+<h1 id="DDD"><a href="#DDD" class="headerlink" title="DDD"></a>DDD</h1><p>虽然技术日新月异，但大多仅仅是技术，带了实现的便利性，但对于业务层次，更多的还是经验。随着业务的复杂性提升，系统的腐化速度和复杂性呈指数上升。</p>
+<p>DDD带了很多的认知的改变，最大的好处是将业务语义显现化，不再是分离数据与行为，而是通过领域对象将领域概念清晰的显性化表达出来</p>
+<p>当然这世间并没有银弹，但至少能给我们带来一种改进经典分层的理论支撑</p>
+<p>DDD中带来了Repository概念，以及基础设施层，再结合【DIP原则】，可以把三层结构变成</p>
+<p><img src="http://images.zhuxingsheng.com/202003011923_765.png"></p>
+<hr>
+<p>再细看一下Controller，这一层，做些什么呢？</p>
+<p>轻业务逻辑，参数校验，异常兜底。通常这种接口可以轻易更换接口类型，所以业务逻辑必须要轻，甚至不做具体逻辑</p>
+<p>但在现实中，有些更极端，在servlet时代，还做下HttpRequest转换成DTO,传入service，现在有了springmvc，struts2框架的转换，不需要转换了，那么controller成了一个透传层，直接调用service</p>
+<p>这儿有两个问题，既然controller是透传，那有必要存在吗？ controller调用的service，这个service指的服务是什么呢？</p>
+<p>第一controller显然有必要存在，不再于业务，而在于技术实现。不管是http,rpc都得有个请求入口。像thrift可能会比其他的一些rpc框架例如dubbo会多出一层,作用和controller层类似</p>
+<p><img src="http://images.zhuxingsheng.com/202003011957_646.png"></p>
+<p>Tservice与controller的作用是一样的</p>
+<p>第二service服务指的是什么？领域服务吗？如果一个复杂的业务，那么会跨越多个领域，自然需要多个领域服务。如果放在controller里面，也就是在controller里面去编排领域服务，如果切换到thrift，那Tservice就得重复</p>
+<p>因此，此时需要另一个service，在DDD中就是应用服务</p>
+<p><img src="http://images.zhuxingsheng.com/202003012105_928.png"></p>
+<p>应用服务算是领域服务的facade，应用层是高层抽象的概念，但表达的是业务的含义，领域层是底层实现的概念，表达的是业务的细节</p>
+<hr>
+<p><img src="http://images.zhuxingsheng.com/202003012245_568.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;modules&gt;</span><br><span class="line">        &lt;module&gt;controller&lt;/module&gt;</span><br><span class="line">        &lt;module&gt;application&lt;/module&gt;</span><br><span class="line">        &lt;module&gt;domain&lt;/module&gt;</span><br><span class="line">        &lt;module&gt;infrastructure&lt;/module&gt;</span><br><span class="line">        &lt;module&gt;start&lt;/module&gt;</span><br><span class="line">&lt;/modules&gt;</span><br></pre></td></tr></table></figure>
+
+<p>controller模块：restfull风格的少不了这层</p>
+<p>application模块：类似以前的service包</p>
+<p>domain模块：如果是事务脚本方式，domain模块就没有了</p>
+<p>infrastructure模块：基础模块，类似之前的dao包，但这里面都是实现类，而像repository接口则在domain模块，还需要对应的convertor</p>
+<p>模块里面各个包，可能需要按实践情况而定了，后面再从项目中抽取个archetype，使用maven直接生成</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/lsp-of-solid.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/lsp-of-solid.html" class="post-title-link" itemprop="url">SOLID之LSP</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-01-31 22:48:00" itemprop="dateCreated datePublished" datetime="2020-01-31T22:48:00+08:00">2020-01-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>里氏代换原则 LSP，Liskov Substitution Principle</p>
+<blockquote>
+<p>子类型必须能够替换掉它们的基类型</p>
+</blockquote>
+<blockquote>
+<p>若对每个类型S的对象O1，都存在一个类型T的对象O2，使得在所有针对T编写的程序P中，用O1替换O2后，程序P行为功能不变，则S是T的子类型</p>
+</blockquote>
+<p>LSP是继承关系设计基本原则，也是使OCP成为可能的主要原则之一。正是子类型的可替换性才使得使用基类类型的模块在无需修改的情况下就可以扩展，对于LSP的违反常常会导致以明显违反OCP的方式使用运行时类型辨别(RTTI),这种方式常常是使用一个显式的if语句或才if&#x2F;else链去确定一个对象的类型</p>
+<p>假设一个函数f，它的参数为指向某个基类B的指针或者引用。同样假设B的某个派生类D，如果把D对象作为B类型传递给f，会导致f出现错误的行为。那么D就违反了LSP。显然，D对于f来说是脆弱的。</p>
+<p>f的编写者会想去对D进行一些测试，以便于在把D的对象传递给f时，可以使f具有正确的行为。这个测试违反了OCP，因为此时f对于B的所有派生类都不再是封闭的</p>
+<h1 id="IS-A"><a href="#IS-A" class="headerlink" title="IS-A"></a>IS-A</h1><p>“IS-A”是严格的分类学意义上的定义，意思是一个类是另一个类的“一种”</p>
+<p>我们经常说继承是IS-A关系，也就是如果一个新类型的对象被认为和一个已有类的对象之间满足IS-A关系，那么这个新对象的类应该从这个已用对象的类派生</p>
+<p>从一般意义上讲，一个正方形就是一个矩形。因此，把Sequare类视为从Rectangle类派生是合乎逻辑的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">void f(Rectangle r) &#123;</span><br><span class="line">    r.setWidth(5);</span><br><span class="line">    r.setHeight(4);</span><br><span class="line">    assert(r.Area() == 20)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时，如果传入的是Sequare对象，那这个函数f不能正确处理，也就是Squauare不能替换Rectangle，也就违反了LSP，意味着LSP与通常的数学法则和生活常识有不可混淆的区别</p>
+<p>在OOD中IS-A关系是就行为方式而言，而不是属性，这也就是面向接口编程；派生类的行为方式和输出不能违反基类已经确立的任何限制。基类的用户不应该被派生类的输出扰乱</p>
+<p>简单判断就是“可替换性”，子类是否能替换父类并保持原有行为不变</p>
+<h1 id="LSP与架构"><a href="#LSP与架构" class="headerlink" title="LSP与架构"></a>LSP与架构</h1><p>LSP从诞生开始，也就差不多这些内容，主要是指导如何使用继承关系的一种方法。随着时间推移，在更宏观上，LSP逐渐演变成了一种更广泛的、指导接口与其实现方式的设计原则</p>
+<p>可以是java风格的接口，具有多个实现类：甚至可以是几个服务响应同一个rest接口，用户都依赖于一种接口，并且都期待实现该接口的类之间能具有可替换性</p>
+<p>一旦违背了可替换性，该系统架构就不得不为此增添大量复杂的应对机制</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ocp-of-solid.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/ocp-of-solid.html" class="post-title-link" itemprop="url">SOLID之OCP</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-01-01 22:47:00" itemprop="dateCreated datePublished" datetime="2020-01-01T22:47:00+08:00">2020-01-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>开闭原则 OCP Open-Closed Principle</p>
+<blockquote>
+<p>设计良好的计算机软件应该易于扩展，同时抗拒修改</p>
+</blockquote>
+<p>换句话说，一个良好的计算机系统应该在不需要修改的前提下就可以轻易被扩展</p>
+<p>遵循开闭原则设计出的模块具有两个特征：</p>
+<ol>
+<li>“对于扩展是开放的”，当应用的需求改变时，我们可以对模块进行扩展，使其具有满足那些改变的新行为</li>
+<li>“对于更改是封装的”，对模块进行扩展时，不必改动原有的代码</li>
+</ol>
+<p>其实这也是研究软件架构的根本目的。如果对原始需求的小小延伸就需要对原有的软件系统进行大幅修改，那么这个系统的架构设计显示是失败的</p>
+<p>一个好的软件架构设计师会努力将旧代码的修改需求量降至最小，甚至为0</p>
+<p>这原则看着很矛盾，需要扩展，但却又不要修改；那么如何实现这个原则呢？</p>
+<p><strong>抽象，面向接口编程</strong></p>
+<p>模块可以操作一个抽象体。由于模块依赖于一个固定的抽象体，所以它对于更改可以是关闭的。同时，通过从这个抽象体派生，也可以扩展此模块的行为</p>
+<p>client,server都是具体类，client使用server</p>
+<p><img src="http://images.zhuxingsheng.com/202001011036_356.png"></p>
+<p>如果client想使用另一个server对象，那么需要修改client中使用server的地方</p>
+<p>显然这样违反了OCP</p>
+<p><img src="http://images.zhuxingsheng.com/202001011037_127.png"></p>
+<p>在新的设计中，添加了ClientInterface接口，此接口是一个拥有抽象成员函数的抽象类。Client类使用这个抽象类。如果我们希望client对象使用不同的server，只需要从clientinterface类派生一个新类，client无需任何修改</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">interface ClientInterface</span><br><span class="line">&#123;</span><br><span class="line">    public void Message();</span><br><span class="line">    //Other functions</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">class Server:ClientInterface</span><br><span class="line">&#123;</span><br><span class="line">    public void Message();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">class Client </span><br><span class="line">&#123;</span><br><span class="line">   ClientInterface ci;</span><br><span class="line">   public void GetMessage()</span><br><span class="line">   &#123;</span><br><span class="line">       ci.Message();</span><br><span class="line">   &#125;</span><br><span class="line">   public void Client(ClientInterface paramCi)</span><br><span class="line">   &#123;</span><br><span class="line">       ci=paramCi;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line">//那么在主函数(或主控端)则</span><br><span class="line">public static void Main()</span><br><span class="line">&#123;</span><br><span class="line">   ClientInterface ci = new Server();</span><br><span class="line">   //在上面如果有新的Server类只要替换Server()就行了．</span><br><span class="line">   Client client = new Client(ci);</span><br><span class="line">   client.GetMessage();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>OCP设计类与模块时的重要原则，但是在架构层面，这项原则意义更重大。</p>
+<p><strong>在设计时，可以先将满足不同需求的代码分组(SRP),然后再来调整这些分组之间的依赖关系(DIP)</strong></p>
+<p>IOC是不是也有OCP的味道</p>
+<p>OCP算是面向对象设计的核心所在。遵循这个原则可以带来面向对象技术的巨大好处(灵活性，可重用性以及可维护性)</p>
+<p>然而，并不是说只要使用一种面向对象语言就得遵循这个原则。对于应用程序中每个部分都肆意地进行抽象同样不是一个好主意。正确的做法是，<strong>开发人员应该仅仅对程序中呈现出频繁变化的那些部分进行抽象，拒绝不成熟的抽象和抽象本身一样重要</strong></p>
+<p>在一个复杂的软件中为什么会建议“尽量”不要违背OCP？</p>
+<p>最核心的原因就是一个现有逻辑的变更可能会影响一些原有的代码，导致一些无法预见的影响。这个风险只能通过完整的单元测试覆盖来保障，但在实际开发中很难保障单测的覆盖率。OCP的原则能尽可能的规避这种风险，当新的行为只能通过新的字段&#x2F;方法来实现时，老代码的行为自然不会变</p>
+<hr>
+<p>Common Closure Principle（CCP）共同封闭原则</p>
+<p>CCP延伸了开闭原则（OCP）的“关闭”概念，当因为某个原因需要修改时，把需要修改的范围限制在一个最小范围内的包里</p>
+<p>一个包中所有的类应该对同一种类型的变化关闭。一个变化影响一个包，便影响了包中所有的类。一个更简短的说法是：一起修改的类，应该组合在一起（同一个包里）。如果必须修改应用程序里的代码，我们希望所有的修改都发生在一个包里（修改关闭），而不是遍布在很多包里。CCP原则就是把因为某个同样的原因而需要修改的所有类组合进一个包里。如果2个类从物理上或者从概念上联系得非常紧密，它们通常一起发生改变，那么它们应该属于同一个包。</p>
+<p>CCP还是解决分布式单体可怕的反模式的法宝</p>
+<p>在现流行的微服务架构中，按业务能力和子域以及SRP和CCP进行分解是将应用程序分解为服务的好方法</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/srp-of-solid.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/srp-of-solid.html" class="post-title-link" itemprop="url">SOLID之SRP</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-12-29 22:46:00" itemprop="dateCreated datePublished" datetime="2019-12-29T22:46:00+08:00">2019-12-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>单一职责原则  SRP，single responsibility principle</p>
+<p>SRP是所有原则中最简单的之一，也是最难正确运用的之一，也是我们日常中最常用的一个</p>
+<p>不管是编码，重构，甚至当下流行的微服务中</p>
+<p>在很多团队的规范中，都会听到一条编码规范：一个方法不要超过x行代码</p>
+<p>作为一群自命不凡的程序员，为什么在规范中却有如此一条格调不对称规范</p>
+<p>主要问题就在于思维对SRP的缺失</p>
+<hr>
+<p>微服务这个术语的一个问题是会将你的关注点错误地聚集在“微”上。它暗示服务应该非常小。很多团队在实施时，也是往小了去考虑，偏移了核心目标</p>
+<p>微服务的目标是将精心设计的服务定义为能够由小团队开发的服务，并且交付时间最短，与其它团队协作最小。</p>
+<p>理论上，团队可能只负责<strong>单一服务</strong>，因此服务绝对<strong>不是微小的</strong></p>
+<h2 id="单一"><a href="#单一" class="headerlink" title="单一"></a>单一</h2><p>从个人理解可以分为狭义与广义</p>
+<p><strong>狭义：</strong> </p>
+<p>狭义只是从面向底层实现细节的设计原则</p>
+<blockquote>
+<p>一个类而言，应该仅有一个引起它变化的原因</p>
+</blockquote>
+<p>在日常中，在编写方法或者重构方法，也是以这个为原则，即确保一个函数只完成一个功能。</p>
+<p>在将大方法重构成小方法时经常会用到这个原则</p>
+<p><strong>广义：</strong></p>
+<p>相对狭义，适用的范围相对大些，不再是一个类，一个方法，亦或是一个原因</p>
+<blockquote>
+<p>任何一个软件模块都应该只对某一类行为者负责</p>
+</blockquote>
+<p>“软件模块”不再只是一个类，可以是一组紧密相关的函数和数据结构,甚至一个独立应用服务</p>
+<h2 id="职责"><a href="#职责" class="headerlink" title="职责"></a>职责</h2><p>什么是职责？如果一个类承担多于一个职责，那么引起它变化的原因就会有多个</p>
+<p>在SRP中，职责定义为“变化的原因”，如果你能够想到多于一个的动机去改变一个类，那么这个类就具有多于一个的职责</p>
+<p>因此对于职责的定义需要结合具体业务，有时从感性上理解一个类的多个方法应该拆分，但如果应用程序的变化方式总是导致这几个职责同时变化，那么就不需要分离</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/blog/page/9/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/9/">9</a><span class="page-number current">10</span><a class="page-number" href="/blog/page/11/">11</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/16/">16</a><a class="extend next" rel="next" href="/blog/page/11/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

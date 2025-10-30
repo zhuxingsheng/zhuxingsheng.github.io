@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="最近又看了几本关于架构的书籍，不禁回到原点：架构是什么？架构师职责是什么？ 架构在《架构与架构师2》中引用了1995年David Garlan和Dewayne Perry给出的定义：  系统的组件结构，组件的相互关系，以及管控组件设计和长期演进的原则和指导方针  十几年前，软件架构师只处理架构中的纯技术问题，像上面定义中的组件，可能是类，是包。而现在架构师承担着大量、宽泛的责任，并且范围还在不断扩">
+<meta property="og:type" content="article">
+<meta property="og:title" content="架构与架构师3">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/architecture-and-architect-3.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="最近又看了几本关于架构的书籍，不禁回到原点：架构是什么？架构师职责是什么？ 架构在《架构与架构师2》中引用了1995年David Garlan和Dewayne Perry给出的定义：  系统的组件结构，组件的相互关系，以及管控组件设计和长期演进的原则和指导方针  十几年前，软件架构师只处理架构中的纯技术问题，像上面定义中的组件，可能是类，是包。而现在架构师承担着大量、宽泛的责任，并且范围还在不断扩">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211105193558_1636112158.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211106151058_1636182658.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211106151349_1636182829.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211106151638_1636182998.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211106154353_1636184633.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211106155328_1636185208.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211106160140_1636185700.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211106211014_1636204214.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211106221835_1636208315.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211106223419_1636209259.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211106230846_1636211326.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211106231620_1636211780.jpg?imageMogr2/thumbnail/!50p">
+<meta property="article:published_time" content="2021-11-07T13:27:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.470Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="架构师">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20211105193558_1636112158.jpg?imageMogr2/thumbnail/!50p">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/architecture-and-architect-3.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>架构与架构师3 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/architecture-and-architect-3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          架构与架构师3
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-11-07 21:27:00 / Modified: 21:29:17" itemprop="dateCreated datePublished" datetime="2021-11-07T21:27:00+08:00">2021-11-07</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近又看了几本关于架构的书籍，不禁回到原点：架构是什么？架构师职责是什么？</p>
+<h1 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h1><p>在<a href="http://www.zhuxingsheng.com/blog/architecture-and-architect-2.html">《架构与架构师2》</a>中引用了1995年David Garlan和Dewayne Perry给出的定义：</p>
+<blockquote>
+<p>系统的组件结构，组件的相互关系，以及管控组件设计和长期演进的原则和指导方针</p>
+</blockquote>
+<p>十几年前，软件架构师只处理架构中的纯技术问题，像上面定义中的组件，可能是类，是包。而现在架构师承担着大量、宽泛的责任，并且范围还在不断扩大。尤其云时代，IT基础设施包括网络、数据中心、计算基础设施、存储，以及其他子系统都得考虑</p>
+<p>贴一张思维导图来说明软件架构涵盖的范围</p>
+<p><img src="http://images.zhuxingsheng.com/20211105193558_1636112158.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>从图中可以看出，架构师的职责包含技术能力、软技能、运营意识及其他很多方面</p>
+<p>所以定义架构不是件轻松的事，Martin Fowler也都拒绝尝试对架构做出定义，退而引用名言：</p>
+<blockquote>
+<p>“架构是那些重要的东西…………无论它具体是什么”<br>            —-  Ralph Johnson</p>
+</blockquote>
+<p>所以在行业内共识：对软件架构本身并没有一个好的定义。</p>
+<p>虽然架构很难定义，但我们总得尝试着描述它，分解它，进而更好地运用它指导软件开发。如果说软件世界更迭速度过快，组件化定义显得太陈旧，那我们需要一种与时俱进的思考软件架构的方式</p>
+<p>Mark Richards与Neal Ford展示了这样的思考方式</p>
+<p><img src="http://images.zhuxingsheng.com/20211106151058_1636182658.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>如图中所示：软件架构包含系统的结构、系统必须支持的架构特征、架构决策以及设计原则</p>
+<h2 id="系统结构"><a href="#系统结构" class="headerlink" title="系统结构"></a>系统结构</h2><p>实现该系统的一种或多种架构风格（比如微服务、分层和微内核）</p>
+<p><img src="http://images.zhuxingsheng.com/20211106151349_1636182829.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>仅仅描述结构并不能完整地诠释架构，还需要了解架构特征、架构决策和设计原则</p>
+<h2 id="架构特征"><a href="#架构特征" class="headerlink" title="架构特征"></a>架构特征</h2><p>架构特征定义了系统的成功标准，这些标准往往与系统的功能正交</p>
+<p><img src="http://images.zhuxingsheng.com/20211106151638_1636182998.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/architecture-and-architect.html">《架构与架构师》</a>中，指出应用系统需要考虑两方面内容：一是功能性需求，二是非功能性需求。</p>
+<p>但从语言角度来看，将一个东西命名为非功能会带来负面影响：如何说服团队充分注意“非功能性”的东西</p>
+<p>另一个流行术语是质量属性，但它暗示的是事后质量评估而不是设计。</p>
+<p>架构特征描述了对架构以及整个系统的成功至关重要的关注点，同时又不影响其重要性。</p>
+<p>架构特征满足三个标准：</p>
+<ol>
+<li>明确非领域设计的某个注意事项</li>
+<li>影响设计的某些结构项</li>
+<li>是否对应用的成功至关重要</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/20211106154353_1636184633.jpg?imageMogr2/thumbnail/!50p"></p>
+<h2 id="构架决策"><a href="#构架决策" class="headerlink" title="构架决策"></a>构架决策</h2><p>架构决策定义了一组关于如何构建系统的规则，构成了系统约束，并指导团队哪些可以做，哪些不可以做</p>
+<p><img src="http://images.zhuxingsheng.com/20211106155328_1636185208.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>比如在一个分层架构中，架构师可能会规定只有业务层和服务层可以访问数据库，限制表现层直接调用数据库。</p>
+<h2 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h2><p>设计原则与架构决策的不同之处在于，设计原则是指导原则，而不是必须遵守的规则。</p>
+<p><img src="http://images.zhuxingsheng.com/20211106160140_1636185700.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>在微服务架构中，开发团队应该使用服务间的异步消息传递来提升性能。</p>
+<h1 id="架构定律"><a href="#架构定律" class="headerlink" title="架构定律"></a>架构定律</h1><p>虽然架构范围已经大到难以置信，但统一元素仍然存在。</p>
+<p><strong>架构第一定律：</strong></p>
+<blockquote>
+<p>软件架构中的一切都是在做权衡</p>
+</blockquote>
+<p>当架构师若认为自己发现了不需要做权衡的东西，很有可能他们只是还没有发现需要舍弃的东西而已</p>
+<p>通过结合架构的原则、特征等，我们对软件架构的定义超越了软件结构脚手架。架构不仅仅是各种要素的组合，还体现了<strong>架构第二定律：</strong></p>
+<blockquote>
+<p>原因比方法更重要</p>
+</blockquote>
+<p>架构师面对不了解的系统时，可以探明这个架构是如何工作的，但会很难解释某个选择背后的原因。</p>
+<p>因此架构师需要去详细记录架构决策以及背后权衡的逻辑。</p>
+<h1 id="架构师"><a href="#架构师" class="headerlink" title="架构师"></a>架构师</h1><p>在之前的两篇文章中指出架构师必须要有屠龙刀还得有绣花针，需要技术+业务+管理三条腿。</p>
+<p>总之一句话，架构师是最牛的人。可一个团队不能人人都是架构师，况且还有资深工程师，技术专家。作为架构师与他们的区别是什么呢？能力模型有什么不同呢？</p>
+<p>决定一个人的强弱，是他的认知水平。对应技术人员就是对技术的认知。架构师的认知有四个阶段：</p>
+<p><img src="http://images.zhuxingsheng.com/20211106211014_1636204214.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>愚昧之巅（不知道自己不知道）、绝望之谷（知道自己不知道）、开悟之坡（知道自己知道）和持续平衡的高原（不知道自己知道），这也是架构师的认知逐步提升的过程。</p>
+<p>如果人们对开发工程师的期望是把功能需求开发完成，那对架构师的期望就多样了</p>
+<p><strong>一、制定架构决策</strong></p>
+<p>架构师需要制定架构决策和设计原则，以指导团队、部门或者整个企业进行技术决策</p>
+<p><strong>二、持续分析架构</strong></p>
+<p>架构师需要持续分析架构和当前技术环境，然后给出改进建议。从整体上分析技术和问题域的变化，以确定架构的稳健性</p>
+<p><strong>三、掌握最新趋势</strong></p>
+<p>开发人员必须时刻关注技术更新，从而保证与这些技术与时俱进。对架构师来说，掌握最新的技术和行业趋势更为关键</p>
+<p><strong>四、确保决策被遵守</strong></p>
+<p>架构师需要确保架构决策和设计原则被遵守</p>
+<p><strong>五、丰富的经历和经验</strong></p>
+<p>架构师需要涉猎各种各样的技术、框架、平台和环境</p>
+<p><strong>六、具备业务领域知识</strong></p>
+<p>一个称职的软件架构师不仅要了解技术，还要了解问题背后的业务领域。没有业务领域知识，就无法理解业务的问题、目标和需求，也就不可能设计出有效的架构</p>
+<p><strong>七、具备人际交往能力</strong></p>
+<p>架构师需要具备出色的人际交往能力，其中包括团队合作、引导和领导力</p>
+<p><strong>八、了解并驾驭政治</strong></p>
+<p>架构师所做的几乎每个决策都会受到挑战。由于成本或工作量（时间）的增加，架构性决策将受到产品负责人、项目经理和业务利益相关者的挑战</p>
+<hr>
+<p>针对以上八点，以及技术+业务+管理三项技术人普实能力，可以更简洁地概述架构师自身定制的三条腿：<strong>技能+影响力+领导力</strong></p>
+<p>1.技能是实践架构的基础。它需要知识以及应用知识的能力</p>
+<p>2.影响力用来衡量架构师在项目中应用技能后给项目或公司带来多大的效益</p>
+<p>3.领导力确保了架构实践的状态能稳步向前推进，同时培养更多的架构师</p>
+<h2 id="能力模型"><a href="#能力模型" class="headerlink" title="能力模型"></a>能力模型</h2><p>论能力模型，与开发人员之间对技术方向的侧重有所不同。开发人员必须拥有很深的技术深度，但软件架构师必须具有非常广的技术广度才能像架构师般思考，并以架构的角度看待事物。</p>
+<p>以知识金字塔展示世界上所有技术知识的类别，事实证明，技术人员应重视的信息类型随职业阶段的不同而不同</p>
+<p><img src="http://images.zhuxingsheng.com/20211106221835_1636208315.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>“已知”指代技术人员日常工作用到的技术、框架、编程语言和工具</p>
+<p>“已知的未知”指代技术人员稍微了解或听说过，但没有掌握的技术</p>
+<p>“未知的未知”是金字塔中面积最大的部分，指代能够完美解决技术人员面临的问题的技术、工具、框架和编程语言，但是技术人员甚至都不知道它们的存在</p>
+<p>开发人员的早期职业生涯专注于扩展金字塔的顶端，积累经验和专业知识。金字塔顶端的知识需要投入时间才能保持专业。最终，金字塔顶的大小就是个人的技术深度。</p>
+<p><img src="http://images.zhuxingsheng.com/20211106223419_1636209259.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>而随着开发人员过渡到架构师角色，知识的性质也发生变化。架构师的价值很大一部分是广泛地理解技术，并且知道如何利用技术解决特定的问题。对架构师来说，最重要的部分是金字塔的顶部和中间部分</p>
+<p><img src="http://images.zhuxingsheng.com/20211106230846_1636211326.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>中间部分与底部交汇处的长度代表了架构师的技术广度</p>
+<p>作为架构师，技术广度比技术深度更重要。因为架构师的职责就是根据功能做出与技术限制相匹配的决策，所以广泛了解了解各种解决方案是非常有价值的</p>
+<p><img src="http://images.zhuxingsheng.com/20211106231620_1636211780.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>架构师需要“博而不专”，牺牲技术深度来提高技术广度，虽然技术人都想在多个领域保持专业深度，但结果往往事与愿违，甚至无一成功。</p>
+<p>对于能力模型为啥有区别，简单总结一下：</p>
+<p><strong>广度决定能找到的方法+深度决定选择方法的正确性+经验决定找到正确方法的速度</strong></p>
+<h2 id="平衡编码"><a href="#平衡编码" class="headerlink" title="平衡编码"></a>平衡编码</h2><p>虽然架构师的能力模型与开发工程师有所不同，但还是需要保持动手编写代码，并保持一定水平的技术深度。</p>
+<p>正好之前所说，不仅要有屠龙术，还要会瓷器活。</p>
+<p>因此架构师面临的困难任务之一是如何在动手编码和软件架构之间取得平衡。</p>
+<p>如果参与过多的编码工作，可能会陷入瓶颈陷阱。也就是当架构师在项目的关键部分（通常是基础框架代码）中拥有代码所有权并成为团队的瓶颈时，就会发生瓶颈陷阱。</p>
+<p>避免瓶颈陷阱方法之一是将关键路径和框架代码委托给开发团队其他人员，然后着重于实现业务功能（一个服务），并且在1~3个迭代中完成。</p>
+<p>如何保持编码能力和一定水平的技术深度呢？</p>
+<p>一、频繁进行概念验证（POC），这种做法不仅要求架构师编写源代码，还要求架构师能够通过考虑细节来帮助验证架构决策</p>
+<p>二、处理一些技术债或架构相关的故事问题，使开发团队腾出精力来处理关键的功能性的用户故事；或者在迭代中修复bug，能使架构师识别出存在于代码甚至架构中的问题和弱点</p>
+<p>三、创建简单的命令行工具和分析器进行自动化来帮助开发团队完成日常任务</p>
+<p>四、进行频繁的代码审查，通过代码审查能确保代码符合架构规则，并在团队中进行指导和辅导</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>架构定义是件不容易的事，软件发展日异月新，架构的范围也日益扩大，进一步加据了定义架构的难度。但无论如何，我们还是有必要通过结构化思维去分析架构，进化古老的组件化定义，从架构结构、架构决策、架构特征以及设计原则四方面描述架构，继而明确架构师的职责，区别与开发工工程师的能力模型，加强“技能+影响力+领导力”三条腿能力成长，更好地服务架构。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84%E5%B8%88/" rel="tag"># 架构师</a>
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/conway-law-and-inverse-conway-law.html" rel="prev" title="康威定律与逆康威定律">
+      <i class="fa fa-chevron-left"></i> 康威定律与逆康威定律
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/benefits-and-challenges-of-domain-driven-design-patterns.html" rel="next" title="领域驱动设计模式的收益与挑战">
+      领域驱动设计模式的收益与挑战 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B3%BB%E7%BB%9F%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">系统结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E7%89%B9%E5%BE%81"><span class="nav-number">1.2.</span> <span class="nav-text">架构特征</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E6%9E%B6%E5%86%B3%E7%AD%96"><span class="nav-number">1.3.</span> <span class="nav-text">构架决策</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-number">1.4.</span> <span class="nav-text">设计原则</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%AE%9A%E5%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">架构定律</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%B8%88"><span class="nav-number">3.</span> <span class="nav-text">架构师</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%83%BD%E5%8A%9B%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.1.</span> <span class="nav-text">能力模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E7%BC%96%E7%A0%81"><span class="nav-number">3.2.</span> <span class="nav-text">平衡编码</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

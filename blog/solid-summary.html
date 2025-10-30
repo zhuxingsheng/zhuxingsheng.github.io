@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="之前已经把SOLID的每人原则都阐述过一遍，此篇主要是从全局角度复述一下SOLID，对于细节概念再做少许补充 SOLID原则的历史已经很悠久，早在20世纪80年代末期，都已经开始逐渐成型了 通常来讲，想构建一个好的软件系统，应该从写整洁的代码开始做起。毕竟如果建筑的砖头质量不佳，那么架构所能起到的作用也会很有限。反之亦然，如果建筑的架构设计不佳，那么其所用砖头质量再好也没用 SOLID原则的主要作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SOLID总结">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/solid-summary.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="之前已经把SOLID的每人原则都阐述过一遍，此篇主要是从全局角度复述一下SOLID，对于细节概念再做少许补充 SOLID原则的历史已经很悠久，早在20世纪80年代末期，都已经开始逐渐成型了 通常来讲，想构建一个好的软件系统，应该从写整洁的代码开始做起。毕竟如果建筑的砖头质量不佳，那么架构所能起到的作用也会很有限。反之亦然，如果建筑的架构设计不佳，那么其所用砖头质量再好也没用 SOLID原则的主要作">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210606112234_1622949754.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210607091720_1623028640.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210606111559_1622949359.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210606230506_1622991906.jpg">
+<meta property="article:published_time" content="2021-06-08T12:57:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.013Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="SOLID">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20210606112234_1622949754.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/solid-summary.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>SOLID总结 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/solid-summary.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SOLID总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-06-08 20:57:00" itemprop="dateCreated datePublished" datetime="2021-06-08T20:57:00+08:00">2021-06-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>之前已经把SOLID的每人原则都阐述过一遍，此篇主要是从全局角度复述一下SOLID，对于细节概念再做少许补充</p>
+<p>SOLID原则的历史已经很悠久，早在20世纪80年代末期，都已经开始逐渐成型了</p>
+<p>通常来讲，想构建一个好的软件系统，应该从写整洁的代码开始做起。毕竟如果建筑的砖头质量不佳，那么架构所能起到的作用也会很有限。反之亦然，如果建筑的架构设计不佳，那么其所用砖头质量再好也没用</p>
+<p>SOLID原则的主要作用就是告诉我们如何将数据和函数组织成为类，以及如何将这些类链接起来成为程序，类似于指导我们如何将砖块彻成墙与房间</p>
+<p>对照几张前辈们画的图，看图说话</p>
+<p><img src="http://images.zhuxingsheng.com/20210606112234_1622949754.jpg"></p>
+<p>这张图把SOLID的整体关系描述清楚了，不再是把各个原则单独看待</p>
+<p>单一职责是所有设计原则的基础，开闭原则是设计的终极目标。</p>
+<p>里氏替换原则强调的是子类替换父类后程序运行时的正确性，它用来帮助实现开闭原则。</p>
+<p>而接口隔离原则用来帮助实现里氏替换原则，同时它也体现了单一职责。</p>
+<p>依赖倒置原则是过程式编程与OO编程的分水岭，同时它也被用来指导接口隔离原则</p>
+<hr>
+<p>这些原则每个单独看都是简单的，但他们却是优秀代码的指导思想，不得不常读，常思；犹如设计模式，很多时候你感觉懂了，不过只是懂了介绍模式的示例，并没有真正理解模式</p>
+<p>反观这些原则，道理类似</p>
+<p>如SRP：是公认最容易理解的原则，却是被违反得最多的设计原则之一；再比如ISP，看着简单，更小和更具体的瘦接口比庞大臃肿的胖接口好，很多时候都没有明白接口的定义</p>
+<p>在实现编写代码时，只要是service都会加上一个 service interface，但想想，从项目开启到后期维护，几乎没有一个 service interface 有一个以上的实现，那为什么要加个接口呢？美其名曰面向接口编程，其实是人云亦云，让自己也让别人看着是那么一回事而已</p>
+<p>面向接口编程所指的“接口”并非Java语言中的interface类型，而是指面向调用者对外暴露的接口，代表一种交互与协作，是对信息的隐藏和封装，而不是具体的interface类型。即使是普通的java方法仍然满足隐藏细节的原则，如果是public的，就可以认为该方法是“面向接口设计”中的接口，也就是说：不要针对实现细节编程，而是针对接口编程</p>
+<p>接口之所以存在，是为了解耦。开发者常常有一个错误的认知，以为是实现类需要接口。其实是消费者需要接口，实现类只是提供服务，因此应该由消费者（客户端）来定义接口。理解了这一点，才能正确地站在消费者的角度定义Role interface，而不是从实现类中提取Header Interface。</p>
+<p>对于Role interface 与 header interface , Martin Fowler给出了定义：</p>
+<blockquote>
+<p>A role interface is defined by looking at a specific interaction between suppliers and consumers. A supplier component will usually implement several role interfaces, one for each of these patterns of interaction. This contrasts to a HeaderInterface, where the supplier will only have a single interface</p>
+</blockquote>
+<p>如果你先定义了一个类，然后因为你需要定义接口对其抽象，然后就简单地将这个类的所有公有方法都提取到抽象的接口中，这样设计的接口，被Martin Fowler称为Header Interface,这种接口也正是胖接口的来源，而 Role interface 才是能达到瘦接口目标</p>
+<p>想起一位投资前辈说的话，成功就是对简单道理的深刻理解和灵活运用；我们很多时候有种无力感，为什么这么简单的道理都做不好，落地不了呢？其实是没有深刻理解而自以为懂了</p>
+<hr>
+<p><img src="http://images.zhuxingsheng.com/20210607091720_1623028640.jpg"></p>
+<p>Kent Beck对软件设计的定义：软件设计是为了在让软件在长期范围内容易应对变化</p>
+<p>为了软件更容易应对变化，就需要符合软件的道：高内聚低耦合</p>
+<p><strong>单一职责和开放封闭，更多的在强调类划分时的高内聚；而里氏替换，依赖倒置，接口隔离则更多的强调类与类之间协作接口（即API）定义的低耦合</strong>,单独应用SOLID的某一个原则并不能让收益最大化。应该把它作为一个整体来理解和应用，从而更好地指导软件设计。</p>
+<p>这个同心圆的原图本来是：</p>
+<p><img src="http://images.zhuxingsheng.com/20210606111559_1622949359.jpg"></p>
+<p>要实现道就得遵循正交设计四原则：</p>
+<ol>
+<li>消除重复</li>
+<li>分离关注点</li>
+<li>缩小依赖范围</li>
+<li>向稳定的方向依赖</li>
+</ol>
+<p>「正交设计」的理论、原则、及其方法论出自前ThoughtWorks软件大师「袁英杰」先生。这一块对我来讲很新颖，消化之后再总结</p>
+<hr>
+<p><img src="http://images.zhuxingsheng.com/20210606230506_1622991906.jpg"></p>
+<p>这幅图揭示了模块化设计的全部：首先将一个低内聚的模块首先拆分为多个高内聚的模块；然后再考虑这多个模块之间的API设计，以降低这些高内聚的软件单元之间的耦合度。</p>
+<p>除了内聚与耦合之外，上面这幅图还揭示了另外一种关系：正交。具备正交关系的两个模块，可以做到一方的变化不会影响另外一方的变化。换句话说，双方各自独自变化，互不影响。</p>
+<p>而这幅图的右侧，正是我们模块化的目标。它描述了永恒的三方关系：客户，API，实现，以及它们之间的关系。这个三方关系图清晰的指出了我们应该关注的内聚性，耦合性，以及正交性都发生在何处</p>
+<p><strong>总结：</strong></p>
+<p>软件的复杂性已经是世界性难题，但最原始的道是相当简单的，就是要高内聚低耦合，在追求道的过程中，前人总结出了很多原则，这些原则相互协作、相互碰撞，我们需要平衡，取舍，这考验架构师的功力，也要求架构师对这些基本概念有深刻理解</p>
+<p>参考：</p>
+<p><a href="https://www.infoq.cn/article/orthogonal-design-oo-and-solid">《正交设计，OO 与 SOLID》</a></p>
+<p><a href="https://insights.thoughtworks.cn/what-is-solid-principle/">你真的了解SOLID吗？</a></p>
+<p><a href="https://www.martinfowler.com/bliki/RoleInterface.html">RoleInterface</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SOLID/" rel="tag"># SOLID</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/what-are-my-strengths.html" rel="prev" title="我的长处是什么">
+      <i class="fa fa-chevron-left"></i> 我的长处是什么
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/coping-with-change.html" rel="next" title="应对变化">
+      应对变化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

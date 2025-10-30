@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="新晋管理者都有一些相同的烦恼和忧愁。 “管理事太杂了，没时间写代码，越来越虚” “如何平稳技术与管理？” “管理事太琐碎，离技术越来越远，未来职业怎么规划？” “做管理最大的挑战，就是舍弃技术，特别难” 这些问题的本源是因为新晋管理者正在进入一个全新的领域，离开以往的舒适区。 以往的舒适区是技术范围，而且主要是技术实现。接受一个功能需求，通过技术实现出来。 而成为管理后，不再是技术实现，而是任务分">
+<meta property="og:type" content="article">
+<meta property="og:title" content="做技术还是做管理">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/technology-or-management.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="新晋管理者都有一些相同的烦恼和忧愁。 “管理事太杂了，没时间写代码，越来越虚” “如何平稳技术与管理？” “管理事太琐碎，离技术越来越远，未来职业怎么规划？” “做管理最大的挑战，就是舍弃技术，特别难” 这些问题的本源是因为新晋管理者正在进入一个全新的领域，离开以往的舒适区。 以往的舒适区是技术范围，而且主要是技术实现。接受一个功能需求，通过技术实现出来。 而成为管理后，不再是技术实现，而是任务分">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220910231251_1662822771.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220912104339_1662950619.jpg">
+<meta property="article:published_time" content="2022-09-12T03:36:00.000Z">
+<meta property="article:modified_time" content="2022-09-12T04:36:27.317Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="管理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20220910231251_1662822771.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/technology-or-management.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>做技术还是做管理 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/technology-or-management.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          做技术还是做管理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-09-12 11:36:00 / Modified: 12:36:27" itemprop="dateCreated datePublished" datetime="2022-09-12T11:36:00+08:00">2022-09-12</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>新晋管理者都有一些相同的烦恼和忧愁。</p>
+<p>“管理事太杂了，没时间写代码，越来越虚”</p>
+<p>“如何平稳技术与管理？”</p>
+<p>“管理事太琐碎，离技术越来越远，未来职业怎么规划？”</p>
+<p>“做管理最大的挑战，就是舍弃技术，特别难”</p>
+<p>这些问题的本源是因为新晋管理者正在进入一个全新的领域，离开以往的舒适区。</p>
+<p>以往的舒适区是技术范围，而且主要是技术实现。接受一个功能需求，通过技术实现出来。</p>
+<p>而成为管理后，不再是技术实现，而是任务分配，团队建设，资源协调等等脱离技术的事项。</p>
+<p><strong>走出舒适区是相当痛苦的，它会让人产生不安全感，让人容易自我质疑，以及自我否定，进而退回舒适区</strong>。</p>
+<p>新晋管理者都有类似这种前怕狼后怕虎的焦虑。</p>
+<p>前怕狼后怕虎，狼是啥？管理之路不好走，事很杂，心里虚。虎是啥？离技术越来越远，失去了技术优势。</p>
+<p>从自身安身立命安全感角度讲，是青黄不接的时候，管理还没有摸出门道，不知道怎么搞定，倍感焦虑；而熟练掌握的技术，却投入的时间越来越少。</p>
+<p>这种纠结的状态，归纳为一个词叫：患得患失。还没有得到时，担心得不到；得到后，又担心失去。</p>
+<span id="more"></span>
+
+<p>如何才能突破这一关卡，或者说如何挣脱刚开始做管理时，患得患失的思维逻辑呢？</p>
+<p>最近在看《技术管理实践36讲》，整理了份思维导图，来梳理作者的观点：</p>
+<p><img src="http://images.zhuxingsheng.com/20220910231251_1662822771.jpg"></p>
+<p>首先，对管理本身就不太了解，对未知事物总有种畏惧感。尤其技术人更喜欢与确定性事务打交道。其次成功路径依赖，喜欢与干得好其实是相互促进的关系，干得越好越喜欢，越喜欢就干得越好。并且会在做其他事情时，不自主地迁移原先的成功路径。</p>
+<p><strong>怎么解决“患失”</strong>？成为管理后，怎么保持技术能力。不能丢失原先的优势。</p>
+<p>做技术时，技术能力来源于自己的实践。而管理后，没有整块的时间技术实现。但作为技术管理，技术判断力是核心能力，怎么提升判断力呢？</p>
+<p><img src="http://images.zhuxingsheng.com/20220912104339_1662950619.jpg"></p>
+<p>1、转变思维，不再是技术实现者，而是技术应用者。在实现目标的过程中，技术能带来什么？</p>
+<p>2、不再是考虑怎么实现，而是以目标为导向，考虑要不要投入资源，并且评估值不值得做。</p>
+<p>3、值不值得做，需要从资源投入成本、维护成本、机会成本、协作成本四方面考虑。</p>
+<p>最重要的还是要保持学习。怎么保持学习呢？不再只靠自己的时间投入，依靠的是团队的力量。</p>
+<p>1、学习型组织，组织定期分享，技术交流</p>
+<p>2、做专项技术调研，让负责人做调研汇报</p>
+<p>3、与技术大牛交流</p>
+<p>4、听取汇报，相互探讨</p>
+<p><strong>怎么解决“患得”？</strong> 首先需要明确，管理带来的价值。技术人三条腿“技术”、“管理”、“业务”就包含了管理。其次，管理代表了更大的责任，也表示可以输出更大的价值。最后能得到更立体的视角和灵活的思维方式。</p>
+<p>退一步，就算管理失败了，也积累了些管理能力，这部分能力可以迁移到技术带头人，还有架构师也是需要部分管理能力。</p>
+<p>所以说就算没有得到，也不算完全失去。</p>
+<p>当然最重要的，如果管理是未来必经之路，那当下开始积累管理能力，就是最好的准备。</p>
+<hr>
+<p>其实不管是做技术，还是做管理。都不是为了做而做，我们都是为了自我成长，成长为更好的自己。保持开放心态，拥抱变化，从单纯的技术维度到相对复杂的管理维度。可以帮我们更快速地全面提升。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%A1%E7%90%86/" rel="tag"># 管理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/the-dilemma-of-ddd-aggregation-design.html" rel="prev" title="DDD聚合设计的困境">
+      <i class="fa fa-chevron-left"></i> DDD聚合设计的困境
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/the-difference-between-jdk8-map-and-flatmap.html" rel="next" title="JDK8的map与flatmap区别">
+      JDK8的map与flatmap区别 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

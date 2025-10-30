@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="微服务架构是云时代的首选架构风格。 Martin Fowler 在 2014 年写的文章《微服务的前置条件》中提到如果使用微服务架构，则需要先拥有一些先决条件： 1、快速的环境提供能力 2、基本的监控能力 3、快速的应用部署能力 而这三个能力，正是云原生提供的基本能力。 新技术带来的价值既然现在是云时代，是不是我们就不用考虑其它架构风格，直接使用微服务架构呢？答案显示并不是。我们不要为了新技术而新">
+<meta property="og:type" content="article">
+<meta property="og:title" content="云时代微服务划分原则是什么">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/what-are-the-principles-of-micro-service-division-in-the-cloud-era.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="微服务架构是云时代的首选架构风格。 Martin Fowler 在 2014 年写的文章《微服务的前置条件》中提到如果使用微服务架构，则需要先拥有一些先决条件： 1、快速的环境提供能力 2、基本的监控能力 3、快速的应用部署能力 而这三个能力，正是云原生提供的基本能力。 新技术带来的价值既然现在是云时代，是不是我们就不用考虑其它架构风格，直接使用微服务架构呢？答案显示并不是。我们不要为了新技术而新">
+<meta property="og:locale">
+<meta property="article:published_time" content="2023-02-27T12:47:00.000Z">
+<meta property="article:modified_time" content="2023-02-27T12:47:36.696Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="微服务">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/what-are-the-principles-of-micro-service-division-in-the-cloud-era.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>云时代微服务划分原则是什么 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/what-are-the-principles-of-micro-service-division-in-the-cloud-era.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          云时代微服务划分原则是什么
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-02-27 20:47:00 / Modified: 20:47:36" itemprop="dateCreated datePublished" datetime="2023-02-27T20:47:00+08:00">2023-02-27</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>微服务架构是云时代的首选架构风格。</p>
+<p>Martin Fowler 在 2014 年写的文章<a href="https://martinfowler.com/bliki/MicroservicePrerequisites.html">《微服务的前置条件》</a>中提到如果使用微服务架构，则需要先拥有一些先决条件：</p>
+<p>1、快速的环境提供能力</p>
+<p>2、基本的监控能力</p>
+<p>3、快速的应用部署能力</p>
+<p>而这三个能力，正是云原生提供的基本能力。</p>
+<h1 id="新技术带来的价值"><a href="#新技术带来的价值" class="headerlink" title="新技术带来的价值"></a>新技术带来的价值</h1><p>既然现在是云时代，是不是我们就不用考虑其它架构风格，直接使用微服务架构呢？答案显示并不是。我们不要为了新技术而新技术。当然，对于找工作肯定是有利的。但我们还是从实际出发，从业务价值出发。</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/the-architects-self-rescue.html">《架构师的自我拯救》</a>中提到，架构师还得多考虑商业价值。使用新技术就是我们的借力。目标还是为了提升商业价值。</p>
+<p><strong>所有的技术演进，都是围绕着用户对这个产品的核心诉求展开的，通过技术层面的架构改造，来解决用户当下的痛点。</strong></p>
+<p>在阿里大牛毕玄的访谈中，提到了服务化的核心是解决了两个问题：</p>
+<p><strong>一、为了解决系统的水平伸缩能力的问题</strong>。每个应用，每个系统，承担的责任变少了，伸缩性就变强了。对应到商业价值，以更细致的粒度，控制系统运营的成本。</p>
+<p><strong>二、研发协作问题</strong>。以前100人开发一个系统，大家都没有分工，接一个需求，要改就从头到尾全改，这个时候有可能会出现冲突，因为可能每个人都在改同一个地方，大家合并代码的时候就非常痛苦，效率很低。</p>
+<p>服务化分工了，你就改这块儿，他就改那块儿，虽然增加了协作成本，但它毕竟能让100人甚至上千人的研发团队可以并行做下去，现代软件变得更复杂，做任何软件上来就是一帮人，必须考虑到一帮人协作的问题。</p>
+<p>正是<a href="http://www.zhuxingsheng.com/blog/remove-the-micro-service-after-removing-the-middle-console.html">《拆完中台再拆微服务》</a>中阐述的微服务是为了提升程序效能和团队效能。</p>
+<h1 id="云时代的特性"><a href="#云时代的特性" class="headerlink" title="云时代的特性"></a>云时代的特性</h1><p>假如一个电商网站，平时只有几千用户同时使用，只需要100台机器就足以支撑这个系统了；而到了双十一，用户量可能猛增几百倍，那需要比如说10000台机器支持这个系统。</p>
+<p>而云平台，可以动态调整系统需要的机器数量，让我们按需使用。这样我们就不需要在闲时投入过高的机器成本，也就是非双十一期间，维持10000台机器的开销。但同时也不会错过在业务高峰获取收益的机会，因为云平台会自动帮我们从100台扩容到10000台机器。</p>
+<p>这种动态调节的能力被称为云的弹性，它是云平台一切美好特质的基础。</p>
+<p>为了实现这种弹性，运行在云平台之上的系统，需要满足一个条件：这个系统可以通过水平扩展进行扩容。</p>
+<p>水平扩展，指通过增加机器数量、构造集群的方法，来满足容量的需求。</p>
+<p>垂直扩展，指当遇到扩容需求时，通过更换更强有力的机器，来获得更好的性能。</p>
+<p>各种基础设施服务云平台，它们其实只有复制和剪切两个能力：</p>
+<p>1、根据给定镜像，产生符合镜像内容的机器的能力。也就是将镜像复制为机器的能力。</p>
+<p>2、撤销不需要的机器，将其放回资源池的能力，也就是剪切机器的能力。</p>
+<p>通过复制和剪切这两个能力，云平台就能对某个镜像提供水平扩展。这种扩展方案通常被称作为弹性负载均衡。</p>
+<p>那么怎样利用弹性负载均衡提供的水平扩展，才能更有效地架构系统呢？关键在于将弹性需求不同的组件分离。</p>
+<p>假如你在运营一个在线电商平台，我们可以粗略地将这个电商 平台的业务分成产品目录和支付两大块。在双十一期间，肯定会遇到比平时更大的流量，因而需要更高的系统容量去支持业务。</p>
+<p>但问题来了，产品浏览和完成支付两个部分增加的流量是一致的吗？从个人实际参与抢购的经验看，双十一之前，用户对产品浏览的需要比平时多；而在双十一当天，可能会对支付的需求更多。</p>
+<p>因此我们对支付和产品目录两块功能，制定不同的水平扩展策略，然后由不同弹性负载均衡控制。这样就可以有针对性地在不同阶段为两块功能提供不同的容量。</p>
+<p>按这个角度，我们把弹性作为主要指标，对系统进行划分，将不同弹性变化的组件放入到不同的弹性边界中。</p>
+<p>通过弹性边界，可以更细致的粒度，控制系统运营成本，也才能真正发挥云平台的能力。所以当要想要利用云平台架构软件时，寻找合理的弹性边界是很重要的事。</p>
+<h1 id="微服务划分原则"><a href="#微服务划分原则" class="headerlink" title="微服务划分原则"></a>微服务划分原则</h1><p>微服务怎么划分？总体来讲，从功能性需求和非功能性需求两方面考虑。</p>
+<p>从功能性方面考虑：微服务的划分应该有利于保证系统概念的一致性，更容易灵活扩展功能，而这些又要求开发团队顺畅的沟通协作。</p>
+<p>DDD限界上下文正好在这方面提供了理论指导，奠定了划分基础。</p>
+<p>根据限界上下文划分，既考虑到了传统模块化思维中对业务概念的松耦合、高内聚的要求，又考虑到团队的认知负载和认知边界。</p>
+<p>这样一方面解决了团队协作和概念一致性问题。另一方面，每个限界上下文又是一个业务概念内聚的边界。在这个边界内部，就更容易建立可维护、易扩展的模型。</p>
+<p>合理的微服务划分，应该是对于多数需求变更，只需要改动一个或少量的微服务。而划分不合理的话，对多数业务需求，都要修改多个微服务。</p>
+<p>从非功能考虑：在性能、安全、可用性，甚至发布周期，看是不是需要进一步划分。或者考虑把几个限界上下文合并到一个微服务。极端情况下，把有上下文合并到一个服务，又变成一个单体。</p>
+<p>到此，微服务的划分，我们当前都是以限界上下文优先来划分的。这也符合面向对象建模中的聚合概念，是一种“一致性优化”的模型结构。是“概念一致性边界”，“事务边界”。</p>
+<p>但结合上一章节“弹性边界”，<strong>在云时代，弹性是个很重要指标。如果两个上下文明显具有不同的弹性诉求，那就应该拆分。而如果具有一致的弹性诉求，就可以不拆。</strong></p>
+<p>弹性边界跟软件模块之间存在依赖关系一样，弹性边界间也会存在依赖。而弹性边界间的依赖（也就是服务间调用关系，或是数据交换关系），会造成流量的传递。如果上游弹性边界突然需要处理大量的流量，那么这些流量自然也会传递到下游弹性边界中。</p>
+<p>这在实现中常发生，当平台的入口系统流量上升后，后面依赖的系统流量也上升了，整个一条调用链路上的系统都得扩容。这种不同弹性边界间流量的传递就是弹性依赖。</p>
+<p><strong>只要组件之间存在交互，弹性依赖就不可避免。在云平台更擅长处理依赖于吞吐量的弹性依赖，但对依赖于响应时间的弹性依赖，就没有好办法了。这背后的原因在于水平扩展并不能保证改进响应时间，而只能提高吞量。也就是云平台的弹性并不总能改进响应时间，但一定可以提高吞吐量。</strong></p>
+<p>正因为云平台不擅长处理依赖于响应时间的弹性依赖，这类弹性依赖被称为弹性耦合，以表示与依赖于吞吐量的弹性依赖的区别。</p>
+<p>怎么避免弹性耦合，才能充分利用云平台的能力。最简单的方式，是将组件的同步调用模式改为异步。因为服务与组件间的同步调用，会带来响应时间的依赖；而异步调用，则能将其改变为吞量的依赖。也就是将弹性耦合变成了弹性依赖，使得整个系统可以更好地利用云平台能力。</p>
+<p>不过，当由同步变成异步时，意味着，原先产生的数据可能存在中间状态。比如支付，由原来的开始支付 -&gt; 支付成功&#x2F;失败；变成开始支付 -&gt; 支付中 -&gt; 支付成功&#x2F;失败。</p>
+<p>带来的中间件状态，在业务上是否有特殊含义，这在业务建模时，是需要考虑的第一个问题；再者，异步带来的一致性改变，对业务会产生什么影响，是需要考虑的第二个问题。</p>
+<p>归根到底，为了解决弹性耦合的问题，我们需要将原味面向对象风格中默认的同步模型改为异步。</p>
+<h2 id="高内聚"><a href="#高内聚" class="headerlink" title="高内聚"></a>高内聚</h2><p>微服务划分原则，不管是以限界上下文为主，还是以弹性边界为主。更多的还是要考虑业务形态。为业务赋能才是目标。多维度去权衡划分原则。</p>
+<p>不能只考虑限界上下文，不管业务功能性还是团队认知负载是合理的，但弹性耦合了，一个扩容，链路上的所有系统都得扩容。也不能只考虑弹性边界，把简单同步的业务上下文都使用异步处理，忽略业务上的<a href="http://www.zhuxingsheng.com/blog/coupling-inevitability.html">耦合必然性</a>。为了异步而异步。</p>
+<p>总结起来，还是要权衡，不要单维度走极端。这些永远正确的废话，真的很有道理。最近看饿了么CTO张雪峰的访谈，正好聊到了微服务问题，可以结合理论体会一下：</p>
+<blockquote>
+<p>饿了么原来就是个单体，所有的业务逻辑就是一个东西、一个源代码库，C 端、B 端、D 端（Delivery，物流）全在一起，牵一发动全身，也就是说你在部署的时候，每个服务器都要布一坨这个东西，一是影响性能，二是发布很麻烦。只要有同学发布，即使跟你无关，你也要发布一遍，所有的机器都要扫一遍。我们做技术的就要拆解，肯定要至少再分一级。</p>
+</blockquote>
+<blockquote>
+<p>拆分与否，我们当时就遵循一个原则：只要一个人有变化，一堆人要随着你动，或者叫“牵一发动大部分”的时候，这一定是有问题的。其实这也是逻辑原则或数学原则。所以我跟他们说，不要扯什么领域驱动、微服务了，就用这个原则。这个原则确实最容易讲清楚，但实践的时候要多次试、反复试。<br>单体是一个极端，微服务或单一原则是另一个极端。</p>
+</blockquote>
+<blockquote>
+<p>饿了么从来没有真正提过微服务，从来没有过，我不去用这个概念。我们就是从业务的合理性去拆分。对领域驱动呢，我当时也是持观望态度，不能说保留态度，我觉得领域驱动是一个模棱两可的东西（顶尖 DDD 牛人或在大规模超复杂体系下成功实践过的同仁勿喷，毕竟让绝大部分技术同学吃透 DDD，无论 ROI 还是效率都很低），就跟架构一样，所以我希望回归朴素，就是从逻辑的角度，或者数学角度，给大家解释。所以当时我们也不做领域，我把以前的经验带过来，开始有一些中台的萌芽，比如说把交易系统、营销系统拆出来，把用户系统拆出来等等。</p>
+</blockquote>
+<blockquote>
+<p>从逻辑上讲，当你十次里面有八次“牵一发要动大部分”的时候，你就没必要去拆，你就让它耦合（内聚）在那，哪怕最后合出来一个巨大的东西，那证明这个业务就是这样的，没办法。你要么抱怨很倒霉进入这个业务领域，要么你就自己想办法克服。当然还有一个办法就是你通过技术去改革这个业务，那意味着这个业务甚至整个行业的游戏规则都要变，在短时间内几乎不可能。之前也讲过，对绝大部分公司的技术团队来说，妄图通过技术驱动业务，还是省省吧。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>后来我发现物流系统还有个很大的问题，搞物流系统这批同学，就是另一类极客。饿了么刚开始拆分服务，物流拆分得很夸张，直接同步变异步了。我说你们犯了一个错误，叫“为了异步而异步”。<br>大家以前的代码（交互）尽量都是一路撸到底嘛，直接写完，这个叫单体。后来搞微服务就要拆开了，结果他们不光拆开，拆开之后，还要用消息通知。我举个不太恰当但大家明白意思就行的例子，比如说算工资，本来可以直接算出来，他们非要先送一个你的职级，再送一个你的社保基数，然后送过来之后还不是马上给你，你要自己去取，我只是通知你有这个数据了。你取过来之后慢慢算，算完之后再推给另一个涉及工资计算的模块，诸如此类。物流同学就是用类似方式，他们真的把异步做到了“极致”（饿了么价值观：极致、激情、创新）。<br>但是他们做异步的初衷是什么？是因为物流的量很大。以前宕机是因为量很大，用同步的话服务器撑不住，所以就改异步。他们说至少可以缓和五秒钟，但后来我发现这五秒钟没意义。<br>我自己也体验过，比如我点个外卖，提交订单之后习惯性去刷一下，看看商户有没有接单，然后过一分钟看看骑手有没有接单。还要看地图，有时候看到小哥明明经过我这了，怎么先去送另一个人了？可能很多人都有这样的疑问，这个不能怪骑手，也不能怪系统，有各种原因，此处暂时不表。<br>大家都会去刷，后来我们发现用户在饿肚子时的心理承受能力就是三到五秒（淘宝、携程没这问题，大家对订单或物流状态变化的容忍度高很多），你是通过异步让这个订单不至于当场爆掉，但你延后五秒之后，堆积起来也很厉害，东西多了之后，最后还是爆掉，你只是让用户前五秒感觉系统没有宕机，但最终结果还是宕机。最后我们异地多活搞出来，几乎就没有大的事情了。</p>
+</blockquote>
+<blockquote>
+<p>我们原来设想异地多活只能一次性切换，因为我们的业务是强耦合的，不像携程，携程机票、酒店关联度不大的，你要订机票 + 酒店，做个简单聚合就行了，但我们不一样，饿了么是用户下了单，商户接了单，物流就要送单，上下游其实是强耦合（高内聚）。<br>程序员可能会说，现实业务没你说的那么理想，该强耦合就强耦合，其实不是强耦合，另一个词叫高内聚，该内聚的时候你不要去追求什么微服务那些乱七八糟的东西，就应该高内聚，因为就是一个业务形态，业务才是最重要的判断耦合或内聚的依据。谁（调用方 &#x2F; 消费方）也离不了谁（被调用方 &#x2F; 服务方），你每次调用都涉及到它，干嘛非强扯开来？没太大好处，当然，可以分开发布算一个好处，但也仅是技术上的好处，不是业务或领域上的好处。</p>
+</blockquote>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>我们将微服务架构看作是一种以业务上下文为弹性边界的云原生架构模式。弹性优先原则不仅仅适用于微服务架构，而是适用于所有云原生架构。</p>
+<p>把功能需求和流量传导分为静态和动态的角度</p>
+<p>静态的功能需求：</p>
+<p>如果少数大需求需要跨微服务，是正常的，但是也要注意任务拆分，把大需求拆分到多个微服务，约定好接口，各自开发，各自部署，集中联调。</p>
+<p>如果大多数需求需要跨微服务，那多半你的微服务拆分的是有问题的，你需要重新考虑你的微服务的拆分是否合理，必要的话合并一些微服务。</p>
+<p>动态的流量传导：则是弹性边界，一旦流量上升，链路上所有系统都会被传导并进行扩容，那是不是拆分也不太合理，或者能否从弹性耦合变为弹性依赖。</p>
+<p>微服务架构只是一种技术手段，使用微服务架构的目的，不是为了让你的架构更流行更酷，也不是为了让你的服务尽可能小，而是借助微服务的架构，让团队规模变小，大开发部门变成各个小的开发小组，并且各个小组应该尽可能独立，减少相互依赖，减少沟通成本。</p>
+<p>而一个常见的问题就是错把手段当目的，为了微服务而微服务，服务拆的太细，反而维护和沟通成本大增。</p>
+<p>理想的微服务架构，一个需求在一个微服务内就解决了，独立测试独立上线，基本不需要太多跨团队的协作。同时一个小团队维护的微服务也是有限的。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/microservice/" rel="tag"># 微服务</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/micro-service-is-not-a-silver-bullet-or-a-dud.html" rel="prev" title="微服务不是银弹也不是哑弹">
+      <i class="fa fa-chevron-left"></i> 微服务不是银弹也不是哑弹
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/precautions-for-repeatedly-reading-inputstream-in-httprequest.html" rel="next" title="httpRequest中重复读取inputstream注意事项">
+      httpRequest中重复读取inputstream注意事项 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%B0%E6%8A%80%E6%9C%AF%E5%B8%A6%E6%9D%A5%E7%9A%84%E4%BB%B7%E5%80%BC"><span class="nav-number">1.</span> <span class="nav-text">新技术带来的价值</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%91%E6%97%B6%E4%BB%A3%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">2.</span> <span class="nav-text">云时代的特性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E5%88%92%E5%88%86%E5%8E%9F%E5%88%99"><span class="nav-number">3.</span> <span class="nav-text">微服务划分原则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E5%86%85%E8%81%9A"><span class="nav-number">3.1.</span> <span class="nav-text">高内聚</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

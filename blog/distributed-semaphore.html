@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="semaphore的定义，意义 在没有juc semaphore之前怎么实现 semaphore使用 分布式semaphore实现  信号量最早用来解决进程同步与互斥问题的机制:包括一个称为信号量的变量及对它进行的两个原语操作(PV操作) 什么是信号量？ 信号量（semaphore）的数据结构为一个值和一个指针，指针指向等待该信号量的下一个进程。信号量的值与相应资源的使用情况有关。 PV操作由P">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分布式Semaphore">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/distributed-semaphore.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="semaphore的定义，意义 在没有juc semaphore之前怎么实现 semaphore使用 分布式semaphore实现  信号量最早用来解决进程同步与互斥问题的机制:包括一个称为信号量的变量及对它进行的两个原语操作(PV操作) 什么是信号量？ 信号量（semaphore）的数据结构为一个值和一个指针，指针指向等待该信号量的下一个进程。信号量的值与相应资源的使用情况有关。 PV操作由P">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-02-14T03:24:00.000Z">
+<meta property="article:modified_time" content="2021-09-29T07:24:30.501Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="分布式">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/distributed-semaphore.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>分布式Semaphore | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/distributed-semaphore.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分布式Semaphore
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-02-14 11:24:00" itemprop="dateCreated datePublished" datetime="2019-02-14T11:24:00+08:00">2019-02-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ol>
+<li>semaphore的定义，意义</li>
+<li>在没有juc semaphore之前怎么实现</li>
+<li>semaphore使用</li>
+<li>分布式semaphore实现</li>
+</ol>
+<h1 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h1><p>最早用来解决进程同步与互斥问题的机制:<br>包括一个称为信号量的变量及对它进行的两个原语操作(PV操作)</p>
+<p>什么是信号量？</p>
+<p>信号量（semaphore）的数据结构为一个值和一个指针，指针指向等待该信号量的下一个进程。信号量的值与相应资源的使用情况有关。</p>
+<p>PV操作由P操作原语和V操作原语组成（原语是不可中断的过程）</p>
+<p>(注,P是荷兰语的Passeren，相当于英文的pass,V是荷兰语的Verhoog,相当于英文中的incremnet)</p>
+<p>对信号量进行操作，具体定义如下：</p>
+<ul>
+<li>P（S）：<ul>
+<li>①将信号量S的值减1，即S&#x3D;S-1；</li>
+<li>②如果S&gt;&#x3D;0，则该进程继续执行；否则该进程置为等待状态，排入等待队列</li>
+</ul>
+</li>
+<li>V（S）：<ul>
+<li>①将信号量S的值加1，即S&#x3D;S+1；</li>
+<li>②如果S&gt;0，则该进程继续执行；否则释放队列中第一个等待信号量的进程</li>
+</ul>
+</li>
+</ul>
+<p>PV操作的意义：我们用信号量及PV操作来实现进程的同步和互斥。PV操作属于进程的低级通信</p>
+<p>使用PV操作实现进程互斥时应该注意的是：</p>
+<ol>
+<li>每个程序中用户实现互斥的P、V操作必须成对出现，先做P操作，进临界区，后做V操作，出临界区。若有多个分支，要认真检查其成对性</li>
+<li>P、V操作应分别紧靠临界区的头尾部，临界区的代码应尽可能短，不能有死循环</li>
+<li>互斥信号量的初值一般为1</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">//许可数量</span><br><span class="line">private int permits = 1;</span><br><span class="line"></span><br><span class="line">public synchronized void P() &#123;</span><br><span class="line">    permits--;</span><br><span class="line">    if(permits &lt; 0 )&#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            wait();</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public synchronized void V()&#123;</span><br><span class="line">    permits++;</span><br><span class="line">    if(permits &lt;=0)&#123;</span><br><span class="line">        notifyAll();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="J-U-C-Semaphore"><a href="#J-U-C-Semaphore" class="headerlink" title="J.U.C Semaphore"></a>J.U.C Semaphore</h1><p>JUC提供了工具类之一就是Semaphore，提供了丰富的API，不再需要自己实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">// 创建具有给定的许可数和非公平的公平设置的 Semaphore。</span><br><span class="line">Semaphore(int permits)</span><br><span class="line">// 创建具有给定的许可数和给定的公平设置的 Semaphore。</span><br><span class="line">Semaphore(int permits, boolean fair)</span><br><span class="line"> </span><br><span class="line">// 从此信号量获取一个许可，在提供一个许可前一直将线程阻塞，否则线程被中断。</span><br><span class="line">void acquire()</span><br><span class="line">// 从此信号量获取给定数目的许可，在提供这些许可前一直将线程阻塞，或者线程已被中断。</span><br><span class="line">void acquire(int permits)</span><br><span class="line">// 从此信号量中获取许可，在有可用的许可前将其阻塞。</span><br><span class="line">void acquireUninterruptibly()</span><br><span class="line">// 从此信号量获取给定数目的许可，在提供这些许可前一直将线程阻塞。</span><br><span class="line">void acquireUninterruptibly(int permits)</span><br><span class="line">// 返回此信号量中当前可用的许可数。</span><br><span class="line">int availablePermits()</span><br><span class="line">// 获取并返回立即可用的所有许可。</span><br><span class="line">int drainPermits()</span><br><span class="line">// 返回一个 collection，包含可能等待获取的线程。</span><br><span class="line">protected Collection&lt;Thread&gt; getQueuedThreads()</span><br><span class="line">// 返回正在等待获取的线程的估计数目。</span><br><span class="line">int getQueueLength()</span><br><span class="line">// 查询是否有线程正在等待获取。</span><br><span class="line">boolean hasQueuedThreads()</span><br><span class="line">// 如果此信号量的公平设置为 true，则返回 true。</span><br><span class="line">boolean isFair()</span><br><span class="line">// 根据指定的缩减量减小可用许可的数目。</span><br><span class="line">protected void reducePermits(int reduction)</span><br><span class="line">// 释放一个许可，将其返回给信号量。</span><br><span class="line">void release()</span><br><span class="line">// 释放给定数目的许可，将其返回到信号量。</span><br><span class="line">void release(int permits)</span><br><span class="line">// 返回标识此信号量的字符串，以及信号量的状态。</span><br><span class="line">String toString()</span><br><span class="line">// 仅在调用时此信号量存在一个可用许可，才从信号量获取许可。</span><br><span class="line">boolean tryAcquire()</span><br><span class="line">// 仅在调用时此信号量中有给定数目的许可时，才从此信号量中获取这些许可。</span><br><span class="line">boolean tryAcquire(int permits)</span><br><span class="line">// 如果在给定的等待时间内此信号量有可用的所有许可，并且当前线程未被中断，则从此信号量获取给定数目的许可。</span><br><span class="line">boolean tryAcquire(int permits, long timeout, TimeUnit unit)</span><br><span class="line">// 如果在给定的等待时间内，此信号量有可用的许可并且当前线程未被中断，则从此信号量获取一个许可。</span><br><span class="line">boolean tryAcquire(long timeout, TimeUnit unit)</span><br></pre></td></tr></table></figure>
+
+<p>对于JUC的Semaphore源码，此篇不阐述了，另开新篇；但对分布式的Semaphore倒是可以研究下</p>
+<h1 id="分布式Semaphore"><a href="#分布式Semaphore" class="headerlink" title="分布式Semaphore"></a>分布式Semaphore</h1><p>Redission中有对应的RSemaphore</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RSemaphore semaphore = redisson.getSemaphore(&quot;semaphore&quot;);</span><br><span class="line">semaphore.acquire();</span><br><span class="line">//或</span><br><span class="line">semaphore.acquireAsync();</span><br><span class="line">semaphore.acquire(23);</span><br><span class="line">semaphore.tryAcquire();</span><br></pre></td></tr></table></figure>
+
+<p>可过期信号量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RPermitExpirableSemaphore semaphore = redisson.getPermitExpirableSemaphore(&quot;mySemaphore&quot;);</span><br><span class="line">String permitId = semaphore.acquire();</span><br><span class="line">// 获取一个信号，有效期只有2秒钟。</span><br><span class="line">String permitId = semaphore.acquire(2, TimeUnit.SECONDS);</span><br><span class="line">// ...</span><br><span class="line">semaphore.release(permitId);</span><br></pre></td></tr></table></figure>
+
+<p>直接上最本质的源码片段，lua脚本很简单，对信号量进行计数，acquire时，信号量减1，release时，信号量加1；主要是保证操作的原子性</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public RFuture&lt;Boolean&gt; tryAcquireAsync(int permits) &#123;</span><br><span class="line">    if (permits &lt; 0) &#123;</span><br><span class="line">        throw new IllegalArgumentException(&quot;Permits amount can&#x27;t be negative&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    if (permits == 0) &#123;</span><br><span class="line">        return RedissonPromise.newSucceededFuture(true);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return commandExecutor.evalWriteAsync(getName(), LongCodec.INSTANCE, RedisCommands.EVAL_BOOLEAN,</span><br><span class="line">              &quot;local value = redis.call(&#x27;get&#x27;, KEYS[1]); &quot; +</span><br><span class="line">              &quot;if (value ~= false and tonumber(value) &gt;= tonumber(ARGV[1])) then &quot; +</span><br><span class="line">                  &quot;local val = redis.call(&#x27;decrby&#x27;, KEYS[1], ARGV[1]); &quot; +</span><br><span class="line">                  &quot;return 1; &quot; +</span><br><span class="line">              &quot;end; &quot; +</span><br><span class="line">              &quot;return 0;&quot;,</span><br><span class="line">              Collections.&lt;Object&gt;singletonList(getName()), permits);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Override</span><br><span class="line">public RFuture&lt;Void&gt; releaseAsync(int permits) &#123;</span><br><span class="line">    if (permits &lt; 0) &#123;</span><br><span class="line">        throw new IllegalArgumentException(&quot;Permits amount can&#x27;t be negative&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    if (permits == 0) &#123;</span><br><span class="line">        return RedissonPromise.newSucceededFuture(null);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return commandExecutor.evalWriteAsync(getName(), StringCodec.INSTANCE, RedisCommands.EVAL_VOID,</span><br><span class="line">        &quot;local value = redis.call(&#x27;incrby&#x27;, KEYS[1], ARGV[1]); &quot; +</span><br><span class="line">        &quot;redis.call(&#x27;publish&#x27;, KEYS[2], value); &quot;,</span><br><span class="line">        Arrays.&lt;Object&gt;asList(getName(), getChannelName()), permits);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在最本质的基础上，再深入看一下还做了哪些事，能真正达到一个工业生产标准</p>
+<h2 id="tryAcquire"><a href="#tryAcquire" class="headerlink" title="tryAcquire()"></a>tryAcquire()</h2><p>非阻塞式，有信息量就正常获取，没有刚快速返回，就是lua本质，没有做额外的事情</p>
+<h2 id="acquire"><a href="#acquire" class="headerlink" title="acquire()"></a>acquire()</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void acquire(int permits) throws InterruptedException &#123;</span><br><span class="line">    if (tryAcquire(permits)) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    RFuture&lt;RedissonLockEntry&gt; future = subscribe();</span><br><span class="line">    commandExecutor.syncSubscription(future);</span><br><span class="line">    try &#123;</span><br><span class="line">        while (true) &#123;</span><br><span class="line">            if (tryAcquire(permits)) &#123;</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line">            getEntry().getLatch().acquire(permits);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        unsubscribe(future);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>阻塞式，相对非阻塞式就多了一些事</p>
+<ul>
+<li>1.先tryAcquire，看是否能获取到信号量</li>
+<li>2.订阅channel事件</li>
+<li>3.无限循环<ul>
+<li>3.1.先tryAcquire()，尝试一下</li>
+<li>3.2.通过getEntry().getLatch()，也就是j.u.c.Semaphore,acquire()阻塞</li>
+</ul>
+</li>
+<li>4.取消订阅</li>
+</ul>
+<p>订阅事件内部细节，另开篇再说了，他的目的其实就是释放Semaphore</p>
+<p>想像一下，同一个client的两个线程A，B 同时需要获取信号量，如果A成功获取，那么B将被Semaphore阻塞住了，何时退出阻塞呢？</p>
+<p>就在线程A进行release()之后，会publish,细节可查看上面的release()中的lua脚本，当B监听到事件时，就会调用Semaphore.release(),再次进行tryAcquire()</p>
+<h2 id="tryAcquire-int-permits-long-waitTime-TimeUnit-unit"><a href="#tryAcquire-int-permits-long-waitTime-TimeUnit-unit" class="headerlink" title="tryAcquire(int permits, long waitTime, TimeUnit unit)"></a>tryAcquire(int permits, long waitTime, TimeUnit unit)</h2><p>如果在给定的等待时间内此信号量有可用的所有许可，并且当前线程未被中断，则从此信号量获取给定数目的许可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public boolean tryAcquire(int permits, long waitTime, TimeUnit unit) throws InterruptedException &#123;</span><br><span class="line">    long time = unit.toMillis(waitTime);</span><br><span class="line">    long current = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">    if (tryAcquire(permits)) &#123;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    time -= (System.currentTimeMillis() - current);</span><br><span class="line">    if (time &lt;= 0) &#123;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    current = System.currentTimeMillis();</span><br><span class="line">    RFuture&lt;RedissonLockEntry&gt; future = subscribe();</span><br><span class="line">    if (!await(future, time, TimeUnit.MILLISECONDS)) &#123;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        time -= (System.currentTimeMillis() - current);</span><br><span class="line">        if (time &lt;= 0) &#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        while (true) &#123;</span><br><span class="line">            current = System.currentTimeMillis();</span><br><span class="line">            if (tryAcquire(permits)) &#123;</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            time -= (System.currentTimeMillis() - current);</span><br><span class="line">            if (time &lt;= 0) &#123;</span><br><span class="line">                return false;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            // waiting for message</span><br><span class="line">            current = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">            getEntry().getLatch().tryAcquire(permits, time, TimeUnit.MILLISECONDS);</span><br><span class="line"></span><br><span class="line">            time -= (System.currentTimeMillis() - current);</span><br><span class="line">            if (time &lt;= 0) &#123;</span><br><span class="line">                return false;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        unsubscribe(future);</span><br><span class="line">    &#125;</span><br><span class="line">//        return get(tryAcquireAsync(permits, waitTime, unit));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实await(future, time, TimeUnit.MILLISECONDS)是使用的CountDownLatch</p>
+<p>如果计数到达零，则返回 true；如果在计数到达零之前超过了等待时间，则返回 false</p>
+<p>当前是第一个请求，或者别的释放，那就再往下进入循环</p>
+<p>CountDownLatch.await()+Semaphore.tryAcquire()配合使用</p>
+<p>每一次等待时间后，都需要检查是否超过等待时间</p>
+<p>为什么需要引入CountDownLatch.await()呢？ 都使用Semaphore.tryAcquire()不行吗？这个需要再次深入挖掘了</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>分布式信号量，原理很明了，主要还是通过lua保障redis操作的原子性</p>
+<p>阅读redisson源码，发现里面的操作基本都是异步化，底层又是基于netty，大量使用了future模式，如果不知道future模式，会很绕，debug都会晕掉，所以在深入redisson之前，需要再对future模式温习一下</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/distributed/" rel="tag"># 分布式</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/parsing-distributed-locks.html" rel="prev" title="剖析分布式锁">
+      <i class="fa fa-chevron-left"></i> 剖析分布式锁
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/current-limiting.html" rel="next" title="限流">
+      限流 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">1.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#J-U-C-Semaphore"><span class="nav-number">2.</span> <span class="nav-text">J.U.C Semaphore</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8FSemaphore"><span class="nav-number">3.</span> <span class="nav-text">分布式Semaphore</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tryAcquire"><span class="nav-number">3.1.</span> <span class="nav-text">tryAcquire()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#acquire"><span class="nav-number">3.2.</span> <span class="nav-text">acquire()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tryAcquire-int-permits-long-waitTime-TimeUnit-unit"><span class="nav-number">3.3.</span> <span class="nav-text">tryAcquire(int permits, long waitTime, TimeUnit unit)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

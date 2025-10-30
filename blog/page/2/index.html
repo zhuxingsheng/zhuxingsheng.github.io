@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="彪悍的人生需要书写">
+<meta property="og:type" content="website">
+<meta property="og:title" content="码农戏码">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/page/2/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="彪悍的人生需要书写">
+<meta property="og:locale">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/page/2/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/insufficient-team-execution-is-a-problem-for-subordinates.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/insufficient-team-execution-is-a-problem-for-subordinates.html" class="post-title-link" itemprop="url">团队执行力不够都是下属问题</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-05-01 21:21:00 / Modified: 21:22:15" itemprop="dateCreated datePublished" datetime="2023-05-01T21:21:00+08:00">2023-05-01</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>对于技术管理者来说，团队执行力这件事，不是什么难事，因为工程师有一种确定性思维，“靠谱”是好的工程师天生的品质，凡是明确答应过的事情，往往都会如数兑现。</p>
+<p>虽然如此，但也不能确保每件事都是落地有声。也有很多时候，技术管理者也有如下的心声：</p>
+<p>1、这事我来干，一天就搞定了，怎么搞了一周？</p>
+<p>2、如果A也像B那么积极主动，这个项目就不会出问题了，所以A，你能不能更主动一些呢？</p>
+<p>3、我们各种各样的流程都有，很完整也很系统，但是大家就是不按照流程办事</p>
+<hr>
+<p>如何有效地推进事项的进展，按计划成功落地。需要做好三件事：<strong>事前规划，事中跟进，事后总结</strong>。</p>
+<h1 id="事前规划"><a href="#事前规划" class="headerlink" title="事前规划"></a>事前规划</h1><p>此阶段，重点就是做好计划。把事安排得明明白白。<strong>计划就是达到目标的路径图。</strong></p>
+<h2 id="优先级"><a href="#优先级" class="headerlink" title="优先级"></a>优先级</h2><p>首先得有“资源是永远不足”的认知。公司本身也是在有限资源下利益最大化。</p>
+<p>到每个团队的资源更是如此。常用判断策略就是：重要紧急四象限。</p>
+<p>换个角度，我们都是要趋利避害的，从收益大小来看事情的重要性，从损失大小看事情的紧急性。</p>
+<p>那么重要紧急四象限就换种画法：</p>
+<p><img src="http://images.zhuxingsheng.com/20230416202412_1681647852.jpg"></p>
+<h2 id="计划"><a href="#计划" class="headerlink" title="计划"></a>计划</h2><p>各个任务的优先级确定完成之后，就得给优先处理的任务制定落地计划。</p>
+<p>而达成计划共识和计划落地是计划中两个重要的部分。</p>
+<h3 id="计划共识"><a href="#计划共识" class="headerlink" title="计划共识"></a>计划共识</h3><p>共识的第一层境界：听懂</p>
+<p>讲得人要讲得清楚，听得人要听得明白</p>
+<p>共识的第二层境界：认同</p>
+<p>认同就是认可和赞同，实现上下同欲</p>
+<p>共识的第三层境界：行动</p>
+<p>共识的终极目标就是要促发下属行动</p>
+<h3 id="计划落地"><a href="#计划落地" class="headerlink" title="计划落地"></a>计划落地</h3><p>计划制定完成，也与团队达到计划共识，剩下的就是计划落地，开始执行了。</p>
+<p>这个阶段有两点比较关键：</p>
+<p>1、职责清晰，责任到人</p>
+<p>2、团队的排兵布阵</p>
+<p><img src="http://images.zhuxingsheng.com/20230422144625_1682145985.jpg"></p>
+<h2 id="OGSM模型"><a href="#OGSM模型" class="headerlink" title="OGSM模型"></a>OGSM模型</h2><p><strong>目的、目标、策略、衡量标准</strong></p>
+<p><img src="http://images.zhuxingsheng.com/20230416214051_1681652451.jpg"></p>
+<h1 id="事中跟进"><a href="#事中跟进" class="headerlink" title="事中跟进"></a>事中跟进</h1><p>下属不会执行你要求的，但会执行你检查的。检查到哪儿，执行到哪儿。</p>
+<p><img src="http://images.zhuxingsheng.com/20230416213119_1681651879.jpg"></p>
+<p>事中阶段有三个重点：行动、规范和进程</p>
+<p>行动：检查计划有没有在推进，能力和意愿是否到位，及时辅导和鼓励</p>
+<p>规范：过程规范，结果才正确。检查基本流程和机制是否缺失，工作流程是否规范</p>
+<p>进程：按照其实制订的工作计划，定时检查工作进度</p>
+<h1 id="事后总结"><a href="#事后总结" class="headerlink" title="事后总结"></a>事后总结</h1><p>总结最好方式就是复盘。</p>
+<p>不管工作的结果好与坏，看看工作过程中有哪些经验，有哪些问题，接下来目标如何调整，计划如何调整，执行如何优化，经验如何固化。</p>
+<p>其目的是着眼未来，确保下个阶段工作做得更好。</p>
+<p>寻找任务成功的必要条件，也就是关键节点。</p>
+<h1 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a>思维导图</h1><p>《技术管理实战》</p>
+<p><img src="http://images.zhuxingsheng.com/20230416120437_1681617877.jpg"></p>
+<p>《不确定的危机下做确定的业绩》</p>
+<p><img src="http://images.zhuxingsheng.com/20230416121230_1681618350.jpg"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/what-kind-of-inheritance-is-good-inheritance.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/what-kind-of-inheritance-is-good-inheritance.html" class="post-title-link" itemprop="url">什么样的继承才是好的继承</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-03-25 19:28:00 / Modified: 19:29:07" itemprop="dateCreated datePublished" datetime="2023-03-25T19:28:00+08:00">2023-03-25</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>继承的本质是提高代码的复用。</p>
+<p>然而自从继承出世后，被人们过多滥用，以至于像耦合恐惧一样恐惧继承，得了“继承创伤应激障碍”。</p>
+<p>是不是有像<a href="http://www.zhuxingsheng.com/blog/coupling-inevitability.html">耦合必然性</a>一样，解决继承的创伤呢？</p>
+<h1 id="里氏替换原则"><a href="#里氏替换原则" class="headerlink" title="里氏替换原则"></a>里氏替换原则</h1><p>这个原则最早是在1986年由 Barbara Liskov 提出：</p>
+<blockquote>
+<p>若对每个类型T1的对象o1，都存在一个类型T2的对象o2，使得在所有针对T2编写的程序P中，用o1替换o2后，程序P的行为功能不变，则T1是T2的子类型</p>
+</blockquote>
+<p>在1996年，Robert Martin 重新描述了这个原则：</p>
+<blockquote>
+<p>Functions that use pointers of references to base classes must be able tu use objects of derived classes without knowing it</p>
+</blockquote>
+<p>通俗地讲，就是子类型必须能够替换掉它们的基类型,并且保证原来的逻辑行为不变及正确性不被破坏。</p>
+<p>比如那个著名的长方形的例子。Rectangle 表示长方形，Square 继承 Rectangle，表示正方形。现在问题就来了，这个关系在数学中是正确的，但表示为代码却不太正确。长方形可以用成员函数单独变更长宽，但正方形却不行，长和宽必须同时变更。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Rectangle rect = new Square();</span><br><span class="line">rect.setHeight(4); // 设置长度</span><br><span class="line">rect.setWidth(5);  // 设置宽度</span><br><span class="line">assertThat(rect.area(), is(20)); // 对结果进行断言</span><br></pre></td></tr></table></figure>
+
+<p>当正方形 Square 替换长方形 Rectangle 时，发现程序不能正确运行，这样就不满足LSP，也就不适合使用继承。</p>
+<p>还有那个同样著名的鸟类的例子。基类 Bird 有个 Fly 方法，所有的鸟类都应该继承它。但企鹅、鸵鸟这样的鸟类却不会飞，实现它们就必须改写 Fly 方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">public class AbstractBird &#123;</span><br><span class="line">  //...省略其他属性和方法...</span><br><span class="line">  public void fly() &#123; //... &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Ostrich extends AbstractBird &#123; //鸵鸟</span><br><span class="line">  //...省略其他属性和方法...</span><br><span class="line">  public void fly() &#123;</span><br><span class="line">    throw new UnSupportedMethodException(&quot;I can&#x27;t fly.&#x27;&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样的设计</p>
+<p><strong>一方面，徒增了编码的工作量</strong></p>
+<p><strong>另一方面，也违背了我们之后要讲的最小知识原则（Least Knowledge Principle，也叫最少知识原则或者迪米特法则）</strong>，暴露不该暴露的接口给外部，增加了类使用过程中被误用的概率。</p>
+<p>想验证有没有违背里氏替换原则，主要是两方面：</p>
+<p>1、IS-A的判定是基于行为，只有行为相同，才能说是满足IS-A关系。</p>
+<p>2、通常说来，子类比父类的契约更严格，都是违反里氏替换原则的。</p>
+<p>在类的继承中，如果父类方法的访问控制是 protected，那么子类 override 这个方法的时候，可以改成是 public，但是不能改成 private。因为 private 的访问控制比 protected 更严格，能使用父类 protected 方法的地方，不能用子类的 private 方法替换，否则就是违反里氏替换原则的。相反，如果子类方法的访问控制改成 public 就没问题，即子类可以有比父类更宽松的契约。同样，子类 override 父类方法的时候，不能将父类的 public 方法改成 protected，否则会出现编译错误。</p>
+<p>而像长方形例子中，正方形继承了长方形，但是正方形有比长方形更严格的契约，即正方形要求长和宽是一样的。因为正方形有比长方形更严格的契约，那么在使用长方形的地方，正方形因为更严格的契约而无法替换长方形。</p>
+<p>多态和里氏替换有点类似，但它们的关注的角度是不一样的。多态是面向对象编程的一大特性，也是面向对象编程语言的一种语法。它是一种代码实现的思路。而里氏替换是一种设计原则，是用来指导继承关系中子类该如何设计的，子类的设计要保证在替换父类的时候，不改变原有程序的逻辑以及不破坏原程序的正确性。</p>
+<p><em>其实还是回归继承本质，就是为了代码复用，子类最好不要覆盖父类的任何方法，只做额外增强</em></p>
+<h1 id="组合优于继承"><a href="#组合优于继承" class="headerlink" title="组合优于继承"></a>组合优于继承</h1><p>组合优于继承：如果一个方案既能用组合实现，也能用继承实现，那就选择组合实现。</p>
+<p>上面提到的鸟类例子，通过 AbstractBird 类派生出两个更加细分的抽象类：会飞的鸟类 AbstractFlyableBird 和不会飞的鸟类 AbstractUnFlyableBird。当还要关注“鸟会不会叫”的时候，<br>那就需要再定义四个抽象类（AbstractFlyableTweetableBird、AbstractFlyableUnTweetableBird、AbstractUnFlyableTweetableBird、AbstractUnFlyableUnTweetableBird）</p>
+<p><img src="http://images.zhuxingsheng.com/20230308222247_1678285367.jpg"></p>
+<p>类的继承层次会越来越深、继承关系会越来越复杂。而这种层次很深、很复杂的继承关系</p>
+<p>一方面，会导致代码的可读性变差。因为我们要搞清楚某个类具有哪些方法、属性，必须阅读父类代码、父类的父类的代码，一直追溯到最顶层父类的代码。</p>
+<p>另一方面，这也破坏了类的封装特性，将父类的实现细节暴露给了子类。子类的实现依赖父类的实现，两者高度耦合，一旦父类代码修改，就会影响所有子类的逻辑。</p>
+<p><img src="http://images.zhuxingsheng.com/20230307182809_1678184889.jpg"></p>
+<p>简而言之，继承最大的问题就在于：继承层次过深、继承关系过于复杂会影响到代码的可读性和可维护性。</p>
+<p>而利用组合、接口、委托三个技术手段，重构一下上面的继承问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">public interface Flyable &#123;</span><br><span class="line">  void fly()；</span><br><span class="line">&#125;</span><br><span class="line">public class FlyAbility implements Flyable &#123;</span><br><span class="line">  @Override</span><br><span class="line">  public void fly() &#123; //... &#125;</span><br><span class="line">&#125;</span><br><span class="line">//省略Tweetable/TweetAbility/EggLayable/EggLayAbility</span><br><span class="line"></span><br><span class="line">public class Ostrich implements Tweetable, EggLayable &#123;//鸵鸟</span><br><span class="line">  private TweetAbility tweetAbility = new TweetAbility(); //组合</span><br><span class="line">  private EggLayAbility eggLayAbility = new EggLayAbility(); //组合</span><br><span class="line">  //... 省略其他属性和方法...</span><br><span class="line">  @Override</span><br><span class="line">  public void tweet() &#123;</span><br><span class="line">    tweetAbility.tweet(); // 委托</span><br><span class="line">  &#125;</span><br><span class="line">  @Override</span><br><span class="line">  public void layEgg() &#123;</span><br><span class="line">    eggLayAbility.layEgg(); // 委托</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>尽管我们鼓励多用组合少用继承，但组合也并不是完美的，继承也并非一无是处。继承改写成组合意味着要做更细粒度的类的拆分。这意味着，我们要定义更多的类和接口。类和接口的增多也就或多或少地增加代码的复杂程度和维护成本。</p>
+<p>如果类之间的继承结构稳定，继承层次比较浅（比如，最多有两层继承关系），继承关系不复杂，我们就可以大胆使用继承。反之，系统越不稳定，继承层次很深，继承关系复杂，就尽量使用组合替代继承。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/precautions-for-repeatedly-reading-inputstream-in-httprequest.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/precautions-for-repeatedly-reading-inputstream-in-httprequest.html" class="post-title-link" itemprop="url">httpRequest中重复读取inputstream注意事项</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-03-04 23:43:00 / Modified: 23:43:57" itemprop="dateCreated datePublished" datetime="2023-03-04T23:43:00+08:00">2023-03-04</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在Filter中获取请求体，就得解析一次request的inputStream。</p>
+<p>而在tomcat的设计中，request的inputStream只能读取一次，读取完一次后，虽然inputStream还在那，也不会变成空，但里面的内容已经被没有了。</p>
+<p>解决方案很简单，就是继承HttpServletRequestWrapper，缓存request中流的内容。</p>
+<p>比如实现一个类:ServletRequestReadWrapper</p>
+<p>整个类的结构是这样的：</p>
+<p><img src="http://images.zhuxingsheng.com/20230304195812_1677931092.jpg"></p>
+<p>然而世事总不那么一帆风顺。</p>
+<p>当请求头Content-Type值为 multipart&#x2F;form-data 时，情况就出现了问题。在<a href="https://www.zhihu.com/question/434950674">https://www.zhihu.com/question/434950674</a> 这个回答中有说明。</p>
+<p>在使用multipart&#x2F;form-data上传文件时，controller类似这样的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@PostMapping</span><br><span class="line">public void upload(MultipartFile file) throws IOException &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>想要得到一个MultipartFile类型的内容，原理与其他类型一样，spring从request中获得流内容，并反射创建MultipartFile。</p>
+<p>但相对于普通类型，Multipart并没有从request.getInputstream中获取内容，而是从另一个方法getParts里面获取，但getParts返回的内容也是解析的request.getInputStream中的内容。</p>
+<p><img src="http://images.zhuxingsheng.com/20230304231226_1677942746.jpg"></p>
+<p>是不是有点奇怪，为什么在wrapper里面已经缓存了inputstream内容，为什么到了右下解再去getInputStream时，却没有了呢？</p>
+<p>tomcat的request类结构是一个装饰器模式</p>
+<p><img src="http://images.zhuxingsheng.com/20230304231410_1677942850.jpg"></p>
+<p>requestWrapper中的getInputStream其实还得来源于真实的Request对象。而在整个处理过程的末端，获取inputStream，并不是从requestWrapper中获取的，而是从真实的Request对象中获取。此时流内容已经被读取过，自然就读取不到了。</p>
+<p>再回味下主要的源码，HttpServletRequestWrapper中getParts()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public Collection&lt;Part&gt; getParts() throws IOException, ServletException &#123;</span><br><span class="line">    return this._getHttpServletRequest().getParts(); </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private HttpServletRequest _getHttpServletRequest() &#123;</span><br><span class="line">    return (HttpServletRequest) super.getRequest();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到了RquestFacade的getParts()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public Collection&lt;Part&gt; getParts() throws IllegalStateException,</span><br><span class="line">        IOException, ServletException &#123;</span><br><span class="line">    return request.getParts();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再到Request的getParts()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public Collection&lt;Part&gt; getParts() throws IOException, IllegalStateException,</span><br><span class="line">            ServletException &#123;</span><br><span class="line"></span><br><span class="line">        parseParts(true);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private void parseParts(boolean explicit) &#123;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">//解析流中文件内容，upload.parseRequest中会调用request.getInputStream</span><br><span class="line">//而传入的request，并不requestWrapper，而是真实的Request本身</span><br><span class="line">//而此时Request中的流已经被读取过了，所以解析出的文件内容为空</span><br><span class="line">//controller中的file变成了null</span><br><span class="line">List&lt;FileItem&gt; items = upload.parseRequest(new ServletRequestContext(this));</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>到此，原理已经讲清楚了。怎么解决呢？</p>
+<p>1、在Wrapper中，非multipart缓存inputstream，是multipart时，则缓存parts</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public ServletRequestReadWrapper(final HttpServletRequest request) throws IOException, ServletException &#123;</span><br><span class="line">    super(request);</span><br><span class="line">    if (HttpUtils.isMultipartContent(request)) &#123;</span><br><span class="line">        parts = request.getParts();</span><br><span class="line">    &#125; else &#123;</span><br><span class="line"></span><br><span class="line">        final ServletInputStream is = request.getInputStream();</span><br><span class="line"></span><br><span class="line">        if (null != is) &#123;</span><br><span class="line">            final ByteArrayOutputStream os = new ByteArrayOutputStream();</span><br><span class="line">            this.bodyLength = ByteStreams.copy(is, os);</span><br><span class="line">            this.body = os.toByteArray();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2、放弃multipart的消息体。</p>
+<p>得到消息体的内容，有时只是为了记录日志，像文件上传，其实得到的消息体也没啥好记录的，所以放弃记录mulipart类型消息体。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/what-are-the-principles-of-micro-service-division-in-the-cloud-era.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/what-are-the-principles-of-micro-service-division-in-the-cloud-era.html" class="post-title-link" itemprop="url">云时代微服务划分原则是什么</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-02-27 20:47:00 / Modified: 20:47:36" itemprop="dateCreated datePublished" datetime="2023-02-27T20:47:00+08:00">2023-02-27</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>微服务架构是云时代的首选架构风格。</p>
+<p>Martin Fowler 在 2014 年写的文章<a href="https://martinfowler.com/bliki/MicroservicePrerequisites.html">《微服务的前置条件》</a>中提到如果使用微服务架构，则需要先拥有一些先决条件：</p>
+<p>1、快速的环境提供能力</p>
+<p>2、基本的监控能力</p>
+<p>3、快速的应用部署能力</p>
+<p>而这三个能力，正是云原生提供的基本能力。</p>
+<h1 id="新技术带来的价值"><a href="#新技术带来的价值" class="headerlink" title="新技术带来的价值"></a>新技术带来的价值</h1><p>既然现在是云时代，是不是我们就不用考虑其它架构风格，直接使用微服务架构呢？答案显示并不是。我们不要为了新技术而新技术。当然，对于找工作肯定是有利的。但我们还是从实际出发，从业务价值出发。</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/the-architects-self-rescue.html">《架构师的自我拯救》</a>中提到，架构师还得多考虑商业价值。使用新技术就是我们的借力。目标还是为了提升商业价值。</p>
+<p><strong>所有的技术演进，都是围绕着用户对这个产品的核心诉求展开的，通过技术层面的架构改造，来解决用户当下的痛点。</strong></p>
+<p>在阿里大牛毕玄的访谈中，提到了服务化的核心是解决了两个问题：</p>
+<p><strong>一、为了解决系统的水平伸缩能力的问题</strong>。每个应用，每个系统，承担的责任变少了，伸缩性就变强了。对应到商业价值，以更细致的粒度，控制系统运营的成本。</p>
+<p><strong>二、研发协作问题</strong>。以前100人开发一个系统，大家都没有分工，接一个需求，要改就从头到尾全改，这个时候有可能会出现冲突，因为可能每个人都在改同一个地方，大家合并代码的时候就非常痛苦，效率很低。</p>
+<p>服务化分工了，你就改这块儿，他就改那块儿，虽然增加了协作成本，但它毕竟能让100人甚至上千人的研发团队可以并行做下去，现代软件变得更复杂，做任何软件上来就是一帮人，必须考虑到一帮人协作的问题。</p>
+<p>正是<a href="http://www.zhuxingsheng.com/blog/remove-the-micro-service-after-removing-the-middle-console.html">《拆完中台再拆微服务》</a>中阐述的微服务是为了提升程序效能和团队效能。</p>
+<h1 id="云时代的特性"><a href="#云时代的特性" class="headerlink" title="云时代的特性"></a>云时代的特性</h1><p>假如一个电商网站，平时只有几千用户同时使用，只需要100台机器就足以支撑这个系统了；而到了双十一，用户量可能猛增几百倍，那需要比如说10000台机器支持这个系统。</p>
+<p>而云平台，可以动态调整系统需要的机器数量，让我们按需使用。这样我们就不需要在闲时投入过高的机器成本，也就是非双十一期间，维持10000台机器的开销。但同时也不会错过在业务高峰获取收益的机会，因为云平台会自动帮我们从100台扩容到10000台机器。</p>
+<p>这种动态调节的能力被称为云的弹性，它是云平台一切美好特质的基础。</p>
+<p>为了实现这种弹性，运行在云平台之上的系统，需要满足一个条件：这个系统可以通过水平扩展进行扩容。</p>
+<p>水平扩展，指通过增加机器数量、构造集群的方法，来满足容量的需求。</p>
+<p>垂直扩展，指当遇到扩容需求时，通过更换更强有力的机器，来获得更好的性能。</p>
+<p>各种基础设施服务云平台，它们其实只有复制和剪切两个能力：</p>
+<p>1、根据给定镜像，产生符合镜像内容的机器的能力。也就是将镜像复制为机器的能力。</p>
+<p>2、撤销不需要的机器，将其放回资源池的能力，也就是剪切机器的能力。</p>
+<p>通过复制和剪切这两个能力，云平台就能对某个镜像提供水平扩展。这种扩展方案通常被称作为弹性负载均衡。</p>
+<p>那么怎样利用弹性负载均衡提供的水平扩展，才能更有效地架构系统呢？关键在于将弹性需求不同的组件分离。</p>
+<p>假如你在运营一个在线电商平台，我们可以粗略地将这个电商 平台的业务分成产品目录和支付两大块。在双十一期间，肯定会遇到比平时更大的流量，因而需要更高的系统容量去支持业务。</p>
+<p>但问题来了，产品浏览和完成支付两个部分增加的流量是一致的吗？从个人实际参与抢购的经验看，双十一之前，用户对产品浏览的需要比平时多；而在双十一当天，可能会对支付的需求更多。</p>
+<p>因此我们对支付和产品目录两块功能，制定不同的水平扩展策略，然后由不同弹性负载均衡控制。这样就可以有针对性地在不同阶段为两块功能提供不同的容量。</p>
+<p>按这个角度，我们把弹性作为主要指标，对系统进行划分，将不同弹性变化的组件放入到不同的弹性边界中。</p>
+<p>通过弹性边界，可以更细致的粒度，控制系统运营成本，也才能真正发挥云平台的能力。所以当要想要利用云平台架构软件时，寻找合理的弹性边界是很重要的事。</p>
+<h1 id="微服务划分原则"><a href="#微服务划分原则" class="headerlink" title="微服务划分原则"></a>微服务划分原则</h1><p>微服务怎么划分？总体来讲，从功能性需求和非功能性需求两方面考虑。</p>
+<p>从功能性方面考虑：微服务的划分应该有利于保证系统概念的一致性，更容易灵活扩展功能，而这些又要求开发团队顺畅的沟通协作。</p>
+<p>DDD限界上下文正好在这方面提供了理论指导，奠定了划分基础。</p>
+<p>根据限界上下文划分，既考虑到了传统模块化思维中对业务概念的松耦合、高内聚的要求，又考虑到团队的认知负载和认知边界。</p>
+<p>这样一方面解决了团队协作和概念一致性问题。另一方面，每个限界上下文又是一个业务概念内聚的边界。在这个边界内部，就更容易建立可维护、易扩展的模型。</p>
+<p>合理的微服务划分，应该是对于多数需求变更，只需要改动一个或少量的微服务。而划分不合理的话，对多数业务需求，都要修改多个微服务。</p>
+<p>从非功能考虑：在性能、安全、可用性，甚至发布周期，看是不是需要进一步划分。或者考虑把几个限界上下文合并到一个微服务。极端情况下，把有上下文合并到一个服务，又变成一个单体。</p>
+<p>到此，微服务的划分，我们当前都是以限界上下文优先来划分的。这也符合面向对象建模中的聚合概念，是一种“一致性优化”的模型结构。是“概念一致性边界”，“事务边界”。</p>
+<p>但结合上一章节“弹性边界”，<strong>在云时代，弹性是个很重要指标。如果两个上下文明显具有不同的弹性诉求，那就应该拆分。而如果具有一致的弹性诉求，就可以不拆。</strong></p>
+<p>弹性边界跟软件模块之间存在依赖关系一样，弹性边界间也会存在依赖。而弹性边界间的依赖（也就是服务间调用关系，或是数据交换关系），会造成流量的传递。如果上游弹性边界突然需要处理大量的流量，那么这些流量自然也会传递到下游弹性边界中。</p>
+<p>这在实现中常发生，当平台的入口系统流量上升后，后面依赖的系统流量也上升了，整个一条调用链路上的系统都得扩容。这种不同弹性边界间流量的传递就是弹性依赖。</p>
+<p><strong>只要组件之间存在交互，弹性依赖就不可避免。在云平台更擅长处理依赖于吞吐量的弹性依赖，但对依赖于响应时间的弹性依赖，就没有好办法了。这背后的原因在于水平扩展并不能保证改进响应时间，而只能提高吞量。也就是云平台的弹性并不总能改进响应时间，但一定可以提高吞吐量。</strong></p>
+<p>正因为云平台不擅长处理依赖于响应时间的弹性依赖，这类弹性依赖被称为弹性耦合，以表示与依赖于吞吐量的弹性依赖的区别。</p>
+<p>怎么避免弹性耦合，才能充分利用云平台的能力。最简单的方式，是将组件的同步调用模式改为异步。因为服务与组件间的同步调用，会带来响应时间的依赖；而异步调用，则能将其改变为吞量的依赖。也就是将弹性耦合变成了弹性依赖，使得整个系统可以更好地利用云平台能力。</p>
+<p>不过，当由同步变成异步时，意味着，原先产生的数据可能存在中间状态。比如支付，由原来的开始支付 -&gt; 支付成功&#x2F;失败；变成开始支付 -&gt; 支付中 -&gt; 支付成功&#x2F;失败。</p>
+<p>带来的中间件状态，在业务上是否有特殊含义，这在业务建模时，是需要考虑的第一个问题；再者，异步带来的一致性改变，对业务会产生什么影响，是需要考虑的第二个问题。</p>
+<p>归根到底，为了解决弹性耦合的问题，我们需要将原味面向对象风格中默认的同步模型改为异步。</p>
+<h2 id="高内聚"><a href="#高内聚" class="headerlink" title="高内聚"></a>高内聚</h2><p>微服务划分原则，不管是以限界上下文为主，还是以弹性边界为主。更多的还是要考虑业务形态。为业务赋能才是目标。多维度去权衡划分原则。</p>
+<p>不能只考虑限界上下文，不管业务功能性还是团队认知负载是合理的，但弹性耦合了，一个扩容，链路上的所有系统都得扩容。也不能只考虑弹性边界，把简单同步的业务上下文都使用异步处理，忽略业务上的<a href="http://www.zhuxingsheng.com/blog/coupling-inevitability.html">耦合必然性</a>。为了异步而异步。</p>
+<p>总结起来，还是要权衡，不要单维度走极端。这些永远正确的废话，真的很有道理。最近看饿了么CTO张雪峰的访谈，正好聊到了微服务问题，可以结合理论体会一下：</p>
+<blockquote>
+<p>饿了么原来就是个单体，所有的业务逻辑就是一个东西、一个源代码库，C 端、B 端、D 端（Delivery，物流）全在一起，牵一发动全身，也就是说你在部署的时候，每个服务器都要布一坨这个东西，一是影响性能，二是发布很麻烦。只要有同学发布，即使跟你无关，你也要发布一遍，所有的机器都要扫一遍。我们做技术的就要拆解，肯定要至少再分一级。</p>
+</blockquote>
+<blockquote>
+<p>拆分与否，我们当时就遵循一个原则：只要一个人有变化，一堆人要随着你动，或者叫“牵一发动大部分”的时候，这一定是有问题的。其实这也是逻辑原则或数学原则。所以我跟他们说，不要扯什么领域驱动、微服务了，就用这个原则。这个原则确实最容易讲清楚，但实践的时候要多次试、反复试。<br>单体是一个极端，微服务或单一原则是另一个极端。</p>
+</blockquote>
+<blockquote>
+<p>饿了么从来没有真正提过微服务，从来没有过，我不去用这个概念。我们就是从业务的合理性去拆分。对领域驱动呢，我当时也是持观望态度，不能说保留态度，我觉得领域驱动是一个模棱两可的东西（顶尖 DDD 牛人或在大规模超复杂体系下成功实践过的同仁勿喷，毕竟让绝大部分技术同学吃透 DDD，无论 ROI 还是效率都很低），就跟架构一样，所以我希望回归朴素，就是从逻辑的角度，或者数学角度，给大家解释。所以当时我们也不做领域，我把以前的经验带过来，开始有一些中台的萌芽，比如说把交易系统、营销系统拆出来，把用户系统拆出来等等。</p>
+</blockquote>
+<blockquote>
+<p>从逻辑上讲，当你十次里面有八次“牵一发要动大部分”的时候，你就没必要去拆，你就让它耦合（内聚）在那，哪怕最后合出来一个巨大的东西，那证明这个业务就是这样的，没办法。你要么抱怨很倒霉进入这个业务领域，要么你就自己想办法克服。当然还有一个办法就是你通过技术去改革这个业务，那意味着这个业务甚至整个行业的游戏规则都要变，在短时间内几乎不可能。之前也讲过，对绝大部分公司的技术团队来说，妄图通过技术驱动业务，还是省省吧。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>后来我发现物流系统还有个很大的问题，搞物流系统这批同学，就是另一类极客。饿了么刚开始拆分服务，物流拆分得很夸张，直接同步变异步了。我说你们犯了一个错误，叫“为了异步而异步”。<br>大家以前的代码（交互）尽量都是一路撸到底嘛，直接写完，这个叫单体。后来搞微服务就要拆开了，结果他们不光拆开，拆开之后，还要用消息通知。我举个不太恰当但大家明白意思就行的例子，比如说算工资，本来可以直接算出来，他们非要先送一个你的职级，再送一个你的社保基数，然后送过来之后还不是马上给你，你要自己去取，我只是通知你有这个数据了。你取过来之后慢慢算，算完之后再推给另一个涉及工资计算的模块，诸如此类。物流同学就是用类似方式，他们真的把异步做到了“极致”（饿了么价值观：极致、激情、创新）。<br>但是他们做异步的初衷是什么？是因为物流的量很大。以前宕机是因为量很大，用同步的话服务器撑不住，所以就改异步。他们说至少可以缓和五秒钟，但后来我发现这五秒钟没意义。<br>我自己也体验过，比如我点个外卖，提交订单之后习惯性去刷一下，看看商户有没有接单，然后过一分钟看看骑手有没有接单。还要看地图，有时候看到小哥明明经过我这了，怎么先去送另一个人了？可能很多人都有这样的疑问，这个不能怪骑手，也不能怪系统，有各种原因，此处暂时不表。<br>大家都会去刷，后来我们发现用户在饿肚子时的心理承受能力就是三到五秒（淘宝、携程没这问题，大家对订单或物流状态变化的容忍度高很多），你是通过异步让这个订单不至于当场爆掉，但你延后五秒之后，堆积起来也很厉害，东西多了之后，最后还是爆掉，你只是让用户前五秒感觉系统没有宕机，但最终结果还是宕机。最后我们异地多活搞出来，几乎就没有大的事情了。</p>
+</blockquote>
+<blockquote>
+<p>我们原来设想异地多活只能一次性切换，因为我们的业务是强耦合的，不像携程，携程机票、酒店关联度不大的，你要订机票 + 酒店，做个简单聚合就行了，但我们不一样，饿了么是用户下了单，商户接了单，物流就要送单，上下游其实是强耦合（高内聚）。<br>程序员可能会说，现实业务没你说的那么理想，该强耦合就强耦合，其实不是强耦合，另一个词叫高内聚，该内聚的时候你不要去追求什么微服务那些乱七八糟的东西，就应该高内聚，因为就是一个业务形态，业务才是最重要的判断耦合或内聚的依据。谁（调用方 &#x2F; 消费方）也离不了谁（被调用方 &#x2F; 服务方），你每次调用都涉及到它，干嘛非强扯开来？没太大好处，当然，可以分开发布算一个好处，但也仅是技术上的好处，不是业务或领域上的好处。</p>
+</blockquote>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>我们将微服务架构看作是一种以业务上下文为弹性边界的云原生架构模式。弹性优先原则不仅仅适用于微服务架构，而是适用于所有云原生架构。</p>
+<p>把功能需求和流量传导分为静态和动态的角度</p>
+<p>静态的功能需求：</p>
+<p>如果少数大需求需要跨微服务，是正常的，但是也要注意任务拆分，把大需求拆分到多个微服务，约定好接口，各自开发，各自部署，集中联调。</p>
+<p>如果大多数需求需要跨微服务，那多半你的微服务拆分的是有问题的，你需要重新考虑你的微服务的拆分是否合理，必要的话合并一些微服务。</p>
+<p>动态的流量传导：则是弹性边界，一旦流量上升，链路上所有系统都会被传导并进行扩容，那是不是拆分也不太合理，或者能否从弹性耦合变为弹性依赖。</p>
+<p>微服务架构只是一种技术手段，使用微服务架构的目的，不是为了让你的架构更流行更酷，也不是为了让你的服务尽可能小，而是借助微服务的架构，让团队规模变小，大开发部门变成各个小的开发小组，并且各个小组应该尽可能独立，减少相互依赖，减少沟通成本。</p>
+<p>而一个常见的问题就是错把手段当目的，为了微服务而微服务，服务拆的太细，反而维护和沟通成本大增。</p>
+<p>理想的微服务架构，一个需求在一个微服务内就解决了，独立测试独立上线，基本不需要太多跨团队的协作。同时一个小团队维护的微服务也是有限的。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/micro-service-is-not-a-silver-bullet-or-a-dud.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/micro-service-is-not-a-silver-bullet-or-a-dud.html" class="post-title-link" itemprop="url">微服务不是银弹也不是哑弹</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-02-19 10:46:31 / Modified: 10:46:41" itemprop="dateCreated datePublished" datetime="2023-02-19T10:46:31+08:00">2023-02-19</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>微服务的核心思路就在于将业务能力封装成独立的松耦合的服务。通过这样一组服务，构建企业内的能力生态系统。除了能满足当前应用的需要之外，也为未来可能的新应用提供了紧实的基础。</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/remove-the-micro-service-after-removing-the-middle-console.html">《拆完中台再拆微服务》</a>中也阐述了微服务是为了提升程序效能和团队效能。</p>
+<h1 id="当提到微服务时，总会想到各种各样的好处："><a href="#当提到微服务时，总会想到各种各样的好处：" class="headerlink" title="当提到微服务时，总会想到各种各样的好处："></a>当提到微服务时，总会想到各种各样的好处：</h1><p>1、使大型的复杂应用程序可以持续交付和持续部署</p>
+<p>2、每个服务都相对较小并容易维护</p>
+<p>3、服务可以独立部署</p>
+<p>4、服务可以独立扩展</p>
+<p>5、微服务架构可以实现团队的自治</p>
+<p>6、更容易实验和采纳新的技术</p>
+<p>7、更好的容错性</p>
+<p>当然，没有一项技术是“银弹”。</p>
+<h1 id="微服务架构也存在一些显著的弊端和问题："><a href="#微服务架构也存在一些显著的弊端和问题：" class="headerlink" title="微服务架构也存在一些显著的弊端和问题："></a>微服务架构也存在一些显著的弊端和问题：</h1><p>1、服务的拆分和定义是一项挑战</p>
+<p>2、分布式系统带来的各种复杂性，使开发、测试和部署变得更困难</p>
+<p>3、当部署跨越多个服务的功能时需要谨慎地协调更多开发团队</p>
+<p>4、开发者需要思考到底应该在应用的什么阶段使用微服务架构</p>
+<p>近些年，反对微服务的声音越来越多。</p>
+<p>在twitter上有个很热门的贴子：<br>twitter.com&#x2F;xuwenhao&#x2F;status&#x2F;1593469165892820992 作者显明的数落了微服务的种种不是。为了更方便你了解作者的看法，我简单罗列下：</p>
+<p>1、微服务的适应场景非常有限。这么多巨头互联网公司的核心业务逐渐微服务化，的确是在特定的历史时期和场景下的解决方案。</p>
+<p>2、大型系统的开发，核心的挑战其实只有一个，就是“控制复杂性”。微服务不会减小复杂性，只会转移复杂性，它天然是为了解决极度复杂的计算、存储问题，中小规模系统其实是根本不需要的，至少在成为大型系统之前。</p>
+<p>3、在系统开发上，控制复杂性的方式，可以用三个关键词来描述，那就是“抽象”、“封装”和“复用”。</p>
+<p>4、服务化的第一个挑战：是“服务”并不是无状态的，“服务”也绑定了数据。以电商业务为例。商场生成订单，必在服务内持久化下来。然后，这个订单会发给到订单履约系统，也会持久化下来。然后两边都有可能触发订单状态的变更，商场用户可能取消订单，履约系统可能因为商品缺货也取消订单。两边都需要有对应的接口和实现，去完成这样的状态同步。这个过程中，就容易引入数据不一致的问题。</p>
+<p>5、第二个挑战：因为是不同的服务，就会面临“向前兼容”的问题，不同的系统并不是完全同步迭代的。而已经发布的服务，意味着对外有了明确的协议承诺。在服务发布新版本的时候，必须要确保向前兼容。</p>
+<p>6、第三个挑战：因为服务化划分了明确的边界，系统更容易变成异构的，更容易引入更多的技术栈。并且有些功能，会在两个不同的语言、框架下各实现一遍，也容易进一步放大之前所说的业务数据不一致的第一个挑战</p>
+<h1 id="三种典型的伪微服务"><a href="#三种典型的伪微服务" class="headerlink" title="三种典型的伪微服务"></a>三种典型的伪微服务</h1><p>在James Lewis 和 Martin Fowler的名作《微服务》中，将微服务定义为一种架构风格，并总结了它的九种特质：</p>
+<p>1、通过服务实现组件化</p>
+<p>2、服务按照业务能力划分组织</p>
+<p>3、服务以产品而不是项目研发</p>
+<p>4、逻辑集中在服务中，编排简单</p>
+<p>5、每个服务自主决策（技术栈、语言等等）</p>
+<p>6、每个服务自主管理数据（不强制使用统一数据源）</p>
+<p>7、基础设施自动化</p>
+<p>8、将服务失败当作常态纳入设计考量</p>
+<p>9、演进式设计（不求一步到位）</p>
+<p>在实现中，如果对上面的特质理解出现偏差，就会出现三种典型的伪微服务风格</p>
+<h2 id="1、分布式服务"><a href="#1、分布式服务" class="headerlink" title="1、分布式服务"></a>1、分布式服务</h2><p><strong>服务按照业务能力划分组织</strong></p>
+<p>微服务中的服务应该以业务能力为粒度。这间接回答了“微服务到底多微合适”，既不是单纯的技术能力（比如查询、获取系统时间），也不是完整的应用，而是用以支撑构建应用的业务能力。</p>
+<p><strong>通常所说的“恰当粒度”是在业务与实现两个维度上平衡的结果</strong>。并不会存在“只从单一维度入手，越怎么样就越好”这么简单粗暴的结论。所以微服务并不是越小越好，当小到不能表示业务能力，就不再是微服务了。</p>
+<p>如果不顾及服务是否按照业务能力划分组织，就是一种典型的伪微服务模式。被称之为分布式服务。当然分布式服务并不是反模式，它有其特有的用处，只不过它并不是微服务而已。</p>
+<h2 id="2、微工作组"><a href="#2、微工作组" class="headerlink" title="2、微工作组"></a>2、微工作组</h2><p><strong>服务以产品而不是项目研发</strong></p>
+<p>这主要是从生命周期角度看，产品和项目的差异体现在团体结构和生命周期上。</p>
+<p>产品的生命周期分为初始、稳定、支持和结束生命几个阶段。那么产品的不同版本，可能处在不同的生命周期中。所以产品团队需要在同一时间内，支持多个处在不同生命周期的产品版本。而项目通常假设只有唯一产物，随着项目生命周期的进项，项目化服务一直在改变。</p>
+<p>因此产品化服务的生命周期，实际上相当于承诺在产品生命周期内，服务是不变的。也就是说只要1.0不结束生命，那么我们就可以一直使用它。哪怕发布了1.5、2.0、3.0，只要1.0满足我的需要，并且还在生命周期内，作为消费者，可以无视你的后续版本。</p>
+<p>微服务需要服务间不仅仅在接口上松耦合，还在要生命周期上松耦合。也就是微服务可以自主发布，其他服务不应该受到影响。产品化是实现这一点的根本途径。</p>
+<p>如果服务缺乏产品化生命周期，那就会产生一组在生命周期上紧密耦合的服务，从而完全丧失微服务的意义。随着服务数量变多，这种生命周期的耦合还会带来难以承受的沟通成本。</p>
+<h2 id="3、傻服务"><a href="#3、傻服务" class="headerlink" title="3、傻服务"></a>3、傻服务</h2><p><strong>逻辑集中在服务中，编排简单</strong></p>
+<p>逻辑越在服务中集中，所需要的编排就越简单，通常通过RESTful API或者轻量的消息机制即可完成。</p>
+<p>如果服务中的逻辑简单，那就会有大量的逻辑泄露到编排逻辑中，此时就需要使用复杂的编排工具辅助我们工作。</p>
+<p>选择编排复杂的逻辑，听越来很有道理：既然我们希望在不同场景下复用服务，那么总有一些需要改变的订制代码，我们需要将它们与服务本身分离。分离之后，就能通过编排引擎，帮助我们在不同的场景下重用这些服务</p>
+<p>但按照这个逻辑下去，服务往往会变成对于数据的CRUD，然后大量的逻辑存在于编排引擎中，这也是典型的伪微服务。像傻服务一样。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>其实任何技术都可以说它既不是银弹也不是哑弹。就是优势与缺点并存。我们需要权衡的是在什么样的阶段引入什么样的技术来帮我们更好更快地解决问题。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/orthogonal-design-in-the-eyes-of-architects.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/orthogonal-design-in-the-eyes-of-architects.html" class="post-title-link" itemprop="url">架构师眼中的正交设计</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-02-11 21:24:00 / Modified: 21:24:34" itemprop="dateCreated datePublished" datetime="2023-02-11T21:24:00+08:00">2023-02-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>正交设计，什么是正交设计，在之前的几篇文章中，<a href="http://www.zhuxingsheng.com/blog/the-essence-of-architecture-is-orthogonal-decomposition-of-services.html">《架构的本质是业务的正交分解》</a>、<a href="http://www.zhuxingsheng.com/blog/coping-with-change.html">《应用对变化》</a>都有学习记录。</p>
+<p>这两篇文章越看越感觉有道理：</p>
+<p><strong>1、系统应该被分解为“最小化核心系统 + 多个彼此正交的周边系统”</strong></p>
+<p><strong>2、消除重复</strong></p>
+<p><strong>3、分离关注点</strong></p>
+<p><strong>4、管理依赖：最小化依赖、向稳定方向依赖</strong></p>
+<p>对于这四个策略的理解，感觉自己的认知层次还是太低了。更多的时候还是在作为编码原则。而非架构原则。</p>
+<p>在《架构师的自我拯救》提出了技术人员的商业价值，包括两部分：快速试错和快速规模化。</p>
+<p>那么我们能在企业的竞争中做些什么，同时也自己创造增量价值呢？其实也被包含在这两方面。</p>
+<p>比如快速试错。为什么需要快速试错？为了验证商业想法是否能得到市场认同，从而获得商业价值。必然需要高速响应业务和技术的需求。</p>
+<p>这面临的挑战就是交付时间压力。市场不等人，竞争对手也不等人。</p>
+<p>除了战略层面的尝试方向对不对，如果有人承诺方向一定对，那自然不用试错，直接火力全开，饱和式攻击就行。</p>
+<p>绝大多数情况是没人担保的，只能尝试。对应到技术人员，挑战在于只是很小的一次尝试，不要把系统改得面目全非。</p>
+<p>对应到架构，就是我们系统的得符合“开闭原则”。能稳住核心系统的不变性，又能保持系统有序的增量。把大多数的尝试尽量封装到一个小的领域内。不会因为多次的业务尝试，导致系统随着时间变得混乱。</p>
+<p>想要做到这些，需要如下架构原则：</p>
+<p><strong>1、单一职责</strong>，把每个业务尝试封装到一个单一模块中。一旦尝试失败，就可以迅速把业务逻辑下线，避免影响整体的复杂性。</p>
+<p><strong>2、最小依赖</strong>，整体架构设计要保障大多数业务尝试可以在业务层完成。如果每个业务方的需求都会侵入到底层的逻辑，那么每次尝试都会变成跨模块，甚至跨团队合作，这种架构会大幅降低业务尝试的速度</p>
+<p><strong>3、最小暴露</strong>，相当于最小被依赖，在业务尝试期接口不对部门或企业外部暴露，包括API、数据共享、事件、消息等一切对外界造成影响的通信机制。尤其是输出，这样才能最小化它的爆炸半径。否则该业务尝试的数据模型会污染到其他业务，在尝试失败之后对其他业务的影响也会很难剥离。</p>
+<p>原则很简单，但怎么落地这些原则，最大的挑战来于短视疸。如互联网火热时，人员更替很频繁，导致技术人员的稳定性差，想要快速拿到结果就会设计短视。还有企业组织结构，像康威定律一样，组织间的利益争夺，造成组织内最优设计，但企业整体设计熵增。</p>
+<p>作为架构师，可以：</p>
+<p><strong>1、提升对封装能力重要性的认知</strong>。这是一个技术人员的基本功，从写代码的第一天就需要。只不过随着职业发展，从封装代码架构，到封装业务逻辑，最后到封装业务尝试。</p>
+<p><strong>2、建设复杂度控制机制</strong>。这里设计评审很关键。业务尝试也要有设计评审，而评审的一个固定环节就是逻辑、数据和接口的最小爆炸半径的设计。</p>
+<p><strong>3、推行最小必要架构原则</strong>。任何增加功能、引入复杂性的设计，都要做一个正式的评审，而简化的行为则不需要。</p>
+<hr>
+<p>当然，这些内容，是在郭东白架构课程里面看到的，他提出这是一个架构师提升企业架构设计对外部的适应能力。我理解这就是应对变化的能力。怎么能更好的应对变化，最佳原则就是“开闭原则”。而这些内容我更感觉是正交设计的另一种表述。这些原则与正交设计是一脉相承的。</p>
+<p>如果整个系统的各个功能模块是正交设计的，那自然能灵活应对变化。一个庞大系统无法适应变化时，主要是架构僵化以及各个模块之间的关系错综复杂，导致牵一发而动全身。不能改不敢改。</p>
+<p>应对变化时，不要饱和式攻击取胜，需要对阶段性精确目标最大投入取得成果。怎么才能做到不饱和式攻击，在架构层面就是要做到正交分解。</p>
+<hr>
+<p>总结一下：<strong>架构师主要职责就是为了抵制熵增</strong>。而抵制熵增不管从战术还是战略，正交设计都是一种很好的实践方式和指导原则。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/basic-terms-of-kafka.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/basic-terms-of-kafka.html" class="post-title-link" itemprop="url">Kafka基础术语</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-02-05 10:40:00 / Modified: 10:41:16" itemprop="dateCreated datePublished" datetime="2023-02-05T10:40:00+08:00">2023-02-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>一个简简单单的基础数据结构，却发展成了形形色色的消息队列中间件。世界就是如此奇妙。</p>
+<p><img src="http://images.zhuxingsheng.com/20230102213501_1672666501.jpg"></p>
+<p>如上图，一个简单的队列数据结构，由生产者往里插入内容，由消费者从里面获取内容进行消费，就构建出一个简单的消息队列模型。</p>
+<p>消息模型有两种：</p>
+<p>1、点对点模型：也叫消息队列模型。多个消费者共同消费同一个队列，效率高</p>
+<p>2、发布&#x2F;订阅模型：发送方也称之为发布者(Publisher)，接受方称为订阅者(Subscriber)。与点对点模型不同的是，这个模型可能存在多个发布者向相同的主题发送消息，而订阅者也可能存在多个，它们都能接收到相同主题的消息。</p>
+<p><img src="http://images.zhuxingsheng.com/20230117001514_1673885714.jpg"></p>
+<p>一个简单的Kafka架构图：</p>
+<p><img src="http://images.zhuxingsheng.com/20230102213918_1672666758.jpg"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/basic-terms-of-kafka.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/the-architects-self-rescue.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/the-architects-self-rescue.html" class="post-title-link" itemprop="url">架构师的自我拯救</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-02-05 10:39:00 / Modified: 10:41:31" itemprop="dateCreated datePublished" datetime="2023-02-05T10:39:00+08:00">2023-02-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>年前老板跟我讲了句话，“兄弟们得自我拯救”。</p>
+<p>感觉十分在理。</p>
+<p>这几年，行情很差，以肉眼可见的速度一步步衰退。大厂裁员，小厂倒闭，与互联网相关的行业，哀鸿遍野，各个公司都在进行降本增效。</p>
+<p>辛辛苦苦一年，年末了，年终还得来个折上折。但从公司角度，长久生存是第一要务。的确很是无奈。</p>
+<p>战略这种词太大，我这种底层也不太明白。但回首公司几年，有几句口号，回荡在耳边，加上老板这句，串联在一起，还蛮有意思：</p>
+<p>躬身入局、往前走一步、自我拯救！</p>
+<p>躬身入局，记得当时说的是高管要躬身入局。我跟一位CTO朋友分享，他立刻反应那你这底层要躬身出局。感叹人家能当CTO也不是白来的，这敏捷的思维，机智的身形。</p>
+<p>对于我这底层，就是躬身出局、往前走一步、自我拯救。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/the-architects-self-rescue.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/complexity-brought-by-interface-isolation-principle.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/complexity-brought-by-interface-isolation-principle.html" class="post-title-link" itemprop="url">接口隔离原则带来的复杂性</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-12-18 23:27:00 / Modified: 23:27:39" itemprop="dateCreated datePublished" datetime="2022-12-18T23:27:00+08:00">2022-12-18</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="ISP"><a href="#ISP" class="headerlink" title="ISP"></a>ISP</h1><p>什么是ISP，之前总结过，详细内容可回顾<a href="http://www.zhuxingsheng.com/blog/solid-isp.html">《SOLID之ISP》</a></p>
+<p>简单总结：多餐少吃，不要大接口，使用职责单一的小接口。</p>
+<p>just so easy!</p>
+<p>不就是把大接口拆成小接口嘛！</p>
+<p>然而，最近在review之前的代码时，发现了点问题。</p>
+<p>简单介绍下背景业务知识，项目是处理发票业务，在公司报销过的人都了解，我们团建、出差，公办支出都会让商家开具一张发票，作为报销凭证。</p>
+<p>那么一张发票在被上传到报销软件，行为分为几个部分：</p>
+<p>1、上传识别：从一张发票图片，被OCR，识别出一份结构化数据</p>
+<p>2、修改：修改发票信息，包括删除、编辑识别出的发票内容，甚至手工填写一张发票信息</p>
+<p>3、验真：会调用国税接口，验证一下发票的真伪</p>
+<p>4、查询：查看发票详情</p>
+<p>每一部分都会有几个方法，为了避免胖接口，自然会拆分成职责更专注的小接口</p>
+<p>使用IDEA绘制出类结构：</p>
+<p><img src="http://images.zhuxingsheng.com/20221211200600_1670760360.jpg"></p>
+<p>InvoiceVerifyService:表示发票验真职责</p>
+<p>InvoiceDiscernService:表示发票识别职责</p>
+<p>InoviceService:表示发票查询、编辑等职责</p>
+<p>思路清晰，结构中正。</p>
+<p>可在项目中却出现了一段这样的代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if(invoiceService instanceof InvoiceVerifyService)&#123;</span><br><span class="line">    InvoiceVerifyService verifyService = (InvoiceVerifyService)invoiceService;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看着instanceof关键字，就倍感别扭。要么抽象得不对，要么结构不对。</p>
+<p>如果没有拆分成三个接口，肯定不需要这样的判断。</p>
+<p>所以还得重新审视一下ISP。</p>
+<p>ISP：接口隔离原则，里面两个关键词：“接口”和“隔离”；“隔离”相对比较简单，从单一职责角度，把职责不相关的行为拆分开。而“接口”则需要重新审视一下。</p>
+<h1 id="接口"><a href="#接口" class="headerlink" title="接口"></a>接口</h1><p>其实每个人对接口的理解是不一样的，从分类上讲，大该两类，一是狭义：常被理解为像Java语言中的interface，或者模块内部的使用；二是广义：系统间交互契约。</p>
+<p>Martin Fowler给了两种类型接口：RoleInterface和HeaderInterface</p>
+<blockquote>
+<p>A role interface is defined by looking at a specific interaction between suppliers and consumers. A supplier component will usually implement several role interfaces, one for each of these patterns of interaction. This contrasts to a HeaderInterface, where the supplier will only have a single interface</p>
+</blockquote>
+<p>大致也是这个意思。</p>
+<h2 id="广义"><a href="#广义" class="headerlink" title="广义"></a>广义</h2><p>主要是系统间交互的契约。类似于一个系统的facade对外提供的交互方式。</p>
+<p><strong>就算你不设计接口，并不代表没有接口</strong>。不局限于语言层面的interface，而是一种契约。</p>
+<p>最重要的原则是KISS原则，最小依赖原则或者叫最少知识原则，让人望文知义。</p>
+<p>追求简单自然，符合惯例。</p>
+<p>比如一个微服务用户系统提供了一组跟用户相关的 API 给其他系统使用，比如：注册、登录、获取用户信息等。</p>
+<p>还包含了后台管理系统需要的删除用户功能，如果接口不作隔离，具体代码如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">public interface UserService &#123;</span><br><span class="line">  boolean register(String cellphone, String password);</span><br><span class="line">  boolean login(String cellphone, String password);</span><br><span class="line">  UserInfo getUserInfoById(long id);</span><br><span class="line">  UserInfo getUserInfoByCellphone(String cellphone);</span><br><span class="line">  </span><br><span class="line">  boolean deleteUserByCellphone(String cellphone);</span><br><span class="line">  boolean deleteUserById(long id);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>然而，删除操作只限于管理后台操作，对其他系统来讲，不仅是多余功能，还有危险性。</p>
+<p>通过使用接口隔离原则，我们可以将一个实现类的不同方法包装在不同的接口中对外暴露。应用程序只需要依赖它们需要的方法，而不会看到不需要的方法。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">public interface UserService &#123;</span><br><span class="line">  boolean register(String cellphone, String password);</span><br><span class="line">  boolean login(String cellphone, String password);</span><br><span class="line">  UserInfo getUserInfoById(long id);</span><br><span class="line">  UserInfo getUserInfoByCellphone(String cellphone);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public interface RestrictedUserService &#123;</span><br><span class="line">  boolean deleteUserByCellphone(String cellphone);</span><br><span class="line">  boolean deleteUserById(long id);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class UserServiceImpl implements UserService, RestrictedUserService &#123;</span><br><span class="line">  // ...省略实现代码...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="狭义"><a href="#狭义" class="headerlink" title="狭义"></a>狭义</h2><p>狭义常被理解为像Java语言中的interface，或者模块内部的使用。</p>
+<p>单纯某一个接口，与单一职责一样，希望接口的职责单一，不要是胖接口、万能接口。</p>
+<p>模块内部设计时，不管是模块调用模块，还是模块调用第三方组件。</p>
+<p>我们一般有两种选择：</p>
+<p>一、是直接依赖所基于的模块或组件；</p>
+<p>二、是将所依赖的组件所有方法抽象成一个接口，让模块依赖于接口而不是实现。</p>
+<p>其实这在之前对面向对象反思的文章中，提到过，打开我们90%的项目，所有的service都有对应的service接口和serivceImpl实现，整齐划一，美其名曰，面向接口编程。</p>
+<p>然而，到项目生命周期结束，一个service都不会有两种实现。</p>
+<p>所以，建议还是直接依赖实现，不要去抽象。<strong>如无必要，勿增实体</strong>。</p>
+<p>如果我们大量抽象依赖的组件，意味着我们系统的可配置性更好，但复杂性也激增。</p>
+<p>什么时候考虑抽象呢？</p>
+<p>1、在需要提供多种选择的时候。比如经典的Logger组件。把选择权交给使用方。</p>
+<p>这儿也有过度设计的情况，比如数据库访问，抽象对数据库的依赖，以便在MySQL和MongoDB之间切换，在绝大数情况下，这种属于过度设计。毕竟切换数据库本身就是件小概率事件。</p>
+<p>2、需要解除一个庞大的外部依赖。有时我们并不是需要多个选择，而是某个依赖过重。我们在测试或其它场景会选择mock一个，以便降低测试系统的依赖</p>
+<p>3、在依赖的外部系统为可选组件时。这个时候可以实现一个mock的组件，并在系统初始化时，设置为mock组件。这样的好处，除非用户关心，否则就当不存在一样，降低学习门槛。</p>
+<hr>
+<hr>
+<p>回到文章篇头的问题，每个接口职责都是单一明确的，为什么还需要instanceof来判别类型？其实是更上层混合使用了</p>
+<p>类似于：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String,InvoiceService&gt; invoiceServiceMap = SpringUtils.getBeans();</span><br></pre></td></tr></table></figure>
+
+<p>客户端使用时，得拆分开：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String,InvoiceVerifyService&gt; invoiceServiceMap = SpringUtils.getBeans();</span><br><span class="line">Map&lt;String,InvoiceService&gt; invoiceServiceMap = SpringUtils.getBeans();</span><br><span class="line">Map&lt;String,InvoiceDiscernService&gt; discernServiceMap = SpringUtils.getBeans();</span><br></pre></td></tr></table></figure>
+
+<p>当需要具体能力时，可以从对应的集合中获取对应的Service。而不是通过instanceof去判断。通过空间的换取逻辑的明确性。</p>
+<h1 id="VS-SRP"><a href="#VS-SRP" class="headerlink" title="VS SRP"></a>VS SRP</h1><p>接口隔离原则跟单一职责原则有点类似，不过稍微还是有点区别。</p>
+<p>单一职责原则针对的是模块、类、接口的设计。</p>
+<p>而接口隔离原则相对于单一职责原则，一方面它更侧重于接口的设计，另一方面它的思考的角度不同。</p>
+<p>它提供了一种判断接口是否职责单一的标准：通过调用者如何使用接口来间接地判定。如果调用者只使用部分接口或接口的部分功能，那接口的设计就不够职责单一。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>表达原则的文字都很简单，但在实践时又会陷入落地时的困境。</p>
+<p>这些原则的背后，也体现了架构之道，虚实结合之道。从实悟虚，从虚就实。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/the-essence-of-architecture-is-orthogonal-decomposition-of-services.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/the-essence-of-architecture-is-orthogonal-decomposition-of-services.html" class="post-title-link" itemprop="url">架构的本质是业务的正交分解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-12-11 14:00:00" itemprop="dateCreated datePublished" datetime="2022-12-11T14:00:00+08:00">2022-12-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-02-11 14:00:38" itemprop="dateModified" datetime="2023-02-11T14:00:38+08:00">2023-02-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><a href="https://note.youdao.com/">七牛CEO许式伟</a>讲：<strong>架构的本质是业务的正交分解。</strong></p>
+<p>好独特的见解。</p>
+<h1 id="做架构到底是做什么？"><a href="#做架构到底是做什么？" class="headerlink" title="做架构到底是做什么？"></a>做架构到底是做什么？</h1><p>在<a href="http://www.zhuxingsheng.com/blog/the-way-to-become-the-chief-architect.html">《首席架构师的打怪升级之路<br>》</a>中提到：架构师是具备架构能力的人，架构能力是指为相对复杂的场景设计并引导一个或多个研发团队，来实施结构化软件系统的能力。</p>
+<p>关键信息：<strong>复杂场景结构化</strong></p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/how-to-make-software-design-beautiful.html">《软件设计之美》</a>中总结了软件复杂性来自业务复杂性和技术复杂性。应对的办法是通过分而治之，控制规模大小；保持结构清晰与一致性来降低认知负荷。并且要有一定的前瞻性，拥有可扩展性，能应对变化。</p>
+<p>关键信息：<strong>规模可控、结构清晰、应对变化</strong></p>
+<p>总结以上两篇的关键信息：做架构就是<strong>通过规模可控、结构清晰的小模块去组合成大模块，进而形成更复杂的软件系统。并且拥有足够的扩展性应对未来的变化。</strong></p>
+<p>架构的核心就是【组合与应对变化】；简洁点，三个字：<strong>“分、合、变”</strong>。</p>
+<p>这些其实与“业务的正交分解”方法是一脉相承的。</p>
+<h1 id="正交分解"><a href="#正交分解" class="headerlink" title="正交分解"></a>正交分解</h1><p>既然是业务的正交分解，自然得理解正交是什么意思？</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/coping-with-change.html">《应对变化》</a>详细介绍过正交设计。</p>
+<p>简而言之，主要是三个要点：</p>
+<p>1、消除重复</p>
+<p>2、分离关注点</p>
+<p>3、管理依赖：缩小依赖的范围和向稳定的方向依赖</p>
+<p>想要把一个复杂的系统拆解成一个一个可被理解掌控、并且又能被结构化地合并成大模块的小模块。正交设计是必须的。</p>
+<p>这考验了架构的拆解能力，拆解的合理性就是解耦的合理性；并能在合并时每一个模块保持高内聚。</p>
+<h1 id="开闭原则"><a href="#开闭原则" class="headerlink" title="开闭原则"></a>开闭原则</h1><p>正交设计主要应对的是“分、合”，那么怎么应对“变”？</p>
+<p>就得提到著名的开闭原则。开闭原则是架构治理的根本哲学。</p>
+<p>之前也整理了下OCP原则，<a href="http://www.zhuxingsheng.com/blog/ocp-of-solid.html">《SOLID之OCP》</a>，只要我们面向接口编程，就能大概率的符合开闭原则。当时的理解回头看还是比较肤浅的。</p>
+<p>一些人对开闭原则的错误解读，认为开闭原则不鼓励修改软件的代码来响应新需求。这显然比较极端。</p>
+<p>一个软件产品只要在其生命周期内，就会不断发生变化。变化是一个事实，需要让软件去适应变化。我们应该在设计时尽量适应这些变化，以提高项目的稳定性和灵活性，真正实现“拥抱变化”。</p>
+<p>其实，开闭原则的背后，是<strong>推崇模块业务的确定性</strong>。可以修改模块代码的缺陷，但不要去随意调整模块的业务范畴，增加功能或减小功能都不鼓励。这意味着模块的业务变更是需要极其谨慎的，需要经得起推敲的。</p>
+<p>开闭原则指出尽量通过扩展软件实体的行为来应对变化，满足新的需求，而不是通过修改现有代码来完成变化，<strong>它是为软件实体的未来事件而制定的对现行开发设计进行约束的一个原则。</strong></p>
+<p>总结一下，开闭原则就两点：</p>
+<p>1、模块的业务要稳定。当要修改模块业务时，不如实现一个新业务模块。而实现一个新的业务模块来完成新的业务范畴，是一件轻松的事。这个角度，鼓励写“只读”的业务模块，一经设计不可修改。需要变化不如把它归档，放弃掉。这种模块业务只读的思想，是架构治理的基础哲学。</p>
+<p>2、模块的业务变化点，简单一点，通过回调函数或者接口开放出去，交给其他业务模块。复杂一点，通过引入插件机制把系统分解为“最小化的核心系统+多个彼此正交的周边系统”。</p>
+<blockquote>
+<p>将开闭原则应用到业务系统。业务对外只读，意味着不可变，但不变的业务生命周期是很短暂的，所以要可扩展。要扩展还要不变，就你倒逼着要做兼容，而兼容可能导致现有的功能职责不单一，这又倒逼着要对现有的功能做再抽象，以适应更广的“单一职责”。</p>
+</blockquote>
+<blockquote>
+<p>所以不改是不可能的，只是改的结果应当是让项目往更稳定方向发展，而这很难。无论是新的抽象还是职责范围的扩张，需要强大的分析能力和精湛的设计。</p>
+</blockquote>
+<p>这种不变与变其实也印证了架构第一定律：<strong>一切都是权衡</strong></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/blog/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="page-number current">2</span><a class="page-number" href="/blog/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/16/">16</a><a class="extend next" rel="next" href="/blog/page/3/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

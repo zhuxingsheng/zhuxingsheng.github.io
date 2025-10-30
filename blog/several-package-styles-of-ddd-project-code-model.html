@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="在团队中，一直在灌输DDD的理念，最近review一些新开发的项目时，发现工程包结构每个人的理解都是不一样的，命名也是各有特色。 因此，觉得有必要把之前整理的工程结构重新梳理下。 而在梳理的过程中，恍惚间，有种看山是山、看山不是山、看山还是山的体会。特别有意思。 传统风格 之前的总结DDD分层，每一层都是明确的。 整个工程的包结构就是这样的：  interface application doma">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDD工程代码模型的几种包风格">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/several-package-styles-of-ddd-project-code-model.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="在团队中，一直在灌输DDD的理念，最近review一些新开发的项目时，发现工程包结构每个人的理解都是不一样的，命名也是各有特色。 因此，觉得有必要把之前整理的工程结构重新梳理下。 而在梳理的过程中，恍惚间，有种看山是山、看山不是山、看山还是山的体会。特别有意思。 传统风格 之前的总结DDD分层，每一层都是明确的。 整个工程的包结构就是这样的：  interface application doma">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20221018231040_1666105840.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20221020002206_1666196526.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20221010123012_1665376212.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20221022224958_1666450198.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20221022230209_1666450929.jpg">
+<meta property="article:published_time" content="2022-10-22T15:07:00.000Z">
+<meta property="article:modified_time" content="2022-11-08T07:15:29.743Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20221018231040_1666105840.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/several-package-styles-of-ddd-project-code-model.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>DDD工程代码模型的几种包风格 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/several-package-styles-of-ddd-project-code-model.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DDD工程代码模型的几种包风格
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-10-22 23:07:00" itemprop="dateCreated datePublished" datetime="2022-10-22T23:07:00+08:00">2022-10-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在团队中，一直在灌输DDD的理念，最近review一些新开发的项目时，发现工程包结构每个人的理解都是不一样的，命名也是各有特色。</p>
+<p>因此，觉得有必要把之前整理的工程结构重新梳理下。</p>
+<p>而在梳理的过程中，恍惚间，有种看山是山、看山不是山、看山还是山的体会。特别有意思。</p>
+<h1 id="传统风格"><a href="#传统风格" class="headerlink" title="传统风格"></a>传统风格</h1><p><img src="http://images.zhuxingsheng.com/20221018231040_1666105840.jpg"></p>
+<p>之前的总结<a href="http://www.zhuxingsheng.com/blog/ddd-layering.html">DDD分层</a>，每一层都是明确的。</p>
+<p>整个工程的包结构就是这样的：</p>
+<ul>
+<li>interface</li>
+<li>application</li>
+<li>domain</li>
+<li>infrastraction</li>
+</ul>
+<p>但是在落地时遇到了很多的问题，在DDD系列文章中也提到过：</p>
+<p>1、循环依赖：</p>
+<p>domain是依赖于infrastraction，但如repository接口是在domain层的，DDD也是这么定义的，但具体的ORM实现是在infrastraction。因此infrastraction又需要依赖domain。形成循环依赖。</p>
+<p>2、domain的厚度</p>
+<p>以前都是MVC，贫血模型。所以刚开始时，domain是很薄的，以致于没有存在感。很多service都被application干完了。常有application service与domain service区别的讨论。落地时也常搞混。</p>
+<h1 id="依赖倒置"><a href="#依赖倒置" class="headerlink" title="依赖倒置"></a>依赖倒置</h1><p>不知道是不是整洁架构，还是洋葱架构之后或之前吧，依赖倒置成了程序员认知的共识。</p>
+<p><img src="http://images.zhuxingsheng.com/20221020002206_1666196526.jpg"></p>
+<p>为了脱离大泥球，人们注意到整体中各个部分的需求变化速率不同，进而通过关注点分离来降低系统复杂度。这是分层架构的起源。</p>
+<p>倒置的原因，是因为领域层被赋于最稳定层。</p>
+<p>1、展现层</p>
+<p>逻辑是最容易改变的，新的交互模式以及不同视觉模板。</p>
+<p>2、应用层</p>
+<p>随着业务流程以及功能点的变化而改变。如流程重组和优化、新功能点引入，都会改变应用层逻辑。</p>
+<p>3、领域层</p>
+<p>核心领域概念的提取，只要领域概念和核心逻辑不变，基本是不变的。一旦领域层出现重大改变，就意味着重大业务调整，整个系统都被推倒重来。</p>
+<p>4、基础设施层</p>
+<p>逻辑由所选择的技术栈决定，更改技术组件、替换所使用的框架，都会改变基础设施层的逻辑。因而基础设施层的变化频率跟所用的技术组件有很大关系。越是核心的组件，变化就越缓慢，比如待定数据库系统后，不太可能频繁更换它，不太可能频繁地更换它。而如果是缓存系统，那么变化的频率会快很多。</p>
+<p>但基础设施层可能存在不可预知的突变。历数过往诸多思潮，NoSQL、大数据、云计算等等，都为基础设计层带来过未曾预期的突变。</p>
+<p>此外，周围系统生态的演化与变更，也会给基础设施层带来不可预知的突变的可能。比如，所依赖的消息通知系统从短信变成微信，支付方式从网银支付变成移动支付，等等。</p>
+<p>整个工程的包结构就是这样的：</p>
+<ul>
+<li>infrastraction</li>
+<li>interface</li>
+<li>application</li>
+<li>domain</li>
+</ul>
+<p>整体包结构是没有变化的，虽然理论是美好的，落地时问题依旧存在。尤其infrastraction与其它三层的不可调和的关系更浓烈了。</p>
+<p>从以往感观，其他三层是必须要依赖infrastraction的，结果现在却在最顶层。</p>
+<p>其实在之前文章中就提到，controller是在interface还是infrastraction，角度不同，在哪一层都可以。</p>
+<p>而像一些基础的，如mq，应用层要发消息，怎么办呢？依赖结构决定了无法使用。</p>
+<p>因此有人提出，<strong>基础设施层不是层</strong>的结论。每一层都是要依赖基础设施的。</p>
+<h1 id="菱形架构"><a href="#菱形架构" class="headerlink" title="菱形架构"></a>菱形架构</h1><p><img src="http://images.zhuxingsheng.com/20221010123012_1665376212.jpg"></p>
+<p>经过了一番学习，发现了菱形架构，解决了之前的很多问题。</p>
+<p>OHS：</p>
+<p>对外主机服务，提供一切入口服务，分为remote和local.</p>
+<p>remote:</p>
+<p>提供一切对外服务，来源有传统的web，还是MQ的订阅等等。</p>
+<p>local:</p>
+<p>本地服务，是application的演变，如果远程服务要访问domain，必须通过local才能到达。</p>
+<p>domain:</p>
+<p>意义不变，就是domain</p>
+<p>acl:</p>
+<p>是原先infrastraction,但把范围给扩大了。把所有对外部的依赖都纳入其中，甚至repository。</p>
+<p>port是表示接口，而adapter表示具体实现。</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/ddd-tactical-practice-guide.html">《DDD实践指南》</a>中有对菱形架构更详细的介绍。</p>
+<p>这样解决了上述两种方案的缺点，理解起来也简单。</p>
+<p>但后来还是不太喜欢，为啥，因为传统，传统的DDD理论中，repository是领域层，这儿却在acl中，所以一直在寻找别的方式来解决。</p>
+<h1 id="六边形风格"><a href="#六边形风格" class="headerlink" title="六边形风格"></a>六边形风格</h1><ul>
+<li>inputadapter</li>
+<li>application</li>
+<li>domain</li>
+<li>outputadapter</li>
+</ul>
+<p>这也是有相当数量受众的架构风格，类似于菱形风格，从外形理解也简单。</p>
+<h1 id="facade风格"><a href="#facade风格" class="headerlink" title="facade风格"></a>facade风格</h1><ul>
+<li>facade<ul>
+<li>query</li>
+<li>entity</li>
+<li>appliation</li>
+<li>adapter</li>
+</ul>
+</li>
+</ul>
+<p>这是在实践中，演变来的一种风格，对外一切都是facade，受CQRS影响</p>
+<p>分为query查询与entity单对象的创建、更新操作；</p>
+<p>application刚是业务原语的操作，简单理解为一个业务行为，会操作多个单entity；</p>
+<p>adapter刚是封装的infrastraction或第三方接口,提供给外部使用。</p>
+<h1 id="混合格斗风格"><a href="#混合格斗风格" class="headerlink" title="混合格斗风格"></a>混合格斗风格</h1><p>经过一系列的学习，输出一个融合风格。</p>
+<ul>
+<li>ohs<ul>
+<li>controller<ul>
+<li>pl</li>
+</ul>
+</li>
+<li>openapi<ul>
+<li>pl</li>
+</ul>
+</li>
+<li>xxljob</li>
+<li>subscriber<ul>
+<li>mq</li>
+<li>event</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>application<ul>
+<li>service</li>
+</ul>
+</li>
+<li>domain<ul>
+<li>entity</li>
+<li>vo</li>
+<li>aggregate</li>
+<li>repository</li>
+</ul>
+</li>
+<li>acl<ul>
+<li>port</li>
+<li>adapter</li>
+</ul>
+</li>
+<li>persistent</li>
+<li>foundation</li>
+<li>infrastraction<ul>
+<li>configuration</li>
+</ul>
+</li>
+</ul>
+<p>依赖关系：</p>
+<p>ohs -&gt; application</p>
+<p>ohs -&gt; infrastraction</p>
+<p>请求入口都在ohs，不然是api，还是队列监听。</p>
+<p>像队列底层属于infrastraction,但只面向接口编程，由ohs层实现。</p>
+<p>application -&gt; domain</p>
+<p>domain -&gt; foundation</p>
+<p>application是domain的facade</p>
+<p>domain -&gt; acl</p>
+<p>虽然可以通过供应商模式，其他层都依赖domain，但还有是会出来一些domain的依赖。放在acl中，供所有层使用。</p>
+<p>这样也可以把需要主动调用的内容从infrastraction中剥离开，解决掉了以往提到的循环依赖。</p>
+<h1 id="回归传统风格"><a href="#回归传统风格" class="headerlink" title="回归传统风格"></a>回归传统风格</h1><p>经过以上一系列的变化，可以说是由简到繁的过程。</p>
+<p>再回头看经历过的项目现状，想想每次项目初始化，自己内心的纠结，在团队中也需要宣贯，需要解释，需要深化。</p>
+<p>不如来得简单明了些，就使用最经典的DDD风格，只要有一点DDD理论知识，大家都看得明白。不会去问ohs是啥。</p>
+<p><img src="http://images.zhuxingsheng.com/20221022224958_1666450198.jpg"></p>
+<p>interface:有api、dto、assembler三个包，api接受外部请求，有传统的controller，还有rpc,callback,listener来的消息。dto就是传输对象。assembler则是interface-&gt;application时，把dto转换成application的command、query。</p>
+<p>application: 还是CQRS的思路，分成query、command;还有event，由内部及domain抛出的event。</p>
+<p>domain:还是核心概念，entity、vo、aggregate。但没有service，为啥，当有service时，经常会与application service相互干扰，并且会慢慢回到贫血模型。通过强制没有service，可以更加OO。</p>
+<p>infrastraction:被拆成不同部分。</p>
+<p>基础设施层，不单单是基础设施。得分成两种，一种像是acl,封装第三方接口；另一种像是mq,email等基础设施。</p>
+<p>1、我们常见的mq,cache,io,email等等都是基础设施层，domain不是直接依赖他们，而是通过DIP来倒置。表现形式是domain都是接口，而基础设施变成了能力供应商。</p>
+<p>2、而依赖的第三方接口，则是直接被domain,application调用。</p>
+<p>因此infrastraction被分成两部分，同时解除了循环依赖的困境。</p>
+<p>在之前文章中，提到过COLA的持久操作在application,当时很反感，后来感觉好像也对，也是供应商模式的一种体现。</p>
+<p><img src="http://images.zhuxingsheng.com/20221022230209_1666450929.jpg"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>当然，最核心的还是domain的设计，专注修炼OO，没有丰满的domain，一切都是花架子，形似无神。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/spring-boot-2.6.-x-and-swagger-3-compatibility-issue-tracking.html" rel="prev" title="springboot2.6.x与swagger3兼容问题追踪">
+      <i class="fa fa-chevron-left"></i> springboot2.6.x与swagger3兼容问题追踪
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/the-essence-of-architecture-is-orthogonal-decomposition-of-services.html" rel="next" title="架构的本质是业务的正交分解">
+      架构的本质是业务的正交分解 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E9%A3%8E%E6%A0%BC"><span class="nav-number">1.</span> <span class="nav-text">传统风格</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BE%9D%E8%B5%96%E5%80%92%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">依赖倒置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%8F%B1%E5%BD%A2%E6%9E%B6%E6%9E%84"><span class="nav-number">3.</span> <span class="nav-text">菱形架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%AD%E8%BE%B9%E5%BD%A2%E9%A3%8E%E6%A0%BC"><span class="nav-number">4.</span> <span class="nav-text">六边形风格</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#facade%E9%A3%8E%E6%A0%BC"><span class="nav-number">5.</span> <span class="nav-text">facade风格</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E6%A0%BC%E6%96%97%E9%A3%8E%E6%A0%BC"><span class="nav-number">6.</span> <span class="nav-text">混合格斗风格</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9E%E5%BD%92%E4%BC%A0%E7%BB%9F%E9%A3%8E%E6%A0%BC"><span class="nav-number">7.</span> <span class="nav-text">回归传统风格</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">8.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

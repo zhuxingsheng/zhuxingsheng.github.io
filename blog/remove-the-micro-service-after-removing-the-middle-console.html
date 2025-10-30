@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="这些年中台、微服务都是技术浪潮中的弄潮儿。两者的命运似乎是所有技术新词的缩影：先谈，再建，后拆，最后平静。 如中台，开始时聊什么都得带上中台，战略层喜欢谈，执行层也喜欢谈，再后面跟随一线大厂纷纷搭建自己的中台，然后就是反思，拆除中台，最后平静看待中台。 中台可以说已经经历完整的生命周期，而微服务周期也差不多，但对于“拆掉”，两者的声势与目标却不太相同。 在《中台是什么》中提出，“效能下限”与“创新">
+<meta property="og:type" content="article">
+<meta property="og:title" content="拆完中台再拆微服务">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/remove-the-micro-service-after-removing-the-middle-console.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="这些年中台、微服务都是技术浪潮中的弄潮儿。两者的命运似乎是所有技术新词的缩影：先谈，再建，后拆，最后平静。 如中台，开始时聊什么都得带上中台，战略层喜欢谈，执行层也喜欢谈，再后面跟随一线大厂纷纷搭建自己的中台，然后就是反思，拆除中台，最后平静看待中台。 中台可以说已经经历完整的生命周期，而微服务周期也差不多，但对于“拆掉”，两者的声势与目标却不太相同。 在《中台是什么》中提出，“效能下限”与“创新">
+<meta property="og:locale">
+<meta property="article:published_time" content="2022-02-20T12:22:00.000Z">
+<meta property="article:modified_time" content="2022-11-08T07:15:29.720Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="中台">
+<meta property="article:tag" content="微服务">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/remove-the-micro-service-after-removing-the-middle-console.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>拆完中台再拆微服务 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/remove-the-micro-service-after-removing-the-middle-console.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          拆完中台再拆微服务
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-02-20 20:22:00" itemprop="dateCreated datePublished" datetime="2022-02-20T20:22:00+08:00">2022-02-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这些年中台、微服务都是技术浪潮中的弄潮儿。两者的命运似乎是所有技术新词的缩影：先谈，再建，后拆，最后平静。</p>
+<p>如中台，开始时聊什么都得带上中台，战略层喜欢谈，执行层也喜欢谈，再后面跟随一线大厂纷纷搭建自己的中台，然后就是反思，拆除中台，最后平静看待中台。</p>
+<p>中台可以说已经经历完整的生命周期，而微服务周期也差不多，但对于“拆掉”，两者的声势与目标却不太相同。</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/what-is-zhongtai.html">《中台是什么》</a>中提出，<strong>“效能下限”与“创新上限”就像翘翘板，产生了哑铃效应，而中台则是追求效能的极致，同时却也降低了创新上限</strong></p>
+<p>建中台是为了效能，拆中台是为了创新。</p>
+<p>以阿里为代表的大厂对拆中台真是高举高打，但看看微服务，可没哪个大厂高喊要拆掉微服务，可见他们俩还是有本质差别的。</p>
+<p>更神奇的是，<strong>不管是拆微服务还是拆掉微服务，本质需求却是一致的：提升效能</strong>。</p>
+<p>为什么都是提升效能，从两种行为分别阐述一下</p>
+<h1 id="为什么拆分微服务"><a href="#为什么拆分微服务" class="headerlink" title="为什么拆分微服务"></a>为什么拆分微服务</h1><p>首先一起回顾一下，为什么要拆分微服务？对于这个问题不得不再向前回退，回到单体架构时代</p>
+<p>在微服务架构出现之前，单体架构是永恒，天经地义的。以致于“单体架构”一词都没人提出。</p>
+<p>项目起初，单体架构无疑是最佳选择，不仅易于开发、易于测试、易于部署，且由于系统中各个功能、模块、方法的调用都是进程通信，性能是最高的。</p>
+<p>甚至在项目从小型发展为中型时，也没有那么不堪。虽然是单体架构，但内部结构并非“铁板一块”，在业务量级可承载范围内，也有一定程度的扩展性。</p>
+<p>从两个视角观察扩展性</p>
+<p>在纵向角度，绝没有一个项目完全是个“大泥球”形态，至少都会以分层架构风格对代码进行纵向层次划分。</p>
+<p>在横向角度，单体架构也支持以功能、技术等维度划分，拆分成各个模块，以便代码重用和管理，甚至提取出各种形体组件，如jar</p>
+<p>那拆微服务解决了哪些效能问题？</p>
+<p><strong>第一程序效能</strong></p>
+<p>在于应用程序的某个方面给基础设施带来了过重负担，这反过来又很可能会导致糟糕的用户体验。</p>
+<p>如，图像处理需要大量CPU，如果CPU负载变得非常高，这将会导致应用其他处理资源的饿死现象。影响系统延迟，甚至影响系统可用性。</p>
+<p>也就是说应用程序中局部缺陷会造成全局问题。局部间没有隔离能力，一旦出现内存泄漏、线程爆炸、阻塞、死循环等问题，将影响整个程序。不仅导致单个功能不可用，甚至整个程序的效能都降至为零。</p>
+<p>从程序维护性来说，所有代码都在同一进程，无法做到单独停止、更新、升级某一部分代码。只能制定专门停机更新计划，整体做灰度发布，A&#x2F;B测试。</p>
+<p><strong>第二团队效能</strong></p>
+<p>与应用的关系不大，但关系到如何组织团队。在应用程序的特定部分，投入工作的人越多，开发和部署就会越慢，而且越容易出错。</p>
+<p>如，抢占持续部署同一服务，出现排队现象，意味着本可以交付产品的工程师只能坐等轮到他们进行部署。出事“紧急事件”时，多个团队代码都需要回滚。</p>
+<p>综上所述，简单总结一下，单体架构并不是一无是处，项目起始阶段依然是最佳选择；</p>
+<p>当对应用程序性能要求超过单机能力，以及软件的开发人员规模明显超过了“2 Pizza Team”时，<br>不管是程序效能还是团队效能都已经达到瓶颈，此时可以通过微服务架构来解决这些问题。</p>
+<h2 id="微服务怎么解决效能问题？"><a href="#微服务怎么解决效能问题？" class="headerlink" title="微服务怎么解决效能问题？"></a>微服务怎么解决效能问题？</h2><p>对于<strong>程序效能</strong>，在单体架构时代，想要整体系统的可靠性，我们只能努力让每一个模块，每一行代码都可靠，以达到整体系统的最终可靠性。</p>
+<p>然而常常事与愿违，战术层面再优秀，也难以弥补战略层面的缺陷。在构建大规模系统时，人们的观念也从“尽量不出错”向正视“出错是必然”转变，在此前提下，历史悠久的单体架构终被挑战。</p>
+<p>微服务把独立的单体架构内部依赖组件，由“编译时期”推迟到了“运行时期”，对时间维度的解耦，带来了运行时动态扩展、服务间技术异构、服务独立交付等好处。</p>
+<p>也就解决了上面所述的局部间没有隔离能力造成的全局性故障，导致整体程序效能降至为零的情况。也实现了局部维护的能力，提升系统整体可维护性，保障系统整体可靠性与可用性。</p>
+<p>对于<strong>团队效能</strong>，系统不再是一块整体，团队更加独立地工作，独立地部署，从而发布更多产品。</p>
+<p>尤其在<a href="http://www.zhuxingsheng.com/blog/conway-law-and-inverse-conway-law.html">康威定律</a>的指导下，划分组织边界以及服务职责范围，让组织之间更高效默契的沟通以及相互配合提升整体效益。</p>
+<h1 id="为什么拆掉微服务"><a href="#为什么拆掉微服务" class="headerlink" title="为什么拆掉微服务"></a>为什么拆掉微服务</h1><p>微服务的确带来了很大的收益，不管在系统扩展性，还是在组织扩展性，都促使商业最大限度的规模化。</p>
+<p>然业务不是永远增长的，随着业务增长乏力，收益萎缩，需要探索新商业机会，原先高成长的业务团队规模也慢慢收缩，之前的服务系统也慢慢沦为遗留系统。</p>
+<p>从原先增长期的每个系统0.5人，到维护期每个人10个系统，服务与团队与康威定律极度不匹配。</p>
+<p>简而言之，在高增长期康威定律带来的所有收益，随着时间的推移，业务收缩，都变成了“遗留”团队的负债。</p>
+<p>所以需要拆掉微服务，改变服务边界以匹配团队边界，平稳回归康威定律。当然也不是彻底拆掉所有微服务回归单体架构。重点是重新调整职责范围，拆分成符合团队的服务边界。</p>
+<p>此时再回头看微服务概念时，当初纠结的“微”到底是多大的问题，已经完全不重要。微服务只是相对单体架构(Monolithic)的称呼，“微”不代表任何实际的内容。</p>
+<p>我们需要更多的关注“合适大小”，服务经过了恰当地设计，以满足其需求：它负责“合适数量”的功能。而且，至于什么是“合适”并不是一个静态的概念，它取决于团队，即团队的技能集、组织的状态、投资回报率（return-on-investment，ROI）的计算、持有成本以及该服务运行的时间点。</p>
+<p>简单总结一下，拆掉微服务，相对程序效能，更多的关注点在团队效能，服务边界匹配团队边界。其次，在整合团队，回归康威定律的过程中，业务流量也是在减少的，程序效能问题也再像扩张时期那么显著。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>一切技术都得服务于业务，而业务形态决定了技术形态。</p>
+<p>没有完美的业务，也必然没有完美的技术，只有两者相匹配时，才能相得益彰。</p>
+<p>不管是建，还是拆。都是适时的选择。架构只有顺应环境才能生存，最大化业务价值。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.infoq.cn/article/o6kcqCSGBTmeTbOP4wG1">拆掉微服务</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%B8%AD%E5%8F%B0/" rel="tag"># 中台</a>
+              <a href="/tags/microservice/" rel="tag"># 微服务</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/io-multiplexing-past-and-present-life.html" rel="prev" title="IO多路复用前世今生">
+      <i class="fa fa-chevron-left"></i> IO多路复用前世今生
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/how-much-is-my-line-of-code-worth.html" rel="next" title="我的一行代码值多少钱">
+      我的一行代码值多少钱 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8B%86%E5%88%86%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text">为什么拆分微服务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%80%8E%E4%B9%88%E8%A7%A3%E5%86%B3%E6%95%88%E8%83%BD%E9%97%AE%E9%A2%98%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">微服务怎么解决效能问题？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E6%8B%86%E6%8E%89%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.</span> <span class="nav-text">为什么拆掉微服务</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

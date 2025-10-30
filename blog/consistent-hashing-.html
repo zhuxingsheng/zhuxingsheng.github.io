@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="背景图片分库存储时，每一张图片都可以定位到特定的服务器  hash上图中，假设我们查找的是”a.png”，由于有4台服务器（排除从库），因此公式为hash(a.png) % 4 &#x3D; 2 ，可知定位到了第2号服务器，这样的话就不会遍历所有的服务器，大大提升了性能！ 一切都运行正常，再考虑如下的两种情况；  一个 cache 服务器 m down 掉了（在实际应用中必须要考虑这种情况），这样">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一致性哈希">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/consistent-hashing-.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="背景图片分库存储时，每一张图片都可以定位到特定的服务器  hash上图中，假设我们查找的是”a.png”，由于有4台服务器（排除从库），因此公式为hash(a.png) % 4 &#x3D; 2 ，可知定位到了第2号服务器，这样的话就不会遍历所有的服务器，大大提升了性能！ 一切都运行正常，再考虑如下的两种情况；  一个 cache 服务器 m down 掉了（在实际应用中必须要考虑这种情况），这样">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201902271827_53.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201902281713_666.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201902281721_753.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201902281729_75.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201902281853_789.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201902281900_632.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201902281901_404.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201903011045_472.png">
+<meta property="article:published_time" content="2019-02-27T11:31:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.470Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201902271827_53.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/consistent-hashing-.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>一致性哈希 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/consistent-hashing-.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一致性哈希
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-02-27 19:31:00" itemprop="dateCreated datePublished" datetime="2019-02-27T19:31:00+08:00">2019-02-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>图片分库存储时，每一张图片都可以定位到特定的服务器</p>
+<p><img src="http://images.zhuxingsheng.com/201902271827_53.png"></p>
+<h2 id="hash"><a href="#hash" class="headerlink" title="hash"></a>hash</h2><p>上图中，假设我们查找的是”a.png”，由于有4台服务器（排除从库），因此公式为hash(a.png) % 4 &#x3D; 2 ，可知定位到了第2号服务器，这样的话就不会遍历所有的服务器，大大提升了性能！</p>
+<p>一切都运行正常，再考虑如下的两种情况；</p>
+<ol>
+<li>一个 cache 服务器 m down 掉了（在实际应用中必须要考虑这种情况），这样所有映射到 cache m 的对象都会失效，怎么办，需要把 cache m 从 cache 中移除，这时候 cache 是 N-1 台，映射公式变成了 hash(object)%(N-1) ；</li>
+<li>由于访问加重，需要添加 cache ，这时候 cache 是 N+1 台，映射公式变成了 hash(object)%(N+1) ；</li>
+</ol>
+<p>1 和 2 意味着什么？</p>
+<p>这意味着突然之间几乎所有cache 都失效了。缓存雪崩，这是一场灾难</p>
+<h1 id="一致性hash"><a href="#一致性hash" class="headerlink" title="一致性hash"></a>一致性hash</h1><p>有什么方法可以改变这个状况呢，这就是 consistent hashing</p>
+<p>比如有{N0, N1, N2}三个节点，陆续有多个资源要分配到这三个节点上，如何尽可能均匀的分配到这些节点上</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>一致性哈希算法的思路为：先构造出一个长度为2^32 整数环，根据N0-3的节点名称的hash值（分布为[0,2^32 -1]）放到这个环上</p>
+<p><img src="http://images.zhuxingsheng.com/201902281713_666.png"></p>
+<p>整个空间按顺时针方向组织，圆环的正上方的点代表0，0点右侧的第一个点代表1，以此类推，2、3、4、5、6……直到2^32 -1，也就是说0点左侧的第一个点代表2^32 -1， 0和2^32 -1在零点中方向重合，我们把这个由2^32个点组成的圆环称为<strong>Hash环</strong></p>
+<p>下一步将各个服务器使用Hash进行一个哈希，具体<strong>可以选择服务器的ip或主机名作为关键字进行哈</strong>希，这样每台机器就能确定其在哈希环上的位置，这里假设四台服务器使用ip地址哈希后在环空间的位置如下：</p>
+<p><img src="http://images.zhuxingsheng.com/201902281721_753.png"></p>
+<p>接下来使用如下算法定位数据访问到相应服务器：<strong>将数据key使用相同的函数Hash计算出哈希值，并确定此数据在环上的位置，从此位置沿环顺时针“行走”，第一台遇到的服务器就是其应该定位到的服务器！</strong></p>
+<p>例如我们有Object A、Object B、Object C、Object D四个数据对象，经过哈希计算后，在环空间上的位置如下： </p>
+<p><img src="http://images.zhuxingsheng.com/201902281729_75.png"></p>
+<p>根据一致性Hash算法，数据A会被定为到Node A上，B被定为到Node B上，C被定为到Node C上，D被定为到Node D上</p>
+<h2 id="容错性"><a href="#容错性" class="headerlink" title="容错性"></a>容错性</h2><p>如果一个节点宕机了，会引起系统故障吗？</p>
+<p><img src="http://images.zhuxingsheng.com/201902281853_789.png"></p>
+<p>如上图，Node C不幸宕机，可以看到此时对象A、B、D不会受到影响，只有C对象被重定位到Node D。一般的，在一致性Hash算法中，如果一台服务器不可用，<strong>则受影响的数据仅仅是此服务器到其环空间中前一台服务器（即沿着逆时针方向行走遇到的第一台服务器）之间数据</strong>，其它不会受到影响</p>
+<h2 id="扩展性"><a href="#扩展性" class="headerlink" title="扩展性"></a>扩展性</h2><p>如果在系统中增加一台服务器Node X</p>
+<p><img src="http://images.zhuxingsheng.com/201902281900_632.png"></p>
+<p>此时对象Object A、B、D不受影响，只有对象C需要重定位到新的Node X ！一般的，在一致性Hash算法中，如果增加一台服务器，则受影响的数据仅仅是新服务器到其环空间中前一台服务器（即沿着逆时针方向行走遇到的第一台服务器）之间数据，其它数据也不会受到影响</p>
+<p><strong>综上所述，一致性Hash算法对于节点的增减都只需重定位环空间中的一小部分数据，具有较好的容错性和可扩展性</strong>。</p>
+<h2 id="数据倾斜"><a href="#数据倾斜" class="headerlink" title="数据倾斜"></a>数据倾斜</h2><p>一致性Hash算法在服务节点太少时，容易因为节点分部不均匀而造成数据倾斜（被缓存的对象大部分集中缓存在某一台服务器上）问题，例如系统中只有两台服务器，其环分布如下： </p>
+<p><img src="http://images.zhuxingsheng.com/201902281901_404.png"></p>
+<p>此时必然造成大量数据集中到Node A上，而只有极少量会定位到Node B上</p>
+<p>然而，这又会造成一个“雪崩”的情况，即A节点由于承担了B节点的数据，所以A节点的负载会变高，A节点很容易也宕机，这样依次下去，这样造成整个集群都挂了</p>
+<h2 id="虚拟节点"><a href="#虚拟节点" class="headerlink" title="虚拟节点"></a>虚拟节点</h2><blockquote>
+<p>计算机的任何问题都可以通过增加一个虚拟层来解决</p>
+</blockquote>
+<p>解决上述数据倾斜问题，也可能通过使用虚拟层的手段：将每台物理缓存服务器虚拟为一组虚拟缓存服务器，将虚拟服务器的hash值放置在hash环上，Key在环上先找到虚拟服务器节点，再得到物理服务器的信息</p>
+<p>例如上面的情况，可以为每台服务器计算三个虚拟节点，于是可以分别计算 “Node A#1”、“Node A#2”、“Node A#3”、“Node B#1”、“Node B#2”、“Node B#3”的哈希值，于是形成六个虚拟节点： </p>
+<p><img src="http://images.zhuxingsheng.com/201903011045_472.png"></p>
+<p>同时数据定位算法不变，只是多了一步虚拟节点到实际节点的映射，例如定位到“Node A#1”、“Node A#2”、“Node A#3”三个虚拟节点的数据均定位到Node A上。这样就解决了服务节点少时数据倾斜的问题</p>
+<p>那么在实践中，一台物理服务器虚拟为多少个虚拟服务器节点合适呢？太多会影响性能，太少又会导致负载不均衡，一般说来，经验值是150，当然根据集群规模和负载均衡的精度需求，这个值应该根据具体情况具体对待</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><p>判定哈希算法好坏的四个定义：</p>
+<ol>
+<li><strong>平衡性(Balance)</strong>：平衡性是指哈希的结果能够尽可能分布到所有的缓冲中去，这样可以使得所有的缓冲空间都得到利用。很多哈希算法都能够满足这一条件</li>
+<li><strong>单调性(Monotonicity)</strong>：单调性是指如果已经有一些内容通过哈希分派到了相应的缓冲中，又有新的缓冲加入到系统中。哈希的结果应能够保证原有已分配的内容可以被映射到原有的或者新的缓冲中去，而不会被映射到旧的缓冲集合中的其他缓冲区</li>
+<li><strong>分散性(Spread)</strong>：在分布式环境中，终端有可能看不到所有的缓冲，而是只能看到其中的一部分。当终端希望通过哈希过程将内容映射到缓冲上时，由于不同终端所见的缓冲范围有可能不同，从而导致哈希的结果不一致，最终的结果是相同的内容被不同的终端映射到不同的缓冲区中。这种情况显然是应该避免的，因为它导致相同内容被存储到不同缓冲中去，降低了系统存储的效率。分散性的定义就是上述情况发生的严重程度。好的哈希算法应能够尽量避免不一致的情况发生，也就是尽量降低分散性</li>
+<li><strong>负载(Load)</strong>：负载问题实际上是从另一个角度看待分散性问题。既然不同的终端可能将相同的内容映射到不同的缓冲区中，那么对于一个特定的缓冲区而言，也可能被不同的用户映射为不同 的内容。与分散性一样，这种情况也是应当避免的，因此好的哈希算法应能够尽量降低缓冲的负荷</li>
+</ol>
+<p>在具体实现时，主要考虑点选择适合的数据结构构造hash环</p>
+<p>此数据结构的特点：插入与删除性能、快速找到特定元素的下一位</p>
+<p>常见算法结构可以有回顾：</p>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-summary.html">《一篇解决排序算法》</a></p>
+<p><a href="http://www.zhuxingsheng.com/blog/tree-overview.html">《树结构概述》</a></p>
+<p>从时间复杂度方面选择，使用平衡二叉树数据结构，可以使得查找的时间复杂度降低为O(logN)</p>
+<p>使用java，以TreeMap为例，TreeMap本身还提供了一个<strong>tailMap</strong>(K fromKey)方法，支持从红黑树中查找比fromKey大的值的集合，但并不需要遍历整个数据结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">import java.util.Collection;</span><br><span class="line">import java.util.SortedMap;</span><br><span class="line">import java.util.TreeMap;</span><br><span class="line"></span><br><span class="line">public class ConsistentHash&lt;T&gt; &#123;</span><br><span class="line"></span><br><span class="line"> private final HashFunction hashFunction;</span><br><span class="line"> private final int numberOfReplicas;</span><br><span class="line"> private final SortedMap&lt;Integer, T&gt; circle = new TreeMap&lt;Integer, T&gt;();</span><br><span class="line"></span><br><span class="line"> public ConsistentHash(HashFunction hashFunction, int numberOfReplicas,</span><br><span class="line">     Collection&lt;T&gt; nodes) &#123;</span><br><span class="line">   this.hashFunction = hashFunction;</span><br><span class="line">   this.numberOfReplicas = numberOfReplicas;</span><br><span class="line"></span><br><span class="line">   for (T node : nodes) &#123;</span><br><span class="line">     add(node);</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> public void add(T node) &#123;</span><br><span class="line">   for (int i = 0; i &lt; numberOfReplicas; i++) &#123;</span><br><span class="line">     circle.put(hashFunction.hash(node.toString() + i), node);</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> public void remove(T node) &#123;</span><br><span class="line">   for (int i = 0; i &lt; numberOfReplicas; i++) &#123;</span><br><span class="line">     circle.remove(hashFunction.hash(node.toString() + i));</span><br><span class="line">   &#125;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line"> public T get(Object key) &#123;</span><br><span class="line">   if (circle.isEmpty()) &#123;</span><br><span class="line">     return null;</span><br><span class="line">   &#125;</span><br><span class="line">   int hash = hashFunction.hash(key);</span><br><span class="line">   if (!circle.containsKey(hash)) &#123;</span><br><span class="line">     SortedMap&lt;Integer, T&gt; tailMap = circle.tailMap(hash);</span><br><span class="line">     hash = tailMap.isEmpty() ? circle.firstKey() : tailMap.firstKey();</span><br><span class="line">   &#125;</span><br><span class="line">   return circle.get(hash);</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="dubbo实现"><a href="#dubbo实现" class="headerlink" title="dubbo实现"></a>dubbo实现</h2><p>理解完理论，再扒一下工业级产品的运用，dubbo负载均衡策略之一ConsistentHashLoadBalance</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">private final TreeMap&lt;Long, Invoker&lt;T&gt;&gt; virtualInvokers;</span><br><span class="line"></span><br><span class="line">ConsistentHashSelector(List&lt;Invoker&lt;T&gt;&gt; invokers, String methodName, int identityHashCode) &#123;</span><br><span class="line">    this.virtualInvokers = new TreeMap&lt;Long, Invoker&lt;T&gt;&gt;();</span><br><span class="line">    this.identityHashCode = identityHashCode;</span><br><span class="line">    URL url = invokers.get(0).getUrl();</span><br><span class="line">    this.replicaNumber = url.getMethodParameter(methodName, &quot;hash.nodes&quot;, 160);</span><br><span class="line">    String[] index = Constants.COMMA_SPLIT_PATTERN.split(url.getMethodParameter(methodName, &quot;hash.arguments&quot;, &quot;0&quot;));</span><br><span class="line">    argumentIndex = new int[index.length];</span><br><span class="line">    for (int i = 0; i &lt; index.length; i++) &#123;</span><br><span class="line">        argumentIndex[i] = Integer.parseInt(index[i]);</span><br><span class="line">    &#125;</span><br><span class="line">    for (Invoker&lt;T&gt; invoker : invokers) &#123;</span><br><span class="line">        String address = invoker.getUrl().getAddress();</span><br><span class="line">        for (int i = 0; i &lt; replicaNumber / 4; i++) &#123;</span><br><span class="line">            byte[] digest = md5(address + i);</span><br><span class="line">            for (int h = 0; h &lt; 4; h++) &#123;</span><br><span class="line">                long m = hash(digest, h);</span><br><span class="line">                virtualInvokers.put(m, invoker);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>整体思想是一样的，虚拟节点+TreeMap,但实现得更精致，使用MD5加密KEY，更加平衡性，整体的思路解释：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">//对所有节点，生成nCopies个虚拟结点  </span><br><span class="line">for(Node node : nodes) &#123;  </span><br><span class="line">    //每四个虚拟结点为一组，为什么这样？下面会说到  </span><br><span class="line">    for(int i=0; i&lt;nCopies / 4; i++) &#123;  </span><br><span class="line">        //getKeyForNode方法为这组虚拟结点得到惟一名称  </span><br><span class="line">        byte[] digest=HashAlgorithm.computeMd5(getKeyForNode(node, i));  </span><br><span class="line">    /** Md5是一个16字节长度的数组，将16字节的数组每四个字节一组，分别对应一个虚拟结点，这就是为什么上面把虚拟结点四个划分一组的原因*/  </span><br><span class="line">        for(int h=0;h&lt;4;h++) &#123;  </span><br><span class="line">          //对于每四个字节，组成一个long值数值，做为这个虚拟节点的在环中的惟一key</span><br><span class="line">          //结果转换为long类，这是因为生成的结果是一个32位数，若用int保存可能会产生负数。而一致性hash生成的逻辑环其hashCode的范围是在 0 - MAX_VALUE之间。因此为正整数，所以这里要强制转换为long类型，避免出现负数。</span><br><span class="line">            Long k = ((long)(digest[3+h*4]&amp;0xFF) &lt;&lt; 24)  </span><br><span class="line">                | ((long)(digest[2+h*4]&amp;0xFF) &lt;&lt; 16)  </span><br><span class="line">                | ((long)(digest[1+h*4]&amp;0xFF) &lt;&lt; 8)  </span><br><span class="line">                | (digest[h*4]&amp;0xFF);  </span><br><span class="line">            allNodes.put(k, node);  </span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><h2 id="QA"><a href="#QA" class="headerlink" title="QA"></a>QA</h2><blockquote>
+<p>为什么hash一致性的数据空间范围是2^32次方？</p>
+</blockquote>
+<p>这个问题有两种答案，一是技术限制、一是实际场景：</p>
+<ol>
+<li>因为，java中int的最大值是2^31-1最小值是-2^31,2^32刚好是无符号整形的最大值</li>
+<li>因为一致性hash算法是来做服务器的负载均衡，而服务器的IP地址是32位，所以是2^32-1次方的数值空间</li>
+</ol>
+<blockquote>
+<p>进一步追尾基础，为什么java中int的最大值是2^31-1最小值是-2^31？</p>
+</blockquote>
+<p>因为，int的最大值最小值范围设定是因为一个int占4个字节，一个字节占8位，二进制中刚好是32位</p>
+<p>根据算法特性，一致性hash是最好的选择吗？</p>
+<p>下一篇介绍另一种实现google maglev hashing算法</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p>《大型网站技术架构》</p>
+<p>对一致性Hash算法，Java代码实现的深入研究</p>
+<p><a href="https://stackoverflow.com/questions/7111256/in-voldemort-why-does-the-hash-ring-only-extend-to-231-1">为什么hash环是32位</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/algorithm---sorting---counting-sorting.html" rel="prev" title="算法渣-排序-计数排序">
+      <i class="fa fa-chevron-left"></i> 算法渣-排序-计数排序
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/algorithm---sorting---summary.html" rel="next" title="算法渣-排序-总结">
+      算法渣-排序-总结 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#hash"><span class="nav-number">1.1.</span> <span class="nav-text">hash</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7hash"><span class="nav-number">2.</span> <span class="nav-text">一致性hash</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%B9%E9%94%99%E6%80%A7"><span class="nav-number">2.2.</span> <span class="nav-text">容错性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E6%80%A7"><span class="nav-number">2.3.</span> <span class="nav-text">扩展性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%80%BE%E6%96%9C"><span class="nav-number">2.4.</span> <span class="nav-text">数据倾斜</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%99%9A%E6%8B%9F%E8%8A%82%E7%82%B9"><span class="nav-number">2.5.</span> <span class="nav-text">虚拟节点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.6.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dubbo%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.7.</span> <span class="nav-text">dubbo实现</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#QA"><span class="nav-number">3.1.</span> <span class="nav-text">QA</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

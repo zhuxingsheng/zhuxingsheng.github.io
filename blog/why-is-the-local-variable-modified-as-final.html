@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="最近在团队中引入checkstyle ，自动执行规范检查，加入到ci步骤里面，让流程工具化，工具自动化，摆脱人工检查，在团队开发中硬性统一，更便于协作顺畅 checkstyle里面有个规范：所有local variable必须修饰为final 这是为什么呢？  final是Java中的一个保留关键字，它可以标记在成员变量、方法、类以及本地变量上。一旦我们将某个对象声明为了final的，那么我们将不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="局部变量为何修饰为final">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/why-is-the-local-variable-modified-as-final.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="最近在团队中引入checkstyle ，自动执行规范检查，加入到ci步骤里面，让流程工具化，工具自动化，摆脱人工检查，在团队开发中硬性统一，更便于协作顺畅 checkstyle里面有个规范：所有local variable必须修饰为final 这是为什么呢？  final是Java中的一个保留关键字，它可以标记在成员变量、方法、类以及本地变量上。一旦我们将某个对象声明为了final的，那么我们将不">
+<meta property="og:locale">
+<meta property="article:published_time" content="2020-08-09T15:49:00.000Z">
+<meta property="article:modified_time" content="2021-09-29T07:24:30.508Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/why-is-the-local-variable-modified-as-final.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>局部变量为何修饰为final | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/why-is-the-local-variable-modified-as-final.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          局部变量为何修饰为final
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-08-09 23:49:00" itemprop="dateCreated datePublished" datetime="2020-08-09T23:49:00+08:00">2020-08-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近在团队中引入<a href="https://checkstyle.sourceforge.io/index.html">checkstyle</a> ，自动执行规范检查，加入到ci步骤里面，让流程工具化，工具自动化，摆脱人工检查，在团队开发中硬性统一，更便于协作顺畅</p>
+<p>checkstyle里面有个规范：所有local variable必须修饰为final</p>
+<p>这是为什么呢？</p>
+<blockquote>
+<p>final是Java中的一个保留关键字，它可以标记在成员变量、方法、类以及本地变量上。一旦我们将某个对象声明为了final的，那么我们将不能再改变这个对象的引用了。如果我们尝试将被修饰为final的对象重新赋值，编译器就会报错</p>
+</blockquote>
+<p>这么简单的一个关键字，怎么需要强制修饰一个局部变量</p>
+<h2 id="局部变量"><a href="#局部变量" class="headerlink" title="局部变量"></a>局部变量</h2><h3 id="class文件"><a href="#class文件" class="headerlink" title="class文件"></a>class文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    String name = &quot;Whoops bug&quot;;</span><br><span class="line">    int pluginType = 3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public void testFinal()&#123;</span><br><span class="line">    final String name = &quot;Whoops bug&quot;;</span><br><span class="line">    int pluginType = 3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>两个方法一个局部变量修饰为final,一个不修饰为final</p>
+<p>通过javap查看字节码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public static void main(java.lang.String[]);</span><br><span class="line">   Code:</span><br><span class="line">      0: ldc           #2                  // String Whoops bug</span><br><span class="line">      2: astore_1</span><br><span class="line">      3: iconst_3</span><br><span class="line">      4: istore_2</span><br><span class="line">      5: return</span><br><span class="line">   LineNumberTable:</span><br><span class="line">     line 13: 0</span><br><span class="line">     line 14: 3</span><br><span class="line">     line 15: 5</span><br><span class="line">   LocalVariableTable:</span><br><span class="line">     Start  Length  Slot  Name   Signature</span><br><span class="line">         0       6     0  args   [Ljava/lang/String;</span><br><span class="line">         3       3     1  name   Ljava/lang/String;</span><br><span class="line">         5       1     2 pluginType   I</span><br><span class="line"></span><br><span class="line"> public void testFinal();</span><br><span class="line">   Code:</span><br><span class="line">      0: ldc           #2                  // String Whoops bug</span><br><span class="line">      2: astore_1</span><br><span class="line">      3: iconst_3</span><br><span class="line">      4: istore_2</span><br><span class="line">      5: return</span><br><span class="line">   LineNumberTable:</span><br><span class="line">     line 18: 0</span><br><span class="line">     line 19: 3</span><br><span class="line">     line 20: 5</span><br><span class="line">   LocalVariableTable:</span><br><span class="line">     Start  Length  Slot  Name   Signature</span><br><span class="line">         0       6     0  this   Lcom/jack/lang/LocalFinalTest;</span><br><span class="line">         3       3     1  name   Ljava/lang/String;</span><br><span class="line">         5       1     2 pluginType   I</span><br></pre></td></tr></table></figure>
+<p>方法参数与局部变量用final修饰是纯编译时信息，到Class文件里就已经没有踪迹了，JVM根本不会知道方法参数或者局部变量有没有被final修饰</p>
+<p>曾经的阿里巴巴规范提出：</p>
+<blockquote>
+<p>推荐】final可提高程序响应效率，声明成final的情况：</p>
+</blockquote>
+<blockquote>
+<p>（1）不需要重新赋值的变量，包括类属性、局部变量；</p>
+</blockquote>
+<blockquote>
+<p>（2）对象参数前加final，表示不允许修改引用的指向；</p>
+</blockquote>
+<blockquote>
+<p>（3）类方法确定不允许被重写</p>
+</blockquote>
+<p>最新规范已经没有这种描述了，R大也回复过这个理由不成立，与性能无关</p>
+<h3 id="不变性"><a href="#不变性" class="headerlink" title="不变性"></a>不变性</h3><p>按上面class文件看，已经与性能无关，那么只能是它的本性：不变性</p>
+<blockquote>
+<p>final is one of the most under-used features of Java. Whenever you compute a value and you know it will never be changed subsequently put a final on it. Why?</p>
+</blockquote>
+<blockquote>
+<p>final lets other programmers (or you reviewing your code years later) know they don’t have to worry about the value being changed anywhere else.</p>
+</blockquote>
+<blockquote>
+<p>If you get in the habit of always using final, when it is missing, it warns people reading your code there is a redefinition of the value elsewhere.</p>
+</blockquote>
+<blockquote>
+<p>final won’t let you or someone else inadvertently change the value somewhere else in the code, often by setting it to null. final helps prevent or flush out bugs. It can sometimes catch an error where an expression is assigned to the wrong variable. You can always remove it later.</p>
+</blockquote>
+<blockquote>
+<p>final helps the compiler generate faster code, though I suspect a clever compiler could deducing finality, even when the final is missing. final values can sometimes be in-lined as literals. They can be further collapsed at compile time in other final expressions.</p>
+</blockquote>
+<blockquote>
+<p>I have got into the habit of using final everywhere, even on local variables and if I am in doubt, I use final on every declaration then take it off when the compiler points out that I modified it elsewhere. When I read my own code, a missing final is a red flag there is something complicated going on to compute a value.</p>
+</blockquote>
+<blockquote>
+<p>If you reference a static final in another class, that value often becomes part of your class at compile time. The source class then need not be loaded to get the value and the source class need not even be included in the jar. This helps conserve RAM (Random Access Memory) and keep your jars small.</p>
+</blockquote>
+<blockquote>
+<p>At the machine language level, static finals can be implemented with inline literals, the most efficient form of addressing data.</p>
+</blockquote>
+<blockquote>
+<p>A little known feature of Java is blank finals. You can declare member variables final, but not declare a value. This forces all constructors to initialise the blank final variables. A final idiom</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public void test() &#123;</span><br><span class="line">        // Use of final to ensure a variable is always assigned a value,</span><br><span class="line">// and is assigned a value once and only once.</span><br><span class="line">        int a = 4;</span><br><span class="line">        final int x;</span><br><span class="line"></span><br><span class="line">        if (a &gt; 0) &#123;</span><br><span class="line">            x = 14;</span><br><span class="line">        &#125; else if (a &lt; 0) &#123;</span><br><span class="line">            x = 0;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            x = 3;</span><br><span class="line">        &#125;</span><br><span class="line">        System.err.println(x);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>修饰为final是为了解决正确性、合理性、严谨性。用来提醒自己以及其他人，这里的参数&#x2F;变量是真的不能被修改，并让Java编译器去检查到底有没有被乱改</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public void testSwitch()&#123;</span><br><span class="line">    final String name;</span><br><span class="line">    int pluginType = 3;</span><br><span class="line">    switch (pluginType) &#123;</span><br><span class="line">        case 1:</span><br><span class="line">            name = &quot;Candidate Stuff&quot;;</span><br><span class="line">            //break;</span><br><span class="line">            //should have handled all the cases for pluginType</span><br><span class="line">        case 2:</span><br><span class="line">            name = &quot;fff&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    // code, code, code</span><br><span class="line">    // Below is not possible with final</span><br><span class="line">    //name = &quot;Whoops bug&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果switch遗漏了break，或者switch完整的，在外面给final变量再次赋值，编译器就会报错</p>
+<h2 id="类变量"><a href="#类变量" class="headerlink" title="类变量"></a>类变量</h2><p>对于final修饰的局部变量有了清晰的认识，再延伸一下final类变量</p>
+<p>这儿涉及到一个问题,为什么JUC中很多的方法在使用类final变量时，都在方法中先引用一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class ArrayBlockingQueue&lt;E&gt; extends AbstractQueue&lt;E&gt;</span><br><span class="line">        implements BlockingQueue&lt;E&gt;, java.io.Serializable &#123;</span><br><span class="line">        /** Main lock guarding all access */</span><br><span class="line">    final ReentrantLock lock;</span><br><span class="line">    </span><br><span class="line">     public int remainingCapacity() &#123;</span><br><span class="line">        final ReentrantLock lock = this.lock;</span><br><span class="line">        lock.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            return items.length - count;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Doug Lea给的答复是</p>
+<blockquote>
+<p>It’s ultimately due to the fundamental mismatch between memory models<br>and OOP<br>Just about every method in all of j.u.c adopts the policy of reading fields as locals whenever a value is used more than once.This way you are sure which value applies when.This is not often pretty, but is easier to visually verify.<br>The surprising case is doing this even for “final” fields.This is because JVMs are not always smart enough to exploit the fine points of the JMM and not reload read final values, as they would otherwise need to do across the volatile accesses entailed in locking. Some JVMs are smarter than they used to be about this, but still not always smart enough.</p>
+</blockquote>
+<p>翻译大意：</p>
+<blockquote>
+<p>归根究底是由于内存模型与OOP之间的原则不一致。<br>几乎j.u.c包中的每个方法都采用了这样一种策略：当一个值会被多次使用时，就将这个字段读出来赋值给局部变量。虽然这种做法不雅观，但检查起来会更直观。<br>final字段也会做这样处理，可能有些令人不解。这是因为JVM并不足够智能，不能充分利用JMM已经提供了安全保证的可优化点，比如可以不用重新加载final值到缓存。相比过去，JVM在这方面有很大进步，但仍不够智能</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private volatile Integer v1 = 1;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public void test()&#123;</span><br><span class="line">        Integer a = v1;</span><br><span class="line">        Integer b = v1;</span><br><span class="line">        System.err.println(v1);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+
+<p>看一下字节码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public class com.jack.lang.LocalFinalTest &#123;</span><br><span class="line">  private final java.lang.Integer v1;</span><br><span class="line">    descriptor: Ljava/lang/Integer;</span><br><span class="line">public void test();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    Code:</span><br><span class="line">       0: aload_0</span><br><span class="line">       1: getfield      #3                  // Field v1:Ljava/lang/Integer;</span><br><span class="line">       4: astore_1</span><br><span class="line">       5: aload_0</span><br><span class="line">       6: getfield      #3                  // Field v1:Ljava/lang/Integer;</span><br><span class="line">       9: astore_2</span><br><span class="line">      10: getstatic     #4                  // Field java/lang/System.err:Ljava/io/PrintStream;</span><br><span class="line">      13: aload_0</span><br><span class="line">      14: getfield      #3                  // Field v1:Ljava/lang/Integer;</span><br><span class="line">      17: invokevirtual #5                  // Method java/io/PrintStream.println:(Ljava/lang/Object;)V</span><br><span class="line">      20: return</span><br></pre></td></tr></table></figure>
+
+<p>使用局部变量引用一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private final Integer v1 = 1;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public void test()&#123;</span><br><span class="line">    final Integer v2 = v1;</span><br><span class="line">    Integer a = v2;</span><br><span class="line">    Integer b = v2;</span><br><span class="line">    System.err.println(v2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对应字节码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public void test();</span><br><span class="line">descriptor: ()V</span><br><span class="line">Code:</span><br><span class="line">   0: aload_0</span><br><span class="line">   1: getfield      #3                  // Field v1:Ljava/lang/Integer;</span><br><span class="line">   4: astore_1</span><br><span class="line">   5: aload_1</span><br><span class="line">   6: astore_2</span><br><span class="line">   7: aload_1</span><br><span class="line">   8: astore_3</span><br><span class="line">   9: getstatic     #4                  // Field java/lang/System.err:Ljava/io/PrintStream;</span><br><span class="line">  12: aload_1</span><br><span class="line">  13: invokevirtual #5                  // Method java/io/PrintStream.println:(Ljava/lang/Object;)V</span><br><span class="line">  16: return</span><br></pre></td></tr></table></figure>
+
+<p>少了很多次的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0: aload_0</span><br><span class="line">1: getfield </span><br></pre></td></tr></table></figure>
+<p>这就是Doug Lea所讲的没有充分利用JMM已经提供了安全保证的可优化点吗？</p>
+<p>其实还有一个关键字与final类似，那就是volatile</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">private volatile FieldType field；  </span><br><span class="line">   </span><br><span class="line"> FieldType getField()&#123;  </span><br><span class="line">    FieldType result = field;  </span><br><span class="line">    if(result == null)&#123;  // first check (no locking)  </span><br><span class="line">       synchronized(this)&#123;  </span><br><span class="line">          result = field;  </span><br><span class="line">          if(result == null) // second check (with locking)  </span><br><span class="line">             field = result = computeFieldValue();  </span><br><span class="line">       &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">    return result;  </span><br><span class="line"> &#125; </span><br></pre></td></tr></table></figure>
+<p>在单例模式懒汉方式下，加个局部的result变量，会有25%性能会提高（effective java 2第71条）</p>
+<p>这儿的性能提升，似乎也是这个原因</p>
+<p>其实final和volatile还有更多的内存语义，禁止重排序。但在class文件中没有，使用hsdis与jitwatch查看JIT后的汇编码，可以发现一些端倪</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0x0000000114428e3e: inc    %edi</span><br><span class="line">0x0000000114428e40: mov    %edi,0xc(%rsi)</span><br><span class="line">0x0000000114428e43: lock addl $0x0,(%rsp)     ;*putfield v1</span><br><span class="line">                                ; - com.jack.lang.LocalFinalTest::test@9 (line 17)</span><br></pre></td></tr></table></figure>
+
+<p>在对volatile写操作时，会加上lock，就是内存屏障store指令</p>
+<p>而对于final没有看到相应汇编语句</p>
+<blockquote>
+<p>现在我们以 x86 处理器为例，说明 final 语义在处理器中的具体实现。<br>上面我们提到，写 final 域的重排序规则会要求译编器在 final 域的写之后，构造函数 return 之前，插入一个 StoreStore 障屏。读 final 域的重排序规则要求编译器在读 final 域的操作前面插入一个 LoadLoad 屏障。</p>
+</blockquote>
+<blockquote>
+<p>由于 x86 处理器不会对写 - 写操作做重排序，所以在 x86 处理器中，写 final 域需要的 StoreStore 障屏会被省略掉。同样，由于 x86 处理器不会对存在间接依赖关系的操作做重排序，所以在 x86 处理器中，读 final 域需要的 LoadLoad 屏障也会被省略掉。也就是说在 x86 处理器中，final 域的读 &#x2F; 写不会插入任何内存屏障！</p>
+</blockquote>
+<p>既然没有相应内存屏障指令，那对于类变量加个局部变量，更大的理由就是少了aload、getfield指令</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://www.mindprod.com/jgloss/final.html">final : Java Glossary</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/136819200">https://zhuanlan.zhihu.com/p/136819200</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/ddd-layering.html" rel="prev" title="DDD分层">
+      <i class="fa fa-chevron-left"></i> DDD分层
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/.html" rel="next" title="">
+       <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E5%8F%98%E9%87%8F"><span class="nav-number">1.</span> <span class="nav-text">局部变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#class%E6%96%87%E4%BB%B6"><span class="nav-number">1.1.</span> <span class="nav-text">class文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%8F%98%E6%80%A7"><span class="nav-number">1.2.</span> <span class="nav-text">不变性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B1%BB%E5%8F%98%E9%87%8F"><span class="nav-number">2.</span> <span class="nav-text">类变量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">3.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

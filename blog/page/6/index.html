@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="彪悍的人生需要书写">
+<meta property="og:type" content="website">
+<meta property="og:title" content="码农戏码">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/page/6/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="彪悍的人生需要书写">
+<meta property="og:locale">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/page/6/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/remove-the-micro-service-after-removing-the-middle-console.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/remove-the-micro-service-after-removing-the-middle-console.html" class="post-title-link" itemprop="url">拆完中台再拆微服务</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-02-20 20:22:00" itemprop="dateCreated datePublished" datetime="2022-02-20T20:22:00+08:00">2022-02-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>这些年中台、微服务都是技术浪潮中的弄潮儿。两者的命运似乎是所有技术新词的缩影：先谈，再建，后拆，最后平静。</p>
+<p>如中台，开始时聊什么都得带上中台，战略层喜欢谈，执行层也喜欢谈，再后面跟随一线大厂纷纷搭建自己的中台，然后就是反思，拆除中台，最后平静看待中台。</p>
+<p>中台可以说已经经历完整的生命周期，而微服务周期也差不多，但对于“拆掉”，两者的声势与目标却不太相同。</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/what-is-zhongtai.html">《中台是什么》</a>中提出，<strong>“效能下限”与“创新上限”就像翘翘板，产生了哑铃效应，而中台则是追求效能的极致，同时却也降低了创新上限</strong></p>
+<p>建中台是为了效能，拆中台是为了创新。</p>
+<p>以阿里为代表的大厂对拆中台真是高举高打，但看看微服务，可没哪个大厂高喊要拆掉微服务，可见他们俩还是有本质差别的。</p>
+<p>更神奇的是，<strong>不管是拆微服务还是拆掉微服务，本质需求却是一致的：提升效能</strong>。</p>
+<p>为什么都是提升效能，从两种行为分别阐述一下</p>
+<h1 id="为什么拆分微服务"><a href="#为什么拆分微服务" class="headerlink" title="为什么拆分微服务"></a>为什么拆分微服务</h1><p>首先一起回顾一下，为什么要拆分微服务？对于这个问题不得不再向前回退，回到单体架构时代</p>
+<p>在微服务架构出现之前，单体架构是永恒，天经地义的。以致于“单体架构”一词都没人提出。</p>
+<p>项目起初，单体架构无疑是最佳选择，不仅易于开发、易于测试、易于部署，且由于系统中各个功能、模块、方法的调用都是进程通信，性能是最高的。</p>
+<p>甚至在项目从小型发展为中型时，也没有那么不堪。虽然是单体架构，但内部结构并非“铁板一块”，在业务量级可承载范围内，也有一定程度的扩展性。</p>
+<p>从两个视角观察扩展性</p>
+<p>在纵向角度，绝没有一个项目完全是个“大泥球”形态，至少都会以分层架构风格对代码进行纵向层次划分。</p>
+<p>在横向角度，单体架构也支持以功能、技术等维度划分，拆分成各个模块，以便代码重用和管理，甚至提取出各种形体组件，如jar</p>
+<p>那拆微服务解决了哪些效能问题？</p>
+<p><strong>第一程序效能</strong></p>
+<p>在于应用程序的某个方面给基础设施带来了过重负担，这反过来又很可能会导致糟糕的用户体验。</p>
+<p>如，图像处理需要大量CPU，如果CPU负载变得非常高，这将会导致应用其他处理资源的饿死现象。影响系统延迟，甚至影响系统可用性。</p>
+<p>也就是说应用程序中局部缺陷会造成全局问题。局部间没有隔离能力，一旦出现内存泄漏、线程爆炸、阻塞、死循环等问题，将影响整个程序。不仅导致单个功能不可用，甚至整个程序的效能都降至为零。</p>
+<p>从程序维护性来说，所有代码都在同一进程，无法做到单独停止、更新、升级某一部分代码。只能制定专门停机更新计划，整体做灰度发布，A&#x2F;B测试。</p>
+<p><strong>第二团队效能</strong></p>
+<p>与应用的关系不大，但关系到如何组织团队。在应用程序的特定部分，投入工作的人越多，开发和部署就会越慢，而且越容易出错。</p>
+<p>如，抢占持续部署同一服务，出现排队现象，意味着本可以交付产品的工程师只能坐等轮到他们进行部署。出事“紧急事件”时，多个团队代码都需要回滚。</p>
+<p>综上所述，简单总结一下，单体架构并不是一无是处，项目起始阶段依然是最佳选择；</p>
+<p>当对应用程序性能要求超过单机能力，以及软件的开发人员规模明显超过了“2 Pizza Team”时，<br>不管是程序效能还是团队效能都已经达到瓶颈，此时可以通过微服务架构来解决这些问题。</p>
+<h2 id="微服务怎么解决效能问题？"><a href="#微服务怎么解决效能问题？" class="headerlink" title="微服务怎么解决效能问题？"></a>微服务怎么解决效能问题？</h2><p>对于<strong>程序效能</strong>，在单体架构时代，想要整体系统的可靠性，我们只能努力让每一个模块，每一行代码都可靠，以达到整体系统的最终可靠性。</p>
+<p>然而常常事与愿违，战术层面再优秀，也难以弥补战略层面的缺陷。在构建大规模系统时，人们的观念也从“尽量不出错”向正视“出错是必然”转变，在此前提下，历史悠久的单体架构终被挑战。</p>
+<p>微服务把独立的单体架构内部依赖组件，由“编译时期”推迟到了“运行时期”，对时间维度的解耦，带来了运行时动态扩展、服务间技术异构、服务独立交付等好处。</p>
+<p>也就解决了上面所述的局部间没有隔离能力造成的全局性故障，导致整体程序效能降至为零的情况。也实现了局部维护的能力，提升系统整体可维护性，保障系统整体可靠性与可用性。</p>
+<p>对于<strong>团队效能</strong>，系统不再是一块整体，团队更加独立地工作，独立地部署，从而发布更多产品。</p>
+<p>尤其在<a href="http://www.zhuxingsheng.com/blog/conway-law-and-inverse-conway-law.html">康威定律</a>的指导下，划分组织边界以及服务职责范围，让组织之间更高效默契的沟通以及相互配合提升整体效益。</p>
+<h1 id="为什么拆掉微服务"><a href="#为什么拆掉微服务" class="headerlink" title="为什么拆掉微服务"></a>为什么拆掉微服务</h1><p>微服务的确带来了很大的收益，不管在系统扩展性，还是在组织扩展性，都促使商业最大限度的规模化。</p>
+<p>然业务不是永远增长的，随着业务增长乏力，收益萎缩，需要探索新商业机会，原先高成长的业务团队规模也慢慢收缩，之前的服务系统也慢慢沦为遗留系统。</p>
+<p>从原先增长期的每个系统0.5人，到维护期每个人10个系统，服务与团队与康威定律极度不匹配。</p>
+<p>简而言之，在高增长期康威定律带来的所有收益，随着时间的推移，业务收缩，都变成了“遗留”团队的负债。</p>
+<p>所以需要拆掉微服务，改变服务边界以匹配团队边界，平稳回归康威定律。当然也不是彻底拆掉所有微服务回归单体架构。重点是重新调整职责范围，拆分成符合团队的服务边界。</p>
+<p>此时再回头看微服务概念时，当初纠结的“微”到底是多大的问题，已经完全不重要。微服务只是相对单体架构(Monolithic)的称呼，“微”不代表任何实际的内容。</p>
+<p>我们需要更多的关注“合适大小”，服务经过了恰当地设计，以满足其需求：它负责“合适数量”的功能。而且，至于什么是“合适”并不是一个静态的概念，它取决于团队，即团队的技能集、组织的状态、投资回报率（return-on-investment，ROI）的计算、持有成本以及该服务运行的时间点。</p>
+<p>简单总结一下，拆掉微服务，相对程序效能，更多的关注点在团队效能，服务边界匹配团队边界。其次，在整合团队，回归康威定律的过程中，业务流量也是在减少的，程序效能问题也再像扩张时期那么显著。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>一切技术都得服务于业务，而业务形态决定了技术形态。</p>
+<p>没有完美的业务，也必然没有完美的技术，只有两者相匹配时，才能相得益彰。</p>
+<p>不管是建，还是拆。都是适时的选择。架构只有顺应环境才能生存，最大化业务价值。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.infoq.cn/article/o6kcqCSGBTmeTbOP4wG1">拆掉微服务</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/io-multiplexing-past-and-present-life.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/io-multiplexing-past-and-present-life.html" class="post-title-link" itemprop="url">IO多路复用前世今生</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-12-31 17:49:00" itemprop="dateCreated datePublished" datetime="2021-12-31T17:49:00+08:00">2021-12-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>之前总结了一篇文章<a href="http://www.zhuxingsheng.com/blog/socket-and-io-high-performance.html">《单服务器高性能》</a>，主要整理了两方面的知识：</p>
+<p>一是socket以及IO常识</p>
+<p>二是单机高性能模式</p>
+<p>你会发现IO知识一般不会单独出现，常会与socket，linux底层相关知识结合出现，所以在学习IO时，总会有很多的背景知识，不然会很吃力。或者不明就理。</p>
+<p>这是为什么呢？</p>
+<p><strong>与socket关联</strong>，应用角度看，是因为发生IO时，数据来源与目的地除了磁盘就是网络了，而网络必谈socket；其次从OS角度看，linux思想就是一切皆是文件，socket也是文件的一种。</p>
+<p><strong>与linux关联</strong>，上面写了linux一切皆是文件，IO操作对象都是文件；其次IO操作得涉及内核，IO的一切优化都需要得到OS的支持。</p>
+<p>所以你会发现，谈到I&#x2F;O multiplexing、mmap、Zero-copy这些提升IO性能的技术时，都需要OS层面出手，否则很难有大的提升。</p>
+<p>其中I&#x2F;O multiplexing与Reactor经常被搞混，甚至被认为是同一种东西。</p>
+<p>我再尝试总结一下I&#x2F;O Multiplexing的前世今生以及与reactor的关联：</p>
+<h1 id="I-O-multiplexing"><a href="#I-O-multiplexing" class="headerlink" title="I&#x2F;O multiplexing"></a>I&#x2F;O multiplexing</h1><p>multiplexing概念多用于通信领域，详细可看<a href="https://www.physics-and-radio-electronics.com/blog/multiplexing/">Multiplexing – Definition – Types of Multiplexing: FDM, WDM, TDM</a>，截取两张图片表示multiplexing技术前后的对比：</p>
+<p><img src="http://images.zhuxingsheng.com/20211217214146_1639748506.jpg"></p>
+<p>在没有multiplexing时，每次通信，一个通道上只能传输一个信号，浪费了带宽</p>
+<p><img src="http://images.zhuxingsheng.com/20211217214203_1639748523.jpg"></p>
+<p>当有了multiplexing技术后，通过设备多路复用器multiplexer(MUX)，一个通道可以传输多个信号，带宽最大化利用。在接受端，通过信号分离器demultiplexer(DEMUX)，再把多个信号分离开。</p>
+<p>通过上面的两张图可以看出，multiplexing技术里面有两个设备比较关键，一是MUX负责多路复用,另一个是DEMUX负责多路分发。</p>
+<p>理解了multiplexing，再看看I&#x2F;O</p>
+<p>简要回顾一下：</p>
+<p>从最原始的BIO，PPC模式进化到TPC，通过线程池有效控制线程扩张，但线程上下文切换也带来了性能损耗依然不能小觑。关键是IO处理没有丝毫改进。</p>
+<p><img src="http://images.zhuxingsheng.com/20211220230541_1640012741.jpg"></p>
+<p>从图中可以看出，之前block的依然block，之前system call的依然发生，对于成千上万的连接高并发，怎么达到高性能？</p>
+<p>怎么办呢？</p>
+<p>这一次还是kernal体现了大爱无私的胸怀，在提供了blocking read方法与non-blocking read方法后，又体贴地想出了两种方法</p>
+<p>1、不要每次都来问了，一次性打包问吧。把所有的system call整合在一起，一次性打包给system kernal,结合上面的multiplexing技术，I&#x2F;O multiplexing由此而来。</p>
+<p>2、不要总跑来问我了，有情况我通知你吧。对，这就是著名的<strong>Hollywood Principle</strong></p>
+<p>根据这两个办法，打造出了最终的完美体epoll。当然在这个完美体前还有select、poll两个被丢弃的废品。至于这三者区别，可详看<a href="http://www.zhuxingsheng.com/blog/socket-and-io-high-performance.html">《单服务器高性能》</a>。</p>
+<hr>
+<h1 id="Reactor-pattern"><a href="#Reactor-pattern" class="headerlink" title="Reactor pattern"></a>Reactor pattern</h1><blockquote>
+<p>The reactor design pattern is an event handling pattern for handling service requests delivered concurrently by one or more inputs. The service handler then demultiplexes the incoming requests and dispatches them synchronously to associated request handlers.</p>
+</blockquote>
+<p>更详细的介绍可看<a href="http://www.dre.vanderbilt.edu/~schmidt/PDF/reactor-siemens.pdf">Reactor An Object Behavioral Pattern for Demultiplexing and Dispatching Handles for Synchronous Events</a></p>
+<p>看一下reactor pattern里面包含的部件：</p>
+<p><img src="http://images.zhuxingsheng.com/20211220221106_1640009466.jpg"></p>
+<p>1.<strong>event</strong>:<br>IO event like write, read, timeout and signal.</p>
+<p>2.<strong>Event Source (ES)</strong>:<br>file descriptor (fd) in linux and Socket or Handle in Windows. Program adds the event that it cares on the given event.</p>
+<p>3.<strong>event_demultiplexer (ED)</strong>:<br>select() and epoll() provided by the OS.  The program firstly add the event source (fd) and the related events to the ED. When event comes, ED eill notify that the events on one or more EVs are ready where program can process the events in nonblock way. The same ED way like select(), poll() and epoll() are used  in Libevent where they are encapsulated by eventop struct.</p>
+<p>4.<strong>event_handler_interface and event_handler_imp (EH)</strong>:<br>EH has a serial of interfaces and each interface refers to a different event.Reactor will invoke certain interface when some certain event fets ready. EH usually binds a valid ES.<br>In libevent, it is event struct.</p>
+<p>5.<strong>reactor</strong>:<br>It is the event management. It uses ED internally to add and remove event. When event is ready, invoke the callback function on the event. It is actually event_base struct in libevent.</p>
+<p>可以看到在reactor pattern中，有个reactor部件。而还有个部件event_demultiplexer是由多路复用技术支持。</p>
+<p>所以在谈到reactor时，是reactor模式，还是reactor部件？也没必要咬文嚼字了，反正他们是一家。</p>
+<p>不仅如此，还有一股编程思潮：<a href="https://www.reactivemanifesto.org/">响应式宣言</a>里面也有reactor</p>
+<p><img src="http://images.zhuxingsheng.com/20211220221325_1640009605.jpg"></p>
+<p>头晕，反正他们都是一家族的。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>一堆名词堆一起，看是又不是，是不是剪不断，理还乱。</p>
+<p>简单讲：</p>
+<p>结合I&#x2F;O与multiplexing，由此得来I&#x2F;O multiplexing。</p>
+<p>Reactor模式中包含了reactor部件及依赖了多路复用技术。而多路复用技术的底层epoll又吸取了reactor思想。</p>
+<p>道生一，一生二。阴阳之道，存乎万物之间。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/domain-model-of-daming-lake.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/domain-model-of-daming-lake.html" class="post-title-link" itemprop="url">大明湖畔的领域模型</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-12-05 20:52:00 / Modified: 20:53:16" itemprop="dateCreated datePublished" datetime="2021-12-05T20:52:00+08:00">2021-12-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>不管在做系统分析，还是系统设计时，我们大概率都会提到领域模型这个词，奇妙的是虽然大家都在谈论领域模型，但每个人心中都有一份对领域模型的认知。</p>
+<p>套用DDD，我们需要统一语言，首先需要对“领域模型”有一个统一认知。达成共识。</p>
+<p>你可以暂时挂起大脑进程，想想：“领域模型是什么？怎么描述？”</p>
+<p>世事万物都在变化中发展，就如同“手机”，十年前和现在，人们对它的认知也是不一样的。所以我们一起回顾一下最原始的“领域模型”是什么，你是否记起大明湖畔的领域模型。</p>
+<p>“领域模型”最早流行于OOA中，简单回顾一下OOA&#x2F;D</p>
+<h1 id="OOA-D"><a href="#OOA-D" class="headerlink" title="OOA&#x2F;D"></a>OOA&#x2F;D</h1><p><strong>分析</strong>：强调的是对问题和需求的调查研究，而不是解决方案。例如，如果需要一个新的在线交易系统，那么，应该如何使用它？它应该具有哪些功能？</p>
+<p><strong>设计</strong>：强调的是满足需求的概念上的解决方案，而不是实现。例如，对数据库方案和软件对象的描述。设计思想通常排斥底层或“显而易见”的细节。最终设计可以实现，而实现则表达了真实和完整的设计。</p>
+<p>++分析和设计可以概括为：做正确的事和正确地做事++</p>
+<p><strong>OOA</strong>：强调在问题领域内发现和描述对象（或概念）。例如，在航班信息系统里包含飞机、航班和飞行员等概念。</p>
+<p><strong>OOD</strong>：强调的是定义软件对象以及它们如何协作以实现需求。例如，软件对象Plane可以有tailNumber(飞机唯一标识)和getFightHistory方法(飞行过的航班)</p>
+<h1 id="领域模型"><a href="#领域模型" class="headerlink" title="领域模型"></a>领域模型</h1><p>领域模型是OOA中最重要的和经典的模型。</p>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>领域模型是对领域内的概念类或现实世界中对象的可视化表。也称为概念模型、领域对象模型和分析对象模型。</p>
+<p>不是描述软件类、软件架构领域层或有职责软件对象的组图。</p>
+<h2 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h2><p>为什么需要领域模型？去掉修饰语，为什么需要模型，这在DDD系列文章中已经解释：模型是对业务复杂度的简化和提炼。帮助我们更好地理解业务。</p>
+<p>同理领域模型能够使我们理解关键概念和业务知识。</p>
+<p>我们在设计和实现时，软件类名称也大多源于领域模型的名称，以使对象具有源于领域的信息和职责。</p>
+<p><img src="http://images.zhuxingsheng.com/20211204162629_1638606389.jpg"></p>
+<p>这样可以降低我们思维与OO建模之间的表示差异</p>
+<h2 id="How"><a href="#How" class="headerlink" title="How"></a>How</h2><p>如何创建领域模型？</p>
+<ol>
+<li>寻找概念类</li>
+<li>将其绘制为UML类图中的类</li>
+<li>添加关联和属性</li>
+</ol>
+<h3 id="寻找概念类"><a href="#寻找概念类" class="headerlink" title="寻找概念类"></a>寻找概念类</h3><p>根据领域模型定义，需要先找到概念类。</p>
+<p>概念类是思想、事物或对象。可以从其符号、内涵和外延考虑。</p>
+<p>符号：表示概念类的词语或图形</p>
+<p>内涵：概念类的定义</p>
+<p>外延：概念类所适用的一组示例</p>
+<p><img src="http://images.zhuxingsheng.com/20211204214242_1638625362.jpg"></p>
+<p>考虑购买交易事件的概念类。</p>
+<p>可以使用符号Sale对其命名。</p>
+<p>Sale的内涵陈述为“表示购买交易的事件，并且具有日期和时间”</p>
+<p>Sale的外延是所有销售的例子，或者说是世界上所有销售实例的集合</p>
+<h3 id="描述类图"><a href="#描述类图" class="headerlink" title="描述类图"></a>描述类图</h3><p>领域模型描述的信息可以采用纯文本方式表示。</p>
+<p>但是在可视化语言中更容易理解这些术语，特别是它们之间的关系，因为我们的思维更擅长理解形象的元素和线条连接。</p>
+<p>在应用UML时，领域模型被描述为一组没有定义操作的类图。</p>
+<h3 id="关联"><a href="#关联" class="headerlink" title="关联"></a>关联</h3><p>关联是类之间的关系，表示有意义和值得关注的连接。</p>
+<p>关联能够满足当前所开发场景的信息需求，并且有助于理解领域。</p>
+<p><img src="http://images.zhuxingsheng.com/20211204220428_1638626668.jpg"></p>
+<p>关联被表示为类之间的连线，并冠以首字母大写的关联名称。</p>
+<p>关联末端可以包含多重性表达式，用于指明类的实例之间的数量关系。</p>
+<p>关联本质上是双向的，方向箭头只是为了方便阅读，默认是从左往右。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>没有所谓唯一正确的领域模型。所有模型都是对我们试图要理解的领域的近似。</p>
+<p>领域模型主要是特定群体中用于理解和沟通的工具。</p>
+<p>有效的领域模型捕获了当前需求语境下本质抽象和理解 领域所需要的信息，并且可以帮助理解领域的概念、术语和关系。</p>
+<hr>
+<p>到此，已经完成追忆大明湖畔的领域模型，也是OO风云初起时代领域模型的含义。</p>
+<p>如果你想更多的回忆，可以去看看以往OO方便书籍，本文内容大多来自《UML和模式应用》。</p>
+<p>现今，领域模型演义出更多新的含义，如Martin Fowler提出的充血模型，以及DDD中的领域模型。</p>
+<p>在与别人交流时，我们得听声听音，是否在同一频道。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/do-not-study-inefficiently-all-your-life.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/do-not-study-inefficiently-all-your-life.html" class="post-title-link" itemprop="url">不要终身低效学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-11-11 17:47:00" itemprop="dateCreated datePublished" datetime="2021-11-11T17:47:00+08:00">2021-11-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>那一年有个程序员在github上撕心裂肺痛首疾呼</p>
+<p><img src="http://images.zhuxingsheng.com/201808161053_26.png" alt="程序员呐喊"></p>
+<p>这句呐喊，喊出了多少程序员内心的苦楚，行业更新迭代太快，而年龄在不断增长，精力在下降，尤其现如今的内卷文化，怎么才能不掉队，保持竞争力？似乎唯有保持学习能力一条路。</p>
+<p>我们是怎么学习的呢？学习的效果如何？需要去对学习有一定的元认知能力。</p>
+<p>李笑来老师有个专栏，叫学习学习再学习。意思是讲先把学习这件事学习会了，再去学习其他知识。</p>
+<p>我也一直在反思自己的学习能力，学习效果与速度，所以也一直在学习怎么学习，怎么学习才有效果，脱离低级学习效能。毕竟学习本身不仅对自身有帮助，也是家中无矿普通大众唯一可以传承给后代的财富，知识时代，缺什么也不能缺少学习能力。</p>
+<h1 id="功夫"><a href="#功夫" class="headerlink" title="功夫"></a>功夫</h1><p>我们学习的动机是什么？</p>
+<p>一开始我们靠兴趣，但是兴趣多变；然后我们追新知，发现新知进化得比我们学习的速度还快；之后我们回身去读经典，却发现经典一辈子也读不完；于是我们开始寻求底层逻辑。</p>
+<p>然而底层逻辑是高度抽象的，人类对抽象的认知都是非常困难的，幸运的是所有对抽象的认知都是源于对大量具体事物认知的抽象。</p>
+<p>我们一般都不是骨骼清奇的天才，大多数时候只能渐修顿悟。就算是真经放在眼前，也没有识货的能力。</p>
+<p>举个切身经历的案例，在我刚入职场时，那时我还很痴迷于阅读源码，一天我灵机一动，学生时代就倒腾了几年的web开发，都是跑在web container中的，为何不看看tomcat源码呢，下班看，上班干完手上活也看。一天领导问我在干吗，我兴致勃勃地说在看tomcat源码，写得真精妙。</p>
+<p>领导把我叫到一边，语重心长地说，学习源码是不错，但对我们当前工作有直接帮助吗？我们开发游戏，用的是TCP协议，使用的是mina、netty网络框架，如果现在项目中要准备使用web了，再看也不迟。就算你现在看了，以后我们真用上，其他人去学习，你也不一定比他们提前多少。</p>
+<p>“切，又忽悠我多干活，压榨”。这是我当时第一反应。你觉得这是真经吗？</p>
+<p>领导的这番教导，我也是过了很久才慢慢醒悟。是什么底层认知逻辑，且看文末总结。</p>
+<p>因此我们还是得踏踏实实地积累基础知识，同时，需要勤于思考，学会抽象，学会抓本质。</p>
+<p>花功夫，事上修。否则读遍经书也枉然。</p>
+<h1 id="如何学习"><a href="#如何学习" class="headerlink" title="如何学习"></a>如何学习</h1><p>学习一样技能，需要经过三个过程</p>
+<p>1、编码：知道并理解，形成一些潜在的心理表征</p>
+<p>2、巩固：强化心理表征，通过遗忘，再考试，再练习不断地被挑战</p>
+<p>3、检索：学以致用</p>
+<p>细化一下这个过程</p>
+<p>大概会经过这几个步骤：<strong>获取、理解、拓展、纠错、应用</strong></p>
+<h2 id="获取"><a href="#获取" class="headerlink" title="获取"></a>获取</h2><p>不再像过去贫瘠时代，获取知识本身的难度，现今是如何面对信息大爆炸时代，过滤出精品。</p>
+<p>获取知识的两个要点：</p>
+<p>1、速度</p>
+<p>2、质量</p>
+<p>对于速度，有几个方法：</p>
+<p>首先让自己变成一个文字型学习者，现在有视频、音频等多媒体信息，而文字是最快速的获取方式。回想微信聊天，是看文字快还是语音快？</p>
+<p>其次学习一些快速阅读的技能</p>
+<p>1、指读法：对的，你没看错，用手指指着文字阅读。</p>
+<p>2、练习阅读法：刻意练习，比如手指移动更快些，又快又能最大吸收信息</p>
+<p>3、积极阅读法：也就是带着问题阅读，或者读完问自己几个问题，这一节主要观点是什么；怎么能记住主要观点；观点拓展以及应用</p>
+<p>比如最近有篇转来转去的文章《我在美团的八年》，作者总结了几个原则，第一次看觉得作者讲得真不错，可当在聊天群中再次看到被人转发时，只是想这文章我看过，作者写得不错。但具体内容可能都忘光了。这时不妨回忆下，作者说了哪个原则？最认同哪个？能再加减点别的原则。再阅读比对一下。</p>
+<p>而对于质量，是要去学习第一手资料学习原理并且及时更新，尤其像程序员，不然看到的知识可能是错的。</p>
+<p>比如，我两年前总结的一篇JVM参数文章：<a href="http://www.zhuxingsheng.com/blog/a-copy-of-jvm-parameters.html">《百万QPS系统JVM参数》</a>，如果你现在看到直接照本全收，估计有些参数有效，有些无效，整体效果你会失望，但也别说我乱写，因为JVM在发展，参数也在更新，而且也是在我当时的系统背景下得出的结论，我的认知也可能是不完整的。</p>
+<p>但你掌握了JVM调优原理，并结合最新的JVM规范因地制宜，是没问题的，质量也是有保障的。</p>
+<p>再比如你正在看的这篇文章，也是很多手信息后的产物。不是说就不要看了，至少可以激发你的思考，进而去拓展学习。</p>
+<p>质量和速度兼并的学习技能是联机学习，我们要做知识的路由器</p>
+<p><img src="http://images.zhuxingsheng.com/20211207232109_1638890469.jpg"></p>
+<p>通过交流交换思想，再深入思考，整合归纳。相比个人学习，不管是速度还是质量都会有更大的提升。</p>
+<p>为什么要去大厂，不就是能更方便地遇到更牛B的人，快速吸收他们的最新思考成果。</p>
+<h2 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h2><p>一味地获取内容和信息，并不一定能达到想要的效果。启发思考才是学习的目的，所以反思是学习真正发生的时候，这样才能去改变我们的行为和思维。</p>
+<p>拓展就是思考与反思阶段，只有拓展得好，才会将学到的知道举一反三、触类旁通。也只有这样，后期我们才能应用好知识。</p>
+<p>拓展有三种方式：</p>
+<p><strong>1、深度拓展</strong></p>
+<p>不仅仅理解一个结论就结束，还得挖掘知识从何而来？结论来自何处？一个发现是如何做出来的？结论之前的试验是怎么做的？怎么想起来做的？</p>
+<p>一句话，我们要知其然还得知其所以然，多问why，以及how。</p>
+<p><strong>2、横向拓展</strong></p>
+<p>与知识周围建立联系。</p>
+<p>知识不会孤立地存在，与此类似的结论还有哪些？是哪些地方类似？不同的地方在哪里？同一时期还有哪些其他的发现，同一个发现者还有哪些发现，在同一个领域里还有哪些发现？</p>
+<p><strong>3、纵向拓展</strong></p>
+<p>知识都遵循一定的模式，同样的模式在其他知识中也会出现，能将一个公式与一个自然事件相联系吗？</p>
+<p>纵向拓展是有相当难度的。也是最有创造性的学习方式。</p>
+<p>比如达芬奇看到鸟在天上飞，他就琢磨鸟在天上飞和鱼在水里游到底有什么共同之处，为什么鱼在水里游那个敏捷的程度明明有水做阻力，但看起来比鸟还快。为什么？后来他就慢慢搞出了流体力学。</p>
+<p>这三种方式似乎有些难以理解，可以类比在《架构与架构师》中提到的架构师技术能力包含的知识深度、宽度、广度。</p>
+<p>再如最近我写的<a href="http://www.zhuxingsheng.com/blog/domain-model-of-daming-lake.html">《大明湖畔的领域模型》</a>，领域模型因OOA被提出，让我们寻找现实中的概念类，万物皆对象，映射到具体软件实现类。而同时期Martin Fowler也提出了Domain Model，却是对OO升华，要充血模型，不要贫血模型。再到现如今大家热议DDD中的领域模型，Eric推崇的分析模型与实现模型统一融合。</p>
+<p>一个概念被各方位拓展后，原始的软件方法论被突破，各种全新软件方法论被创造。</p>
+<h1 id="高效学习"><a href="#高效学习" class="headerlink" title="高效学习"></a>高效学习</h1><p>赚钱只能赚到认知范围内的钱，不然凭运气赚取的钱也会被实力亏掉；同样，学习也是如此。只是知道如何学习，无法内化这些认知，学习行为的效率依然低下。</p>
+<p>如何能高效学习，我们需要再一次反思自己对学习的元认知。</p>
+<h2 id="错觉"><a href="#错觉" class="headerlink" title="错觉"></a>错觉</h2><p>我们的元认知非常容易出现偏差，常会产生两个误区：</p>
+<p>1、不知道自己学习中的薄弱之处，不知道要在哪里花更多精力才能提高自己的知识水平</p>
+<p>2、爱使用那些会让自己错误地认为掌握了知识的学习方法，也就是拼命记笔记、拼命画下划线、拼命地用荧光笔、拼命地反复阅读</p>
+<p>怎么解决这两个误区？巩固与检索。</p>
+<p>学习越轻松，效果越不好，看来起来非常勤奋，不停地背书，一遍一遍地背，拿笔一遍一遍地画，甚至是一遍一遍地抄，看起来很勤奋耗费大量的时间，但他的学习过程是很轻松的，没有做到有挑战的事情。</p>
+<p>通过检索、考试，不断地挑战来巩固记忆。</p>
+<p>比如要跳槽了，怎么去准备面试呢？拿出浩瀚如烟的资料去慢慢复习吗？或者找一堆面试题来刷吗？</p>
+<p>这些都很低效，不如自己玩一把角色扮演，扮演下面试官，给自己出一份面试题，出题需要检索知识点，解题也需要挑战记忆。</p>
+<p>再按知识模块与各种资料比对自己的知识掌握度，查漏补缺，事半功倍。</p>
+<h2 id="问题树"><a href="#问题树" class="headerlink" title="问题树"></a>问题树</h2><p>认知心理学认为，有三个前提要求时，学习效率最高：</p>
+<p>1、有目标导向，俗称带着问题学习</p>
+<p>2、有即时反馈，为什么游戏好玩？</p>
+<p>3、最近发展区，当前水平与通过学习获得的潜力之间的差异叫最近发展区</p>
+<p>那么怎么样的学习方式才会同时拥有这几个前提呢？使用问题树的思维方式替代知识树的思维方式。</p>
+<p>知识树的思路，是典型的专业知识细分的学习路径。工业时代分工高度稳定，每个领域都相对独立、发展缓慢，一个人有机会学完一个细分领域的所有知识。沿着一棵长成的大树向上爬，这种学习路径效率最高。</p>
+<p>但在一个高度变化、多领域跨界的时代，完成任何任务都需要调取多领域的知识，全部靠自己学习显然来不及。</p>
+<p><img src="http://images.zhuxingsheng.com/20211211150802_1639206482.jpg"></p>
+<p>当我们想学习某一知识时，常列个计划，搜集资料，罗列书单、阅读清单，可涉及面很广，这样难免有很大的随机时，书单虽全虽好，最后没有动力去读，读了也没有实践的动力。</p>
+<p>而以问题为切入点，问题使目标更清晰，不会在知识树里迷路；动力也更强，一个问题解锁后，会带来更多、更大、更有趣的问题。</p>
+<p>时代是水流，答案是河岸，而问题是船只。</p>
+<p>在水流不快的时代，可以在河岸上慢慢走，也许跟得上水流；但在知识爆炸、洪流时代，只有登上船只，才能保持和时代同步。守在岸上，只能被远远抛下，望洋兴叹。</p>
+<h2 id="不要学习"><a href="#不要学习" class="headerlink" title="不要学习"></a>不要学习</h2><p>相对现如今提出的终身学习者，是不是有些反人类。</p>
+<p>不要学习，指的是在没有明确自己究竟想达到什么目的，就去不停地“学习”，实在是对宝贵时间资源的浪费。而且学习得多，未必收获得就好。</p>
+<p>打个比方，学习就好比整个食物经过咀嚼、消化、吸收的过程，它不是表面看起来“吃”的动作。人们不可能永远吃个不停，所以学习行为不是越多越好。</p>
+<p>学习需要挑选吃的食物（获取信息）、咀嚼（明白阶段）、消化（理解阶段）、吸收（应用阶段）。</p>
+<p>犹如ThoughtWorks中国区CTO徐昊在他的专栏《业务建模》中所说，技术没有反哺过我的生活，反而我的人生给养了在技术上的洞见。吃喝玩乐并不耽误事，因为学习是一种状态（being），而不是一种行为（doing）。在学习的状态中，吃喝玩乐都可以让我成为更好的程序员。</p>
+<p>找到自己的目标，不要人云亦云，刻意宣传终身学习更多时刻是商家制造的焦虑感收缴人们的智商税。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>世人都知道认知能力重要性时，我们更需要去认知一下如何更好地获得认知的能力。</p>
+<p>“学习”本身不是一件容易的事，在我们长期实践“学习”的空隙，需要对“学习”保留一份反思，学习学习，加深对学习元认知的认识。</p>
+<p>不需要刻意终身学习，更不必因终身学习而焦虑，它就是我们的血液。是这个时代赋予我们的第二呼吸。</p>
+<p>学习行为像吃饭，学习状态像呼吸。不要为了学习而学习，贪图勤奋的假象带来的快感。</p>
+<p>回到篇首，提到我的切身经历，问题的本质是认知效率：认知收益与时间精力之比，牛人真正的秘诀是在最精华的资源上，以高很多倍的认知资源来学习。要事第一。</p>
+<p>当然在认知水平不够时，也不要吝啬自己的时间。毕竟我们已经与牛人有了差距，花功夫才能得到真功夫。</p>
+<p>最后的最后，如果你对学习主题也感兴趣，可以延伸阅读《刻意练习》、《认知天性》、《如何高效学习》、《人是如何学习的》、《卡片笔记法》、《跃迁》。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/benefits-and-challenges-of-domain-driven-design-patterns.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/benefits-and-challenges-of-domain-driven-design-patterns.html" class="post-title-link" itemprop="url">领域驱动设计模式的收益与挑战</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-11-11 14:21:00" itemprop="dateCreated datePublished" datetime="2021-11-11T14:21:00+08:00">2021-11-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-17 14:22:07" itemprop="dateModified" datetime="2021-11-17T14:22:07+08:00">2021-11-17</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>《软件学报》在2021年第32卷第9期刊登了一篇论文：<a href="http://www.jos.org.cn/jos/article/abstract/6275?st=article_issue">《领域驱动设计模式的收益与挑战:系统综述》</a>。这篇论文是学术界在这一领域开山之作。</p>
+<p>论文是对2003~2019年之间发表的相关文献进行识别、筛选、汇总和分析。</p>
+<p>揭示DDDP的应用情况，即哪些DDDP被应用到了软件开发中，以及其所带来的收益、挑战及相应的缓解挑战方法。</p>
+<p>对于长期在DDD中折腾的人，值得一读。</p>
+<p>一是可以看看学术界的研究成果</p>
+<p>二是对比自己实践，是否在康庄大道上</p>
+<p>如果你对学术性论文不感兴趣，可以仔细阅读这篇文章，我对论文做些简单摘抄，对比一下自己实践感悟</p>
+<h1 id="基本介绍"><a href="#基本介绍" class="headerlink" title="基本介绍"></a>基本介绍</h1><p>论文先对DDD的一些概念、特性作了介绍</p>
+<p>定义：</p>
+<blockquote>
+<p>DDD是一种软件设计中应该遵循的思维方式，其目标在于加快具有复杂需求的软件项目的研发速度</p>
+</blockquote>
+<p>理论：</p>
+<blockquote>
+<p>通过构建领域模型来解决软件开发的复杂性问题。因为在大多数软件项目中，最困难的往往是解决业务领域复杂性，而非技术复杂性</p>
+</blockquote>
+<p>特征：</p>
+<blockquote>
+<p>设计与开发的绑定，DDD强调软件设计概念必须在开发过程中得以成功实现</p>
+</blockquote>
+<p>DDDP:</p>
+<blockquote>
+<p>DDD方法中，将一组设计实践、技术和原则合并为标准模式，即所谓的领域驱动设计模式(domain driven design pattern，简称DDDP)</p>
+</blockquote>
+<h2 id="基本原则"><a href="#基本原则" class="headerlink" title="基本原则"></a>基本原则</h2><ul>
+<li>Evans强调设计概念必须在代码中成功实现，否则它们将会变成抽象的讨论。DDD通过引入模型驱动设计建模范式及其构造块，弥补模型与可运行软件之间的差距</li>
+<li>DDD提倡迭代开发，领域驱动设计与具体实现过程间紧密关系，使得DDD比其他软件设计方法更具实用性</li>
+<li>DDD追求领域模型需要依靠头脑风暴的创造性和对领域的深入了解，因此在实践过程中，开发人员与领域专家之间需要展开紧密协作</li>
+<li>DDD是一种软件设计方法，而任何设计出来的领域模型都应该与架构无关。也就是除了领域模型，在软件开发过程中仍然需要架构设计，比如微服务架构或六边形架构</li>
+</ul>
+<h2 id="DDD设计模式概览"><a href="#DDD设计模式概览" class="headerlink" title="DDD设计模式概览"></a>DDD设计模式概览</h2><p>DDD由Evans作为一种大型模式语言引入，其由一组相互关联的模式组成。</p>
+<p>模式语言提供了讨论问题的交流术语，它定义了特定场景、特定问题的解决方案，其主要目的是帮助开发者解决在设计和编程中遇到的通用问题。</p>
+<p>模式语言在软件工程中被广泛地应用，比如设计模式、企业架构模式等。</p>
+<p>DDD与DDDP的关系，正如同OOD与面向对象设计模式的关系。</p>
+<p>对于DDD，最基本的模式是通用语言，它是一种供不同涉众（如开发人员和领域专家）共同使用的语言，主要用来辅助领域建模，，</p>
+<p>一种通用语言只适用于单个限界上下文，后者作为一个电焊工的模型边界来维护模型的完整性。</p>
+<p>根据Vernon的观点，除了通用语言之外的DDDP，要么属于战略设计模式，要么属于战术设计模式。</p>
+<h3 id="战略设计模式"><a href="#战略设计模式" class="headerlink" title="战略设计模式"></a>战略设计模式</h3><p>旨在应对具有多个领域模型的大型软件开发项目的复杂性，其中，每个领域模型都属于单独的限界上下文。</p>
+<p>限界上下文以外的其他战略设计模式关注如何管理不同限界上下文之间的关系</p>
+<p>比如上下文映射负责描述不同领域模型间的通信，而职责分层则站在更高的抽象层级来组织不同领域模型间的概念依赖关系</p>
+<h3 id="战术设计模式"><a href="#战术设计模式" class="headerlink" title="战术设计模式"></a>战术设计模式</h3><p>负责根据通用语言对单个限界上下文进行领域建模，并结合面向对象原则绑定领域建模和编码实现。包括实体、值对象、聚合、服务、资源库等。</p>
+<p>实体和值对象用于对具有不同领域特征的领域对象进行建模；</p>
+<p>聚合将一组领域对象绑定为一个整体，以控制事务；</p>
+<p>服务则充当领域模型接口，具有无状态特点；</p>
+<p>资源库用于封装领域对象的数据库访问操作</p>
+<hr>
+<p><strong>感悟</strong></p>
+<p>对于基础信息的介绍，可以说基本是符合当前DDD的理论知识，只是表述方式有所差异。但鉴于每个人认知差距，可能抓住的重点信息不同，从我个人认知角度，我来点评一下：</p>
+<p>首先是定义，论文指出<strong>DDD是一种思维方式</strong>。</p>
+<p>这是种很新颖的定义。在DDD系列文章中，我们也去追寻过DDD定义。但这种定义是第一次听说。</p>
+<p><strong>软件设计中最困难的是什么？</strong></p>
+<p>论文指出是解决业务领域复杂性，而非技术复杂性。</p>
+<p>这个应该会随着软件复杂性越来越高，人们的认知会越来越深。现在技术人员还是过于看重技术，甚至对技术驱动业务深信不疑。现实是怎么样？现在工具人的流行说法已经足以说明，<em>驱动业务是少见的，而跟随业务是常态，成就业务已经了不得</em>。</p>
+<p>为什么瀑布模型不适合软件行业，就因为隐藏的业务知识太多。不可能一次性就把所有业务知识提取出来，而且在软件开发进程中，业务可能还在变化中发展。</p>
+<p>借助敏捷中迭代式开发，一次次与领域专家交流的深入，才能慢慢挖掘出隐藏在业务知识中的复杂性。</p>
+<p>而DDD正是通过模型去捕获领域知识，对领域复杂性进行简化和提炼。</p>
+<p>所以整合起来看，DDD是一种迭代改进试错法，还不知道什么时候该停止，甚至停止的时候你也不知道得到的到底是垃圾还是宝藏。</p>
+<p><strong>设计与开发绑定</strong></p>
+<p>这一点，是相当重要。是DDD与别的分析方法重要区别。</p>
+<p>为什么DDD如此流行，可能跟很多技术大词一样，正如之前在中台文章所说，可能是应激者怕掉队，也可能是投机者想上位，很多人还是把它当成一种分析方法。</p>
+<p>如果只是一种分析法，我们之前使用的ER分析，OOA，都已经够用了。</p>
+<p>对于现流行说的DDD帮助微服务划分，那只是DDD中界限上下文这一个点，而且服务划分也不能只考虑领域界限，还有其它因素。</p>
+<p>因此需要多思考，为什么需要DDD，DDD到底有什么独到之处？</p>
+<p>我个人认为理由在Evans著作中提到的知识消化。学习者过多的精力放在了战术部分，什么是实体、领域服务、repository等等这些元素上。</p>
+<p>在编程实践中，我们希望实实在在的用上DDD元素，才表示我们是在进行DDD，而其实没有DDD，对OO的深刻理解，充血模型是自然而然的。</p>
+<p>然而，如果没有DDD战略部分，只有DDD战术元素，那只是<strong>DDD编码风格</strong>，而编码风格，没有高低之下，贫贱之分。</p>
+<p>何为知识消化？我特此画张图：</p>
+<p><img src="http://images.zhuxingsheng.com/20211113145601_1636786561.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>业务方与技术方沟通业务需求，在交流中，对部分业务知识达到共识，这部分交流语言被标准化为统一语言；</p>
+<p>在不断地交流中，对于双方达成共识部分，凝炼成到模型中，对模型review，以确定描述了业务实际情况，发现缺乏或不适当概念时，进行修正，指取新的统一语言；</p>
+<p>当模型确认后，以模型为样本，使用代码实现它；</p>
+<p>上面是正向流程，技术方在重构代码时，也会同步修改模型，进来提取出新的统一语言，反哺业务方。</p>
+<p>通过正逆流程，达到修改统一语言就是修改模型，修改模型也就是修改代码；修改代码也是修改模型，修改模型也相继修改统一语言。</p>
+<p>这样打破了知识壁垒，给予业务方与技术方一种更好的协同方式。这就是DDD的精髓。让分析模型与实现模型融合了，不再像以前的方法一样分裂。</p>
+<hr>
+<h1 id="研究结果"><a href="#研究结果" class="headerlink" title="研究结果"></a>研究结果</h1><p><img src="http://images.zhuxingsheng.com/20211113161210_1636791130.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>如上图所示，应用DDDP的相关活动主要分为4类：领域分析、领域设计、领域模型实现和普适性活动。</p>
+<p>领域分析：与领域专家一起探索领域知识的过程。经过领域，将得到初始的领域模型；</p>
+<p>领域设计：指将模型分成不同部分（每个部分对应着独立的限界上下文），然后扩展和细化每个限界上下文的过程，以此为开发实现做准备</p>
+<p>领域模型实现：将模型转换为可运行代码，这一过程还通过检查模型为模型设计提供反馈</p>
+<p>普适性活动：在应用DDDP时，可能在领域分析，领域设计，领域模型实现这3个阶段都会发生的模切活动，比如构建和更新通用语言</p>
+<h2 id="应用情况"><a href="#应用情况" class="headerlink" title="应用情况"></a>应用情况</h2><p>在基础研究集合中，出现频次到达3次以上的DDDP，以及对应的描述和提及这些模式的研究文献</p>
+<p><img src="http://images.zhuxingsheng.com/20211113162647_1636792007.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>这些模式出现的频次并不平衡，战术设计模式被提及的频次明显高于战略设计，表明开发人员更容易注意到领域驱动设计的战术设计模式。</p>
+<p>总体而言，目前只有31.1%的DDDP在基础研究中得到探讨，这也表明当前学术界对DDDP的研究存在不足。</p>
+<h2 id="应用DDDP的收益"><a href="#应用DDDP的收益" class="headerlink" title="应用DDDP的收益"></a>应用DDDP的收益</h2><p>下图展示了应用DDDP所带来的收益在领域分析、领域模型实现以及普适性活动中的体现情况</p>
+<p><img src="http://images.zhuxingsheng.com/20211113163048_1636792248.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>对每个阶段带来的收益细节详述一下</p>
+<h3 id="领域设计"><a href="#领域设计" class="headerlink" title="领域设计"></a>领域设计</h3><p>应用DDDP收益在于使各个领域之间依赖关系更加明确，上下文映射和职责分层用于组织系统的不同部分：</p>
+<p>前者表示不同限界上下文之间的关系，每个上下文表示一个特定的领域；</p>
+<p>后者根据领域对象职责，将它们组织成具有清晰依赖关系的层次结构</p>
+<p>帮助开发人员更加深入地了解系统，降低认知复杂性，有助于分析系统架构</p>
+<h3 id="领域模型实现"><a href="#领域模型实现" class="headerlink" title="领域模型实现"></a>领域模型实现</h3><p>应用DDDP有助于领域模型的落地实现。</p>
+<h3 id="普适性活动"><a href="#普适性活动" class="headerlink" title="普适性活动"></a>普适性活动</h3><p>可以提升软件架构的质量属性，如可维护性、可扩展性、可重用性和可测试性等</p>
+<h2 id="应用DDDP的挑战"><a href="#应用DDDP的挑战" class="headerlink" title="应用DDDP的挑战"></a>应用DDDP的挑战</h2><p>下图列出了在领域分析、领域设计、领域模型实现和普适性活动中，应用DDDP可能面临的挑战以及相应的缓解方法</p>
+<p><img src="http://images.zhuxingsheng.com/20211113211041_1636809041.jpg?imageMogr2/thumbnail/!50p"></p>
+<p><img src="http://images.zhuxingsheng.com/20211113211103_1636809063.jpg?imageMogr2/thumbnail/!50p"></p>
+<hr>
+<p><strong>感悟</strong></p>
+<p>可以看出论文对DDDP应用的收益和挑战阐述得很详细。在现实实践中，挑战远比论文中提到的还要多。我觉得主要是两方面：</p>
+<p>一是对理论研究的不够深入，没有系统性学习</p>
+<p>二是过于关注战术问题，不深入战略部分而不知所以然，又对OO的理解不深入使其难以落地，从而抱怨DDD</p>
+<p>对于第一条</p>
+<p>1、从个人学习者角度，只能自己多看看市面上已经出版的书籍，碎片化时间系统性学习，而不是随便看看几篇文章，就以为理解DDD了，现在DDD就像个筐，什么东西都在往里装，就算是Evans开山之作，也有很多时代局限性；</p>
+<p>2、从团队角度讲，不要奢求团队每个人都去理解DDD，毕竟它的本身门槛就高，作为TL，需要自身内化DDD，制定规范，团队执行就可以，向有兴趣的同学传输背后理论。</p>
+<p>对于第二条</p>
+<p>3、除了需要系统性学习外，要明白DDD精髓与DDD编码风格是两码事，在实践DDD过程中，也带有个人经验特征，不仅要有自我理论作为背后支撑，也要认识到不是使用了战术元素，我们就是DDD了，而是要有DDD的知识消化过程。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>软件工程中是“没有银弹”的，任何理论方法都会存在一定的局限性和缺点，DDDP也是如此。因此应用各种DDDP带来的局限或者挑战，仍需要未来进一步探索和反思。</p>
+<p>也希望我的感悟能帮助到你，如果有兴趣可以再看看论文原稿。对于高阶程序员来讲，困难的不是能不能干出来，而是怎么干才舒坦。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/architecture-and-architect-3.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/architecture-and-architect-3.html" class="post-title-link" itemprop="url">架构与架构师3</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-11-07 21:27:00 / Modified: 21:29:17" itemprop="dateCreated datePublished" datetime="2021-11-07T21:27:00+08:00">2021-11-07</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近又看了几本关于架构的书籍，不禁回到原点：架构是什么？架构师职责是什么？</p>
+<h1 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h1><p>在<a href="http://www.zhuxingsheng.com/blog/architecture-and-architect-2.html">《架构与架构师2》</a>中引用了1995年David Garlan和Dewayne Perry给出的定义：</p>
+<blockquote>
+<p>系统的组件结构，组件的相互关系，以及管控组件设计和长期演进的原则和指导方针</p>
+</blockquote>
+<p>十几年前，软件架构师只处理架构中的纯技术问题，像上面定义中的组件，可能是类，是包。而现在架构师承担着大量、宽泛的责任，并且范围还在不断扩大。尤其云时代，IT基础设施包括网络、数据中心、计算基础设施、存储，以及其他子系统都得考虑</p>
+<p>贴一张思维导图来说明软件架构涵盖的范围</p>
+<p><img src="http://images.zhuxingsheng.com/20211105193558_1636112158.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>从图中可以看出，架构师的职责包含技术能力、软技能、运营意识及其他很多方面</p>
+<p>所以定义架构不是件轻松的事，Martin Fowler也都拒绝尝试对架构做出定义，退而引用名言：</p>
+<blockquote>
+<p>“架构是那些重要的东西…………无论它具体是什么”<br>            —-  Ralph Johnson</p>
+</blockquote>
+<p>所以在行业内共识：对软件架构本身并没有一个好的定义。</p>
+<p>虽然架构很难定义，但我们总得尝试着描述它，分解它，进而更好地运用它指导软件开发。如果说软件世界更迭速度过快，组件化定义显得太陈旧，那我们需要一种与时俱进的思考软件架构的方式</p>
+<p>Mark Richards与Neal Ford展示了这样的思考方式</p>
+<p><img src="http://images.zhuxingsheng.com/20211106151058_1636182658.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>如图中所示：软件架构包含系统的结构、系统必须支持的架构特征、架构决策以及设计原则</p>
+<h2 id="系统结构"><a href="#系统结构" class="headerlink" title="系统结构"></a>系统结构</h2><p>实现该系统的一种或多种架构风格（比如微服务、分层和微内核）</p>
+<p><img src="http://images.zhuxingsheng.com/20211106151349_1636182829.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>仅仅描述结构并不能完整地诠释架构，还需要了解架构特征、架构决策和设计原则</p>
+<h2 id="架构特征"><a href="#架构特征" class="headerlink" title="架构特征"></a>架构特征</h2><p>架构特征定义了系统的成功标准，这些标准往往与系统的功能正交</p>
+<p><img src="http://images.zhuxingsheng.com/20211106151638_1636182998.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/architecture-and-architect.html">《架构与架构师》</a>中，指出应用系统需要考虑两方面内容：一是功能性需求，二是非功能性需求。</p>
+<p>但从语言角度来看，将一个东西命名为非功能会带来负面影响：如何说服团队充分注意“非功能性”的东西</p>
+<p>另一个流行术语是质量属性，但它暗示的是事后质量评估而不是设计。</p>
+<p>架构特征描述了对架构以及整个系统的成功至关重要的关注点，同时又不影响其重要性。</p>
+<p>架构特征满足三个标准：</p>
+<ol>
+<li>明确非领域设计的某个注意事项</li>
+<li>影响设计的某些结构项</li>
+<li>是否对应用的成功至关重要</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/20211106154353_1636184633.jpg?imageMogr2/thumbnail/!50p"></p>
+<h2 id="构架决策"><a href="#构架决策" class="headerlink" title="构架决策"></a>构架决策</h2><p>架构决策定义了一组关于如何构建系统的规则，构成了系统约束，并指导团队哪些可以做，哪些不可以做</p>
+<p><img src="http://images.zhuxingsheng.com/20211106155328_1636185208.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>比如在一个分层架构中，架构师可能会规定只有业务层和服务层可以访问数据库，限制表现层直接调用数据库。</p>
+<h2 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h2><p>设计原则与架构决策的不同之处在于，设计原则是指导原则，而不是必须遵守的规则。</p>
+<p><img src="http://images.zhuxingsheng.com/20211106160140_1636185700.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>在微服务架构中，开发团队应该使用服务间的异步消息传递来提升性能。</p>
+<h1 id="架构定律"><a href="#架构定律" class="headerlink" title="架构定律"></a>架构定律</h1><p>虽然架构范围已经大到难以置信，但统一元素仍然存在。</p>
+<p><strong>架构第一定律：</strong></p>
+<blockquote>
+<p>软件架构中的一切都是在做权衡</p>
+</blockquote>
+<p>当架构师若认为自己发现了不需要做权衡的东西，很有可能他们只是还没有发现需要舍弃的东西而已</p>
+<p>通过结合架构的原则、特征等，我们对软件架构的定义超越了软件结构脚手架。架构不仅仅是各种要素的组合，还体现了<strong>架构第二定律：</strong></p>
+<blockquote>
+<p>原因比方法更重要</p>
+</blockquote>
+<p>架构师面对不了解的系统时，可以探明这个架构是如何工作的，但会很难解释某个选择背后的原因。</p>
+<p>因此架构师需要去详细记录架构决策以及背后权衡的逻辑。</p>
+<h1 id="架构师"><a href="#架构师" class="headerlink" title="架构师"></a>架构师</h1><p>在之前的两篇文章中指出架构师必须要有屠龙刀还得有绣花针，需要技术+业务+管理三条腿。</p>
+<p>总之一句话，架构师是最牛的人。可一个团队不能人人都是架构师，况且还有资深工程师，技术专家。作为架构师与他们的区别是什么呢？能力模型有什么不同呢？</p>
+<p>决定一个人的强弱，是他的认知水平。对应技术人员就是对技术的认知。架构师的认知有四个阶段：</p>
+<p><img src="http://images.zhuxingsheng.com/20211106211014_1636204214.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>愚昧之巅（不知道自己不知道）、绝望之谷（知道自己不知道）、开悟之坡（知道自己知道）和持续平衡的高原（不知道自己知道），这也是架构师的认知逐步提升的过程。</p>
+<p>如果人们对开发工程师的期望是把功能需求开发完成，那对架构师的期望就多样了</p>
+<p><strong>一、制定架构决策</strong></p>
+<p>架构师需要制定架构决策和设计原则，以指导团队、部门或者整个企业进行技术决策</p>
+<p><strong>二、持续分析架构</strong></p>
+<p>架构师需要持续分析架构和当前技术环境，然后给出改进建议。从整体上分析技术和问题域的变化，以确定架构的稳健性</p>
+<p><strong>三、掌握最新趋势</strong></p>
+<p>开发人员必须时刻关注技术更新，从而保证与这些技术与时俱进。对架构师来说，掌握最新的技术和行业趋势更为关键</p>
+<p><strong>四、确保决策被遵守</strong></p>
+<p>架构师需要确保架构决策和设计原则被遵守</p>
+<p><strong>五、丰富的经历和经验</strong></p>
+<p>架构师需要涉猎各种各样的技术、框架、平台和环境</p>
+<p><strong>六、具备业务领域知识</strong></p>
+<p>一个称职的软件架构师不仅要了解技术，还要了解问题背后的业务领域。没有业务领域知识，就无法理解业务的问题、目标和需求，也就不可能设计出有效的架构</p>
+<p><strong>七、具备人际交往能力</strong></p>
+<p>架构师需要具备出色的人际交往能力，其中包括团队合作、引导和领导力</p>
+<p><strong>八、了解并驾驭政治</strong></p>
+<p>架构师所做的几乎每个决策都会受到挑战。由于成本或工作量（时间）的增加，架构性决策将受到产品负责人、项目经理和业务利益相关者的挑战</p>
+<hr>
+<p>针对以上八点，以及技术+业务+管理三项技术人普实能力，可以更简洁地概述架构师自身定制的三条腿：<strong>技能+影响力+领导力</strong></p>
+<p>1.技能是实践架构的基础。它需要知识以及应用知识的能力</p>
+<p>2.影响力用来衡量架构师在项目中应用技能后给项目或公司带来多大的效益</p>
+<p>3.领导力确保了架构实践的状态能稳步向前推进，同时培养更多的架构师</p>
+<h2 id="能力模型"><a href="#能力模型" class="headerlink" title="能力模型"></a>能力模型</h2><p>论能力模型，与开发人员之间对技术方向的侧重有所不同。开发人员必须拥有很深的技术深度，但软件架构师必须具有非常广的技术广度才能像架构师般思考，并以架构的角度看待事物。</p>
+<p>以知识金字塔展示世界上所有技术知识的类别，事实证明，技术人员应重视的信息类型随职业阶段的不同而不同</p>
+<p><img src="http://images.zhuxingsheng.com/20211106221835_1636208315.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>“已知”指代技术人员日常工作用到的技术、框架、编程语言和工具</p>
+<p>“已知的未知”指代技术人员稍微了解或听说过，但没有掌握的技术</p>
+<p>“未知的未知”是金字塔中面积最大的部分，指代能够完美解决技术人员面临的问题的技术、工具、框架和编程语言，但是技术人员甚至都不知道它们的存在</p>
+<p>开发人员的早期职业生涯专注于扩展金字塔的顶端，积累经验和专业知识。金字塔顶端的知识需要投入时间才能保持专业。最终，金字塔顶的大小就是个人的技术深度。</p>
+<p><img src="http://images.zhuxingsheng.com/20211106223419_1636209259.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>而随着开发人员过渡到架构师角色，知识的性质也发生变化。架构师的价值很大一部分是广泛地理解技术，并且知道如何利用技术解决特定的问题。对架构师来说，最重要的部分是金字塔的顶部和中间部分</p>
+<p><img src="http://images.zhuxingsheng.com/20211106230846_1636211326.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>中间部分与底部交汇处的长度代表了架构师的技术广度</p>
+<p>作为架构师，技术广度比技术深度更重要。因为架构师的职责就是根据功能做出与技术限制相匹配的决策，所以广泛了解了解各种解决方案是非常有价值的</p>
+<p><img src="http://images.zhuxingsheng.com/20211106231620_1636211780.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>架构师需要“博而不专”，牺牲技术深度来提高技术广度，虽然技术人都想在多个领域保持专业深度，但结果往往事与愿违，甚至无一成功。</p>
+<p>对于能力模型为啥有区别，简单总结一下：</p>
+<p><strong>广度决定能找到的方法+深度决定选择方法的正确性+经验决定找到正确方法的速度</strong></p>
+<h2 id="平衡编码"><a href="#平衡编码" class="headerlink" title="平衡编码"></a>平衡编码</h2><p>虽然架构师的能力模型与开发工程师有所不同，但还是需要保持动手编写代码，并保持一定水平的技术深度。</p>
+<p>正好之前所说，不仅要有屠龙术，还要会瓷器活。</p>
+<p>因此架构师面临的困难任务之一是如何在动手编码和软件架构之间取得平衡。</p>
+<p>如果参与过多的编码工作，可能会陷入瓶颈陷阱。也就是当架构师在项目的关键部分（通常是基础框架代码）中拥有代码所有权并成为团队的瓶颈时，就会发生瓶颈陷阱。</p>
+<p>避免瓶颈陷阱方法之一是将关键路径和框架代码委托给开发团队其他人员，然后着重于实现业务功能（一个服务），并且在1~3个迭代中完成。</p>
+<p>如何保持编码能力和一定水平的技术深度呢？</p>
+<p>一、频繁进行概念验证（POC），这种做法不仅要求架构师编写源代码，还要求架构师能够通过考虑细节来帮助验证架构决策</p>
+<p>二、处理一些技术债或架构相关的故事问题，使开发团队腾出精力来处理关键的功能性的用户故事；或者在迭代中修复bug，能使架构师识别出存在于代码甚至架构中的问题和弱点</p>
+<p>三、创建简单的命令行工具和分析器进行自动化来帮助开发团队完成日常任务</p>
+<p>四、进行频繁的代码审查，通过代码审查能确保代码符合架构规则，并在团队中进行指导和辅导</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>架构定义是件不容易的事，软件发展日异月新，架构的范围也日益扩大，进一步加据了定义架构的难度。但无论如何，我们还是有必要通过结构化思维去分析架构，进化古老的组件化定义，从架构结构、架构决策、架构特征以及设计原则四方面描述架构，继而明确架构师的职责，区别与开发工工程师的能力模型，加强“技能+影响力+领导力”三条腿能力成长，更好地服务架构。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/conway-law-and-inverse-conway-law.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/conway-law-and-inverse-conway-law.html" class="post-title-link" itemprop="url">康威定律与逆康威定律</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-10-17 14:26:00" itemprop="dateCreated datePublished" datetime="2021-10-17T14:26:00+08:00">2021-10-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-08-13 21:35:43" itemprop="dateModified" datetime="2022-08-13T21:35:43+08:00">2022-08-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>康威定律随着微服务架构兴起的步伐慢慢复苏，重新进入人们的视线，但他的威力远远不仅限于简单的指导如何拆分微服务，不管是整个团队的战力，还是架构方案能否顺利落地都起着重要的作用。</p>
+<h1 id="康威定律"><a href="#康威定律" class="headerlink" title="康威定律"></a>康威定律</h1><p>先回顾一下什么是康威定律：1968年，计算机系统研究院的梅尔康威在Datamation杂志上发表了一篇论文How Do Committees Invent?</p>
+<p>这篇论文中有一句话被总结为康威定律：<strong>“设计系统的组织由于受到约束，这些设计往往是组织内部沟通结构的副本。”</strong></p>
+<p>下面先通过一次切身经历来阐述定律如何发挥威力，以及如何通过逆康威定律得到我们想要的架构方案</p>
+<p>起初我带领一支团队负责一个业务，先称它为APP1，经过一段时间，老板找我谈话，说：“APP1在你的带领下，运行得不错，应该承担更大的责任，后面APP2团队也由你负责”。</p>
+<p>经过一段时间的迭代，APP2需要一个配置服务，支撑差异化运营</p>
+<p>APP2架构师根据最新业务需求，提出了给APP2增加一个配置服务，对于APP2来讲，架构师都无需赘述，此架构方案无疑是合理的</p>
+<p>但从整体看APP1已经有配置服务</p>
+<p><img src="http://images.zhuxingsheng.com/20211017194630_1634471190.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>此时就有了两个方案：</p>
+<ol>
+<li>按架构师规划，APP2构建新的配置服务</li>
+<li>增强APP1的配置服务，让它同时支撑APP1和APP2</li>
+</ol>
+<p>怎么决择呢？</p>
+<p>从架构角度，方案一似乎更有优势，独立，两个APP之间也不会相互干扰，原先的配置服务也无需改动，相对去改造一个旧系统，构建新系统负担还小一些</p>
+<p>但从组织结构讲，组织效能角度也更高效，大局出发，也不需要两个相似的配置服务，组织结构与架构结构也更有同态性</p>
+<p><img src="http://images.zhuxingsheng.com/20211017202415_1634473455.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>此时，康威定律就发挥了至关重要的作用：<strong>“如果系统的架构和组织结构不一致，那么组织结构将成为赢家”</strong></p>
+<hr>
+<p>当我在计划着进一步整合两个团队时，事情发生了变化，老板又找我谈话了，“经过这段时间，发现你带两个团队有些吃力，这样吧，以后你就只负责APP2团队”</p>
+<p>随着业务的继续开展，发现了个问题，当APP2团队需求需要变更配置服务时，为难了</p>
+<p>APP1使用配置服务深度和广度都高于APP2，所以在划分时，配置服务归于APP1了，之前都是同一个大团队，资源协调很简单，内部沟通很容易</p>
+<p>此时怎么办？</p>
+<p>原先团队内部的沟通，需要跨团队沟通了，再简单的一次变更，都需要提前沟通，协调排期，制约了高效迭代交付能力</p>
+<p>所以APP2团队不得不剥离APP1的配置服务，另起炉灶，回到当初架构师的方案一</p>
+<p>这其实还是康威定律发挥着威力：<strong>组织内部的沟通路径（无论是否和正式汇报线一致）严重制约了组织所能设计的解决方案的类型</strong></p>
+<h1 id="逆康威定律"><a href="#逆康威定律" class="headerlink" title="逆康威定律"></a>逆康威定律</h1><p>这是ThoughtWorks技术总监James Lewis突发奇想地提出的，<strong>组织要根据他们想得到的软件架构来设计团队结构，而不是期望团队盲从一个被设计好的团队结构</strong>。</p>
+<p>其核心观点在于，<strong>将软件架构看作一个独立的概念，认为它可以被孤立设计，然后交由任何团队来实现，这从根本上就是错误的</strong></p>
+<p>我们把上面的示例，顺序倒置过来，就是逆康威定律。</p>
+<p>我详细阐述下：</p>
+<p>刚开始，APP1和APP2是两个独立完整的团队，都有各自的配置服务，也就是</p>
+<p><img src="http://images.zhuxingsheng.com/20211017194630_1634471190.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>虽然他们功能相似，但由于在两个团队里面，与组织结构和沟通路径都是匹配的</p>
+<p>从公司全局架构看，发现配置服务只需要一个就够了，推倒烟囱式架构，整合资源，配置服务中台化，这也是近些年各公司崇拜的中台文化</p>
+<p>怎么办呢？简单啊，提取共性，抽象整合呗。</p>
+<p>现实没那么轻松，如果两大APP团队，是支撑公司盈利的两大业务，营收压力也很大，基本上整合是句空话，看看有多少公司的BU都是各自为战，烟囱式系统一个比一个强悍，谁能动得了？</p>
+<p>此时怎么办？整合组织结构，让两个团队组合成更大的团队，拥有独立的架构团队，团队内部自己就会催生出整合的力量</p>
+<p>再看一个示例，假设有四个独立团队，每个都由前后端开发工程师组成，他们分别负责系统的不同部分，然后对DBA提出数据库变更请求。</p>
+<p><img src="http://images.zhuxingsheng.com/20211017220412_1634479452.jpg?imageMogr2/thumbnail/!30p"></p>
+<p>如果这四支团队独立的前端和后端开工程师推动了UI和应用层的前后端分离，而有一个共享的DBA团队，那么很可能会带来这样一个单一的共享数据库。</p>
+<p>因为康威定律的同态力会强烈地牵引软件架构“自然而然”地体现出当前的组织设计和沟通路径。</p>
+<p>当我们在使用微服务架构时，每个独立服务都需要有属于自己的数据存储。</p>
+<p><img src="http://images.zhuxingsheng.com/20211017220449_1634479489.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>通过应用逆康威定律，可以在各个独立的客户端应用和API开发团队里面增加一名数据库开发人员，那架构结构自然就体现出来了。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>想想架构风格千千万万，为什么分层架构却是最流行的，也是最容易实践成功的，因为有独立的前端团队，后端团队，基础服务团队，对于业务数据流向，正好也是从UI发起，逻辑层处理，数据库存储，组织结构与架构结构是匹配的。这就是康威定律的威力。</p>
+<p>组织结构和团队间真实的沟通路径会直接影响所构建系统的架构。如果有四个小组合作开发一个编译器，那么你将得到一款具有四个步骤的编辑器。对于一家软件产品公司来说，组织结构预示着产品架构。</p>
+<p>过去很多组织结构调整的潜在目标都是为了减少员工或者围绕管理者和领导者的权势建立山头。可对于一家软件公司，势必慎重，必须要考虑架构，更可以应用逆康威定律：设计团队满足理想的软件架构</p>
+<p>简而言之，在设计软件架构或进行组织结构调整时，将康威定律纳入考虑因素之中，就能够受益于兼顾软件架构和团队设计的同态力。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/modeling-is-not-necessary.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/modeling-is-not-necessary.html" class="post-title-link" itemprop="url">建模没必要</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-23 09:27:00" itemprop="dateCreated datePublished" datetime="2021-09-23T09:27:00+08:00">2021-09-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Eric在DDD第一章节就介绍了模型，可见模型的作用不言而喻，说DDD是一种模型驱动设计方法，绝对没有问题</p>
+<p>那是不是我们在拿到业务需求时，就急呼呼的跟业务方来一起构造模型呢？毕竟模型是万事之首嘛</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/ddd-opening.html">《DDD开篇》</a>提过DDD是一种基于面向对象的设计方法，我们既然已经有了面向对象，而且OOAD也很强大，为什么还需要DDD呢？</p>
+<p>要想弄清楚这两个问题，首先我们需要拿个示例来仔细比对一下</p>
+<h1 id="OOP小示例"><a href="#OOP小示例" class="headerlink" title="OOP小示例"></a>OOP小示例</h1><p>在<a href="http://www.zhuxingsheng.com/blog/what-is-objectoriented.html">《面向对象是什么》</a>一文中提到的游戏小示例</p>
+<p>有个游戏，基本规则就是玩家装备武器去攻击怪物</p>
+<ul>
+<li>玩家（Player）可以是战士（Fighter）、法师（Mage）、龙骑（Dragoon）</li>
+<li>怪物（Monster）可以是兽人（Orc）、精灵（Elf）、龙（Dragon），怪物有血量</li>
+<li>武器（Weapon）可以是剑（Sword）、法杖（Staff），武器有攻击力</li>
+<li>玩家可以装备一个武器，武器攻击可以是物理类型（0），火（1），冰（2）等，武器类型决定伤害类型</li>
+</ul>
+<p>作为一名受过OO熏陶的程序员，借助OO的继承特性把类结构设计成：</p>
+<p><img src="http://images.zhuxingsheng.com/20210919215112_1632059472.jpg"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public abstract class Player &#123;</span><br><span class="line">      Weapon weapon</span><br><span class="line">&#125;</span><br><span class="line">public class Fighter extends Player &#123;&#125;</span><br><span class="line">public class Mage extends Player &#123;&#125;</span><br><span class="line">public class Dragoon extends Player &#123;&#125;</span><br><span class="line"></span><br><span class="line">public abstract class Weapon &#123;</span><br><span class="line">    int damage;</span><br><span class="line">    int damageType; // 0 - physical, 1 - fire, 2 - ice etc.</span><br><span class="line">&#125;</span><br><span class="line">public Sword extends Weapon &#123;&#125;</span><br><span class="line">public Staff extends Weapon &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>攻击规则如下：</p>
+<ul>
+<li>兽人对物理攻击伤害减半</li>
+<li>精灵对魔法攻击伤害减半</li>
+<li>龙对物理和魔法攻击免疫，除非玩家是龙骑，则伤害加倍</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class Player &#123;</span><br><span class="line">    public void attack(Monster monster) &#123;</span><br><span class="line">        monster.receiveDamageBy(weapon, this);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Monster &#123;</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        this.health -= weapon.getDamage(); // 基础规则</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Orc extends Monster &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        if (weapon.getDamageType() == 0) &#123;</span><br><span class="line">            this.setHealth(this.getHealth() - weapon.getDamage() / 2); // Orc的物理防御规则</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            super.receiveDamageBy(weapon, player);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Dragon extends Monster &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        if (player instanceof Dragoon) &#123;</span><br><span class="line">            this.setHealth(this.getHealth() - weapon.getDamage() * 2); // 龙骑伤害规则</span><br><span class="line">        &#125;</span><br><span class="line">        // else no damage, 龙免疫力规则</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果此时，要增加一个武器类型：狙击枪，能够无视一切防御，此时需要修改</p>
+<ol>
+<li>Weapon,扩展狙击枪Gun</li>
+<li>Player和所有子类（是否能装备某个武器）</li>
+<li>Monster和所有子类（伤害计算逻辑）</li>
+</ol>
+<p>除了伤害逻辑有各种规则，还有装备武器也会有各种规则</p>
+<p>比如，战士只能装备剑，法师只能装备法杖，但他们都可以装备匕首</p>
+<p>再比如，当我们有不同的对象，但又有相同或类似的行为时，OOP会不可避免的导致代码的重复</p>
+<p>在这个例子里，如果我们去增加一个“可移动”的行为，需要在Player和Monster类中都增加类似的逻辑：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public abstract class Player &#123;</span><br><span class="line">    int x;</span><br><span class="line">    int y;</span><br><span class="line">    void move(int targetX, int targetY) &#123;</span><br><span class="line">        // logic</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public abstract class Monster &#123;</span><br><span class="line">    int x;</span><br><span class="line">    int y;</span><br><span class="line">    void move(int targetX, int targetY) &#123;</span><br><span class="line">        // logic</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一个可能的解法是有个通用的父类：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public abstract class Movable &#123;</span><br><span class="line">    int x;</span><br><span class="line">    int y;</span><br><span class="line">    void move(int targetX, int targetY) &#123;</span><br><span class="line">        // logic</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public abstract class Player extends Movable;</span><br><span class="line">public abstract class Monster extends Movable;</span><br></pre></td></tr></table></figure>
+
+<p>但如果再增加一个跳跃能力Jumpable呢？一个跑步能力Runnable呢？如果Player可以Move和Jump，Monster可以Move和Run，怎么处理继承关系？要知道Java（以及绝大部分语言）是不支持多父类继承的，所以只能通过重复代码来实现</p>
+<hr>
+<h2 id="原生OOP力不从心"><a href="#原生OOP力不从心" class="headerlink" title="原生OOP力不从心"></a>原生OOP力不从心</h2><p>从OO角度看待，逻辑简单，代码也算过得去，也基本符合充血模型需要的数据与行为结合性要求</p>
+<p>但如果业务比较复杂，未来会有大量的业务规则变更时，简单的OOP代码会在后期变成复杂的一团浆糊，逻辑分散在各地，缺少全局视角，各种规则的叠加会触发bug。</p>
+<p>在这个小示例中，可以看到新增加一次规则几乎重写很多类，改造成本相当高，这还写得不够OO吗？</p>
+<p>总体而言，上面的代码没有处理好这三个问题：</p>
+<ul>
+<li>业务规则的归属到底是对象的“行为”还是独立的”规则对象“？</li>
+<li>业务规则之间的关系如何处理？</li>
+<li>通用“行为”应该如何复用和维护？</li>
+</ul>
+<hr>
+<h1 id="DDD应对"><a href="#DDD应对" class="headerlink" title="DDD应对"></a>DDD应对</h1><p>示例和单纯使用面向对象的问题已经很明晰了，DDD如何应对呢？</p>
+<p>当然，可以申辩</p>
+<p>虽然示例代码已经很OO，但却没有遵守OO原则<a href="http://www.zhuxingsheng.com/tags/SOLID/">SOLID</a>，至少没有达到OCP目标</p>
+<p>尤其开始就掉进OOP的陷阱，使用继承来实现看似是继承关系的逻辑，没有遵循组合优先于继承的原则</p>
+<p>尤其没有提取出业务规则，并理清业务规则的归属，不应该与实体对象混合</p>
+<h2 id="建模"><a href="#建模" class="headerlink" title="建模"></a>建模</h2><p>示例本身很简单，如果我们建模，大概是这样：</p>
+<p><img src="http://images.zhuxingsheng.com/20210919215132_1632059492.jpg"></p>
+<p>但很怪，模型则偏重于数据角度，描述了在不同业务维度下，数据将会如何改变，以及如何支撑对应的计算与统计，也就是说模型上看，会有实体以及实体间的关系，隐藏了业务维度，可以我们这个模型上却包含了动词，来描述业务行为</p>
+<p>当然这个模型可以再充实一下，比如把业务规则标识上去，这也说明了传统模型的缺点，如果你对其他模型感兴趣，请关注我，后期会详情介绍模型系列文章</p>
+<p>我们回到有问题的本质原点，为什么要建模呢，为了抽象复杂业务逻辑，降低理解业务的成本，挖掘更多的业务隐藏知识</p>
+<p>可上面的示例太清楚了，一览无余。一句话可以概述出整个业务需求：</p>
+<p>玩家使用武器攻击怪物，对怪物造成伤害，直至怪物死亡</p>
+<p>把规则加进去：</p>
+<p>玩家按规则使用武器按规则攻击怪物，对怪物、玩家、武器造成一定规则的影响(怪物受到伤害，玩家可能会有反弹伤害，武器持久属性会下降直到武器消失)，直至怪物死亡</p>
+<p>这其实是任何一款ARGP游戏的核心业务</p>
+<p>软件开发的核心难度在于处理隐藏在业务知识中的复杂度，模型就是对这种复杂度的简化与精练，DDD改进版还使用事件风暴方式挖掘业务知识，而像这种业务知识没有隐藏的简明型业务系统，我们已经把核心问题描述得很清楚，无需再去知识消化，事件风暴，为了DDD而DDD，所以建模价值不高，甚至毫无必要</p>
+<h2 id="DDD应对-1"><a href="#DDD应对-1" class="headerlink" title="DDD应对"></a>DDD应对</h2><p>在上面的申辩中，我们已经发现了并不是OO不行，而是使用OO方式不对，虽说要把OO原则深入骨髓，可有没有一种方法能直接上升一层次，就像我们在使用面向过程语言时，也要有面向对象思维，实践没那么容易，直接使用面向对象语言，会让我们更容易使用面向对象思维，领略OO精髓</p>
+<p>DDD正好就是这样一种方法，基于OO的升华，主要看看领域层的规范</p>
+<h3 id="实体，充血的实体"><a href="#实体，充血的实体" class="headerlink" title="实体，充血的实体"></a>实体，充血的实体</h3><p>这一点与原生OO一样，数据与行为相结合</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class Player &#123;</span><br><span class="line">    private String name;</span><br><span class="line">    private long health;</span><br><span class="line">    private WeaponId weaponId;</span><br><span class="line">    </span><br><span class="line">    public void equip(Weapon weapon) &#123;</span><br><span class="line">       // ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>任何实体的行为只能直接影响到本实体（和其子实体）</li>
+<li>因为 Weapon 是实体类，但是Weapon能独立存在，Player不是聚合根，所以Player只能保存WeaponId，而不能直接指向Weapon</li>
+<li>实体需要依赖其他服务时，也不能直接依赖，使用Double Dispatch</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class Player &#123;</span><br><span class="line"></span><br><span class="line">    public void equip(Weapon weapon, EquipmentService equipmentService) &#123;</span><br><span class="line">        if (equipmentService.canEquip(this, weapon)) &#123;</span><br><span class="line">            this.weaponId = weapon.getId();</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            throw new IllegalArgumentException(&quot;Cannot Equip: &quot; + weapon);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="领域服务-Domain-Service"><a href="#领域服务-Domain-Service" class="headerlink" title="领域服务(Domain Service)"></a>领域服务(Domain Service)</h3><h4 id="单对象"><a href="#单对象" class="headerlink" title="单对象"></a>单对象</h4><p>这种领域对象主要面向的是单个实体对象的变更，但涉及到多个领域对象或外部依赖的一些规则</p>
+<h4 id="跨对象领域服务"><a href="#跨对象领域服务" class="headerlink" title="跨对象领域服务"></a>跨对象领域服务</h4><p>当一个行为会直接修改多个实体时，不能再通过单一实体的方法作处理，而必须直接使用领域服务的方法来做操作。</p>
+<p>在这里，领域服务更多的起到了跨对象事务的作用，确保多个实体的变更之间是有一致性的</p>
+<p>不能学习实体的Double Dispatch</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class Player &#123;</span><br><span class="line">    void attack(Monster, CombatService) &#123;</span><br><span class="line">        CombatService.performAttack(this, Monster); // ❌，不要这么写，会导致副作用</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个原则也映射了“任何实体的行为只能直接影响到本实体（和其子实体）”的原则，即Player.attack会直接影响到Monster，但这个调用Monster又没有感知</p>
+<h4 id="通用组件型"><a href="#通用组件型" class="headerlink" title="通用组件型"></a>通用组件型</h4><p>像Movalbe、Runnable通用能力，提供组件化的行为，但本身又不直接绑死在一种实体类上</p>
+<h3 id="策略对象（Domain-Policy）"><a href="#策略对象（Domain-Policy）" class="headerlink" title="策略对象（Domain Policy）"></a>策略对象（Domain Policy）</h3><p>Policy或者Strategy设计模式是一个通用的设计模式，但是在DDD架构中会经常出现，其核心就是封装领域规则。</p>
+<p>一个Policy是一个无状态的单例对象，通常需要至少2个方法：canApply 和 一个业务方法。其中，canApply方法用来判断一个Policy是否适用于当前的上下文，如果适用则调用方会去触发业务方法。通常，为了降低一个Policy的可测试性和复杂度，Policy不应该直接操作对象，而是通过返回计算后的值，在Domain Service里对对象进行操作。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>DDD是一种模型驱动设计方法，但使用DDD也并不是一定要按固定方式方法一步步执行，建模是为了对复杂问题的简化和精炼，挖掘隐藏的业务知识。</p>
+<p>如果能通过简明方式就能把业务核心问题描述清楚，比其他一切手段都有用，也都重要。那我们就没必要再去为了DDD而DDD，去进行事件风暴，知识消化慢迭代方式</p>
+<p>本文中虽然提取了一些DDD领域层规范直接升华OO，但你有没有注意到一个问题，Player如果拥有很多能力，比如Moveable,Runnable,Jumpable,Fireable，那这个实体如何实现？</p>
+<p>首先我们肯定会面向接口编程，提取出interface Moveable,interface Runnable,interface Jumpable,interface Fireable，可Player呢？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class Player implements Moveable,Jumpable,Fireable &#123;</span><br><span class="line"></span><br><span class="line">    void move(int targetX, int targetY) &#123;</span><br><span class="line">        // logic</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    void jump() &#123;</span><br><span class="line">        // logic</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    void fire() &#123;</span><br><span class="line">        // logic</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以想象，随着能力越来越强大，player类会越来越臃肿，发展成超大类，充满坏味道，可我们这次也没有违反什么原则？难道达到了原生面向对象的能力极限？</p>
+<p>如果你有好的想法，欢迎留言交流。如果你觉得文章有帮助，多转发，点击右下角『看一看』</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/mo-daojun-goes-early.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/mo-daojun-goes-early.html" class="post-title-link" itemprop="url">莫道君行早</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-14 09:25:00" itemprop="dateCreated datePublished" datetime="2021-09-14T09:25:00+08:00">2021-09-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>前一段时间，脑子短路了，出现点思维障碍，突然特别想推广一下公众号，增长一下粉丝数量。</p>
+<p>所以呢，就去各大技术网站，同步一些文章，想引流到公众号，现在写作技术网站真不少，也可能因为各个能写的技术人都要打造自己的个人品牌，从这些大型平台上搬迁到个人网站了，造成了一些流量流失，所以现在这些平台也在大力推广，吸引作者回归平台，比如搞更文活动，有赏写文，用户体检也上去了，可以很方便地从别的平台把文章搬迁过来</p>
+<p>时间巧得很，7月底去看了各大平台，发现掘金在8月搞更文活动，连续更文多少天，就有相应的奖品。虽然奖品不是很值钱，但我借此机会，把文章搬过去，即能引些流量，又能得到奖品，两全其美。要得到最大奖项的要求是连续31天，心里想，这应该很难有多少人做到，每天写一篇，真是神人，除非像我这种人，已经有一大堆文章，只是手动搬迁一下</p>
+<p>虽然就每天机械地选篇文章复制过去，但坚持了一周，还是有些烦，一是每天都有这么一件事在心里挂着，二是越来越发现意义不大，不应该把时间浪费在此，哪怕只有2分钟。 同时也发现能挑选的系列文章不多，好文章也不多，几年的积累，战不过一个月的考验，悲哉</p>
+<p>一整月，终于过去了，平台发布了中奖名单，我根据人数，做了个统计</p>
+<p><img src="http://images.zhuxingsheng.com/20210908175822_1631095102.jpg"></p>
+<p>横轴是更文天数，纵轴是人数</p>
+<p>个人感觉应该是金字塔结构，结果是头尾两波人数量差不多，中间人数反而比较少，这有些违背常识，难道跟我类似的人很多？</p>
+<p>连续更文31天的人，如此之多，单单是为了这些奖品，我是不太相信，更多的应该是内驱力的驱动。莫道君行早，更有早行人。这个世界勤奋的人远超出想象，这估计也是为什么各行各业都充斥着内卷的气息</p>
+<p>这也说明在当下时代，相对过去想要成功，不仅需要付出更多的勤奋，还需要有智慧的勤奋，也就是战术勤奋，战略更不能不努力。需要更加剖析自我，找出个人特色，有的放矢。</p>
+<p>努力决定下限，运气决定上限；除了单单个人努力，在这样一个时代，还需要其他因素，而且因他因素的占比会越来越重，也越来越多元。</p>
+<p>在此环境下，我们首先需要提高自己的底层认知水平</p>
+<p>最近听好几位大佬提到一本书《跃迁》，摘抄几句：</p>
+<blockquote>
+<p>获得百倍收益的关键，并不是百倍努力。每个时代的高手都在利用社会和科技的底层逻辑撬动自己，实现跨越式的成长。</p>
+</blockquote>
+<blockquote>
+<p>长江商学院的校训是“取势、明道、优术”，个人方法论被放到了第三位，更重要的是把握趋势（取势）、理解系统运行之道（明道）</p>
+</blockquote>
+<blockquote>
+<p>没有一个人是仅凭努力、天赋、机遇而获得巨大成功的，跃迁式成功都是利用了更底层规律，激发了个体的跨越式成长。</p>
+</blockquote>
+<p><img src="http://images.zhuxingsheng.com/20210914151038_1631603438.jpg"></p>
+<p>暂时还在消化中，有些认识值得多看几遍，希望你也有所收获</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/what-is-zhongtai.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/what-is-zhongtai.html" class="post-title-link" itemprop="url">中台是什么</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-04 20:09:00" itemprop="dateCreated datePublished" datetime="2021-09-04T20:09:00+08:00">2021-09-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:29:53" itemprop="dateModified" datetime="2021-09-29T15:29:53+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>中台，在过去两年是个流量顶级词汇，谈什么都得带上中台，干什么都得扯点中台，不说中台，那绝对不是个合格的技术人</p>
+<p>但经过了谈中台、建中台、拆中台，潮起潮落，不管是看好，还是贬低；可以看出在技术大词的浪潮里，不管是应激者怕掉队，还是投机者想上位，真正懂它的人不多，或者大多都还停留在以以往经验来判定的新事物</p>
+<p>在历史遗忘之际，我来重温一下它</p>
+<h1 id="起源"><a href="#起源" class="headerlink" title="起源"></a>起源</h1><p>在中台的发展进程中，首先得回到它的起源，至少有两个版本：</p>
+<p>一是正史，马云一行，参观了芬兰一家游戏公司supercell，大受震撼，回来就提出了“中台战略”</p>
+<p>一是野史，张勇的挟中台以令诸侯</p>
+<p>从这两史中至少可以看出一些东西：</p>
+<ol>
+<li>中台是由企业掌舵者提出以及使用的，它不是一个技术人员提出的，甚至说是CTO级别提出的，提出的起源与技术占不上边</li>
+<li>中台的战略地位，不管是愿景实现还是战略落地，都发挥着巨大作用</li>
+</ol>
+<p>所以很多技术人不解的地方，为什么谈到中台，需要谈企业战略，需要企业级组织变更，而不仅仅在于研发内部，不是使用的技术多牛，而是因为中台本身就有战略属性</p>
+<p>因此在讨论中台时，需要从业务环境，组织结构，人力构成和技术架构各方面统筹考虑，抛开这些单从技术角度，是没有全局视角衡量中台的优劣，也是没有意义的，所以中台得结合企业本身综合情况，而不是技术迁移就能完成的</p>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>现在提到中台，一连串的词汇会涌现出现，比如共享、复用、积木化</p>
+<p>那么什么才叫中台呢？至少指出者没有给出定义，但它有特性，就是在高速发展环境之下，企业需要具备相应的响应速度去支撑企业运营的需求，而依靠小而灵活的前台团队，频繁而低成本的试错是一种应对此商业环境具有竞争力的模式</p>
+<p>“小而灵活”是关键：小意味着人员少，成本低；灵活意味着对外快速响应市场，对内流程敏捷，快速失败</p>
+<p>而能支撑这种小而灵活前台团队的系统就称为中台，这是从中台的作用来描述它，经过这几年的发展，有各式各样的定义</p>
+<p>我比较认同王健老师的定义：<strong>企业级能力复用平台</strong></p>
+<p><strong>企业级：</strong></p>
+<p>定义了中台的范围。它不是单业务级，是从企业全局出发，考虑多条业务线；一个企业也不是只有一个中台，可以有多个中台。也就是企业与中台的关系是多对多的</p>
+<p>企业级这表明了中台不单是技术问题，而是上升到企业架构的问题</p>
+<p><strong>能力：</strong></p>
+<p>定义了中台主要承载的对象。能力的抽象解释了为什么有那么多种类的中台，也解释了为什么每家中台都是不一样的，因为每家企业的核心能力是不一样的</p>
+<p><strong>复用：</strong></p>
+<p>定义了中台的核心价值，建设中台的过程就是推倒烟囱系统的过程，也是去重复用的过程；“去重”讲的更多是向后看，是技术驱动；“复用”讲的更多是向前看，是业务驱动和用户驱动的</p>
+<p>中台需要从“去重”到“复用”的视角转变</p>
+<p>“复用”是中台更加关注的目标</p>
+<p>“可复用性”和“易复用性”是衡量中台建设好坏的重要指标</p>
+<p>“业务响应力”和“业务满意度”是考核中台建设进度的重要标准</p>
+<p><strong>平台：</strong></p>
+<p>定义了中台的主要形式。区别于传统的应用系统拼凑的方式，通过对于更细粒度能力的识别与平台化沉淀，实现企业能力的柔性复用，更好地支撑前台业务</p>
+<h1 id="种类"><a href="#种类" class="headerlink" title="种类"></a>种类</h1><p>自从中台概念流行，各个词都与中台组词了，研发中台、技术中台、组织中台、业务中台…只要把以前谈的词语带上中台，就是高大上的</p>
+<p>经过过去几年的喧嚣，沉寂。人们对中台品种达成了一定的共识：<strong>业务数据双中台</strong></p>
+<p>网易副总裁汪源曾在网易云创峰会上提到：“所有中台都是业务中台”。从中台起源出发，的确，中台就是为业务，为企业更好地以更低成本、更高质量、更快响应速度售出产品、换取利润服务的</p>
+<p>而数据中台，更多的是大数据时代到来，大势所趋，业务中台是产生数据，数据中台是做数据二次加工，并将结果再服务于业务，为业务进行数据和智能的赋能</p>
+<h1 id="创新"><a href="#创新" class="headerlink" title="创新"></a>创新</h1><p>这两年，拆中台的声音呼啸而起。尤其以当年带起中台的阿里等一系列巨头，都在拆。人们又开始跟风中台不行了</p>
+<p>戏称，我们作业才抄到一半，你说写错了</p>
+<p>为什么要拆呢？想那盒马不就是中台成功的典范，但在犀牛制造却提出不拿中台一针一线了，自己从零开始</p>
+<p>这其实就是任何软件平台的特性</p>
+<p>平台的能力越丰富，上层应用可以利用的越多，去完成某类功能的成本就越低，因而平台能力通常被看作效能下限</p>
+<p>应用利用平台能力获得效能，是通过放弃一部分自主性获取，而低自主性就影响创新的可能，所以应用自主度被看作创新上限</p>
+<p>“效能下限”与“创新上限”就像翘翘板，产生了哑铃效应，而中台则是追求效能的极致，同时却也降低了创新上限</p>
+<p>对于像巨头在中台已经沉淀多年，有了相当应对当前市场的能力，但想要争取更多的市场份额，创新需求日益剧增,尤其需要颠覆式创新</p>
+<p>因此，别人拆的时候，你能拆吗？建中台需要综合考虑，拆中台同样需要考虑</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>中台曾经的顶级流量热词，不管当初的是应激怕掉队，还是投机想上位，浪潮退去之时，我们才能静下心来思考它是什么，它能干什么</p>
+<p>虽然现在已经冷却，但威力不减，提升企业竞争力一把好手，它的出发点不是技术基建，而是寻找更好的组织结构和技术架构，以支持业务的快速增长和发展</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/blog/page/5/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/blog/page/7/">7</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/16/">16</a><a class="extend next" rel="next" href="/blog/page/7/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="并发问题的源头并发？为啥需要并发呢？自然是为了性能，增强算力以及协调能力 在现今计算机器体系中，涉及性能的主要有CPU、内存、IO三方面，而这三者的速度也是天壤之别，形象之讲，CPU天上一天，内存是地上一年，IO则要地上十年 怎么应对： 1、CPU增加了多级缓存，均衡与内存的速度差异，并且还从单核发展为多核增加算力 2、操作系统增加线程，分时复用CPU，均衡CPU与IO的速度差异 3、通过即时编译">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java并发的问题及应对办法">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/problems-and-solutions-of-java-concurrency.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="并发问题的源头并发？为啥需要并发呢？自然是为了性能，增强算力以及协调能力 在现今计算机器体系中，涉及性能的主要有CPU、内存、IO三方面，而这三者的速度也是天壤之别，形象之讲，CPU天上一天，内存是地上一年，IO则要地上十年 怎么应对： 1、CPU增加了多级缓存，均衡与内存的速度差异，并且还从单核发展为多核增加算力 2、操作系统增加线程，分时复用CPU，均衡CPU与IO的速度差异 3、通过即时编译">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220531134925_1653976165.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201806261839_931.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220602232142_1654183302.jpg">
+<meta property="article:published_time" content="2022-06-02T12:48:00.000Z">
+<meta property="article:modified_time" content="2022-11-08T07:15:29.650Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="并发">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20220531134925_1653976165.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/problems-and-solutions-of-java-concurrency.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Java并发的问题及应对办法 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/problems-and-solutions-of-java-concurrency.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java并发的问题及应对办法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-06-02 20:48:00" itemprop="dateCreated datePublished" datetime="2022-06-02T20:48:00+08:00">2022-06-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="并发问题的源头"><a href="#并发问题的源头" class="headerlink" title="并发问题的源头"></a>并发问题的源头</h1><p>并发？为啥需要并发呢？自然是为了性能，增强算力以及协调能力</p>
+<p>在现今计算机器体系中，涉及性能的主要有CPU、内存、IO三方面，而这三者的速度也是天壤之别，形象之讲，CPU天上一天，内存是地上一年，IO则要地上十年</p>
+<p>怎么应对：</p>
+<p>1、CPU增加了多级缓存，均衡与内存的速度差异，并且还从单核发展为多核增加算力</p>
+<p>2、操作系统增加线程，分时复用CPU，均衡CPU与IO的速度差异</p>
+<p>3、通过即时编译器重排序，处理器乱序执行，以及内存系统重排序优化指令执行次序，更好地利用缓存</p>
+<p>但这些措施并不是百利无害的，并发问题就是其中一害。</p>
+<h2 id="1、缓存导致的可见性问题"><a href="#1、缓存导致的可见性问题" class="headerlink" title="1、缓存导致的可见性问题"></a>1、缓存导致的可见性问题</h2><p>多核时代，每个核都有各自的L1，L2缓存，在各自缓存中修改的数据相互不可见。</p>
+<p><img src="http://images.zhuxingsheng.com/20220531134925_1653976165.jpg"></p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/caching-is-a-face-project.html">《缓存是个面子工程》</a>提到的硬件缓存，也带来了并发问题。</p>
+<p><img src="http://images.zhuxingsheng.com/201806261839_931.png" alt="Java内存模型"></p>
+<h2 id="2、线程切换带来的原子性问题"><a href="#2、线程切换带来的原子性问题" class="headerlink" title="2、线程切换带来的原子性问题"></a>2、线程切换带来的原子性问题</h2><p>这主要有些看似一行的代码，其实需要多条CPU指令才能完成</p>
+<p>如count+&#x3D;1，需要三条指令</p>
+<p>指令1：把变量count从内存加载到CPU的寄存器</p>
+<p>指令2：在寄存器中执行+1操作</p>
+<p>指令3：最后将结果写入内存</p>
+<p>当多线程时，线程切换时三条指令就会被错误执行，打破了原子性，导致逻辑的错误。</p>
+<h2 id="3、编译优化带来的有序性问题"><a href="#3、编译优化带来的有序性问题" class="headerlink" title="3、编译优化带来的有序性问题"></a>3、编译优化带来的有序性问题</h2><p>编译器为了优化性能，有时改变了程序中语句的先后顺序。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public class Singleton &#123;</span><br><span class="line">  static Singleton instance;</span><br><span class="line">  static Singleton getInstance()&#123;</span><br><span class="line">    if (instance == null) &#123;</span><br><span class="line">      synchronized(Singleton.class) &#123;</span><br><span class="line">        if (instance == null)</span><br><span class="line">          instance = new Singleton();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return instance;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>new Singleton()这句话感觉是</p>
+<ol>
+<li>分配一块内存M</li>
+<li>在内存M上初始化Singleton对象</li>
+<li>然后M的地址赋值给instance变量</li>
+</ol>
+<p>实际执行路径却是：</p>
+<ol>
+<li>分配一块内存M</li>
+<li>将M的地址赋值给instance变量</li>
+<li>最后在内存M上初始化Singleton对象</li>
+</ol>
+<h1 id="JMM"><a href="#JMM" class="headerlink" title="JMM"></a>JMM</h1><p>如何解决上述的三大问题，JSR-133定义了内存模型JMM</p>
+<blockquote>
+<p>A memory model describes, given a program and an execution trace of that program, whether the execution trace is a legal execution of the program. For the Java programming language, the memory model works by examining each read in an execution trace and checking that the write observed by that read is valid according to certain rules.</p>
+</blockquote>
+<p>也就是说一个内存模型描述了一个给定的程序和和它的执行路径是否一个合法的执行路径。对于java序言来说，内存模型通过考察在程序执行路径中每一个读操作，根据特定的规则，检查写操作对应的读操作是否能是有效的。<br>java内存模型只是定义了一个规范，具体的实现可以是根据实际情况自由实现的。但是实现要满足java内存模型定义的规范。</p>
+<p>内存模型的种类大致有两种：</p>
+<p><strong>Sequential Consistency Memory Model：</strong> 连续一致性模型。这个模型定义了程序执行的顺序和代码执行的顺序是一致的。也就是说 如果两个线程，一个线程T1对共享变量A进行写操作，另外一个线程T2对A进行读操作。如果线程T1在时间上先于T2执行，那么T2就可以看见T1修改之后的值。<br>这个内存模型比较简单，也比较直观，比较符合现实世界的逻辑。但是这个模型定义比较严格，在多处理器并发执行程序的时候，会严重的影响程序的性能。因为每次对共享变量的修改都要立刻同步会主内存，不能把变量保存到处理器寄存器里面或者处理器缓存里面。导致频繁的读写内存影响性能。</p>
+<p>这种模型相当于禁用了缓存。如果再禁止编译器优化，就算是彻底解决上述问题了，但性能将受到严重影响。</p>
+<p><strong>Happens-Before Memory Model：</strong> 先行发生模型。这个模型理解起来就比较困难。先介绍一个先行发生关系 （Happens-Before Relationship）<br>　　如果有两个操作A和B存在A Happens-Before B，那么操作A对变量的修改对操作B来说是<strong>可见的</strong>。<strong>这个先行并不是代码执行时间上的先后关系，而是保证执行结果是顺序的</strong>。</p>
+<h1 id="happens-before"><a href="#happens-before" class="headerlink" title="happens-before"></a>happens-before</h1><p>happens-before 约束了编译器的优化行为，虽允许编译器优化，但是要求编译器优化后一定遵守 happens-before 规则。</p>
+<p><strong>happens-before规则：</strong></p>
+<p><strong>程序次序规则（program order rule）</strong>: 在一个线程内，先在前面的代码操作先行。准确的说控制流顺序而不是代码顺序。需要考虑分支，循环等结构。 </p>
+<p><strong>管程锁定规则（monitor lock rule）</strong>：同一个资源锁，先unlock，之后才能lock。 </p>
+<p><strong>Volatile变量规则（volatile variable rule）</strong>：一个变量被volatile修饰，多线程操作，先执行操作，再执行读操作。（同时写操作只能有一个） </p>
+<p><strong>线程启动规则（Thread start rule）</strong>：Thread对象的start方法，先行发生于此线程的每一个方法。</p>
+<p><strong>线程终止规则（Thread Termination rule)</strong>：该线程的所有方法，先行发生于该线程的终止检测方法。例如：可以通过Thread.join方法结束，Thread.isAlive()的返回值等手段检测到线程已经终止执行。 </p>
+<p><strong>线程中断规则（Thread Interruption Rule）</strong>:  中断方法先行发生于，中断检测方法。中断方法interrupt()，中断检测interrupted()方法。</p>
+<p><strong>对象终结规则（finalizer rule）</strong>:  一个对象的初始化完成（构造函数执行结束）先行发生于它的finalizer方法的开始。 </p>
+<p><strong>传递性(Transitivity)</strong>: 如果操作A先行发生于操作B，操作B先行发生于操作C，那就可以得出操作A先行发生于操作C的结论。</p>
+<h1 id="as-if-serial"><a href="#as-if-serial" class="headerlink" title="as-if-serial"></a>as-if-serial</h1><p>在谈happens-befre常会提到as-if-serial</p>
+<p>即时编译器保证程序能够遵守as-if-serial属性。通俗地说，就是在单线程情况下，要给程序一个顺序执行的假象。也就是经过重排序的执行结果要与顺序执行的结果保持一致。</p>
+<p>而且，如果两个操作之间存在数据依赖时，编译器不能调整它们的顺序，否则将造成程序语义的改变。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class AsIfSerialDemo &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        int a = 10;//1</span><br><span class="line">        int b = 10;//2</span><br><span class="line">        int c = a+ b;//3</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面示例中：1和3之间存在数据依赖关系，同时2和3之间也存在数据依赖关系。因此在最终执行的指令序列中，3不能被重排序到1和2的前面（3排到1和2的前面，程序的结果将会被改变）。但1和2之间没有数据依赖关系，编译器和处理器可以重排序1和2之间的执行顺序。</p>
+<h2 id="VS-时间先行"><a href="#VS-时间先行" class="headerlink" title="VS 时间先行"></a>VS 时间先行</h2><p>对于happens-before先行发生，怎么理解，最常与“时间先后发生”搞混淆。</p>
+<p>happens-before 关系是用来描述两个操作的内存可见性的。</p>
+<p>如果操作 X happens-before 操作 Y，那么 X 的结果对于 Y 可见。那么与“时间先后发生”顺序有什么区别？</p>
+<p>在<a href="https://www.cs.umd.edu/~pugh/java/memoryModel/jsr133.pdf">《JSR-133: JavaTM Memory Model and Thread Specification》</a>，happens-before是这样定义的：</p>
+<blockquote>
+<p>Two actions can be ordered by a happens-before relationship.<br>If one action happens-before another, then the first is visible to and ordered before the second.<br>It should be stressed that a happens-before relationship between two actions does not imply that<br>those actions must occur in that order in a Java platform implementation. The happens-before<br>relation mostly stresses orderings between two actions that conflict with each other, and defines<br>when data races take place. </p>
+</blockquote>
+<p>从定义中可以看出两点：</p>
+<blockquote>
+<p>1、the first is visible to and ordered before the second</p>
+</blockquote>
+<p>如果一个操作happens-before另一个操作，那么第一个操作的执行结果将对第二个操作可见，而且第一个操作的执行顺序排在第二个操作之前</p>
+<blockquote>
+<p>2、does not imply that those actions must occur in that order in a Java platform implementation</p>
+</blockquote>
+<p>两个操作之间存在happens-before关系，并不意味着Java平台的具体实现必须要按照happens-before关系指定的顺序来执行</p>
+<hr>
+<p>由这两条可以得出，JMM是要求当有happens-before关系时，不仅要求了可见性，而且在时间上也得保证有序。然而在不改变语义的前提下，Java平台的实现可以自主决定。这也就表明了happens-before与时间先后没有更大的关联性。</p>
+<p>A happens-before B does not imply A happening before B.</p>
+<p>A happening before B does not imply A happens-before B.</p>
+<p><strong>一个操作 “先行发生” 并不意味着这个操作必定是“时间上的先发生”</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 以下操作在同一个线程中执行</span><br><span class="line">int i = 1;</span><br><span class="line">int j = 2;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>根据happens-before规则第一条，“int i &#x3D; 1” 的操作先行发生（Happens-before）于 “int j &#x3D; 2”，但在保证语义不改变的前提下，重排序了两条语句，那在时间上，“int j&#x3D;2”先执行了。</p>
+<p>在<a href="https://preshing.com/20130702/the-happens-before-relation/">《The Happens-Before Relation》</a>这篇文章中，作者还举了个示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">int A = 0;</span><br><span class="line">int B = 0;</span><br><span class="line"></span><br><span class="line">void foo()</span><br><span class="line">&#123;</span><br><span class="line">    A = B + 1;              // (1)</span><br><span class="line">    B = 1;                  // (2)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>虽然(1) happens-before (2),而且从上面的as-if-serial判断，(1) 得happen before (2) ,但作者观察并不是。</p>
+<p><img src="http://images.zhuxingsheng.com/20220602232142_1654183302.jpg"></p>
+<p>从图上可看出，A被赋值为0，B被赋值为1，但 (1) 没被执行呢。</p>
+<p>关于这个问题，在<a href="https://stackoverflow.com/questions/53264829/i-know-that-happens-before-does-not-imply-happening-before-can-the-code-a-b">stackoverflow happens-before </a> 被讨论了。有人指出作者说得不对，而也有人给出解答：</p>
+<p>A and B are locations in memory. However the operation B+1 does not happen in memory, it happens in the CPU. Specifically, the author is describing these two operations.</p>
+<p>A &#x3D; B + 1 (1)</p>
+<ul>
+<li>A1 - The value in memory location B (0) is loaded into a CPU register</li>
+<li>A2 - The CPU register is incremented by 1</li>
+<li>A3 - The value in the CPU register (1) is written to memory location A</li>
+</ul>
+<p>B &#x3D; 1 (2)</p>
+<ul>
+<li>B1 - The value 1 is written to memory location B</li>
+</ul>
+<p>Happens-Before requires that the read of B (step A1) happens before the write of B (step B1). However, the rest of the operations have no interdependence and can be reordered without affecting the result. Any of these sequences will produce the same outcome</p>
+<ul>
+<li>A1, B1, A2, A3</li>
+<li>A1, A2, B1, A3</li>
+<li>A1, A2, A3, B1</li>
+</ul>
+<p><strong>一个操作 “时间上的先发生” 也不能代表这个操作会是“先行发生”</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private int value = 0;</span><br><span class="line"></span><br><span class="line">// 线程 A 调用</span><br><span class="line">pubilc void setValue(int value)&#123;    </span><br><span class="line">    this.value = value;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 线程 B 调用</span><br><span class="line">public int getValue()&#123;</span><br><span class="line">    return value;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>假设存在线程 A 和 B，线程 A 先（时间上的先后）调用了 setValue(1)，然后线程 B 调用了同一个对象的 getValue() ，那么线程 B 收到的返回值是什么? 0和1都有可能。因为两个操作之间没有happens-before关系。</p>
+<h2 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h2><p>volatile字段的happens-before关系指的是在两个不同线程中，【volatile的写操作】 happens-before之后【对同一字段的读操作】。这里有个关键字“之后”，指的是时间上的先后。<br>也就是我这边写，你之后再读就一定能读得到我刚刚写的值。普通字段则没有这个保证。也就是上面的setValue()与getValue()示例问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">int a=0;</span><br><span class="line">volatile int b=0;</span><br><span class="line"></span><br><span class="line">public void method1() &#123;</span><br><span class="line">  int r2 = a;</span><br><span class="line">  b = 1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public void method2() &#123;</span><br><span class="line">  int r1 = b;</span><br><span class="line">  a = 2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先，b加了volatile之后，并不能保证b&#x3D;1一定先于r1&#x3D;b，而是保证r1&#x3D;b始终能够看到b的最新值。比如说b&#x3D;1;b&#x3D;2，之后在另一个CPU上执行r1&#x3D;b，那么r1会被赋值为2。<br>如果先执行r1&#x3D;b，然后在另外一个CPU上执行b&#x3D;1和b&#x3D;2，那么r1将看到b&#x3D;1之前的值。</p>
+<p>在没有标记volatile的时候，同一线程中，r2&#x3D;a和b&#x3D;1存在happens before关系，但因为没有数据依赖可以重排列。一旦标记了volatile，即时编译器和CPU需要考虑到多线程happens-before关系，因此不能自由地重排序。</p>
+<p>volatile与synchronized的区别，可以查看<a href="http://www.zhuxingsheng.com/blog/volatile-synchronized--cas.html">《volatile synchronized cas》</a></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>本篇总结了Java并发问题的本质：可见性、原子性、有序性；以及应对这些问题，JMM中happens-before模型的规则。以及happens-before与happen before的区别。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag"># 并发</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/exception-handling-of-clean-code-series.html" rel="prev" title="Clean Code系列之异常处理">
+      <i class="fa fa-chevron-left"></i> Clean Code系列之异常处理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/the-way-to-become-the-chief-architect.html" rel="next" title="成为首席架构师的打怪升级之路">
+      成为首席架构师的打怪升级之路 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98%E7%9A%84%E6%BA%90%E5%A4%B4"><span class="nav-number">1.</span> <span class="nav-text">并发问题的源头</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E7%BC%93%E5%AD%98%E5%AF%BC%E8%87%B4%E7%9A%84%E5%8F%AF%E8%A7%81%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.</span> <span class="nav-text">1、缓存导致的可见性问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E7%BA%BF%E7%A8%8B%E5%88%87%E6%8D%A2%E5%B8%A6%E6%9D%A5%E7%9A%84%E5%8E%9F%E5%AD%90%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-number">1.2.</span> <span class="nav-text">2、线程切换带来的原子性问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96%E5%B8%A6%E6%9D%A5%E7%9A%84%E6%9C%89%E5%BA%8F%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-number">1.3.</span> <span class="nav-text">3、编译优化带来的有序性问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JMM"><span class="nav-number">2.</span> <span class="nav-text">JMM</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#happens-before"><span class="nav-number">3.</span> <span class="nav-text">happens-before</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#as-if-serial"><span class="nav-number">4.</span> <span class="nav-text">as-if-serial</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#VS-%E6%97%B6%E9%97%B4%E5%85%88%E8%A1%8C"><span class="nav-number">4.1.</span> <span class="nav-text">VS 时间先行</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#volatile"><span class="nav-number">4.2.</span> <span class="nav-text">volatile</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

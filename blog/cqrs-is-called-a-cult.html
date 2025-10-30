@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="CQRS全称Command Query Responsibility Segregation  在CQRS中，来自客户端的命令通过单独的路径抵达命令模型，而查询操作则采用不同的数据源，这样的好处在于可以优化对查询数据的获取，比如用于展现、用于接口或报告的数据。 CQRS这些年火起来了，常被人挂在嘴边提起。为什么？因为DDD提倡富模型，但从资源库查找所有需要显示的数据是困难的，特别是在需要显示来自不">
+<meta property="og:type" content="article">
+<meta property="og:title" content="CQRS被称为邪教">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/cqrs-is-called-a-cult.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="CQRS全称Command Query Responsibility Segregation  在CQRS中，来自客户端的命令通过单独的路径抵达命令模型，而查询操作则采用不同的数据源，这样的好处在于可以优化对查询数据的获取，比如用于展现、用于接口或报告的数据。 CQRS这些年火起来了，常被人挂在嘴边提起。为什么？因为DDD提倡富模型，但从资源库查找所有需要显示的数据是困难的，特别是在需要显示来自不">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220414233044_1649950244.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220415220618_1650031578.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220415224925_1650034165.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220415231321_1650035601.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220415231608_1650035768.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220415231624_1650035784.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220415232104_1650036064.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220415232658_1650036418.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220415232859_1650036539.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220416120632_1650081992.jpg">
+<meta property="article:published_time" content="2022-04-16T12:11:31.000Z">
+<meta property="article:modified_time" content="2022-11-08T07:15:29.629Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20220414233044_1649950244.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/cqrs-is-called-a-cult.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>CQRS被称为邪教 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/cqrs-is-called-a-cult.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          CQRS被称为邪教
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-04-16 20:11:31" itemprop="dateCreated datePublished" datetime="2022-04-16T20:11:31+08:00">2022-04-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>CQRS全称Command Query Responsibility Segregation</p>
+<p><img src="http://images.zhuxingsheng.com/20220414233044_1649950244.jpg"></p>
+<p>在CQRS中，来自客户端的命令通过单独的路径抵达命令模型，而查询操作则采用不同的数据源，这样的好处在于可以优化对查询数据的获取，比如用于展现、用于接口或报告的数据。</p>
+<p>CQRS这些年火起来了，常被人挂在嘴边提起。为什么？因为DDD提倡富模型，但从资源库查找所有需要显示的数据是困难的，特别是在需要显示来自不同聚合类型与实例的数据时。领域越复杂，这种困难程度越大。</p>
+<p>有没有一种完全不同的方法可以将领域数据映射到界面显示中呢？答案正是CQRS。</p>
+<p>在<a href="https://antonnalivayko1.medium.com/from-crud-to-cqrs-part1-cqrs-cbeac0350043">From CRUD to CQRS</a>文章中，作者比对了CRUD模式与CQRS模式</p>
+<span id="more"></span>
+
+<h1 id="CRUD"><a href="#CRUD" class="headerlink" title="CRUD"></a>CRUD</h1><p>我们传统使用的CRUD风格：</p>
+<p><img src="http://images.zhuxingsheng.com/20220415220618_1650031578.jpg"></p>
+<p>这就是经典的CRUD应用模式。数据流在应用中是这样的：</p>
+<p><img src="http://images.zhuxingsheng.com/20220415224925_1650034165.jpg"></p>
+<p>所有的业务服务与领域服务都在同一条数据流中完成数据的获取与更新操作。</p>
+<h1 id="CQRS"><a href="#CQRS" class="headerlink" title="CQRS"></a>CQRS</h1><p>相对于CRUD，CQRS应用模型，会有两条数据流：读与写</p>
+<p><img src="http://images.zhuxingsheng.com/20220415231321_1650035601.jpg"></p>
+<p>写命令数据流负责创建&#x2F;更新&#x2F;删除领域模型</p>
+<p><img src="http://images.zhuxingsheng.com/20220415231608_1650035768.jpg"></p>
+<p>读数据流负责从数据源获取数据</p>
+<p><img src="http://images.zhuxingsheng.com/20220415231624_1650035784.jpg"></p>
+<p>CQRS风格整体大概有三种形式：</p>
+<p>1、应用完全分割成两个部分：</p>
+<p><img src="http://images.zhuxingsheng.com/20220415232104_1650036064.jpg"></p>
+<p>2、应用有一个通用的web api层，但业务层分割成两部分：</p>
+<p><img src="http://images.zhuxingsheng.com/20220415232658_1650036418.jpg"></p>
+<p>3、webapi与business都是通用，command和query在通用服务中创建</p>
+<p><img src="http://images.zhuxingsheng.com/20220415232859_1650036539.jpg"></p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/ddd-tactical-practice-guide.html">DDD实践指南</a>中也引入了CQRS的元素，进行command与query区分。一切都很完美。</p>
+<p>然后，现实并非如此，徐昊老师却称<strong>CQRS是邪教</strong></p>
+<p>总结下来有两点原因：</p>
+<p><strong>1、模式滥用</strong></p>
+<p>CQRS是个模式,模式有适用场景,然而现在CQRS成了全能模式，尤其在实践DDD时，更是标配模式。</p>
+<p>CQRS本身是一个对象接口设计原则，把get&#x2F;find和mutable的set分离</p>
+<p>然后自然扩张变成了服务接口设计原则</p>
+<p>有人灵机一动，用domain model做command，用query model做查询和报表</p>
+<p>整套系统俩模型</p>
+<p>这就是把一个限定概念无限扩大</p>
+<p>到现在，有人说graphql做query，domain model做command</p>
+<p>然而实际上，想解决的都是报表 特别是ad hoc报表</p>
+<p>用一个特别复杂的方案，解决个简单的问题（还比一定解决得了），逢人就说，这是应该的方案，这不是邪教是什么</p>
+<p>为什么说CQRS是复杂的？</p>
+<p><a href="https://udidahan.com/2009/12/09/clarified-cqrs/">Udi Dahan</a>绘制了一张图：</p>
+<p><img src="http://images.zhuxingsheng.com/20220416120632_1650081992.jpg"></p>
+<p>图中可以看到Cache,写模型也要读有cache，然后你的读模型也有cache，俩cache不一致</p>
+<p>特别是用jpa&#x2F;hibernate之类的框架，cache行为很难控制，不加cache性能不好，加了cache，俩模型不一致。</p>
+<p>而且代码量也增加，从多个聚合取数据拼装一起的代码量多，你分成cqrs代码不多吗？多一套model，代码不多吗</p>
+<p>cqrs作为模式，是一种分布式架构模式，一个单体里大概率就是用错了</p>
+<p><a href="https://martinfowler.com/bliki/CQRS.html">Martin Fowler</a>也表明了这个观点：</p>
+<blockquote>
+<p>“By separate models we most commonly mean different object models, probably running in different logical processes, perhaps on separate hardware. ”- Martin Fowler. </p>
+</blockquote>
+<p>把repo分成xxxquery 放各种find和xxxupdate 放save,理论上也叫cqrs</p>
+<p>底层模型还是一样 只是接口分一下,那有啥用</p>
+<p>cqrs重点在有两套模型</p>
+<p>如果是cqrs 我建议你用独立的查询数据库或者搜索引擎</p>
+<p>一个最典型的cqrs，cms&#x2F;blog系统，读模型，file缓存，搜索引擎；写模型，后台domain，分得干干净净</p>
+<p><strong>2、把view model当query model</strong></p>
+<p>把view model当query model，本来mvc,mvp,mvvm的问题，硬拗成cqrs</p>
+<p>围绕domain做read model，第一选择是细化domain 调整各种聚合</p>
+<p>必须在限定问题领域内使用</p>
+<p>行业里说cqrs的，大部分是因为 <strong>domain model提炼不力，绕过domain直接查询数据库</strong></p>
+<h2 id="何时使用"><a href="#何时使用" class="headerlink" title="何时使用"></a>何时使用</h2><p>既然CQRS是种模式，就得像任何模式一样，有适用场景，也有不适用场景。</p>
+<p>很多系统很适合CRUD模式，就应该使用CRUD，那么什么场景下适合CQRS呢？</p>
+<p>Martin Fowler指出了两个场景</p>
+<p><strong>1、比较复杂的领域模型</strong></p>
+<p>这种场景需要强调的是，使用CQRS还是很少的场景。当读写模型比较重叠时，使用共享模式相对简单些。</p>
+<p>不然会增加复杂性，从而减小生产力并增加风险。</p>
+<p><strong>2、高性能应用</strong></p>
+<p>CQRS可以隔离读与写负载，并独立扩容。</p>
+<p>当读与写模型有明显区别时，会很方便。即使没有，读写也可以使用不同的优化策略。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>可以联想到在数据库架构时，也常使用主写从读架构。那是不是也称为CQRS呢？</p>
+<p>我们在一个应用中，真的同时使用了这两种模型吗？其实也未必，只是某些小点，借鉴了CQRS思想。</p>
+<p>CQRS作为模式，是一种分布式架构模式，而且是很复杂的模式。流行的CQRS不过是为了查询而绕开domain的做法，不过是因为domain提炼不到位。</p>
+<p>正常的程序，都有读写功能，不需要分成皆然不同的两套模型，就无所谓是不是CQRS了。</p>
+<p>这也说明了一个问题，大佬说的CQRS与普通人说的CQRS其实不是一个东西，普通人为了轻松理解，就简单理解为读写分离，并且自以为这就是全部，变成了全知全能，其实这只是个开始。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/lod-of-solid.html" rel="prev" title="SOLID之LOD">
+      <i class="fa fa-chevron-left"></i> SOLID之LOD
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/does-the-domain-service-throw-an-exception-or-return-an-error-code.html" rel="next" title="领域服务上抛异常还是返回错误码">
+      领域服务上抛异常还是返回错误码 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#CRUD"><span class="nav-number">1.</span> <span class="nav-text">CRUD</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#CQRS"><span class="nav-number">2.</span> <span class="nav-text">CQRS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E4%BD%BF%E7%94%A8"><span class="nav-number">2.1.</span> <span class="nav-text">何时使用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

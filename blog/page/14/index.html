@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="彪悍的人生需要书写">
+<meta property="og:type" content="website">
+<meta property="og:title" content="码农戏码">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/page/14/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="彪悍的人生需要书写">
+<meta property="og:locale">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/page/14/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm-overview.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/algorithm-overview.html" class="post-title-link" itemprop="url">算法概要</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-30 20:34:00" itemprop="dateCreated datePublished" datetime="2018-10-30T20:34:00+08:00">2018-10-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>算法虐我千万遍，我待算法如初恋；IT人永远逃脱不了的算法</p>
+</blockquote>
+<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>算法是特定问题求解步骤的描述，在计算机中表现为指令的有限序列</p>
+<p><strong>算法是独立存在的一种解决问题的方法和思想</strong></p>
+<p>对于算法而言，实现的语言并不重要，重要的是思想</p>
+<h1 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h1><ol>
+<li>输入: 算法具有0个或多个输入</li>
+<li>输出: 算法至少有1个或多个输出</li>
+<li>有穷性: 算法在有限的步骤之后会自动结束而不会无限循环，并且每一个步骤可以在可接受的时间内完成</li>
+<li>确定性：算法中的每一步都有确定的含义，不会出现二义性</li>
+<li>可行性：算法的每一步都是可行的，也就是说每一步都能够执行有限的次数完成</li>
+</ol>
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><p>一个算法的优劣主要从算法的执行时间和所需要占用的存储空间两个方面衡量</p>
+<h2 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h2><p><strong>定义</strong>：如果一个问题的规模是n，解这一问题的某一算法所需要的时间为T(n)，它是n的某一函数T(n)称为这一算法的“时间复杂性”</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T(n) = O(f(n))</span><br></pre></td></tr></table></figure>
+
+<p>当输入量n逐渐加大时，时间复杂性的极限情形称为算法的“渐近时间复杂性”。</p>
+<p>比如排序算法：可用算法执行中的数据比较次数与数据移动次数来衡量</p>
+<h2 id="空间复杂度"><a href="#空间复杂度" class="headerlink" title="空间复杂度"></a>空间复杂度</h2><p>对一个算法在运行过程中临时占用存储空间大小的量度，记做S(n)&#x3D;O(f(n))。</p>
+<p>比如直接插入排序，需一个监视哨兵，空间复杂度是O(1) ，而一般的递归算法就要有O(n)的空间复杂度了，因为每次递归都要存储返回信息。</p>
+<h1 id="大O表示法"><a href="#大O表示法" class="headerlink" title="大O表示法"></a>大O表示法</h1><p>大O表示法被用来描述一个算法的性能或复杂度。大O表示法可以用来描述一个算法的最差情况，或者一个算法执行的耗时或占用空间（例如内存或磁盘占用）</p>
+<p>假设一个算法的时间复杂度是 O(n)，n在这里代表的意思就是数据的个数。</p>
+<p>举个例子，如果你的代码用一个循环遍历 100 个元素，那么这个算法就是 O(n)，n 为 100，所以这里的算法在执行时就要做 100 次工作</p>
+<p>大O表示法就是将算法的所有步骤转换为代数项，然后排除不会对问题的整体复杂度产生较大影响的较低阶常数和系数,<strong>只关心复杂度最重要的部分</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">规律       Big-O</span><br><span class="line"></span><br><span class="line">2             O(1)   --&gt; 就是一个常数</span><br><span class="line"></span><br><span class="line">2n + 10       O(n)   --&gt; n 对整体结果会产生最大影响</span><br><span class="line"></span><br><span class="line">5n^2         O(n^2) --&gt; n^2 具有最大影响</span><br></pre></td></tr></table></figure>
+
+<p><strong>O(log n)</strong>，即对数复杂度（logarithmic complexity）。对数可以是ln(底数为e)，log10，log2 或者以其它为底数，这无关紧要，它仍然是O(log n)，正如O(2n^2) 和 O(100n^2) 都记为 O(n^2)。</p>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><h3 id="O-1"><a href="#O-1" class="headerlink" title="O(1)"></a>O(1)</h3><p>O(1)表示该算法的执行时间（或执行时占用空间）总是为一个常量，不论输入的数据集是大是小</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bool IsFirstElementNull(IList&lt;string&gt; elements)</span><br><span class="line">&#123;</span><br><span class="line">    return elements[0] == null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="O-N"><a href="#O-N" class="headerlink" title="O(N)"></a>O(N)</h3><p>O(N)表示一个算法的性能会随着输入数据的大小变化而线性变化。下面的例子同时也表明了大O表示法其实是用来描述一个算法的最差情况的：在for循环中，一旦程序找到了输入数据中与第二个传入的string匹配时，程序就会提前退出，然而大O表示法却总是假定程序会运行到最差情况（在这个例子中，意味着大O会表示程序全部循环完成时的性能）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">bool ContainsValue(IList&lt;string&gt; elements, string value)</span><br><span class="line">&#123;</span><br><span class="line">    foreach (var element in elements)</span><br><span class="line">    &#123;</span><br><span class="line">        if (element == value) return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="O-n²"><a href="#O-n²" class="headerlink" title="O(n²)"></a>O(n²)</h3><p>for循环嵌套的复杂度就是二次方的，因为你在一个线性操作里执行另外一个线性操作（或者说： n*n &#x3D;n² ）</p>
+<p>如果嵌套层级不断深入的话，算法的性能将会变为O(N^3)，O(N^4)，以此类推</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">for (var outer = 0; outer &lt; elements.Count; outer++)</span><br><span class="line">    &#123;</span><br><span class="line">        for (var inner = 0; inner &lt; elements.Count; inner++)</span><br><span class="line">        &#123;</span><br><span class="line">            // Don&#x27;t compare with self</span><br><span class="line">            if (outer == inner) continue;</span><br><span class="line"></span><br><span class="line">            if (elements[outer] == elements[inner]) return true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="O-2-N"><a href="#O-2-N" class="headerlink" title="O(2^N)"></a>O(2^N)</h3><p>O(2^N)表示一个算法的性能将会随着输入数据的每次增加而增大两倍。O(2^N)的增长曲线是一条爆炸式增长曲线——开始时较为平滑，但数据增长后曲线增长非常陡峭。一个典型的O(2^N)方法就是裴波那契数列的递归计算实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">int Fibonacci(int number)</span><br><span class="line">&#123;</span><br><span class="line">    if (number &lt;= 1) return number;</span><br><span class="line"></span><br><span class="line">    return Fibonacci(number - 2) + Fibonacci(number - 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="logn"><a href="#logn" class="headerlink" title="(logn)"></a>(logn)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">i=1;       </span><br><span class="line">while (i&lt;=n)</span><br><span class="line">    i=i*2;</span><br></pre></td></tr></table></figure>
+
+<h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O(1)&lt;O(logn)&lt;O(n)&lt;O(nlogn)&lt;O(n^2)&lt;O(n^3)&lt;O(2^n)&lt;O(n!)&lt;O(n^n)</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://images.zhuxingsheng.com/201810291628_723.png" alt="Big-O Complexity"></p>
+<h1 id="引申阅读"><a href="#引申阅读" class="headerlink" title="引申阅读"></a>引申阅读</h1><p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sort-bubble.html">算法渣-排序-冒泡</a></p>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-fast.html">算法渣-排序-快速排序</a></p>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-insertion.html">算法渣-排序-插入</a></p>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-hill.html">算法渣-排序-希尔</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/custom-class-loader.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/custom-class-loader.html" class="post-title-link" itemprop="url">自定义类加载器</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-10 21:29:36" itemprop="dateCreated datePublished" datetime="2018-10-10T21:29:36+08:00">2018-10-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="1、为什么需要自定义类加载器"><a href="#1、为什么需要自定义类加载器" class="headerlink" title="1、为什么需要自定义类加载器"></a>1、为什么需要自定义类加载器</h1><ol>
+<li>在<a href="https://mp.weixin.qq.com/s/yOktvsG8Cj7XBA6PjgX3Xg">《类加载器》</a>中讲的，默认类加载器只能加载固定路径下的class，如果有特定路径下的class，需要自定义</li>
+<li>安全性：系统自身需要一些jar，class，如果业务类代码中也有相同的class，破坏系统，类似双亲委托安全性</li>
+</ol>
+<p>可以看看tomcat自定义类加载器的原因，别的就大同小异了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">a)、要保证部署在tomcat上的每个应用依赖的类库相互独立，不受影响。</span><br><span class="line">b)、由于tomcat是采用java语言编写的，它自身也有类库依赖，为了安全考虑，tomcat使用的类库要与部署的应用的类库相互独立。</span><br><span class="line">c)、有些类库tomcat与部署的应用可以共享，比如说servlet-api，使用maven编写web程序时，servlet-api的范围是provided，</span><br><span class="line">表示打包时不打包这个依赖，因为我们都知道服务器已经有这个依赖了。</span><br><span class="line">d)、部署的应用之间的类库可以共享。这听起来好像与第一点相互矛盾，但其实这很合理，类被类加载器加载到虚拟机后，</span><br><span class="line">会生成代表该类的class对象存放在永久代区域，这时候如果有大量的应用使用spring来管理，如果spring类库不能共享，</span><br><span class="line">那每个应用的spring类库都会被加载一次，将会是很大的资源浪费。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="2、自定义加载器"><a href="#2、自定义加载器" class="headerlink" title="2、自定义加载器"></a>2、自定义加载器</h1><p>这儿主要说下我司的自定义类加载器；更复杂点的可以看看tomcat的类加载机制</p>
+<p>为什么需要自定义类加载器？这可以参考章节1的答案</p>
+<p>主要在于应用与基础平台的隔离，相对应用:可以有更大技术选型自由度,不用考虑基础平台的jar包版本、相对平台：更可靠安全，不被应用class影响</p>
+<h2 id="类加载器结构"><a href="#类加载器结构" class="headerlink" title="类加载器结构"></a>类加载器结构</h2><p>虽然JAVA使用了类加载的委派机制，但并没严格要求开发者必须遵守该机制，我们可以打破这种”双亲委派”机制</p>
+<h3 id="目录结构"><a href="#目录结构" class="headerlink" title="目录结构"></a>目录结构</h3><table>
+<thead>
+<tr>
+<th>目录</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>&#x2F;servicesdir</td>
+<td>业务实现jar包</td>
+</tr>
+<tr>
+<td>&#x2F;thirddir</td>
+<td>业务依赖jar包</td>
+</tr>
+<tr>
+<td>&#x2F;platformdir</td>
+<td>平台依赖jar包</td>
+</tr>
+</tbody></table>
+<h3 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h3><ul>
+<li>1.PlatformClassLoader平台加载器<ul>
+<li>1.1.加载&#x2F;platformdir下的jar包</li>
+<li>1.2.在加载时，采用了默认的“双亲委派”</li>
+</ul>
+</li>
+<li>2.AppClassLoader应用加载器<ul>
+<li>2.1.加载&#x2F;servicesdir,&#x2F;thirddir下的jar</li>
+<li>2.2.该类加载器一定程度上打破了默认的“双亲委派”<ul>
+<li>2.2.0.loadClass方法中，如果本加载器没有load到对应的类，则会检查该类是否处于平台类加载器白名单中：</li>
+<li>2.2.1.如果处于白名单中，则委派PlatformClassLoader加载</li>
+<li>2.2.2.否则，通过super.loadClass(String,boolean)走默认的双亲委派</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>此处白名单类：平台核心类，不能被同名业务类干扰</p>
+<h2 id="预加载"><a href="#预加载" class="headerlink" title="预加载"></a>预加载</h2><p><a href="https://mp.weixin.qq.com/s/yOktvsG8Cj7XBA6PjgX3Xg">《类加载器》</a>中说过，程序启动后，并不会加载所有类，在运行中实现到时，才会去加载。这儿就有性能损耗。</p>
+<p>按类加载规则，一个类只加载一次</p>
+<p>可以测试一下，加载需要的损耗</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 类加载时间性能测试</span><br><span class="line"> *</span><br><span class="line"> * 看一下类加载需要消耗的时间</span><br><span class="line"> * Created by Jack on 2018/10/8.</span><br><span class="line"> */</span><br><span class="line">public class ClassLoaderTest1 &#123;</span><br><span class="line">    public static void main(String[] args) throws SQLException &#123;</span><br><span class="line">        long s = System.nanoTime();</span><br><span class="line"></span><br><span class="line">        LoaderClass loaderClass = new LoaderClass();</span><br><span class="line">        long e = System.nanoTime();</span><br><span class="line">        //第一次时间</span><br><span class="line">        System.out.println(e - s);</span><br><span class="line">        e = System.nanoTime();</span><br><span class="line">        //第二次实例，但已经加载过，不再需要加载</span><br><span class="line">        LoaderClass loaderClass1 = new LoaderClass();</span><br><span class="line">        long e1 = System.nanoTime();</span><br><span class="line">        //第二次时间</span><br><span class="line">        System.out.println(e1 - e);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">//输出</span><br><span class="line">2409737</span><br><span class="line">396</span><br></pre></td></tr></table></figure>
+<p>可以从输出看到性能损耗是不小的，这部分损耗可以通过预加载来消除</p>
+<p>随着程序运行时间越久，被触发的业务越多，那加载到的业务类越多。</p>
+<h3 id="预加载类的逻辑"><a href="#预加载类的逻辑" class="headerlink" title="预加载类的逻辑"></a>预加载类的逻辑</h3><p>ClassWarmUp</p>
+<ul>
+<li>1.在classloader中loadClass时，把className加入到LinkedBlockingDeque中</li>
+<li>2.为了性能，异步把deque中的class写入到文件中，需要起一个后台线程<ul>
+<li>2.1 后台线程，从deque中取出class，写入到文件中</li>
+</ul>
+</li>
+<li>3.下次从文件中预先加载class</li>
+</ul>
+<h2 id="打包"><a href="#打包" class="headerlink" title="打包"></a>打包</h2><p>对于&#x2F;servicesdir 与 &#x2F;thirddir 都好处理，但对于platformdir是怎么打包的呢？毕竟在开发时，只是引入一个平台基础jar就行</p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>有了自定义类加载器，在应用主函数中，就不能直接new了，不然就会使用AppClassLoader</p>
+<p>所以需要使用反射机制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Class&lt;?&gt; loadClass = platformClassLoader.loadClass(&quot;com.jack.Start&quot;);</span><br><span class="line">Method startMethod = loadClass.getMethod(&quot;startUp&quot;);</span><br><span class="line">startMethod.invoke(loadClass);</span><br></pre></td></tr></table></figure>
+<p>这样，通过Start加载的类也会通过platformClassLoader去加载</p>
+<p>创建springcontext也一样,这儿还需使用到Thread.currentThread().getContextClassLoader()【下面有详解】</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">ClassLoader currentThreadLoader = Thread.currentThread().getContextClassLoader();</span><br><span class="line">Thread.currentThread().setContextClassLoader(appClassLoader);</span><br><span class="line"></span><br><span class="line">Class&lt;?&gt; contextClass = appClassLoader</span><br><span class="line">				.loadClass(&quot;org.springframework.context.support.FileSystemXmlApplicationContext&quot;);</span><br><span class="line">Class&lt;?&gt;[] parameterTypes = new Class[] &#123; String[].class &#125;;</span><br><span class="line">Constructor&lt;?&gt; constructor = contextClass.getConstructor(parameterTypes);</span><br><span class="line">return constructor.newInstance(new Object[] &#123; xmlPaths.toArray(new String[0]) &#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// switch back the thread context classloader</span><br><span class="line">Thread.currentThread().setContextClassLoader(currentThreadLoader);</span><br></pre></td></tr></table></figure>
+
+<h1 id="3、反常"><a href="#3、反常" class="headerlink" title="3、反常"></a>3、反常</h1><p>“双亲委派”模型有优点，也有力不从心的地方</p>
+<blockquote>
+<p>Java 提供了很多服务提供者接口（Service Provider Interface，SPI），允许第三方为这些接口提供实现。常见的 SPI 有 JDBC、JCE、JNDI、JAXP 和 JBI 等。</p>
+</blockquote>
+<blockquote>
+<p>这些 SPI 的接口由 Java 核心库来提供，而这些 SPI 的实现代码则是作为 Java 应用所依赖的 jar 包被包含进类路径（CLASSPATH）里。SPI接口中的代码经常需要加载具体的实现类。那么问题来了，SPI的接口是Java核心库的一部分，是由启动类加载器(Bootstrap Classloader)来加载的；SPI的实现类是由系统类加载器(System ClassLoader)来加载的。引导类加载器是无法找到 SPI 的实现类的，因为依照双亲委派模型，BootstrapClassloader无法委派AppClassLoader来加载类。<br>而线程上下文类加载器破坏了“双亲委派模型”，可以在执行线程中抛弃双亲委派加载链模式，使程序可以逆向使用类加载器。</p>
+</blockquote>
+<h2 id="场景："><a href="#场景：" class="headerlink" title="场景："></a>场景：</h2><ol>
+<li>当高层提供了统一的接口让低层去实现，同时又要在高层加载（或者实例化）低层的类时，就必须要通过线程上下文类加载器来帮助高层的ClassLoader找到并加载该类</li>
+<li>当使用本类托管类加载，然而加载本类的ClassLoader未知时，为了隔离不同的调用者，可以取调用者各自的线程上下文类加载器代为托管</li>
+</ol>
+<h2 id="解决方案："><a href="#解决方案：" class="headerlink" title="解决方案："></a>解决方案：</h2><p>从jdk1.2开始引入的，类Thread中的getContextClassLoader()与setContextClassLoader(ClassLoader c1)，分别用来获取和设置类加载器</p>
+<p>一般使用模式：获取-使用-还原</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">ClassLoader classLoader = Thread.currentThread().getContextClassLoader(); </span><br><span class="line">try&#123;    </span><br><span class="line">    Thread.currentThread().setContextClassLoader(targetTccl);    </span><br><span class="line">    excute(); </span><br><span class="line">&#125; finally &#123; </span><br><span class="line">    Thread.currentThread().setContextClassLoader(classLoader); </span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="jdbc"><a href="#jdbc" class="headerlink" title="jdbc"></a>jdbc</h2><p>以jdbc看下场景1的情况</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Class.forName(&quot;com.mysql.jdbc.Driver&quot;)</span><br><span class="line">String url = &quot;jdbc:mysql://localhost:3306/testdb&quot;;    </span><br><span class="line">// 通过java库获取数据库连接</span><br><span class="line">Connection conn = java.sql.DriverManager.getConnection(url, &quot;name&quot;, &quot;password&quot;);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>1.Class.forName(“com.mysql.jdbc.Driver”); 在com.mysql.jdbc.Driver中</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class Driver extends NonRegisteringDriver implements java.sql.Driver &#123;</span><br><span class="line">	static &#123;</span><br><span class="line">		try &#123;</span><br><span class="line">			java.sql.DriverManager.registerDriver(new Driver());</span><br><span class="line">		&#125; catch (SQLException E) &#123;</span><br><span class="line">			throw new RuntimeException(&quot;Can&#x27;t register driver!&quot;);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	public Driver() throws SQLException &#123;</span><br><span class="line">		// Required for Class.forName().newInstance()</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>通过Class.forName()，主要就是执行初始化static代码块，也就是向DriverManager注册Driver</p>
+<p>此时：应用类、Driver是由AppClassLoader加载，但由于双亲委派java.sql.DriverManager是由BootstrapClassLoader加载</p>
+<ul>
+<li>2.java.sql.DriverManager.getConnection 获取连接</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">private static Connection getConnection(</span><br><span class="line">	String url, java.util.Properties info, ClassLoader callerCL) throws SQLException &#123;</span><br><span class="line">	java.util.Vector drivers = null;</span><br><span class="line">        </span><br><span class="line">	synchronized(DriverManager.class) &#123;	 </span><br><span class="line">	  if(callerCL == null) &#123;</span><br><span class="line">	      callerCL = Thread.currentThread().getContextClassLoader();</span><br><span class="line">	   &#125;    </span><br><span class="line">	&#125; </span><br><span class="line">	 </span><br><span class="line">	if(url == null) &#123;</span><br><span class="line">	    throw new SQLException(&quot;The url cannot be null&quot;, &quot;08001&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">    </span><br><span class="line">	println(&quot;DriverManager.getConnection(\&quot;&quot; + url + &quot;\&quot;)&quot;);</span><br><span class="line">    </span><br><span class="line">	if (!initialized) &#123;</span><br><span class="line">	    initialize();</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	synchronized (DriverManager.class)&#123; </span><br><span class="line">	    drivers = readDrivers;  </span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">	SQLException reason = null;</span><br><span class="line">	for (int i = 0; i &lt; drivers.size(); i++) &#123;</span><br><span class="line">	    DriverInfo di = (DriverInfo)drivers.elementAt(i);</span><br><span class="line">  </span><br><span class="line">	    if ( getCallerClass(callerCL, di.driverClassName ) != di.driverClass ) &#123;</span><br><span class="line">		println(&quot;    skipping: &quot; + di);</span><br><span class="line">		continue;</span><br><span class="line">	    &#125;</span><br><span class="line">	    try &#123;</span><br><span class="line">		println(&quot;    trying &quot; + di);</span><br><span class="line">		Connection result = di.driver.connect(url, info);</span><br><span class="line">		if (result != null) &#123;</span><br><span class="line">		    // Success!</span><br><span class="line">		    println(&quot;getConnection returning &quot; + di);</span><br><span class="line">		    return (result);</span><br><span class="line">		&#125;</span><br><span class="line">	    &#125; catch (SQLException ex) &#123;</span><br><span class="line">		if (reason == null) &#123;</span><br><span class="line">		    reason = ex;</span><br><span class="line">		&#125;</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	if (reason != null)    &#123;</span><br><span class="line">	    println(&quot;getConnection failed: &quot; + reason);</span><br><span class="line">	    throw reason;</span><br><span class="line">	&#125;</span><br><span class="line">    </span><br><span class="line">	println(&quot;getConnection: no suitable driver found for &quot;+ url);</span><br><span class="line">	throw new SQLException(&quot;No suitable driver found for &quot;+ url, &quot;08001&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">private static Class getCallerClass(ClassLoader callerClassLoader, </span><br><span class="line">					String driverClassName) &#123;</span><br><span class="line">	Class callerC = null;</span><br><span class="line"> </span><br><span class="line">	try &#123;</span><br><span class="line">	    callerC = Class.forName(driverClassName, true, callerClassLoader);</span><br><span class="line">	&#125;</span><br><span class="line">	catch (Exception ex) &#123;</span><br><span class="line">	    callerC = null;           // being very careful </span><br><span class="line">	&#125;</span><br><span class="line"> </span><br><span class="line">	return callerC;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>这其中有两行代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">callerCL = Thread.currentThread().getContextClassLoader();</span><br><span class="line"></span><br><span class="line">callerC = Class.forName(driverClassName, true, callerClassLoader);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>这儿是取线程上下文中的classloader，也就是AppClassLoader；如果不取此classloader，那么Class.forName(driverClassName)就是使用DriverManager的BootstrapClassLoader加载，那必然是加载不到，这也就是父层类加载器加载不了低层类。</p>
+<p>还有个问题，为什么在应用程序中已经加载过Driver，到了getConnection()又要再加载，还得通过Thread.currentThread().getContextClassLoader()？</p>
+<p>其实在getConnection()中，只是对比class是否是同一个，像tomcat那样，各个应用都有自己的mysql-driver的jar包，就只能通过classloader来区分，因为class是不是相同需要classname+classloader组合鉴别</p>
+<h2 id="spring"><a href="#spring" class="headerlink" title="spring"></a>spring</h2><p>对于场景2的问题</p>
+<blockquote>
+<p>如果有 10 个 Web 应用程序都用到了spring的话，可以把Spring的jar包放到 common 或 shared 目录下让这些程序共享。Spring 的作用是管理每个web应用程序的bean，getBean时自然要能访问到应用程序的类，而用户的程序显然是放在 &#x2F;WebApp&#x2F;WEB-INF 目录中的（由 WebAppClassLoader 加载），那么在 CommonClassLoader 或 SharedClassLoader 中的 Spring 容器如何去加载并不在其加载范围的用户程序（&#x2F;WebApp&#x2F;WEB-INF&#x2F;）中的Class呢？</p>
+</blockquote>
+<blockquote>
+<p>答案呼之欲出：spring根本不会去管自己被放在哪里，它统统使用线程上下文加载器来加载类，而线程上下文加载器默认设置为了WebAppClassLoader，也就是说哪个WebApp应用调用了spring，spring就去取该应用自己的WebAppClassLoader来加载bean</p>
+</blockquote>
+<p>org.springframework.web.context.ContextLoader类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">public WebApplicationContext initWebApplicationContext(ServletContext servletContext) &#123;</span><br><span class="line">		if (servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE) != null) &#123;</span><br><span class="line">			throw new IllegalStateException(</span><br><span class="line">					&quot;Cannot initialize context because there is already a root application context present - &quot; +</span><br><span class="line">					&quot;check whether you have multiple ContextLoader* definitions in your web.xml!&quot;);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		Log logger = LogFactory.getLog(ContextLoader.class);</span><br><span class="line">		servletContext.log(&quot;Initializing Spring root WebApplicationContext&quot;);</span><br><span class="line">		if (logger.isInfoEnabled()) &#123;</span><br><span class="line">			logger.info(&quot;Root WebApplicationContext: initialization started&quot;);</span><br><span class="line">		&#125;</span><br><span class="line">		long startTime = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">		try &#123;</span><br><span class="line">			// Determine parent for root web application context, if any.</span><br><span class="line">			ApplicationContext parent = loadParentContext(servletContext);</span><br><span class="line"></span><br><span class="line">			// Store context in local instance variable, to guarantee that</span><br><span class="line">			// it is available on ServletContext shutdown.</span><br><span class="line">			this.context = createWebApplicationContext(servletContext, parent);</span><br><span class="line">			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, this.context);</span><br><span class="line"></span><br><span class="line">			ClassLoader ccl = Thread.currentThread().getContextClassLoader();</span><br><span class="line">			if (ccl == ContextLoader.class.getClassLoader()) &#123;</span><br><span class="line">				currentContext = this.context;</span><br><span class="line">			&#125;</span><br><span class="line">			else if (ccl != null) &#123;</span><br><span class="line">				currentContextPerThread.put(ccl, this.context);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			if (logger.isDebugEnabled()) &#123;</span><br><span class="line">				logger.debug(&quot;Published root WebApplicationContext as ServletContext attribute with name [&quot; +</span><br><span class="line">						WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE + &quot;]&quot;);</span><br><span class="line">			&#125;</span><br><span class="line">			if (logger.isInfoEnabled()) &#123;</span><br><span class="line">				long elapsedTime = System.currentTimeMillis() - startTime;</span><br><span class="line">				logger.info(&quot;Root WebApplicationContext: initialization completed in &quot; + elapsedTime + &quot; ms&quot;);</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			return this.context;</span><br><span class="line">		&#125;</span><br><span class="line">		catch (RuntimeException ex) &#123;</span><br><span class="line">			logger.error(&quot;Context initialization failed&quot;, ex);</span><br><span class="line">			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, ex);</span><br><span class="line">			throw ex;</span><br><span class="line">		&#125;</span><br><span class="line">		catch (Error err) &#123;</span><br><span class="line">			logger.error(&quot;Context initialization failed&quot;, err);</span><br><span class="line">			servletContext.setAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, err);</span><br><span class="line">			throw err;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>关键代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// 获取线程上下文类加载器，默认为WebAppClassLoader</span><br><span class="line">ClassLoader ccl = Thread.currentThread().getContextClassLoader();</span><br><span class="line">// 如果spring的jar包放在每个webapp自己的目录中</span><br><span class="line">// 此时线程上下文类加载器会与本类的类加载器（加载spring的）相同，都是WebAppClassLoader</span><br><span class="line">if (ccl == ContextLoader.class.getClassLoader()) &#123;</span><br><span class="line">    currentContext = this.context;</span><br><span class="line">&#125;</span><br><span class="line">else if (ccl != null) &#123;</span><br><span class="line">    // 如果不同，也就是上面说的那个问题的情况，那么用一个map把刚才创建的WebApplicationContext及对应的WebAppClassLoader存下来</span><br><span class="line">    // 一个webapp对应一个记录，后续调用时直接根据WebAppClassLoader来取出</span><br><span class="line">    currentContextPerThread.put(ccl, this.context);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>这样做的目的在于当通过ConetxtLoader的静态方法获取context的时候，能保证获取的是当前web application的context.实际上就是对于tomcat下面的任何一个线程，我们都能很方便的找出这个线程对应的webapplicationContext.于是在一些不能方便获取servletContext的场合，我们可以通过当前线程获取webapplicationContext.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public static WebApplicationContext getCurrentWebApplicationContext() &#123;</span><br><span class="line">		ClassLoader ccl = Thread.currentThread().getContextClassLoader();</span><br><span class="line">		if (ccl != null) &#123;</span><br><span class="line">			WebApplicationContext ccpt = currentContextPerThread.get(ccl);</span><br><span class="line">			if (ccpt != null) &#123;</span><br><span class="line">				return ccpt;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		return currentContext;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>简而言之就是ContextClassLoader默认存放了AppClassLoader的引用，由于它是在运行时被放在了线程中，所以不管当前程序处于何处（BootstrapClassLoader或是ExtClassLoader等），在任何需要的时候都可以用Thread.currentThread().getContextClassLoader()取出应用程序类加载器来完成需要的操作</p>
+<h1 id="4、参考资料"><a href="#4、参考资料" class="headerlink" title="4、参考资料"></a>4、参考资料</h1><p><a href="https://blog.csdn.net/liweisnake/article/details/8795976">以jdbc为例搞清contextClassLoader</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/class-loader.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/class-loader.html" class="post-title-link" itemprop="url">类加载器</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-10 20:57:00" itemprop="dateCreated datePublished" datetime="2018-10-10T20:57:00+08:00">2018-10-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="java执行过程"><a href="#java执行过程" class="headerlink" title="java执行过程"></a>java执行过程</h1><p>先回顾一下要执行java程序，需要经过哪些步骤</p>
+<p><img src="http://qnimages.zhuxingsheng.com/jit/compile.png" alt="执行java程序"></p>
+<ol>
+<li>编写java代码</li>
+<li>通过javac把源代码编译成class</li>
+<li>把class载入JVM</li>
+</ol>
+<p>1、2两步是需要开发人员参与的，而第3步是JVM的行为，对开发人员透明</p>
+<h2 id="JVM类加载"><a href="#JVM类加载" class="headerlink" title="JVM类加载"></a>JVM类加载</h2><p>详细看下第三点，class载入JVM过程</p>
+<p>从内存空间视角,会分配到各个空间：</p>
+<p><img src="http://images.zhuxingsheng.com/201809261932_365.png" alt="内存结构"></p>
+<p>每个内存空间详情可参考：《GC及JVM参数》</p>
+<p>从类生命周期角度，分阶段：</p>
+<p><img src="http://images.zhuxingsheng.com/201809261921_783.png" alt="类生命周期"></p>
+<p>其中类加载的过程包括了<strong>加载</strong>、<strong>验证</strong>、<strong>准备</strong>、<strong>解析</strong>、<strong>初始化</strong>五个阶段。在这五个阶段中，加载、验证、准备和初始化这四个阶段发生的顺序是确定的，而解析阶段则不一定，它在某些情况下可以在初始化阶段之后开始，这是为了支持Java语言的运行时绑定（也成为动态绑定或晚期绑定）。另外注意这里的几个阶段是按顺序开始，而不是按顺序进行或完成，因为这些阶段通常都是互相交叉地混合进行的，通常在一个阶段执行的过程中调用或激活另一个阶段。</p>
+<h3 id="1-加载"><a href="#1-加载" class="headerlink" title="1.加载"></a>1.加载</h3><p>类的加载指的是将类的.class文件中的二进制数据读入到内存中，将其放在运行时数据区的方法区内，然后在堆区创建一个java.lang.Class对象，用来封装类在方法区内的数据结构。类的加载的最终产品是位于堆区中的Class对象，Class对象封装了类在方法区内的数据结构，并且向Java程序员提供了访问方法区内的数据结构的接口</p>
+<p>在加载阶段，虚拟机需要完成以下3件事情：</p>
+<ol>
+<li>通过一个类的全限定名来获取定义此类的二进制字节流</li>
+<li>将这个字节流所代表的静态存储结构转化为方法区的运行时数据结构。</li>
+<li>在内存中生成一个代表这个类的java.lang.Class对象，作为方法区这个类的各种数据的访问入口</li>
+</ol>
+<p><strong>加载.class文件的方式</strong></p>
+<ul>
+<li>从本地系统中直接加载</li>
+<li>通过网络下载.class文件</li>
+<li>从zip，jar等归档文件中加载.class文件</li>
+<li>从专有数据库中提取.class文件</li>
+<li>将Java源文件动态编译为.class文件</li>
+</ul>
+<p><em>相对于类加载的其他阶段而言，加载阶段（准确地说，是加载阶段获取类的二进制字节流的动作）是可控性最强的阶段，因为开发人员既可以使用系统提供的类加载器来完成加载，也可以自定义自己的类加载器来完成加载</em></p>
+<p>加载阶段完成后，虚拟机外部的 二进制字节流就按照虚拟机所需的格式存储在方法区之中，<br>而且在Java堆中也创建一个java.lang.Class类的对象，这样便可以通过该对象访问方法区中的这些数据</p>
+<h4 id="加载时机"><a href="#加载时机" class="headerlink" title="加载时机"></a>加载时机</h4><ul>
+<li><p>当应用程序启动的时候，所有的类不会被一次性加载，因为如果一次性加载，内存资源有限，可能会影响应用程序的正常运行。例如，A a&#x3D;new A()，<br>一个类真正被加载的时机是在创建对象的时候，才会去执行以上过程，加载类。当我们测试的时候，最先加载拥有main方法的主线程所在类</p>
+</li>
+<li><p>Java虚拟机有预加载功能。类加载器并不需要等到某个类被”首次主动使用”时再加载它,JVM规范规定JVM可以预测加载某一个类，如果这个类出错，但是应用程序没有调用这个类， JVM也不会报错；如果调用这个类的话，JVM才会报错，（LinkAgeError错误)</p>
+</li>
+</ul>
+<h4 id="加载方式"><a href="#加载方式" class="headerlink" title="加载方式"></a>加载方式</h4><h5 id="隐式加载"><a href="#隐式加载" class="headerlink" title="隐式加载"></a>隐式加载</h5><ol>
+<li>创建类对象</li>
+<li>使用类的静态域</li>
+<li>创建子类对象</li>
+<li>使用子类的静态域</li>
+<li>在JVM启动时，BootStrapLoader会加载一些JVM自身运行所需的class</li>
+<li>在JVM启动时，ExtClassLoader会加载指定目录下一些特殊的class</li>
+<li>在JVM启动时，AppClassLoader会加载classpath路径下的class，以及main函数所在的类的class文件</li>
+</ol>
+<h5 id="显式加载"><a href="#显式加载" class="headerlink" title="显式加载"></a>显式加载</h5><ol>
+<li>ClassLoader.loadClass(className)，不会进行初始化</li>
+<li>Class.forName(String name, boolean initialize,ClassLoader loader);  借助当前调用者的class的ClassLoader完成class的加载,加载class的同时根据initialize是否初始化</li>
+</ol>
+<h3 id="2-连接"><a href="#2-连接" class="headerlink" title="2.连接"></a>2.连接</h3><h4 id="2-1-验证：确保被加载的类的正确性"><a href="#2-1-验证：确保被加载的类的正确性" class="headerlink" title="2.1.验证：确保被加载的类的正确性"></a>2.1.验证：确保被加载的类的正确性</h4><p>验证是连接阶段的第一步，这一阶段的目的是为了确保Class文件的字节流中包含的信息符合当前虚拟机的要求，并且不会危害虚拟机自身的安全。验证阶段大致会完成4个阶段的检验动作：</p>
+<p><strong>文件格式验证</strong>：验证字节流是否符合Class文件格式的规范；例如：是否以0xCAFEBABE开头、主次版本号是否在当前虚拟机的处理范围之内、常量池中的常量是否有不被支持的类型。</p>
+<p><strong>元数据验证</strong>：对字节码描述的信息进行语义分析（注意：对比javac编译阶段的语义分析），以保证其描述的信息符合Java语言规范的要求；例如：这个类是否有父类，除了java.lang.Object之外。</p>
+<p><strong>字节码验证</strong>：通过数据流和控制流分析，确定程序语义是合法的、符合逻辑的。</p>
+<p><strong>符号引用验证</strong>：确保解析动作能正确执行。</p>
+<p>验证阶段是非常重要的，但不是必须的，它对程序运行期没有影响，如果所引用的类经过反复验证，那么可以考虑采用**-Xverify:none**参数来关闭大部分的类验证措施，以缩短虚拟机类加载的时间</p>
+<h4 id="2-2-准备：为类的静态变量分配内存，并将其初始化为默认值"><a href="#2-2-准备：为类的静态变量分配内存，并将其初始化为默认值" class="headerlink" title="2.2. 准备：为类的静态变量分配内存，并将其初始化为默认值"></a>2.2. 准备：为类的静态变量分配内存，并将其初始化为默认值</h4><p>准备阶段是正式为类变量分配内存并设置类变量初始值的阶段，这些内存都将在方法区中分配。对于该阶段有以下几点需要注意：</p>
+<ul>
+<li><p>2.2.1、这时候进行内存分配的仅包括类变量（static），而不包括实例变量，实例变量会在对象实例化时随着对象一块分配在Java堆中。</p>
+</li>
+<li><p>2.2.2、这里所设置的初始值通常情况下是数据类型默认的零值（如0、0L、null、false等），而不是被在Java代码中被显式地赋予的值。<br>假设一个类变量的定义为：public static int value &#x3D; 3；<br> 那么变量value在准备阶段过后的初始值为0，而不是3，因为这时候尚未开始执行任何Java方法，而把value赋值为3的putstatic指令是在程序编译后，存放于类构造器方法之中的，所以把value赋值为3的动作将在初始化阶段才会执行</p>
+</li>
+<li><p>2.2.3、如果类字段的字段属性表中存在ConstantValue属性，即同时被final和static修饰，那么在准备阶段变量value就会被初始化为ConstValue属性所指定的值。</p>
+<p> 假设上面的类变量value被定义为： public static final int value &#x3D; 3；</p>
+<p> 编译时Javac将会为value生成ConstantValue属性，在准备阶段虚拟机就会根据ConstantValue的设置将value赋值为3</p>
+</li>
+</ul>
+<h4 id="2-3-解析：虚拟机将常量池中的符号引用替换为直接引用（内存地址）的过程"><a href="#2-3-解析：虚拟机将常量池中的符号引用替换为直接引用（内存地址）的过程" class="headerlink" title="2.3. 解析：虚拟机将常量池中的符号引用替换为直接引用（内存地址）的过程"></a>2.3. 解析：虚拟机将常量池中的符号引用替换为直接引用（内存地址）的过程</h4><p>解析阶段是虚拟机将常量池内的符号引用替换为直接引用的过程，解析动作主要针对类或接口、字段、类方法、接口方法、方法类型、方法句柄和调用点限定符7类符号引用进行。符号引用就是一组符号来描述目标，可以是任何字面量。直接引用就是直接指向目标的指针、相对偏移量或一个间接定位到目标的句柄</p>
+<h5 id="常量池"><a href="#常量池" class="headerlink" title="常量池"></a>常量池</h5><ol>
+<li>字面量：比较接近Java语言层面，如String字符串,声明final的常量等</li>
+<li>符号引用：属于编译原理方面的概念:1、包括类和接口的全限定名 2、字段的名称和描述符3.方法的名称和描述符</li>
+</ol>
+<h6 id="常量项结构"><a href="#常量项结构" class="headerlink" title="常量项结构"></a>常量项结构</h6><p><img src="http://images.zhuxingsheng.com/201809281128_30.png" alt="常量项结构"></p>
+<p>这些内容，需要再去分析class文件详细结构，后续再学习了</p>
+<h3 id="3-初始化，为类的静态变量赋予正确的初始值"><a href="#3-初始化，为类的静态变量赋予正确的初始值" class="headerlink" title="3.初始化，为类的静态变量赋予正确的初始值"></a>3.初始化，为类的静态变量赋予正确的初始值</h3><p>类加载的最后一个阶段，除了加载阶段我们可以通过自定义类加载器参与之外，其余完全又JVM主导。到了初始化阶段，才真正开始执行程序，也就是由java转换成的class</p>
+<p>JVM负责对类进行初始化，主要对类变量进行初始化。</p>
+<p>在Java中对类变量进行初始值设定有两种方式：</p>
+<ol>
+<li><p>声明类变量是指定初始值</p>
+</li>
+<li><p>使用静态代码块为类变量指定初始值</p>
+</li>
+</ol>
+<h4 id="JVM初始化规则"><a href="#JVM初始化规则" class="headerlink" title="JVM初始化规则"></a>JVM初始化规则</h4><p>类初始化时机：只有当对类的主动使用的时候才会导致类的初始化</p>
+<p>Java程序对类的使用方式可以分为两种： </p>
+<ol>
+<li>主动使用：会执行加载、连接、初始化静态域</li>
+<li>被动使用：只执行加载、连接，不执行类的初始化静态域</li>
+</ol>
+<h5 id="类的主动使用包括以下六种："><a href="#类的主动使用包括以下六种：" class="headerlink" title="类的主动使用包括以下六种："></a>类的主动使用包括以下六种：</h5><ul>
+<li>创建类的实例，如（1）new （2）反射newInstance （3）序列化生成obj;遇到new、getstatic、putstatic、invokestatic这四条字节码指令</li>
+<li>访问某个类或接口的静态变量，或者对该静态变量赋值 （注意static 与static final的区别）</li>
+<li>调用类的静态方法</li>
+<li>反射（如Class.forName(“Test”)）</li>
+<li>初始化某个类的子类，则其父类也会被初始化；接口初始化不会导致父接口的初始化(这其实也是static final的原因)；对于静态字段，<ul>
+<li>只有直接定义这个字段的类才会被初始化，因此，通过其子类来引用父类中定义的静态字段，只会触发父类的初始化而不会触发子类的初始化</li>
+</ul>
+</li>
+<li>Java虚拟机启动时被标明为启动类的类（Java Test），直接使用java.exe命令来运行某个主类</li>
+</ul>
+<h5 id="被动使用，不在主动使用的六种以内都是被动的"><a href="#被动使用，不在主动使用的六种以内都是被动的" class="headerlink" title="被动使用，不在主动使用的六种以内都是被动的"></a>被动使用，不在主动使用的六种以内都是被动的</h5><ul>
+<li>1.如通过子类引用父类的静态字段，为子类的被动使用，不会导致子类初始化</li>
+<li>2.通过数组定义类引用类，为类的被动使用，不会触发此类的初始化<ul>
+<li>2.1 原因：其实数组已经不是E类型了，E的数组jvm在运行期，会动态生成一个新的类型，新类型为：<br>      如果是一维数组，则为：[L+元素的类全名；二维数组，则为[[L+元素的类全名<br>      如果是基础类型（int&#x2F;float等），则为[I（int类型）、[F（float类型）等</li>
+</ul>
+</li>
+<li>3.常量在编译阶段会存入调用方法所在的类的常量池中，本质上没有直接引用到定义常量的类，因此不会触发定义常量的类的初始化</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 主动 被动使用问题测试</span><br><span class="line"> * Created by Jack on 2018/9/28.</span><br><span class="line"> */</span><br><span class="line">public class ClassInitTest3 &#123;</span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        String x = F.s;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">class F &#123;</span><br><span class="line">    //因为UUID.randomUUID().toString()这个方法，是运行期确认的，所以，这不是被动使用</span><br><span class="line">    static final String s = UUID.randomUUID().toString();</span><br><span class="line"></span><br><span class="line">    static &#123;</span><br><span class="line">        //这儿会被输出</span><br><span class="line">        System.out.println(&quot;Initialize class F&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="clinit-与-init"><a href="#clinit-与-init" class="headerlink" title="clinit 与 init"></a>clinit 与 init</h4><p>在编译生成class文件时，编译器会产生两个方法加于class文件中，一个是类的初始化方法clinit, 另一个是实例的初始化方法init</p>
+<h5 id="clinit："><a href="#clinit：" class="headerlink" title="clinit："></a>clinit：</h5><p>clinit指的是类构造器，这个构造器是jvm自动合并生成的，在jvm<strong>第一次加载</strong>class文件时调用，包括静态变量初始化语句和静态块的执行</p>
+<p>它合并static变量的赋值操作</p>
+<ol>
+<li>注意是赋值操作，**(仅声明，或者final static)**不会触发<clinit>，毕竟前面准备阶段已经默认赋过值为0了</li>
+<li>static{}语句块生成，且虚拟机保证<clinit>执行前，父类的<clinit>已经执行完毕，所以说父类如果定义static块的话，一定比子类先执行</li>
+<li>如果一个类或接口中没有static变量的赋值操作和static{}语句块，那么<clinit>不会被JVM生成</li>
+<li>static变量的赋值操作和static{}语句块合并的顺序是由语句在源文件中出现的顺序所决定的。</li>
+</ol>
+<h5 id="init"><a href="#init" class="headerlink" title="init:"></a>init:</h5><p>在实例创建出来的时候调用，也就是构造函数，包括:</p>
+<ol>
+<li>new操作符</li>
+<li>普通代码块</li>
+<li>调用Class或java.lang.reflect.Constructor对象的newInstance()方法；</li>
+<li>调用任何现有对象的clone()方法；</li>
+<li>通过java.io.ObjectInputStream类的getObject()方法反序列化。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * &lt;clinit&gt; 与 &lt;init&gt; 区别</span><br><span class="line"> */</span><br><span class="line">public class ClassInitTest2 &#123;</span><br><span class="line">    static &#123;</span><br><span class="line">        System.out.println(&quot;cinit&quot;);</span><br><span class="line"></span><br><span class="line">        i = 3;//可以赋值</span><br><span class="line">        //System.out.println(i);//但不能使用，语法错误</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static int i = 1;</span><br><span class="line"></span><br><span class="line">    &#123;</span><br><span class="line">        System.out.println(&quot;init&quot;);//实例化构造器，</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String [] args)	&#123;</span><br><span class="line">        new ClassInitTest2();</span><br><span class="line">        new ClassInitTest2();</span><br><span class="line">        String str = &quot;str&quot;;</span><br><span class="line">        System.out.println(str);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 输出</span><br><span class="line">cinit</span><br><span class="line">init</span><br><span class="line">init</span><br><span class="line">str</span><br></pre></td></tr></table></figure>
+
+<p>static 与 static final 对初始化的区别</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * static 与 static final 对初始化的区别</span><br><span class="line"> */</span><br><span class="line">public class ClassInitFinalTest &#123;</span><br><span class="line">    public static  int age = 20;</span><br><span class="line"></span><br><span class="line">    static &#123;</span><br><span class="line">        //如果age定义为static final，这儿就不会执行</span><br><span class="line">        System.out.println(&quot;静态初始化！&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(String args[])&#123;</span><br><span class="line">        System.out.println(ClassInitFinalTest.age);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h4 id="不会执行类初始化的几种情况"><a href="#不会执行类初始化的几种情况" class="headerlink" title="不会执行类初始化的几种情况"></a>不会执行类初始化的几种情况</h4><ul>
+<li>通过子类引用父类的静态字段，只会触发父类的初始化，而不会触发子类的初始化。</li>
+<li>定义对象数组，不会触发该类的初始化</li>
+<li>类A引用类B的static final常量不会导致类B初始化 (看上面的ClassInitFinalTest)</li>
+<li>通过类名获取Class对象，不会触发类的初始化。如</li>
+<li>System.out.println(Person.class);</li>
+<li>通过Class.forName加载指定类时，如果指定参数initialize为false时，也不会触发类初始化，其实这个参数是告诉虚拟机，是否要对类进行初始化。</li>
+<li>通过ClassLoader默认的loadClass方法，也不会触发初始化动作</li>
+</ul>
+<h3 id="结束生命周期"><a href="#结束生命周期" class="headerlink" title="结束生命周期"></a>结束生命周期</h3><p>在如下几种情况下，Java虚拟机将结束生命周期</p>
+<ul>
+<li>执行了System.exit()方法</li>
+<li>程序正常执行结束</li>
+<li>程序在执行过程中遇到了异常或错误而异常终止</li>
+<li>由于操作系统出现错误而导致Java虚拟机进程终止</li>
+</ul>
+<h2 id="类加载测试"><a href="#类加载测试" class="headerlink" title="类加载测试"></a>类加载测试</h2><p>看到一段代码，很有意思</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 测试类加载及初始化顺序问题</span><br><span class="line"> * Created by jack01.zhu on 2018/9/28.</span><br><span class="line"> */</span><br><span class="line">public class ClassInit &#123;</span><br><span class="line">        private static ClassInit singleton = new ClassInit();</span><br><span class="line">        public static int counter1;</span><br><span class="line">        public static int counter2 = 0;</span><br><span class="line">        private ClassInit() &#123;</span><br><span class="line">            counter1++;</span><br><span class="line">            counter2++;</span><br><span class="line">        &#125;</span><br><span class="line">        public static ClassInit getSingleton() &#123;</span><br><span class="line">            return singleton;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 通过输出结果，推测类加载过程</span><br><span class="line"> * Created by jack01.zhu on 2018/9/28.</span><br><span class="line"> */</span><br><span class="line">public class ClassInitTestMain &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String []args) &#123;</span><br><span class="line">        ClassInit classInitTest = ClassInit.getSingleton();</span><br><span class="line">        System.out.println(&quot;counter1=&quot;+classInitTest.counter1);</span><br><span class="line">        System.out.println(&quot;counter2=&quot;+classInitTest.counter2);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这段代码输出的结果是什么？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">counter1=1</span><br><span class="line">counter2=0</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>入口肯定是ClassInitTestMain.main()，从这儿开始加载，初始化</li>
+<li>ClassInit.getSingleton()，首次使用化，所以从加载部分开始执行，执行到<strong>准备阶段</strong>所有static变量都被设置为初始值。此时</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public static int counter1 = 0;</span><br><span class="line">public static int counter2 = 0;</span><br><span class="line">private static ClassInit singleton = null;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>ClassInit执行到初始化阶段，生成类构造器<clinit>，类构造器会合并 static变量的赋值操作和 static语句块。合并后执行</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public static int counter1 ; // 由于 counter1没被赋值，所以不会被合并进去</span><br><span class="line"></span><br><span class="line">public void clinit() &#123;// 伪代码：&lt;clinit&gt;方法体内容</span><br><span class="line">  ClassInit singleton = new ClassInit();//（1）</span><br><span class="line">  int counter2 = 0;// （2）</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>初始化阶段 执行clinit内代码，执行到（1）处，此时counter1和counter2都变为1。</li>
+<li>初始化阶段 执行clinit内代码，执行到（2）处，counter2又被设置为0。</li>
+<li>初始化结束 ，回到Main方法的ClassInit.getSingleton();继续执行main方法，最后输出结束。</li>
+</ol>
+<hr>
+<p>以上，就是一个类的生命周期，这篇重点就是加载部分，如上面所说，加载阶段相对别的阶段，对开发人员而言有更强的可控性;下面学习一下类加载器相关知识</p>
+<h1 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h1><p><img src="http://images.zhuxingsheng.com/201809281552_12.png" alt="类加载器"></p>
+<blockquote>
+<ol>
+<li>BootstrapClassLoader:加载路径: System.getProperty(“java.class.path”) 或直接通过 -Xbootclasspath 指定</li>
+</ol>
+<p>  特性: 用C语言写的</p>
+<p>  手动获取加载路径: sun.misc.Launcher.getBootstrapClassPath().getURLs()</p>
+<ol start="2">
+<li>ExtClassLoader:加载路径: System.getProperty(“java.ext.dirs”) 或直接通过 -Djava.ext.dirs 指定</li>
+</ol>
+<p>  特性: 继承 URLClassLoader</p>
+<p>  手动获取加载路径:((URLClassLoader)App.class.getClassLoader().getParent()).getURLs()</p>
+<ol start="3">
+<li>AppClassLoader:加载路径: System.getProperty(“sun.boot.class.path”) 或直接通过 -cp, -classpath 指定</li>
+</ol>
+<p>  特性: 继承 URLClassLoader</p>
+<p>  手动获取加载路径: ((URLClassLoader)App.class.getClassLoader()).getURLs()<br>  通过 ClassLoader.getSystemClassLoader() 就可以获取 AppClassLoader, 自己写的程序中写的 ClassLoader(继承 URLClassLoader), 若不指定 parent, 默认的parent就是 AppClassLoader</p>
+</blockquote>
+<h2 id="同一个class"><a href="#同一个class" class="headerlink" title="同一个class"></a>同一个class</h2><p>在JVM中，如何确定一个类型实例:</p>
+<p>同一个Class &#x3D; 相同的 ClassName + PackageName + ClassLoader</p>
+<p>在JVM中，类型被定义在一个叫SystemDictionary 的数据结构中，该数据结构接受类加载器和全类名作为参数，返回类型实例。</p>
+<p>SystemDictionary 如图所示：</p>
+<p><img src="http://images.zhuxingsheng.com/201809251755_835.png" alt="SystemDictionary"></p>
+<h2 id="加载机制"><a href="#加载机制" class="headerlink" title="加载机制"></a>加载机制</h2><ol>
+<li><strong>全盘负责</strong>，当一个类加载器负责加载某个Class时，该Class所依赖的和引用的其他Class也将由该类加载器负责载入，除非显示使用另外一个类加载器来载入</li>
+<li><strong>双亲委托</strong>，先让父类加载器试图加载该类，只有在父类加载器无法加载该类时才尝试从自己的类路径中加载该类</li>
+<li><strong>缓存机制</strong>，缓存机制将会保证所有加载过的Class都会被缓存，当程序中需要使用某个Class时，类加载器先从缓存区寻找该Class，只有缓存区不存在，系统才会读取该类对应的二进制数据，并将其转换成Class对象，存入缓存区。这就是为什么修改了Class后，必须重启JVM，程序的修改才会生效</li>
+</ol>
+<h3 id="双亲委托模型"><a href="#双亲委托模型" class="headerlink" title="双亲委托模型"></a>双亲委托模型</h3><p>双亲委托的工作过程：如果一个类加载器收到了一个类加载请求，它首先不会自己去加载这个类，而是把这个请求委托给父类加载器去完成，每一个层次的类加载器都是如此，因此所有的加载请求最终都应该传送到顶层的启动类加载器中，只有当父类加载器反馈自己无法完成加载请求(它管理的范围之中没有这个类)时，子加载器才会尝试着自己去加载</p>
+<p><img src="http://images.zhuxingsheng.com/201809260947_799.png"></p>
+<ol>
+<li><p>当AppClassLoader加载一个class时，它首先不会自己去尝试加载这个类，而是把类加载请求委派给父类加载器ExtClassLoader去完成。</p>
+</li>
+<li><p>当ExtClassLoader加载一个class时，它首先也不会自己去尝试加载这个类，而是把类加载请求委派给BootStrapClassLoader去完成。</p>
+</li>
+<li><p>如果BootStrapClassLoader加载失败（例如在$JAVA_HOME&#x2F;jre&#x2F;lib里未查找到该class），会使用ExtClassLoader来尝试加载；</p>
+</li>
+<li><p>若ExtClassLoader也加载失败，则会使用AppClassLoader来加载，如果AppClassLoader也加载失败，则会报出异常ClassNotFoundException。</p>
+</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">javac –verbose查看运行类是加载了jar文件 </span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">protected synchronized Class&lt;?&gt; loadClass(String name, boolean resolve) throws ClassNotFoundException&#123;</span><br><span class="line"></span><br><span class="line">	// 首先检查，jvm中是否已经加载了对应名称的类，findLoadedClass(String )方法实际上是findLoadedClass0方法的wrapped方法，做了检查类名的工</span><br><span class="line">       //作，而findLoadedClass0则是一个native方法，通过底层来查看jvm中的对象。</span><br><span class="line">	Class c = findLoadedClass(name);</span><br><span class="line">	if (c == null) &#123;//类还未加载</span><br><span class="line">	    try &#123;</span><br><span class="line">		if (parent != null) &#123;</span><br><span class="line">            //在类还未加载的情况下，我们首先应该将加载工作交由父classloader来处理。</span><br><span class="line">		    c = parent.loadClass(name, false);</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">                    //返回一个由bootstrap class loader加载的类，如果不存在就返回null</span><br><span class="line">		    c = findBootstrapClassOrNull(name);</span><br><span class="line">		&#125;</span><br><span class="line">	    &#125; catch (ClassNotFoundException e) &#123;</span><br><span class="line">                // ClassNotFoundException thrown if class not found</span><br><span class="line"></span><br><span class="line">                // from the non-null parent class loader</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            if (c == null) &#123;</span><br><span class="line">	        // If still not found, then invoke findClass in order</span><br><span class="line">	        // to find the class.</span><br><span class="line">	        c = findClass(name);//这里是我们的入手点，也就是指定我们自己的类加载实现</span><br><span class="line">	    &#125;</span><br><span class="line">	&#125;</span><br><span class="line">	if (resolve) &#123;</span><br><span class="line">	    resolveClass(c);//用来做类链接操作</span><br><span class="line">	&#125;</span><br><span class="line">	return c;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>从上面的方法也看出我们在实现自己的加载器的时候，不要覆盖locaClass方法，而是<strong>重写findClass()</strong>，这样能保证双亲委派模型，同时也实现了自己的方法</p>
+<h3 id="为什么要使用双亲委托这种模型呢？"><a href="#为什么要使用双亲委托这种模型呢？" class="headerlink" title="为什么要使用双亲委托这种模型呢？"></a>为什么要使用双亲委托这种模型呢？</h3><ol>
+<li>节约系统资源： 因为这样可以避免重复加载，当父亲已经加载了该类的时候，就没有必要子ClassLoader再加载一次</li>
+<li>保证Java核心库的类型安全: 我们试想一下，如果不使用这种委托模式，那我们就可以随时使用自定义的String来动态替代java核心api中定义的类型，这样会存在非常大的安全隐患，而双亲委托的方式，就可以避免这种情况，因为String已经在启动时就被引导类加载器（Bootstrcp ClassLoader）加载，所以用户自定义的ClassLoader永远也无法加载一个自己写的String，除非你改变JDK中ClassLoader搜索类的默认算法。</li>
+</ol>
+<h2 id="自定义加载器"><a href="#自定义加载器" class="headerlink" title="自定义加载器"></a>自定义加载器</h2><p>既然JVM已经提供了默认的类加载器，为什么还要定义自已的类加载器呢？</p>
+<p>因为Java中提供的默认ClassLoader，只加载指定目录下的jar和class，如果我们想加载其它位置的类或jar时，比如：我要加载网络上的一个class文件，通过动态加载到内存之后，要调用这个类中的方法实现业务逻辑。在这样的情况下，默认的ClassLoader就不能满足我们的需求了，所以需要定义自己的ClassLoader</p>
+<h3 id="定义自已的类加载器分为两步："><a href="#定义自已的类加载器分为两步：" class="headerlink" title="定义自已的类加载器分为两步："></a>定义自已的类加载器分为两步：</h3><ol>
+<li>继承java.lang.ClassLoader</li>
+<li>重写父类的findClass方法</li>
+</ol>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>很简单的两个类，方法中打印出各自的类加载器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public class LoaderClass &#123;</span><br><span class="line"></span><br><span class="line">    public void loader()&#123;</span><br><span class="line">        System.out.println(&quot;LoaderClass:&quot;+this.getClass().getClassLoader());</span><br><span class="line">        LoaderClass1 class1 = new LoaderClass1();</span><br><span class="line">        class1.loader();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class LoaderClass1 &#123;</span><br><span class="line"></span><br><span class="line">    public void loader() &#123;</span><br><span class="line">        System.out.println(this.getClass().getName() + &quot; loader:&quot;+this.getClass().getClassLoader());</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>自定义加载器</p>
+<ol>
+<li>重写findClass方法，从class文件加载</li>
+<li>通过defineClass从bytes构建class</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">public class MyClassLoader extends ClassLoader &#123;</span><br><span class="line"></span><br><span class="line">    protected Class&lt;?&gt; findClass(String name) throws ClassNotFoundException &#123;</span><br><span class="line"></span><br><span class="line">        String root = &quot;d:/&quot;;</span><br><span class="line"></span><br><span class="line">        byte[] bytes = null;</span><br><span class="line">        try &#123;</span><br><span class="line">            //路径改到根目录下</span><br><span class="line">            String file = root + name.substring(name.lastIndexOf(&quot;.&quot;)+1) + &quot;.class&quot;;</span><br><span class="line">            InputStream ins = new FileInputStream(file);</span><br><span class="line">            ByteArrayOutputStream baos = new ByteArrayOutputStream();</span><br><span class="line">            int bufferSize = 1024;</span><br><span class="line">            byte[] buffer = new byte[bufferSize];</span><br><span class="line">            int length = 0;</span><br><span class="line">            while ((length = ins.read(buffer)) != -1) &#123;</span><br><span class="line">                baos.write(buffer, 0, length);</span><br><span class="line">            &#125;</span><br><span class="line">            bytes = baos.toByteArray();</span><br><span class="line"></span><br><span class="line">            ins.close();</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        return defineClass(name, bytes, 0, bytes.length);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>测试类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">public class ClassLoaderTest &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[]args) throws Exception &#123;</span><br><span class="line">        ClassLoaderTest test = new ClassLoaderTest();</span><br><span class="line"></span><br><span class="line">        System.out.println(test.getClass().getClassLoader());//输出sun.misc.Launcher$AppClassLoader</span><br><span class="line"></span><br><span class="line">        System.out.println(test.getClass().getClassLoader().getParent());//输出sun.misc.Launcher$ExtClassLoader</span><br><span class="line"></span><br><span class="line">        System.out.println(test.getClass().getClassLoader().getParent().getParent());//输出null</span><br><span class="line"></span><br><span class="line">        //=====测试重复加载，类路径中LoaderClass.class存在=================</span><br><span class="line">        //======虽然指定了classloader，但依然输出的是LoaderClass:sun.misc.Launcher$AppClassLoader</span><br><span class="line">        //==删除类路径下的LoaderClass.class,才会输出LoaderClass:com.jack.classloader.MyClassLoader</span><br><span class="line">        //并且loaderclass中创建的对象类加载器也是MyClassLoader</span><br><span class="line">        MyClassLoader classLoader = new MyClassLoader();</span><br><span class="line">        Class&lt;?&gt; loadClass = Class.forName(&quot;com.jack.classloader.LoaderClass&quot;, true, classLoader);</span><br><span class="line">        Method startMethod = loadClass.getMethod(&quot;loader&quot;);</span><br><span class="line">        startMethod.invoke(loadClass.newInstance());</span><br><span class="line"></span><br><span class="line">        //===当类加载器不一样时，两个class不相等</span><br><span class="line">        MyClassLoader classLoader1 = new MyClassLoader();</span><br><span class="line">        Class&lt;?&gt; loadClass1 = Class.forName(&quot;com.jack.classloader.LoaderClass&quot;, true, classLoader1);</span><br><span class="line">        System.out.println(loadClass.equals(loadClass1));//输出false</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://blog.csdn.net/jiyiqinlovexx/article/details/51090751">class加载时机及两种显示加载的区别</a></p>
+<p><a href="https://www.cnblogs.com/hunterCecil/p/6379197.html">JVM类加载机制—类加载的过程</a></p>
+<p><a href="https://blog.csdn.net/w425006762/article/details/50452469">&lt;init&gt;和&lt;clinit&gt;</a></p>
+<p><a href="https://www.jianshu.com/p/0b1dba1a1e95">类加载原理分析&amp;动态加载Jar&#x2F;Dex</a></p>
+<p><a href="https://blog.csdn.net/mweibiao/article/details/79516708">java类的主动使用&#x2F;被动使用</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/fastthreadlocal-parsing.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/fastthreadlocal-parsing.html" class="post-title-link" itemprop="url">FastThreadLocal解析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-05 11:11:27" itemprop="dateCreated datePublished" datetime="2018-10-05T11:11:27+08:00">2018-10-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-07-23 11:54:38" itemprop="dateModified" datetime="2022-07-23T11:54:38+08:00">2022-07-23</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前《TreadLocal解析》说过Threadlocal的结构：</p>
+<p><img src="http://images.zhuxingsheng.com/201810221114_591.png" alt="ThreadLocal结构"></p>
+<p>但netty却重新搞了一个fastthreadlocal,从各方面对比一下两者的区别。也不得不说一下netty真不愧是款优秀框架，里面中有很多优秀类和方法值得细品</p>
+<h1 id="VS-ThreadLocal"><a href="#VS-ThreadLocal" class="headerlink" title="VS ThreadLocal"></a>VS ThreadLocal</h1><h2 id="1、性能"><a href="#1、性能" class="headerlink" title="1、性能"></a>1、性能</h2><p>第一点，从性能开始，为什么要重造轮子，可能就是之前的轮子达不到性能要求</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">public class FastThreadLocalTest &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        testFast(100);</span><br><span class="line">        testSlow(100);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static void testFast(int threadLocalCount) &#123;</span><br><span class="line">        final FastThreadLocal&lt;String&gt;[] caches = new FastThreadLocal[threadLocalCount];</span><br><span class="line">        final Thread mainThread = Thread.currentThread();</span><br><span class="line">        for (int i = 0; i &lt; threadLocalCount; i++) &#123;</span><br><span class="line">            caches[i] = new FastThreadLocal();</span><br><span class="line">        &#125;</span><br><span class="line">        Thread t = new FastThreadLocalThread(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                for (int i = 0; i &lt; threadLocalCount; i++) &#123;</span><br><span class="line">                    caches[i].set(&quot;float.lu&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                long start = System.nanoTime();</span><br><span class="line">                for (int i = 0; i &lt; threadLocalCount; i++) &#123;</span><br><span class="line">                    for (int j = 0; j &lt; 1000000; j++) &#123;</span><br><span class="line">                        caches[i].get();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                long end = System.nanoTime();</span><br><span class="line">                System.out.println(&quot;take[&quot; + TimeUnit.NANOSECONDS.toMillis(end - start) +</span><br><span class="line">                        &quot;]ms&quot;);</span><br><span class="line">                LockSupport.unpark(mainThread);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;);</span><br><span class="line">        t.start();</span><br><span class="line">        LockSupport.park(mainThread);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static void testSlow(int threadLocalCount) &#123;</span><br><span class="line">        final ThreadLocal&lt;String&gt;[] caches = new ThreadLocal[threadLocalCount];</span><br><span class="line">        final Thread mainThread = Thread.currentThread();</span><br><span class="line">        for (int i=0;i&lt;threadLocalCount;i++) &#123;</span><br><span class="line">            caches[i] = new ThreadLocal();</span><br><span class="line">        &#125;</span><br><span class="line">        Thread t = new Thread(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                for (int i=0;i&lt;threadLocalCount;i++) &#123;</span><br><span class="line">                    caches[i].set(&quot;float.lu&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                long start = System.nanoTime();</span><br><span class="line">                for (int i=0;i&lt;threadLocalCount;i++) &#123;</span><br><span class="line">                    for (int j=0;j&lt;1000000;j++) &#123;</span><br><span class="line">                        caches[i].get();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                long end = System.nanoTime();</span><br><span class="line">                System.out.println(&quot;take[&quot; + TimeUnit.NANOSECONDS.toMillis(end - start) +</span><br><span class="line">                        &quot;]ms&quot;);</span><br><span class="line">                LockSupport.unpark(mainThread);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;);</span><br><span class="line">        t.start();</span><br><span class="line">        LockSupport.park(mainThread);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//输出</span><br><span class="line">fast[15]ms</span><br><span class="line">slow[302]ms</span><br></pre></td></tr></table></figure>
+<p>从输出可见性能提升很大</p>
+<h2 id="2、数据结构"><a href="#2、数据结构" class="headerlink" title="2、数据结构"></a>2、数据结构</h2><p>两者的数据结构大体相似，都是thread带上map属性，threadlocal实例为key；但在细节算法处理时，不一样</p>
+<h3 id="get"><a href="#get" class="headerlink" title="get()"></a>get()</h3><p>整体思路：通过thread取到map，再从map中取value</p>
+<h4 id="ThreadLocal-get"><a href="#ThreadLocal-get" class="headerlink" title="ThreadLocal.get()"></a>ThreadLocal.get()</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public T get() &#123;</span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        if (map != null) &#123;</span><br><span class="line">            ThreadLocalMap.Entry e = map.getEntry(this);</span><br><span class="line">            if (e != null) &#123;</span><br><span class="line">                @SuppressWarnings(&quot;unchecked&quot;)</span><br><span class="line">                T result = (T)e.value;</span><br><span class="line">                return result;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return setInitialValue();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>从map中取值：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">private Entry getEntry(ThreadLocal&lt;?&gt; key) &#123;</span><br><span class="line">            int i = key.threadLocalHashCode &amp; (table.length - 1);</span><br><span class="line">            Entry e = table[i];</span><br><span class="line">            if (e != null &amp;&amp; e.get() == key)</span><br><span class="line">                return e;</span><br><span class="line">            else</span><br><span class="line">                return getEntryAfterMiss(key, i, e);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">private Entry getEntryAfterMiss(ThreadLocal&lt;?&gt; key, int i, Entry e) &#123;</span><br><span class="line">            Entry[] tab = table;</span><br><span class="line">            int len = tab.length;</span><br><span class="line"></span><br><span class="line">            while (e != null) &#123;</span><br><span class="line">                ThreadLocal&lt;?&gt; k = e.get();</span><br><span class="line">                if (k == key)</span><br><span class="line">                    return e;</span><br><span class="line">                if (k == null)</span><br><span class="line">                    expungeStaleEntry(i);</span><br><span class="line">                else</span><br><span class="line">                    i = nextIndex(i, len);</span><br><span class="line">                e = tab[i];</span><br><span class="line">            &#125;</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>如果key值相等，直接返回value</p>
+<p>如果key不相等，使用循环线性探测，一直找到最后一个元素</p>
+<h4 id="FastThreadLocal-get"><a href="#FastThreadLocal-get" class="headerlink" title="FastThreadLocal.get()"></a>FastThreadLocal.get()</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public final V get(InternalThreadLocalMap threadLocalMap) &#123;</span><br><span class="line">        Object v = threadLocalMap.indexedVariable(index);</span><br><span class="line">        if (v != InternalThreadLocalMap.UNSET) &#123;</span><br><span class="line">            return (V) v;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return initialize(threadLocalMap);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">public Object indexedVariable(int index) &#123;</span><br><span class="line">        Object[] lookup = indexedVariables;</span><br><span class="line">        return index &lt; lookup.length? lookup[index] : UNSET;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这个明显就快些，有index,直接数组拿值,不需要再去处理循环</p>
+<h3 id="set"><a href="#set" class="headerlink" title="set()"></a>set()</h3><p>主要在于向map中放值</p>
+<h4 id="ThreadLocal-set"><a href="#ThreadLocal-set" class="headerlink" title="ThreadLocal.set()"></a>ThreadLocal.set()</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">public void set(T value) &#123;</span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        if (map != null)</span><br><span class="line">            map.set(this, value);</span><br><span class="line">        else</span><br><span class="line">            createMap(t, value);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">private void set(ThreadLocal&lt;?&gt; key, Object value) &#123;</span><br><span class="line"></span><br><span class="line">            // We don&#x27;t use a fast path as with get() because it is at</span><br><span class="line">            // least as common to use set() to create new entries as</span><br><span class="line">            // it is to replace existing ones, in which case, a fast</span><br><span class="line">            // path would fail more often than not.</span><br><span class="line"></span><br><span class="line">            Entry[] tab = table;</span><br><span class="line">            int len = tab.length;</span><br><span class="line">            int i = key.threadLocalHashCode &amp; (len-1);</span><br><span class="line"></span><br><span class="line">            for (Entry e = tab[i];</span><br><span class="line">                 e != null;</span><br><span class="line">                 e = tab[i = nextIndex(i, len)]) &#123;</span><br><span class="line">                ThreadLocal&lt;?&gt; k = e.get();</span><br><span class="line"></span><br><span class="line">                if (k == key) &#123;</span><br><span class="line">                    e.value = value;</span><br><span class="line">                    return;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                if (k == null) &#123;</span><br><span class="line">                    replaceStaleEntry(key, value, i);</span><br><span class="line">                    return;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            tab[i] = new Entry(key, value);</span><br><span class="line">            int sz = ++size;</span><br><span class="line">            if (!cleanSomeSlots(i, sz) &amp;&amp; sz &gt;= threshold)</span><br><span class="line">                rehash();</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>通过取模，得到index</li>
+<li>key相等，直接赋值value</li>
+<li>key不相等，那就线性探测存放</li>
+</ol>
+<h4 id="FastThreadLocal-set"><a href="#FastThreadLocal-set" class="headerlink" title="FastThreadLocal.set()"></a>FastThreadLocal.set()</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public final void set(V value) &#123;</span><br><span class="line">        if (value != InternalThreadLocalMap.UNSET) &#123;</span><br><span class="line">            InternalThreadLocalMap threadLocalMap = InternalThreadLocalMap.get();</span><br><span class="line">            if (setKnownNotUnset(threadLocalMap, value)) &#123;</span><br><span class="line">                registerCleaner(threadLocalMap);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            remove();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">public boolean setIndexedVariable(int index, Object value) &#123;</span><br><span class="line">        Object[] lookup = indexedVariables;</span><br><span class="line">        if (index &lt; lookup.length) &#123;</span><br><span class="line">            Object oldValue = lookup[index];</span><br><span class="line">            lookup[index] = value;</span><br><span class="line">            return oldValue == UNSET;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            expandIndexedVariableTableAndSet(index, value);</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这类似就是放入到数组中</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><strong>到此可以看出二者的区别</strong></p>
+<table>
+<thead>
+<tr>
+<th>区别</th>
+<th>ThreadLocal</th>
+<th>FastThreadLocal</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>map</td>
+<td>ThreadLocalMap</td>
+<td>InternalThreadLocalMap extends UnpaddedInternalThreadLocalMap</td>
+</tr>
+<tr>
+<td>线程</td>
+<td>Thread</td>
+<td>FastThreadLocalThread extends Thread</td>
+</tr>
+</tbody></table>
+<p>主要还是在内部map的处理逻辑上，两者都没有使用hashmap，但是自定义了map结构与行为，在<a href="https://mp.weixin.qq.com/s/PB5CYXogFO2wCFwRafJudg">《hashmap源码解析》</a>中指出map结构的两种处理方式：<strong>拉链法</strong>与<strong>线性探测法</strong>；在hasmap中使用的是<strong>拉链法</strong>，而threadlocal中使用的是<strong>线性探测法</strong></p>
+<blockquote>
+<p>线性探查（Linear Probing）方式虽然简单，但是有一些问题，它会导致同类哈希的聚集。在存入的时候存在冲突，在查找的时候冲突依然存在</p>
+</blockquote>
+<p>冲突也就造成了性能损耗，而FastTreadLocal就更简单，直接使用数组</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public FastThreadLocal() &#123;</span><br><span class="line">        index = InternalThreadLocalMap.nextVariableIndex();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>UnpaddedInternalThreadLocalMap</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Object[] indexedVariables;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public static int nextVariableIndex() &#123;</span><br><span class="line">        int index = nextIndex.getAndIncrement();</span><br><span class="line">        if (index &lt; 0) &#123;</span><br><span class="line">            nextIndex.decrementAndGet();</span><br><span class="line">            throw new IllegalStateException(&quot;too many thread-local indexed variables&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        return index;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>整个map就是一个数组结构，在每个thread中，每一个FastThreadLocal在创建时就指定了index,value就是数组元素</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/recognize-rpc-thrift-again.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/recognize-rpc-thrift-again.html" class="post-title-link" itemprop="url">再识RPC-thrift</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-09-22 09:46:00" itemprop="dateCreated datePublished" datetime="2018-09-22T09:46:00+08:00">2018-09-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/source/" itemprop="url" rel="index"><span itemprop="name">源码解读</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="RPC"><a href="#RPC" class="headerlink" title="RPC"></a>RPC</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p><img src="https://www.cs.rutgers.edu/~pxk/417/notes/images/rpc-flow.png" alt="image"></p>
+<p>什么是Stub？</p>
+<p>Stub是一段代码，用来转换RPC过程中传递的参数。处理内容包括不同OS之间的大小端问题。另外，Client端一般叫Stub，Server端一般叫Skeleton。</p>
+<p>生产方式：</p>
+<ol>
+<li>手动生成，比较麻烦；</li>
+<li>自动生成，使用IDL（InterfaceDescriptionLanguate），定义C&#x2F;S的接口</li>
+</ol>
+<h2 id="RPC的套路："><a href="#RPC的套路：" class="headerlink" title="RPC的套路："></a>RPC的套路：</h2><p>自古深情留不住 唯有套路留人心</p>
+<p>RPC最本质的就是通过socket把方法信息传输到远程服务器并执行相应method</p>
+<p>在java界的rpc框架的实现手法：</p>
+<ul>
+<li>服务端：socket + 反射</li>
+<li>客户端：动态代理 + socket</li>
+</ul>
+<p>之前也解析过motain框架，<a href="https://mp.weixin.qq.com/s/kESoK3NmRp9Cwkg5GlI9DQ">《motain客服端分析》</a>、《motain服务端分析》</p>
+<h1 id="thrift"><a href="#thrift" class="headerlink" title="thrift"></a>thrift</h1><p>由于我司框架是通过thrift改造，发现这个框架没有按java套路出牌，可能这是跨语言类RPC的套路，有必要了解一下</p>
+<blockquote>
+<p>thrift最初由facebook开发用做系统内各语言之间的RPC通信 。2007年由facebook贡献到apache基金 ，08年5月进入apache孵化器,支持多种语言之间的RPC方式的通信：php语言client可以构造一个对象，调用相应的服务方法来调用java语言的服务 ，跨越语言的C&#x2F;S RPC调用
+　　</p>
+</blockquote>
+<p><img src="http://images.zhuxingsheng.com/201809192020_382.png" alt="thrift"></p>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><h3 id="IDL文件"><a href="#IDL文件" class="headerlink" title="IDL文件"></a>IDL文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//HelloService.thrfit</span><br><span class="line">namespace java com.jack.thrift</span><br><span class="line">service HelloService&#123;</span><br><span class="line">    string helloString(1:string what)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="生成代码"><a href="#生成代码" class="headerlink" title="生成代码"></a>生成代码</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">运行  thrift -gen HelloService.thrfit</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>会生成一个HelloService类</p>
+<h3 id="实现服务端与客服端"><a href="#实现服务端与客服端" class="headerlink" title="实现服务端与客服端"></a>实现服务端与客服端</h3><p>让服务端打印出客户端传入的参数</p>
+<h4 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public class ThriftServer &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 启动thrift服务器</span><br><span class="line">     * @param args</span><br><span class="line">     */</span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            System.out.println(&quot;服务端开启....&quot;);</span><br><span class="line">            TProcessor tprocessor = new HelloService.Processor&lt;HelloService.Iface&gt;(new HelloServiceImpl());</span><br><span class="line">            // 简单的单线程服务模型</span><br><span class="line">            TServerSocket serverTransport = new TServerSocket(9898);</span><br><span class="line">            TServer.Args tArgs = new TServer.Args(serverTransport);</span><br><span class="line">            tArgs.processor(tprocessor);</span><br><span class="line">            tArgs.protocolFactory(new TBinaryProtocol.Factory());</span><br><span class="line">            TServer server = new TSimpleServer(tArgs);</span><br><span class="line">            server.serve();</span><br><span class="line">        &#125;catch (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public class ThriftClient &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.out.println(&quot;客户端启动....&quot;);</span><br><span class="line">        TTransport transport = null;</span><br><span class="line">        try &#123;</span><br><span class="line">            transport = new TSocket(&quot;localhost&quot;, 9898, 30000);</span><br><span class="line">            // 协议要和服务端一致</span><br><span class="line">            TProtocol protocol = new TBinaryProtocol(transport);</span><br><span class="line">            HelloService.Client client = new HelloService.Client(protocol);</span><br><span class="line">            transport.open();</span><br><span class="line">            String result = client.helloString(&quot;哈哈&quot;);</span><br><span class="line">            System.out.println(result);</span><br><span class="line">        &#125; catch (TTransportException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; catch (TException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            if (null != transport) &#123;</span><br><span class="line">                transport.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h2><p>可以看出server,client代码相对很简单，主要看看生成的HelloService类，这个类就是stub代码</p>
+<p>来看一下，这个类是如何封装，把method和args传输到远程的</p>
+<h3 id="client"><a href="#client" class="headerlink" title="client"></a>client</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HelloService.Client client = new HelloService.Client(protocol);</span><br><span class="line">String result = client.helloString(&quot;哈哈&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>关键点在HelloService.Client.helloString()方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public String helloString(String what) throws org.apache.thrift.TException</span><br><span class="line">    &#123;</span><br><span class="line">      send_helloString(what);</span><br><span class="line">      return recv_helloString();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="发送消息"><a href="#发送消息" class="headerlink" title="发送消息"></a>发送消息</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public void send_helloString(String what) throws org.apache.thrift.TException</span><br><span class="line">    &#123;</span><br><span class="line">      helloString_args args = new helloString_args();</span><br><span class="line">      args.setWhat(what);</span><br><span class="line">      sendBase(&quot;helloString&quot;, args);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>把args抽象成了一个类</li>
+<li>属性赋值</li>
+<li>发送</li>
+</ol>
+<p>主要看下sendBase()方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">private void sendBase(String methodName, TBase&lt;?,?&gt; args, byte type) throws TException &#123;</span><br><span class="line">   oprot_.writeMessageBegin(new TMessage(methodName, type, ++seqid_));</span><br><span class="line">   args.write(oprot_);</span><br><span class="line">   oprot_.writeMessageEnd();</span><br><span class="line">   oprot_.getTransport().flush();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1.oprot_.writeMessageBegin  根据Protocol写数据，比如这儿使用的TBinaryProtocol，以二进制写数据</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public void writeMessageBegin(TMessage message) throws TException &#123;</span><br><span class="line">    if (strictWrite_) &#123;</span><br><span class="line">      int version = VERSION_1 | message.type;</span><br><span class="line">      writeI32(version);</span><br><span class="line">      writeString(message.name);</span><br><span class="line">      writeI32(message.seqid);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      writeString(message.name);</span><br><span class="line">      writeByte(message.type);</span><br><span class="line">      writeI32(message.seqid);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>再深入看看怎么写二进制数据的</p>
+<p>int类型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public void writeI32(int i32) throws TException &#123;</span><br><span class="line">    inoutTemp[0] = (byte)(0xff &amp; (i32 &gt;&gt; 24));</span><br><span class="line">    inoutTemp[1] = (byte)(0xff &amp; (i32 &gt;&gt; 16));</span><br><span class="line">    inoutTemp[2] = (byte)(0xff &amp; (i32 &gt;&gt; 8));</span><br><span class="line">    inoutTemp[3] = (byte)(0xff &amp; (i32));</span><br><span class="line">    trans_.write(inoutTemp, 0, 4);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>string类型，先写长度，再写bytes</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public void writeString(String str) throws TException &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">      byte[] dat = str.getBytes(&quot;UTF-8&quot;);</span><br><span class="line">      writeI32(dat.length);</span><br><span class="line">      trans_.write(dat, 0, dat.length);</span><br><span class="line">    &#125; catch (UnsupportedEncodingException uex) &#123;</span><br><span class="line">      throw new TException(&quot;JVM DOES NOT SUPPORT UTF-8&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>这儿写最终还是使用Transport.write,比如这儿使用的TSocket</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public void write(byte[] buf, int off, int len) throws TTransportException &#123;</span><br><span class="line">    if (outputStream_ == null) &#123;</span><br><span class="line">      throw new TTransportException(TTransportException.NOT_OPEN, &quot;Cannot write to null outputStream&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    try &#123;</span><br><span class="line">      outputStream_.write(buf, off, len);</span><br><span class="line">    &#125; catch (IOException iox) &#123;</span><br><span class="line">      throw new TTransportException(TTransportException.UNKNOWN, iox);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>就是写到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">outputStream_ = new BufferedOutputStream(socket_.getOutputStream(), 1024);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>2.args.write(oprot_);</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public void write(org.apache.thrift.protocol.TProtocol oprot, helloString_args struct) throws org.apache.thrift.TException &#123;</span><br><span class="line">        struct.validate();</span><br><span class="line"></span><br><span class="line">        oprot.writeStructBegin(STRUCT_DESC);</span><br><span class="line">        if (struct.what != null) &#123;</span><br><span class="line">          oprot.writeFieldBegin(WHAT_FIELD_DESC);</span><br><span class="line">          oprot.writeString(struct.what);</span><br><span class="line">          oprot.writeFieldEnd();</span><br><span class="line">        &#125;</span><br><span class="line">        oprot.writeFieldStop();</span><br><span class="line">        oprot.writeStructEnd();</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+<p>这就是写field,也就是向输出流里写参数内容</p>
+<ul>
+<li><p>3.oprot_.writeMessageEnd();<br>这表示消息写完成了，各个协议处理不同，比如二进制就是空实现，但如json就需要写个”}”，以完成json格式</p>
+</li>
+<li><p>4.oprot_.getTransport().flush();  直接flush</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">   * Flushes the underlying output stream if not null.</span><br><span class="line">   */</span><br><span class="line">  public void flush() throws TTransportException &#123;</span><br><span class="line">    if (outputStream_ == null) &#123;</span><br><span class="line">      throw new TTransportException(TTransportException.NOT_OPEN, &quot;Cannot flush null outputStream&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    try &#123;</span><br><span class="line">      outputStream_.flush();</span><br><span class="line">    &#125; catch (IOException iox) &#123;</span><br><span class="line">      throw new TTransportException(TTransportException.UNKNOWN, iox);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="client总结"><a href="#client总结" class="headerlink" title="client总结"></a>client总结</h4><p>整个发送消息就结束了，虽然没有按套路使用动态代理，而是通过生成的stub代码，把methodName,args给封装好了</p>
+<h3 id="server"><a href="#server" class="headerlink" title="server"></a>server</h3><p>服务端也没有通过反射的方式</p>
+<p>主要逻辑在生成的HelloService$Processor类中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">public static class Processor&lt;I extends Iface&gt; extends org.apache.thrift.TBaseProcessor&lt;I&gt; implements org.apache.thrift.TProcessor &#123;</span><br><span class="line">    private static final org.slf4j.Logger _LOGGER = org.slf4j.LoggerFactory.getLogger(Processor.class.getName());</span><br><span class="line">    public Processor(I iface) &#123;</span><br><span class="line">      super(iface, getProcessMap(new java.util.HashMap&lt;String, org.apache.thrift.ProcessFunction&lt;I, ? extends org.apache.thrift.TBase&gt;&gt;()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected Processor(I iface, java.util.Map&lt;String, org.apache.thrift.ProcessFunction&lt;I, ? extends org.apache.thrift.TBase&gt;&gt; processMap) &#123;</span><br><span class="line">      super(iface, getProcessMap(processMap));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static &lt;I extends Iface&gt; java.util.Map&lt;String,  org.apache.thrift.ProcessFunction&lt;I, ? extends org.apache.thrift.TBase&gt;&gt; getProcessMap(java.util.Map&lt;String, org.apache.thrift.ProcessFunction&lt;I, ? extends  org.apache.thrift.TBase&gt;&gt; processMap) &#123;</span><br><span class="line">      processMap.put(&quot;helloString&quot;, new helloString());</span><br><span class="line">      return processMap;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static class helloString&lt;I extends Iface&gt; extends org.apache.thrift.ProcessFunction&lt;I, helloString_args&gt; &#123;</span><br><span class="line">      public helloString() &#123;</span><br><span class="line">        super(&quot;helloString&quot;);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      public helloString_args getEmptyArgsInstance() &#123;</span><br><span class="line">        return new helloString_args();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      protected boolean isOneway() &#123;</span><br><span class="line">        return false;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      @Override</span><br><span class="line">      protected boolean handleRuntimeExceptions() &#123;</span><br><span class="line">        return false;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      public helloString_result getResult(I iface, helloString_args args) throws org.apache.thrift.TException &#123;</span><br><span class="line">        helloString_result result = new helloString_result();</span><br><span class="line">        result.success = iface.helloString(args.what);</span><br><span class="line">        return result;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>1.先看构造函数</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">protected Processor(I iface, java.util.Map&lt;String, org.apache.thrift.ProcessFunction&lt;I, ? extends org.apache.thrift.TBase&gt;&gt; processMap) &#123;</span><br><span class="line">      super(iface, getProcessMap(processMap));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static &lt;I extends Iface&gt; java.util.Map&lt;String,  org.apache.thrift.ProcessFunction&lt;I, ? extends org.apache.thrift.TBase&gt;&gt; getProcessMap(java.util.Map&lt;String, org.apache.thrift.ProcessFunction&lt;I, ? extends  org.apache.thrift.TBase&gt;&gt; processMap) &#123;</span><br><span class="line">      processMap.put(&quot;helloString&quot;, new helloString());</span><br><span class="line">      return processMap;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这段把methodName与对应的处理类映射，那后面的事就简单了，当接受到消息，取得methodName,通过map获取对就的处理类回调就可以</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public static class helloString&lt;I extends Iface&gt; extends org.apache.thrift.ProcessFunction&lt;I, helloString_args&gt; &#123;</span><br><span class="line">      public helloString() &#123;</span><br><span class="line">        super(&quot;helloString&quot;);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      public helloString_args getEmptyArgsInstance() &#123;</span><br><span class="line">        return new helloString_args();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      protected boolean isOneway() &#123;</span><br><span class="line">        return false;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      @Override</span><br><span class="line">      protected boolean handleRuntimeExceptions() &#123;</span><br><span class="line">        return false;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      public helloString_result getResult(I iface, helloString_args args) throws org.apache.thrift.TException &#123;</span><br><span class="line">        helloString_result result = new helloString_result();</span><br><span class="line">        result.success = iface.helloString(args.what);</span><br><span class="line">        return result;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>处理类，继承ProcessFunction类，实现getResult(),这个方法就是调用了对应service.helloString()</p>
+<p>可以再深入看一下,在socket监听消息时</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">client = serverTransport_.accept();</span><br><span class="line">        if (client != null) &#123;</span><br><span class="line">          processor = processorFactory_.getProcessor(client);</span><br><span class="line">          inputTransport = inputTransportFactory_.getTransport(client);</span><br><span class="line">          outputTransport = outputTransportFactory_.getTransport(client);</span><br><span class="line">          inputProtocol = inputProtocolFactory_.getProtocol(inputTransport);</span><br><span class="line">          outputProtocol = outputProtocolFactory_.getProtocol(outputTransport);</span><br><span class="line">          if (eventHandler_ != null) &#123;</span><br><span class="line">            connectionContext = eventHandler_.createContext(inputProtocol, outputProtocol);</span><br><span class="line">          &#125;</span><br><span class="line">          while (true) &#123;</span><br><span class="line">            if (eventHandler_ != null) &#123;</span><br><span class="line">              eventHandler_.processContext(connectionContext, inputTransport, outputTransport);</span><br><span class="line">            &#125;</span><br><span class="line">            if(!processor.process(inputProtocol, outputProtocol)) &#123;</span><br><span class="line">              break;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br></pre></td></tr></table></figure>
+<p>关键行：processor.process(inputProtocol, outputProtocol)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public boolean process(TProtocol in, TProtocol out) throws TException &#123;</span><br><span class="line">    TMessage msg = in.readMessageBegin();</span><br><span class="line">    ProcessFunction fn = processMap.get(msg.name);</span><br><span class="line">    if (fn == null) &#123;</span><br><span class="line">      TProtocolUtil.skip(in, TType.STRUCT);</span><br><span class="line">      in.readMessageEnd();</span><br><span class="line">      TApplicationException x = new TApplicationException(TApplicationException.UNKNOWN_METHOD, &quot;Invalid method name: &#x27;&quot;+msg.name+&quot;&#x27;&quot;);</span><br><span class="line">      out.writeMessageBegin(new TMessage(msg.name, TMessageType.EXCEPTION, msg.seqid));</span><br><span class="line">      x.write(out);</span><br><span class="line">      out.writeMessageEnd();</span><br><span class="line">      out.getTransport().flush();</span><br><span class="line">      return true;</span><br><span class="line">    &#125;</span><br><span class="line">    fn.process(msg.seqid, in, out, iface);</span><br><span class="line">    return true;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>这就很明显了，通过methodName从map中取得ProccessFunction，再执行process方法，调用相应service的方法</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>虽然thrift没有按以往java套路出牌，但最根本的把method发送到远程执行是一致的。可能对于多语言来讲，便于所以语言一致性，的确需要通过生成的stub代码手法来实现RPC</p>
+<p>当然thrift并不简单，还有很多的内容需要深挖学习，但至少这个简单示例可以了解跨语言型的RPC，相关IDL,Stub的知识，有清晰认知，而不局限于概念</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/marketing-and-productivity-of-soft-skills-notes.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/marketing-and-productivity-of-soft-skills-notes.html" class="post-title-link" itemprop="url">《软技能》笔记之营销与生产力</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-09-05 11:25:00" itemprop="dateCreated datePublished" datetime="2018-09-05T11:25:00+08:00">2018-09-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="http://images.zhuxingsheng.com/201808221030_648.png" alt="软技能-代码之外的生存技能"></p>
+<p>《软技能-代码之外的生存技能》这本书可以算是《原则》的实践指南，作者对每一个建议都是事无巨细地指导方案，虽然此书对任何职业都有指导意义，但由于作者程序员的身份，让此书对程序员的实际指导更具体明确</p>
+<p>之前<a href="https://mp.weixin.qq.com/s?__biz=MzIyOTYwMDM0Mw==&mid=2247483797&idx=1&sn=6b33c774261d534c3b97bab3f781c3c9&chksm=e8417caddf36f5bb5235f8370b33f3459cc88a4a39e76366a709fbadd17ffd206b2982875b17&token=2054470909&lang=zh_CN#rd">《软技能笔记之职业与学习》</a>写了职业与学习，这一篇写营销与生产力；作者的做法有些真是自己实践的，莫名喜感</p>
+<h1 id="营销"><a href="#营销" class="headerlink" title="营销"></a>营销</h1><p>酒香也怕巷子深，尤其追求实干的程序员是得掌握一些自我营销知识</p>
+<p><img src="http://images.zhuxingsheng.com/201809021827_110.png" alt="营销"></p>
+<blockquote>
+<p>营销就是一场争夺人们注意力的竞赛</p>
+</blockquote>
+<p>凡人听到营销都会皱眉头，名声实在是不怎么样。<br>但实事上营销追求的是“实现价值在先，要求回报在后”</p>
+<h2 id="价值在先"><a href="#价值在先" class="headerlink" title="价值在先"></a>价值在先</h2><p>自我营销的正确方式就是为他人提供价值，学习如何控制好自己要传达的信息，塑造好自己的形象，扩展信息送达的人群</p>
+<p>营销并不能确保你一定成功，但是它却是你可控的重要元素</p>
+<p>基本机制：要想让人们追随你、倾听你、你就要带给他们价值：为他们的问题提供答案，甚至是给他们带去欢乐</p>
+<h3 id="正视自我"><a href="#正视自我" class="headerlink" title="正视自我"></a>正视自我</h3><p>我不是专家，没什么可营销的 ———— 其实很多人都喜欢向只比自己稍微优秀一点点的人学习，因为这些人才是可望而又可及的</p>
+<p>一直谈论自己并试图证明自己价值连城。然而，你会发现，能解决他人的问题，真正能够帮到他人，你更容易获得成功。</p>
+<h2 id="营销手段"><a href="#营销手段" class="headerlink" title="营销手段"></a>营销手段</h2><ol>
+<li>创建品牌：品牌即承诺，承诺按照你预期的方式交付你所预期的价值</li>
+<li>打造博客：最大秘诀有且仅有一个————持之以恒，持之以恒地坚持写作，坚持不懈地产生高品质的内容。感觉没什么可写，提前头脑风暴出各种不同的想法，每当有新想法时，添加到主题列表中</li>
+<li>演讲</li>
+<li>著书立说</li>
+</ol>
+<h2 id="思维障碍"><a href="#思维障碍" class="headerlink" title="思维障碍"></a>思维障碍</h2><p><strong>看起来像个傻瓜</strong><br>这种想法，我也有，比如我不太敢主动分享自己的文章，感觉写得傻，蠢。好在我没有不行动，还在坚持写</p>
+<blockquote>
+<p>在我的职业生涯中，我一共错失了9000多次投篮，输掉了近300场比赛。我本来有26次绝杀的机会却投球不进。我失败了一次又一次。 这就是我能够成功的原因     ————迈克尔 乔丹</p>
+</blockquote>
+<h1 id="生产力"><a href="#生产力" class="headerlink" title="生产力"></a>生产力</h1><p>这是一个快速变化的世界，时间飞逝，人难免焦虑，很多人会去看很多关于时间管理方面的书籍，但时间真的能管理吗？</p>
+<p>如何让自己成为一台性能卓越、品质出众的超级高效机器</p>
+<p>这一章节，有些地方给了新的认知，有些我自己也在践行，效果不错，值得一试</p>
+<h2 id="制定计划"><a href="#制定计划" class="headerlink" title="制定计划"></a>制定计划</h2><p>这不用再重复，没有方向的油轮，是永远到达不了目的地的</p>
+<p>可以从季度计划、月计划、周计划、日计划，让自己知道在前进，在向目标靠近</p>
+<h2 id="番茄工作法"><a href="#番茄工作法" class="headerlink" title="番茄工作法"></a>番茄工作法</h2><p>我没有实践过这个方式，但对于程序员来讲，看一段源码，分析一个bug，几个小时的专注其实没什么问题，有时真是废寝忘食。</p>
+<p>所以我对此方法也不屑，但作者的看法，带给我启发</p>
+<blockquote>
+<p>番茄工作法只有被当作估算和评估工作的工具时，才能发挥它的真正威力</p>
+</blockquote>
+<blockquote>
+<p>制订任务列表全凭主观臆断，每天能够专注完成的工作量才是最重要的</p>
+</blockquote>
+<p>其实作者的意思就是要对自己的专注能力进行量化。量化是很重要的，大多数都是感觉，比如感觉自己很专注的工作，但真正专注了多久呢？上班8小时，专注了几个小时？一周专注工作几个小时？平均每个月能专注多久，这些是需要量化的。</p>
+<p>无论是制订目标，还是改进目标，都需要量化，数据说话。就好比性能优化，不能凭感觉，而得给出具体数据。</p>
+<p>我很认同作者的这个提法，所以现在也在尝试看自己一天能专注几个番茄时间</p>
+<h2 id="定额工作法"><a href="#定额工作法" class="headerlink" title="定额工作法"></a>定额工作法</h2><p>制订一些固定周期内的工作</p>
+<p>比如：</p>
+<ol>
+<li>每周跑3次</li>
+<li>每周一篇博客</li>
+<li>每天学习一个算法</li>
+</ol>
+<blockquote>
+<p>实现定额制后，我发现自己的工作成果比以往多了很多。最大好处在于，长期坚持这么做，我就能随着时间的推移度量并标记自己的进度。可以确切知道自己在给定的一段时间内能够完成的工作量。</p>
+</blockquote>
+<p><strong>承诺是“定额工作法”的核心</strong>这其实很明显，太多人是只会制订计划，但从不执行，所以这是对自己的一份承诺</p>
+<p>可以帮助克服意志力薄弱的问题，通过预先设定好的必须要遵循的过程，消除需要做出决策的部分</p>
+<p>为什么这种工作法有效呢？</p>
+<blockquote>
+<p>以缓慢但稳定的节奏工作，要优于快速但缺乏持久和坚持的工作方式</p>
+</blockquote>
+<p>这个方法，其实我就在使用，比如我自己制定每月至少写一篇读书笔记、一篇技术学习</p>
+<p>开始很难做到，但会时时提醒自己，要去读书，对学习的技术，要做整理。</p>
+<p>这样坚持一段时间后，现在我算是超额完成，现在每月要写四篇文章，两篇关于读书的，两篇关于技术的</p>
+<p>这样也正好呼应了营销部分的打造一个好博客，坚持写作，一个月四篇，一年就有48篇。其实看看一年量化，这数字也太少了，但要完成还真不容易</p>
+<p>有了对自己的承诺，会强迫自己去兑现</p>
+<h2 id="保持激情"><a href="#保持激情" class="headerlink" title="保持激情"></a>保持激情</h2><p>是人就会疲惫，新鲜感会消退，产生倦怠</p>
+<p>想起李笑来的一句话，任何事，前期都不要用力过猛，越猛后期就越乏力</p>
+<blockquote>
+<p>赛跑比的是谁耐力更长久，而不是看谁冲刺更有力</p>
+</blockquote>
+<p>所以<strong>生产力的真正秘诀在于：长期坚持做一些小事</strong></p>
+<hr>
+<p>延伸阅读：</p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzIyOTYwMDM0Mw==&mid=2247483797&idx=1&sn=6b33c774261d534c3b97bab3f781c3c9&chksm=e8417caddf36f5bb5235f8370b33f3459cc88a4a39e76366a709fbadd17ffd206b2982875b17&token=2054470909&lang=zh_CN#rd">《软技能笔记之职业与学习》</a></p>
+<p><a href="https://mp.weixin.qq.com/s?__biz=MzIyOTYwMDM0Mw==&mid=2247483790&idx=1&sn=0cd1fae5ce8ee0c1aaa8c27ac17d1c6c&chksm=e8417cb6df36f5a0a0e9bc3c3bec74abecd1785ad7902cadce379b581b46d39f06989090e9d6&token=2054470909&lang=zh_CN#rd">《原则》读书笔记</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/career-and-learning-of-soft-skills-notes.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/career-and-learning-of-soft-skills-notes.html" class="post-title-link" itemprop="url">《软技能》笔记之职业与学习</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-08-24 11:23:00" itemprop="dateCreated datePublished" datetime="2018-08-24T11:23:00+08:00">2018-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>之前看的《原则》，有没有感觉作者的原则都对，但实际操作又感觉假大空呢？</p>
+<p><img src="http://images.zhuxingsheng.com/201808221030_648.png" alt="软技能-代码之外的生存技能"></p>
+<p>《软技能-代码之外的生存技能》这本书可以算是《原则》的实践指南，作者对每一个建议都是事无巨细地指导方案，虽然此书对任何职业都有指导意义，但由于作者程序员的身份，让此书对程序员的实际指导更具体明确</p>
+<h1 id="呐喊"><a href="#呐喊" class="headerlink" title="呐喊"></a>呐喊</h1><p>这是此前github上很火的评论，我称之为程序员的呐喊</p>
+<p><img src="http://images.zhuxingsheng.com/201808161053_26.png" alt="程序员呐喊"></p>
+<p>人人都推崇要活到老，学到老。但当真正身陷这个快速变更的行业里，有时难免出现焦躁，疲惫感</p>
+<p>如何应对职业生涯，制定好职业规划，是此行业从业者们必须时时反省的话题</p>
+<h1 id="软技能"><a href="#软技能" class="headerlink" title="软技能"></a>软技能</h1><p><img src="http://images.zhuxingsheng.com/201808191118_538.png" alt="软技能"></p>
+<p>作者从七个方面阐述他的思想，这一篇记录下职业与学习两方面</p>
+<h2 id="职业"><a href="#职业" class="headerlink" title="职业"></a>职业</h2><p><img src="http://images.zhuxingsheng.com/201808202236_578.png" alt="职业"></p>
+<p>作者阐述了在职业中可能遇到的各种问题，面面俱到</p>
+<h3 id="心态"><a href="#心态" class="headerlink" title="心态"></a>心态</h3><p>不想当将军的士兵不是好士兵</p>
+<p>把自己看成老板，不要安逸于一名职员</p>
+<p>把自己当做一个软件企业，把雇主当做企业的一个客户，你应当能够提供某种产品或者服务</p>
+<h3 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h3><p>《原则》中人生五步中的第一步就是确定目标，大多数人没有目标，但更大的问题是不知道如何确定目标</p>
+<h3 id="人际交往"><a href="#人际交往" class="headerlink" title="人际交往"></a>人际交往</h3><p>talk is cheap ,show me the code</p>
+<p>程序员特殊崇尚这句话，喜欢静静的写代码！但实事上每个职业工作都是与人打交道</p>
+<p>code is cheap , show me the answer</p>
+<h3 id="面试"><a href="#面试" class="headerlink" title="面试"></a>面试</h3><p>最快捷的方式让面试官不见其人先闻其声</p>
+<p>让面试官对你怀有好感</p>
+<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><blockquote>
+<p>教育就是当一个人把在学校所学全部忘光之后剩下的东西 –爱因斯坦</p>
+</blockquote>
+<blockquote>
+<p>教育的首要目标，并不在于“知”而在于“行”  –赫伯特 斯宾塞</p>
+</blockquote>
+<h3 id="三要素"><a href="#三要素" class="headerlink" title="三要素"></a>三要素</h3><p>为了能够掌握一门技术，我需要了解以下三个要点</p>
+<ol>
+<li>如何开始 ——要想开始使用自己所学的，我需要掌握哪些基本知识？ </li>
+<li>学科范围 ——我现在学的东西有多宏大？我应该怎么做？在开始阶段，我不需要了解每个细节，但是如果我能对该学<br>科的轮廓有大致的了解，那么将来我就能发现更多细节。 </li>
+<li>基础知识 ——不止在开始阶段，要想使用一项特定的技术，我需要了解基本的用户案例和最常见的问题，也需要知道<br>自己学的哪20%就能满足80%的日常应用</li>
+</ol>
+<h3 id="学习十步法"><a href="#学习十步法" class="headerlink" title="学习十步法"></a>学习十步法</h3><p><img src="http://images.zhuxingsheng.com/201808191021_321.png" alt="学习十步法"></p>
+<p><strong>从第一步到第六步：这些步骤只用作一次！</strong></p>
+<h4 id="第一步：了解全局"><a href="#第一步：了解全局" class="headerlink" title="第一步：了解全局"></a>第一步：了解全局</h4><p>通常完成这一步我们可以使用网络搜索来完成大量的研究。在这一阶段我们只需要对要学习的东西有一个大概的了解即可。</p>
+<h4 id="第二步-：确定范围"><a href="#第二步-：确定范围" class="headerlink" title="第二步 ：确定范围"></a>第二步 ：确定范围</h4><p>现在我们在对我们要学习的东西有一定的了解的情况下，接下来就要集中精力去明确自己到底想要学习什么？在任何项目中，明确项目范围是至关重要的，唯有这样才能了解项目的全局，做好相应的准备工作。</p>
+<p>而在这样的一个过程中，我们都很容易犯一个错误就是试图解决太大的问题而把自己搞得不堪重负，因此，我们要明确自己的学习范围。为此我们需要运用在第一步中所获得信息来让自己的关注点落脚在更小也可控制的范围内。</p>
+<p>但在此过程中，我们可能会受到诱惑，为了学习该主题下不同的主题，我们可能会扩张自己的学习范围导致自己不够聚焦，所以请务必的抵制这个有诱惑，尽可能的保持专注，一次只能学习一样东西。我们可以稍后再回头学习别的领域的分支。</p>
+<p>最后，请一定注意：明确学习范围的时候要考虑的时间因素，你的学习范围务必大小适当，既能够符合你的学习理由，又能符合你的时间限制。</p>
+<h4 id="第三步：定义目标"><a href="#第三步：定义目标" class="headerlink" title="第三步：定义目标"></a>第三步：定义目标</h4><p>在我们全力以赴之前，明确“成功”的含义极为重要。如果不知道成功是什么样子，很难找准目标，也很难知道自己什么时候已经真正达到目标。所以在当你知道自己的目标是什么的时候，你就可以更轻松的使用倒推方式，明确实现目标所需要的步骤。</p>
+<p>这一步的目标是形成一份简明清晰的陈述，勾勒出你勤奋学习后的成功图景。但是一定要确保其中包含的的具体成功标准，从而能让你用来充分评估自己是否已经达成学习目标。</p>
+<p><strong>好的目标应该是具体的，无二义性的，不要对自己想要完成的任务进行含糊不清的描述</strong>。</p>
+<p>你想从自己的学习经历中获取什么决定了你的成功标准是什么。请确保你能借此在学习结束后评估自己是否达成目标。好的成功标准也能让你向着既定目标不断前进。</p>
+<h4 id="第四步：寻找资源"><a href="#第四步：寻找资源" class="headerlink" title="第四步：寻找资源"></a>第四步：寻找资源</h4><p>要尝试收集到多种多样的资源来帮助你学习，而不是只读一本关于这一主题的书。资源是多种多样的，不局限于书籍。现在随着网络的广泛应用，你几乎可以针对自己感兴趣的人和主题找到大量的资源。</p>
+<p>在这一不中，你要尽可能多的寻找自己所选择的相关资料，而且此时你无需考虑这些资源的质量。在你寻找过后，你要对你找到的这些资源进行过滤，去伪存真。</p>
+<p>如果你不想因为单一来源的信息而产生偏见，那你就尽可能的去获取各种各样的信息吧。</p>
+<h4 id="第五步：创建学习计划"><a href="#第五步：创建学习计划" class="headerlink" title="第五步：创建学习计划"></a>第五步：创建学习计划</h4><p>好的技术书都遵循着这样的规律：打好基础，做好铺垫，然后逐个展开每一章的论述。对于大多数学科而言，学习是一个自然的过程。从A开始，前进到B，然后到达Z。这个顺序对你掌握随机的碎片化知识价值不大。你需要找出在最短时间内从A到Z的正确路径，并且到达沿途的重要地标。</p>
+<p>在这一步，你需要创建自己的学习路径。把它看作自己写作时候打大纲。</p>
+<p>打造自己的学习计划，一个好方法就是借鉴吸取他人的方法，我们这时候可以翻看自己在第四步找来的资料，看看他们是如何学习这个主题的，如果很多不同的作者都把内容分解为相同的模块和顺序，你不妨可以去试一试，效仿他们去做一个自己的学习计划。</p>
+<h4 id="第六步：筛选资源"><a href="#第六步：筛选资源" class="headerlink" title="第六步：筛选资源"></a>第六步：筛选资源</h4><p>现在，我们知道自己要学习什么，按照什么样的方式去学习，那么是时候决定要使用哪些资源来完成自己的学习任务。现在时候对这些资源进行筛选，挑选最有价值记的几项来帮至自己实现目标。</p>
+<p>在这一步中，把我们在第四步中收集的全部资料浏览一遍，找出哪些内容能够覆盖自己的学习计划。</p>
+<p>一旦完成了这一步，我们就可以准备进到学习计划中的第一个模块了！</p>
+<p>但在我们实现自己的目标之前，我们还需要为每个模块重复第7步到第10步。</p>
+<p><strong>第七步到第十步：循环往复（学习——实践——掌握——教授）</strong></p>
+<h4 id="第七步：-开始学习，浅尝辄止"><a href="#第七步：-开始学习，浅尝辄止" class="headerlink" title="第七步： 开始学习，浅尝辄止"></a>第七步： 开始学习，浅尝辄止</h4><p>在这一步中，我们的目标是获得足够多的与所学主题相关的信息，从让能让我们开始学习，并在下一步中动手操作。</p>
+<p>这一步的关键在于过犹不及。我们通常会很容易的就失去自控力，开始消化计划学习中列出的所有资源。但是你会发现，如果你能经受住这样的诱惑，你会取得更大的成就。你要专注于掌握自己所需的、能再下一步动手操作的的最小量的知识。</p>
+<h4 id="第八步：动手操作，边学边玩"><a href="#第八步：动手操作，边学边玩" class="headerlink" title="第八步：动手操作，边学边玩"></a>第八步：动手操作，边学边玩</h4><p>这一步既有趣又可怕。说它有趣是因为你真的是在玩耍，说它可怕是因为这一步完全没有边际。在一部没有任何规则，你可以做任何你想做的事情，如何更好地实施这一步，完全由你来决定。</p>
+<p>大多数人会尝试通过读书或者观看视频来掌握某个主题，他们会提前吸收很多信息，然后再付诸实践。这一方法的问题在于，在他们读书或者看视频的时候，他们并不知道哪些内容是重点。他们只是在因循他们设计好的学习路径。</p>
+<p>现在，我们无需提前了解全部内容，你要做的首要的一件事情就是亲自操作和亲身体验。采用这种方法，你通过探索和时间学习。在操作的过程中，你的大脑自然地产生各种各样的问题：它是如何工作的？如果我这么做，它会发生什么？我该如何解决这个问题？这些问题引导着你走向真正重要的方向。当你回过头来寻找问题答案的时候，不只是这些问题迎刃而解，而且你记得的东西比你学习的东西要多得多，因为你所学到的都是对你很重要的东西。</p>
+<p>在这一步中，不要担心结果，勇敢探索吧。</p>
+<h4 id="第九步：全面掌握，学以致用"><a href="#第九步：全面掌握，学以致用" class="headerlink" title="第九步：全面掌握，学以致用"></a>第九步：全面掌握，学以致用</h4><p>好奇心是学习特别是自学的重要组成部分。这一步的目标就是让你找会好奇寻驱动的学习。在第八步中，你通过动手操作发现了一些尚未找到的答案的问题。现在时候来回答这些问题了，在这一步中，你要利用先前收集到的所有资料，进行深入学习。</p>
+<p>为了有效利用自己选择的材料，为上一步产生的问题寻找答案，阅读文字、观看视频、与他们交流都是必要的手段。这能让你沉浸在学习材料中，尽可能地汲取知识。</p>
+<p>不要害怕回头再去操作，付出更多，因为这不仅能让你找到问题的答案，也能让你学到新的东西。给自己足够多的时间去深入理解自己的主题，你可以阅读，可以实验，可以观察，也可以操作。</p>
+<p>不过请记住，你依然没有必要把收集到的所有资料全部仔细看看一遍。你只需要阅读或者观看与当前所学有关的部分。</p>
+<p> 最后请不要忘了，你在第三步中定义的成功标准。试着把自己正在学习的内容与最终目标关联起来。你掌握的每个模块，都应该以某种方式推动你向着终极目标前行。</p>
+<h4 id="第十步：乐为人师，融会贯通"><a href="#第十步：乐为人师，融会贯通" class="headerlink" title="第十步：乐为人师，融会贯通"></a>第十步：乐为人师，融会贯通</h4><p>如果你真的想深入地掌握一门学问，想对这门学问做到融会贯通，那么你必须要做到”好为人师“。除此之外，别无他法。</p>
+<p>在现实中，你只需要超前别人一步，就可以成为他们的老师。有时候，比学生超前太多的专家反而不能得心应手的教，因为他们无法与学生产生共鸣。他们忘记了初学者是什么样子，很容易专注于他们认为简单的细节。</p>
+<p>在这一步中，我们要要求自己走出自己的舒适区，将自己学到的知识教给别人。要想确定你确实掌握了某些知识，这是唯一的办法；同时在我们将自己所学到的东西介绍给别人时，这也是查缺补漏的好办法。</p>
+<p>你可以通过很多方式将自己所学交给他们。你可以写博客，也可以制作视频。你也可以跟自己的舍友，基友，爱人以及朋友探讨，将自己所学解释给他们。</p>
+<p>重点在于，你要花时间将自己学到的东西从大脑提取出来，以别人能理解的方式组织起来。在经历这整个过程之后，你会发现，有很多你以为自己明白了的知识点，其实并没有摸透。于是你将会将那些以前自己没太明白的东西联系起来，并且简化自己大脑中已有的信息，将它们浓缩并经常复习。</p>
+<h1 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h1><p>这篇只记录了职业与学习两部分，后续还有程序员更需要关注的营销部分</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/cache-practice-of-million-qps-system.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/cache-practice-of-million-qps-system.html" class="post-title-link" itemprop="url">百万QPS系统的缓存实践</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-08-11 20:53:00" itemprop="dateCreated datePublished" datetime="2018-08-11T20:53:00+08:00">2018-08-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>标题有些吸引眼球了，但并不浮夸，甚至还会远远超过百万，现在的平均响应时间在1ms内，0.08ms左右</p>
+<p>如此高的QPS，如此低的AVG,为什么会有如此效果，关键点还是在多级缓存上</p>
+<blockquote>
+<p>在开发高并发系统时有三把利器用来保护系统:缓存、降级和限流</p>
+</blockquote>
+<h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p><img src="http://images.zhuxingsheng.com/201808071644_266.png" alt="查询过程"></p>
+<p>上图基本上就是查询的通用方案，缓存中是否存在，存在就返回，不存在再查询Db,查询到的结果load进缓存</p>
+<h1 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h1><p>缓存，逃不过三种操作，创建、查询、删除</p>
+<p>此实践可能不保证全场景通用，但满足当前系统各项指标，当然没有完美的方案，只有适合的方案。</p>
+<p>下面的时序图中，cache lv1是指本地缓存，cache lv2是cache cluster</p>
+<h2 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h2><p><img src="http://images.zhuxingsheng.com/201808071834_279.png" alt="查询"></p>
+<p>查询过程：</p>
+<p>从一级缓存开始查，如果没有，再向下一级查询，直到db</p>
+<p><strong>注意点：</strong></p>
+<ol>
+<li>一直查到db时，需要回源各级cache</li>
+<li>防止击穿，需要在cache中填充value</li>
+</ol>
+<h2 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h2><p><img src="http://images.zhuxingsheng.com/201808071833_834.png" alt="创建"></p>
+<p>创建过程：</p>
+<ol>
+<li>创建cacheObject</li>
+<li>放入Db(为了性能，以及db的降级，这儿可以引入异步开关)</li>
+<li>放入cache lv2</li>
+<li>放入cache lv1</li>
+<li>publish创建成功消息</li>
+<li>消息监听服务会通知其它服务更新本地缓存</li>
+</ol>
+<p><strong>注意点：</strong></p>
+<ol>
+<li>到底是先放入Db,还是先放入cache</li>
+<li>db与cache的一致性保障</li>
+</ol>
+<h2 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h2><p><img src="http://images.zhuxingsheng.com/201808071833_460.png" alt="删除"></p>
+<p>删除过程：</p>
+<ol>
+<li>通过key查询cacheobject</li>
+<li>清除db</li>
+<li>清除各级cache</li>
+<li>publish消除成功消息</li>
+<li>监听服务清除其它服务的本地缓存</li>
+</ol>
+<p><strong>注意点：</strong></p>
+<ol>
+<li>先清除db还是cache</li>
+<li>Db与cache的一致性保障</li>
+</ol>
+<h1 id="缓存操作模式"><a href="#缓存操作模式" class="headerlink" title="缓存操作模式"></a>缓存操作模式</h1><p>除了创建，查询，删除，还有更新操作；但我们业务场景没有。</p>
+<p>对于我们的实践是不是放之四海而皆准，肯定是不行的。不以业务为基础的设计都是无根之木</p>
+<p>先看下业界常见的操作缓存模式</p>
+<p>更新缓存的的Design Pattern有四种：Cache aside, Read through, Write through, Write behind caching</p>
+<h2 id="Cache-aside"><a href="#Cache-aside" class="headerlink" title="Cache aside"></a>Cache aside</h2><ul>
+<li>失效：应用程序先从cache取数据，没有得到，则从数据库中取数据，成功后，放到缓存中。</li>
+<li>命中：应用程序从cache中取数据，取到后返回。</li>
+<li>更新：先把数据存到数据库中，成功后，再让缓存失效。</li>
+</ul>
+<p><img src="http://images.zhuxingsheng.com/201808131607_525.png" alt="查询"></p>
+<p><img src="http://images.zhuxingsheng.com/201808131611_274.png" alt="更新"></p>
+<p>这是标准的design pattern，包括Facebook的论文《Scaling Memcache at Facebook》也使用了这个策略。为什么不是写完数据库后更新缓存？你可以看一下Quora上的这个问答《Why does Facebook use delete to remove the key-value pair in Memcached instead of updating the Memcached during write request to the backend?》，主要是怕两个并发的写操作导致脏数据。</p>
+<p>那么，是不是Cache Aside这个就不会有并发问题了？不是的，比如，一个是读操作，但是没有命中缓存，然后就到数据库中取数据，此时来了一个写操作，写完数据库后，让缓存失效，然后，之前的那个读操作再把老的数据放进去，所以，会造成脏数据。</p>
+<p>但，这个case理论上会出现，不过，实际上出现的概率可能非常低，因为这个条件需要发生在读缓存时缓存失效，而且并发着有一个写操作。而实际上数据库的写操作会比读操作慢得多，而且还要锁表，而读操作必须在写操作前进入数据库操作，而又要晚于写操作更新缓存，所有的这些条件都具备的概率基本并不大。</p>
+<p>Cache Aside，我们的应用代码需要维护两个数据存储，一个是缓存（Cache），一个是数据库（Repository）。所以，应用程序比较啰嗦。而Read&#x2F;Write Through套路是把更新数据库（Repository）的操作由缓存自己代理了，所以，对于应用层来说，就简单很多了。可以理解为，应用认为后端就是一个单一的存储，而存储自己维护自己的Cache。</p>
+<h2 id="Read-Through"><a href="#Read-Through" class="headerlink" title="Read Through"></a>Read Through</h2><p>Read Through 套路就是在查询操作中更新缓存，也就是说，当缓存失效的时候（过期或LRU换出），Cache Aside是由调用方负责把数据加载入缓存，而Read Through则用缓存服务自己来加载，从而对应用方是透明的。</p>
+<p>这似乎很像guave的LoadCache</p>
+<h2 id="Write-Through"><a href="#Write-Through" class="headerlink" title="Write Through"></a>Write Through</h2><p>Write Through 套路和Read Through相仿，不过是在更新数据时发生。当有数据更新的时候，如果没有命中缓存，直接更新数据库，然后返回。如果命中了缓存，则更新缓存，然后再由Cache自己更新数据库（这是一个同步操作）</p>
+<h2 id="Write-Back"><a href="#Write-Back" class="headerlink" title="Write Back"></a>Write Back</h2><p>在更新数据的时候，只更新缓存，不更新数据库，而我们的缓存会异步地批量更新数据库。这个设计的好处就是让数据的I&#x2F;O操作飞快无比（因为直接操作内存嘛 ），因为异步，write backg还可以合并对同一个数据的多次操作，所以性能的提高是相当可观的。</p>
+<p>在wikipedia上有一张write back的流程图，基本逻辑如下：</p>
+<p><img src="http://images.zhuxingsheng.com/201808131927_852.png" alt="write back"></p>
+<p>在游戏开发中基本上都是使用这种模式</p>
+<p>但他也有缺点：</p>
+<ol>
+<li>数据不是强一致性</li>
+<li>数据可能会丢失</li>
+<li>逻辑比较复杂</li>
+</ol>
+<h1 id="争论"><a href="#争论" class="headerlink" title="争论"></a>争论</h1><ol>
+<li>一致性问题<br>  这儿的一致性是说强一致性，在分布式环境下，保证强一致性促使系统复杂性增加，或者性能有所下降。所以现在一般对非强制性业务场景都使用最终一致性解决。一致性的解读可以看看《zookeeper-paxos》，在我们实践时，在删除操作时，在清理失败时也通过补偿操作去尝试清除。</li>
+<li>到底是update cache,还是delete cache<br>其实任务技术手段都是看业务场景的，不能一概而论<ul>
+<li>update cache<br> 这个在并发写时，A1写db，B1写db，B2写cache，A2写cache；这时就出现db与Cache不一致的问题<br> 主动更新缓存，如果cacheobject复杂，需要Db与cache的多次交互，虽然减少了一次cache miss，但却增加了系统复杂度，得不偿失</li>
+<li>delete cache<br> 这个不会有不一致问题了，但会造成cache miss，会不会造成热key穿透？</li>
+</ul>
+</li>
+<li>是先操作Db,还是cache<br> 假设先操作cache，再操作db;A B并发操作，A1 delete cache； B1 get cache –&gt; miss –&gt; select db –&gt; load cache；A2 delete db;<br> 此种情况就出现此key一直有效状态，如果没有设置超时时间，那会长期在缓存中。这是不是得先操作db呢？<br> 一个操作先update db,再delte cache时失败了；那会数据库里是新数据，而缓存里是旧数据，业务无法接受。那是不是该先操作缓存呢？</li>
+</ol>
+<p>是不是已经晕头了呢？</p>
+<p>再有db主从架构中，主从不一致的情况，是不是没法玩了</p>
+<p>所以还是开篇讲的没有放之四海而皆准的方案，只能寻找最适合的方案</p>
+<p>在各种业务场景下，还是需要去寻找一些最佳实践，比如关注一下缓存过期策略、设置缓存过期时间</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://coolshell.cn/articles/17416.html">缓存更新的套路</a></p>
+<p><a href="https://vladmihalcea.com/a-beginners-guide-to-cache-synchronization-strategies/">A beginner’s guide to Cache synchronization strategies</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/create-the-object-only-and-only-once.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/create-the-object-only-and-only-once.html" class="post-title-link" itemprop="url">仅且仅创建一次对象</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-07-18 10:32:35" itemprop="dateCreated datePublished" datetime="2018-07-18T10:32:35+08:00">2018-07-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>此篇算是对<a href="https://mp.weixin.qq.com/s?__biz=MzIyOTYwMDM0Mw==&mid=2247483770&idx=1&sn=b23066ada3467f49e4dbc7c35eb179f4&chksm=e8417c42df36f55414a88fb754c6817ff6710c47f779186e6152c411f59e6cf9a5588d82ea88#rd">《voliatile,synchronized,cas》</a>理论的一种实践</p>
+<h2 id="全局引用场景"><a href="#全局引用场景" class="headerlink" title="全局引用场景"></a>全局引用场景</h2><h2 id="单例模式"><a href="#单例模式" class="headerlink" title="单例模式"></a>单例模式</h2><p>不用讲，这是首先想到的方式。</p>
+<h3 id="饿汉式-static-final-field"><a href="#饿汉式-static-final-field" class="headerlink" title="饿汉式 static final field"></a>饿汉式 static final field</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class Singleton&#123;</span><br><span class="line">    //类加载时就初始化</span><br><span class="line">    private static final Singleton instance = new Singleton();</span><br><span class="line">    </span><br><span class="line">    private Singleton()&#123;&#125;</span><br><span class="line">    public static Singleton getInstance()&#123;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这是最简单又安全的方式。但也有缺点：</p>
+<ol>
+<li>它不是一种懒加载模式（lazy initialization）</li>
+<li>一些场景中将无法使用：譬如 Singleton 实例的创建是依赖参数或者配置文件的，在 getInstance() 之前必须调用某个方法设置参数给它，那样这种单例写法就无法使用了。</li>
+</ol>
+<h3 id="静态内部类"><a href="#静态内部类" class="headerlink" title="静态内部类"></a>静态内部类</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class Singleton &#123;  </span><br><span class="line">    private static class SingletonHolder &#123;  </span><br><span class="line">        private static final Singleton INSTANCE = new Singleton();  </span><br><span class="line">    &#125;  </span><br><span class="line">    private Singleton ()&#123;&#125;  </span><br><span class="line">    public static final Singleton getInstance() &#123;  </span><br><span class="line">        return SingletonHolder.INSTANCE; </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这种写法仍然使用JVM本身机制保证了线程安全问题；由于 SingletonHolder 是私有的，除了 getInstance() 之外没有办法访问它，因此它是懒汉式的；同时读取实例的时候不会进行同步，没有性能缺陷；也不依赖 JDK 版本</p>
+<h3 id="双重检验锁"><a href="#双重检验锁" class="headerlink" title="双重检验锁"></a>双重检验锁</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class Singleton &#123;</span><br><span class="line">    private volatile static Singleton instance; //声明成 volatile</span><br><span class="line">    private Singleton ()&#123;&#125;</span><br><span class="line">    public static Singleton getSingleton() &#123;</span><br><span class="line">        if (instance == null) &#123;                         </span><br><span class="line">            synchronized (Singleton.class) &#123;</span><br><span class="line">                if (instance == null) &#123;       </span><br><span class="line">                    instance = new Singleton();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return instance;</span><br><span class="line">    &#125;</span><br><span class="line">   </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个写法得注意到volatile</p>
+<p>主要在于instance &#x3D; new Singleton()这句，这并非是一个原子操作，事实上在 JVM 中这句话大概做了下面 3 件事情。</p>
+<ol>
+<li>给 instance 分配内存</li>
+<li>调用 Singleton 的构造函数来初始化成员变量</li>
+<li>将instance对象指向分配的内存空间（执行完这步 instance 就为非 null 了）<br>但是在 JVM 的即时编译器中存在指令重排序的优化。也就是说上面的第二步和第三步的顺序是不能保证的，最终的执行顺序可能是 1-2-3 也可能是 1-3-2。如果是后者，则在 3 执行完毕、2 未执行之前，被线程二抢占了，这时 instance 已经是非 null 了（但却没有初始化），所以线程二会直接返回 instance，然后使用，然后顺理成章地报错。</li>
+</ol>
+<p>声明为volatile，使用其一个特性：禁止指令重排序优化。</p>
+<p>也就是说，在 volatile 变量的赋值操作后面会有一个内存屏障（生成的汇编代码上），读操作不会被重排序到内存屏障之前。比如上面的例子，取操作必须在执行完 1-2-3 之后或者 1-3-2 之后，不存在执行到 1-3 然后取到值的情况。从「先行发生原则」的角度理解的话，就是对于一个 volatile 变量的写操作都先行发生于后面对这个变量的读操作（这里的“后面”是时间上的先后顺序）。</p>
+<p>volatile的更多特性，可以看一下上篇文章<a href="https://mp.weixin.qq.com/s?__biz=MzIyOTYwMDM0Mw==&mid=2247483770&idx=1&sn=b23066ada3467f49e4dbc7c35eb179f4&chksm=e8417c42df36f55414a88fb754c6817ff6710c47f779186e6152c411f59e6cf9a5588d82ea88#rd">《voliatile,synchronized,cas》</a></p>
+<h2 id="间接被引用情景"><a href="#间接被引用情景" class="headerlink" title="间接被引用情景"></a>间接被引用情景</h2><p>需要创建一次的对象不是直接被全局的引用所引用，而是间接地被引用。经常有这种情况，全局维护一个并发的ConcurrentMap, Map的每个Key对应一个对象，这个对象需要只创建一次</p>
+<h3 id="CAS"><a href="#CAS" class="headerlink" title="CAS"></a>CAS</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">private final ConcurrentMap&lt;String, InstanceObject&gt; cache</span><br><span class="line">        = new ConcurrentHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    public InstanceObject get(String key) &#123;</span><br><span class="line">        InstanceObject single = cache.get(key);</span><br><span class="line">        if (single == null) &#123;</span><br><span class="line">            InstanceObject instanceObject = new InstanceObject(key);</span><br><span class="line">            single = cache.putIfAbsent(key, instanceObject);</span><br><span class="line">            if (single == null) &#123;</span><br><span class="line">                single = instanceObject;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return single;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>使用这个很可能会产生多个InstanceObject对象，但最终只有一个InstanceObject有用</p>
+<p>但并不没有达到仅创建一个的目标</p>
+<p>如果创建InstanceObject的成本不高，那也不用太讲究</p>
+<p>但一旦是大对象缓存，那么这很可能就是问题了，因为缓存中的对象获取成本一般都比较高，而且通常缓存都会经常失效，那么避免重复创建对象就有价值了</p>
+<h3 id="影子类"><a href="#影子类" class="headerlink" title="影子类"></a>影子类</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">private final ConcurrentMap&lt;String, Future&lt;InstanceObject&gt;&gt; cache1 = new ConcurrentHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">    public InstanceObject get1(final String key) &#123;</span><br><span class="line">        Future&lt;InstanceObject&gt; future = cache1.get(key);</span><br><span class="line">        if (future == null) &#123;</span><br><span class="line">            Callable&lt;InstanceObject&gt; callable = new Callable() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public InstanceObject call() throws Exception &#123;</span><br><span class="line">                    return new InstanceObject(key);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;;</span><br><span class="line">            FutureTask&lt;InstanceObject&gt; task = new FutureTask&lt;&gt;(callable);</span><br><span class="line"></span><br><span class="line">            future = cache1.putIfAbsent(key, task);</span><br><span class="line">            if (future == null) &#123;</span><br><span class="line">                future = task;</span><br><span class="line">                task.run();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            return future.get();</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            cache.remove(key);</span><br><span class="line">            throw new RuntimeException(e);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这儿使用Future来代替真实的对象，多次创建Future代价比创建缓存大对象小得多</p>
+<h3 id="自旋锁"><a href="#自旋锁" class="headerlink" title="自旋锁"></a>自旋锁</h3><p>觉得Future对象还是重了，那就使用更轻的AtomicBoolean,那其实主要使用的还是volatile的特性</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">private final ConcurrentMap&lt;String, AtomicBoolean&gt; spinCache = new ConcurrentHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line">   public InstanceObject getAtomic(final String key)  &#123;</span><br><span class="line">       InstanceObject single = cache.get(key);</span><br><span class="line">       if (single == null) &#123;</span><br><span class="line">           AtomicBoolean newBoolean = new AtomicBoolean(false);</span><br><span class="line">           AtomicBoolean oldBoolean = spinCache.putIfAbsent(key, newBoolean);</span><br><span class="line">           if (oldBoolean == null) &#123;</span><br><span class="line">               cache.put(key, new InstanceObject(key));</span><br><span class="line">               newBoolean.set(true);</span><br><span class="line">           &#125; else &#123;</span><br><span class="line">               //其他线程在自旋状态上自旋，等等被释放</span><br><span class="line">               while (!oldBoolean.get()) &#123;&#125;</span><br><span class="line">           &#125;</span><br><span class="line">           single = cache.get(key);</span><br><span class="line">       &#125;</span><br><span class="line">       return  single;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>保守写法可以使用synchronized,lock，他们的性能也不低；但为了性能极致，可以使用上面的方式。</p>
+<p>完整的测试代码：<a href="https://github.com/zhuxingsheng/javastudy/blob/master/src/main/java/com/jack/createonlyone/CreateOnlyOneMain.java">https://github.com/zhuxingsheng/javastudy/blob/master/src/main/java/com/jack/createonlyone/CreateOnlyOneMain.java</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/the-distant-savior.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/the-distant-savior.html" class="post-title-link" itemprop="url">遥远的救世主</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-07-13 21:48:00" itemprop="dateCreated datePublished" datetime="2018-07-13T21:48:00+08:00">2018-07-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-08-13 21:49:26" itemprop="dateModified" datetime="2022-08-13T21:49:26+08:00">2022-08-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="http://images.zhuxingsheng.com/201806101715_369.png" alt="遥远的救世主"></p>
+<p>这本小说有改编的电视剧《天道》，不论是电视剧还是原著小说都看过多次，已经不记得是何缘起结识了这部书籍。</p>
+<p>最近有个朋友又提到这部影剧，说影响了他的人生轨迹；使他看到并大概率得到波动命运琴弦的关键及能力</p>
+<p>实在是惭愧，读了那么多次，尽然没有如此感悟，收获。再次翻书阅读</p>
+<p>以我的学识、阅历，要读懂可能很难，甚至短时间没有可能性。但想想，那又怎么样呢？</p>
+<p>如肖亚文所说</p>
+<blockquote>
+<p>认识这个人就是开了一扇窗户，就能看到不一样的东西，听到不一样的声音，能让你思考，觉悟，这已经够了</p>
+</blockquote>
+<p>能有这样一本，让你时时回味，时时思考，有所悟，或有所得的书籍，这已经很好了</p>
+<h3 id="文化属性"><a href="#文化属性" class="headerlink" title="文化属性"></a>文化属性</h3><p>此书中的故事 皆有“文化属性”而来，那么吸引人的也大体是这个词了。</p>
+<blockquote>
+<p>透视社会依次有三个层面：技术、制度和文化。小到一个人，大到一个国家一个民族，任何一种命运归根到底都是那种文化属性的产物。强势文化造就强者，弱势文化造就弱者，这是规律，也可以理解为天道，不以人的意志为转移</p>
+</blockquote>
+<blockquote>
+<p>强势文化就是遵循事物规律的文化，弱势文化就是依赖强者的道德期望破格获取的文化，也是期望救主的文化。强势文化在武学上被称为“秘笈”，而弱势文化由于易学、易懂、易用，成了流行品种。</p>
+</blockquote>
+<p>知道又如何？怎么用呢？</p>
+<blockquote>
+<p>无所用，无所不用；比如文化产业，文学、影视是扒拉灵魂的艺术，如果文学、影视的创作能破解更高思维空间的文化密码，那么它的功效就是启迪人的觉悟，震撼人的灵魂，这就是众生所需，就是功德、市场、名利，精神拯救的暴利与毒品麻醉的暴利完全等值，而且不必像贩毒那样耍花招，没有心理成本和法律风险</p>
+</blockquote>
+<blockquote>
+<p>中国的传统文化是皇恩浩大的文化，它的实用是以皇天在上为先决条件。中国为什么穷？穷就穷在幼稚的思维，穷在期望救主、期望救恩的文化上，这是渗透到民族骨子里的价值判断体系</p>
+</blockquote>
+<h3 id="神话"><a href="#神话" class="headerlink" title="神话"></a>神话</h3><p>芮小丹让丁元英在王庙村写个神话</p>
+<blockquote>
+<p>这个世上原本就没有什么神话，神话不过是常人的思维所不易理解的平常事</p>
+</blockquote>
+<blockquote>
+<p>无论做什么，市场都不是一块无限大的蛋糕。神话的实质就是强力作用的杀富济贫，这就可能产生两个问题，一是杀富是不是破坏性开采市场资源？ 二是让井底的人扒着井沿看了一眼再掉下去是不是让他患上精神绝症？</p>
+</blockquote>
+<p>后面的故事，的确如丁所说，乐圣林雨峰自杀了，三个股东之一的刘冰也自杀了。仁人志士一片讨伐之声。</p>
+<p>但这事真的神了吗？</p>
+<blockquote>
+<p>从整个事件里，她没有看到丁元英有任何能让人感到“神”的招式，每一件具体的事都是普通人都能做到的普通事</p>
+</blockquote>
+<blockquote>
+<p>他的确是在公开，公平的条件下合理合法的竞争，一切都是公开的，没有任何秘密和违法可言，所谓的“神话”竟是这么平淡，简单。实事求是就是神话，说老实话，办老实事的人就是神！</p>
+</blockquote>
+<blockquote>
+<p>神就是道，道就是规律，规律如来，容不得你思议，按规律办事的人就是神</p>
+</blockquote>
+<p>在小说开篇，其实就有实事求是，客观规律的论述</p>
+<blockquote>
+<p>马克思主义的道理归根到底就是一句话：客观规律不以人的意志为转移。什么是客观规律？归根到底也是一句话：一切以时间，地点和条件为转移</p>
+</blockquote>
+<h3 id="造血功能"><a href="#造血功能" class="headerlink" title="造血功能"></a>造血功能</h3><p>整本书貌似都在讲述文化属性，以及各种人潜意识里的文化属性结成了整个故事该有的结局</p>
+<blockquote>
+<p>不是说谁本该成为哪种人是规律，而是说谁本该成为哪种人的条件的可能，因果不虚，因果是规、是律，不可思议</p>
+</blockquote>
+<p>但如何解决造血功能呢？这可能是作者留给读者思考的内容，也就是人人都和各自的条件可能。</p>
+<p>但如何才能做到事实求是呢？</p>
+<p>本质的道作者已经说了很多很次，就是要事实求是，遵循规律，<strong>有道无术，术尚可求也，有术无道，止于术</strong></p>
+<blockquote>
+<p>不可思议一词不是众生道里的对神秘事物的描述，而是如是、本来、就是如此，容不得你思议。也是一种告诫、提示，是告诉你不可以思议，由不得你思议。从数学逻辑上说，一加一等于二，容得了你思议吗？不容，这就是告诉你了，一加一等于二是规律，规律是不以人的意志为转移，你只能认识、遵循，不可思议</p>
+</blockquote>
+<p>如果你生活在一个虚妄的世界里，事实求是就很难，就如三个股东一样</p>
+<blockquote>
+<p>观念，传统观念。一是传统的“事实胜于雄辩”的观念，二是传统的疑罪从有的观念，三是传统的青天大老爷的观念。中国人一直接受简单的文化思维教育，他们相信法律是神圣的，决不冤枉一个好人，也决不放过一个坏人</p>
+</blockquote>
+<p>也如芮小丹说讲</p>
+<blockquote>
+<p>只要不是我觉到，悟到的，你给不了我，给了我也拿不住。只有我自己觉到，悟到的我才有可能做到，我能做到的才是我的。</p>
+</blockquote>
+<blockquote>
+<p>你的知道是自觉，现在是让你觉他。知道这个道理的人很多，但多是呈道理和知识存在。不是自觉。道理和知识是没用的，只是有用的一个条件。用才有用。让你觉他什么？觉他的无明，觉他的道理和知识的没用</p>
+</blockquote>
+<p>通过否定法，至少要去掉两种思维，才可能性拥有造血功能</p>
+<p><strong>靠</strong>   <strong>等</strong></p>
+<blockquote>
+<p>传统观念的死结就在一个“靠”字上，在家靠父母，出门靠朋友，靠上帝、靠菩萨、靠皇恩… 总之靠什么都行，就是别靠自己。这是一个沉积了几千年的文化属性问题，非几次新文化运动就能开悟。</p>
+</blockquote>
+<blockquote>
+<p>咱们翻开历史看看，你从哪一行哪一页能找到救世主救世的记录？没有，从来就没有，从来都是救人的被救了，被救的救了人。如果一定要讲救世主的话，那么符合和代表客观规律的文化就是救世主。扶贫的本质在一个扶字，如果你根本就没打算自己站起来，老天爷来了都没用。</p>
+</blockquote>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/blog/page/13/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/blog/page/15/">15</a><a class="page-number" href="/blog/page/16/">16</a><a class="extend next" rel="next" href="/blog/page/15/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

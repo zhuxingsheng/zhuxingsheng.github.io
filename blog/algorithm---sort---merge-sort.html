@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法  定义归并排序（MERGE-SORT）是建立在归并操作上的一种有效的排序算法,该算法是采用分治法（Divide and Conquer）的一个非常典型的应用。将已有序的子序列合并，得到完全有序的序列；即先使每个子序列有序，再使子序列段间有序。若将两个有序表合并成一个有序表，称为二路归并。 算法归并排">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法渣-排序-归并排序">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/algorithm---sort---merge-sort.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法  定义归并排序（MERGE-SORT）是建立在归并操作上的一种有效的排序算法,该算法是采用分治法（Divide and Conquer）的一个非常典型的应用。将已有序的子序列合并，得到完全有序的序列；即先使每个子序列有序，再使子序列段间有序。若将两个有序表合并成一个有序表，称为二路归并。 算法归并排">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812081004_402.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812081624_753.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812082218_207.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812082218_695.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/mergesort.gif">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812081122_255.png">
+<meta property="article:published_time" content="2018-12-08T02:35:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.013Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201812081004_402.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/algorithm---sort---merge-sort.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>算法渣-排序-归并排序 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm---sort---merge-sort.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          算法渣-排序-归并排序
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-08 10:35:00" itemprop="dateCreated datePublished" datetime="2018-12-08T10:35:00+08:00">2018-12-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法</p>
+</blockquote>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>归并排序（MERGE-SORT）是建立在归并操作上的一种有效的排序算法,该算法是采用分治法（Divide and Conquer）的一个非常典型的应用。将已有序的子序列合并，得到完全有序的序列；即先使每个子序列有序，再使子序列段间有序。若将两个有序表合并成一个有序表，称为二路归并。</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>归并排序(Merge Sort)就是利用归并思想对数列进行排序。根据具体的实现，归并排序包括”<strong>从上往下</strong>“和”<strong>从下往上</strong>“2种方式</p>
+<p><strong>从上往下的归并排序：</strong></p>
+<ol>
+<li>分解 – 将当前区间一分为二，即求分裂点 mid &#x3D; (low + high)&#x2F;2</li>
+<li>求解 – 递归地对两个子区间a[low…mid] 和 a[mid+1…high]进行归并排序。递归的终结条件是子区间长度为1</li>
+<li>合并 – 将已排序的两个子区间a[low…mid]和 a[mid+1…high]归并为一个有序的区间a[low…high]</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812081004_402.png"></p>
+<p> <strong>从下往上的归并排序：</strong></p>
+<ol>
+<li>将待排序的数列分成若干个长度为1的子数列，然后将这些数列两两合并；</li>
+<li>得到若干个长度为2的有序数列，再将这些数列两两合并；得到若干个长度为4的有序数列，再将它们两两合并；</li>
+<li>直接合并成一个数列为止。这样就得到了我们想要的排序结果。</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812081624_753.png"></p>
+<h3 id="归并步骤"><a href="#归并步骤" class="headerlink" title="归并步骤"></a>归并步骤</h3><ul>
+<li>第一步：申请空间，使其大小为两个已经排序序列之和，该空间用来存放合并后的序列</li>
+<li>第二步：设定两个指针，最初位置分别为两个已经排序序列的起始位置</li>
+<li>第三步：比较两个指针所指向的元素，选择相对小的元素放入到合并空间，并移动指针到下一位置</li>
+<li>重复步骤3直到某一指针超出序列尾，将另一序列剩下的所有元素直接复制到合并序列尾</li>
+</ul>
+<p>比如合并，要将[4,5,7,8]和[1,2,3,6]两个已经有序的子序列，合并为最终序列[1,2,3,4,5,6,7,8]，来看下实现步骤</p>
+<p><img src="http://images.zhuxingsheng.com/201812082218_207.png"></p>
+<p><img src="http://images.zhuxingsheng.com/201812082218_695.png"></p>
+<h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><p><img src="http://images.zhuxingsheng.com/mergesort.gif" alt="image"></p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 归并排序</span><br><span class="line"> * @param array</span><br><span class="line"> * @param left</span><br><span class="line"> * @param right</span><br><span class="line"> */</span><br><span class="line">private static void mergeSort(int []array,int left,int right)&#123;</span><br><span class="line">    if(left &lt; right) &#123;</span><br><span class="line">        //分解</span><br><span class="line">        int mid = (left + right) / 2;</span><br><span class="line">        mergeSort(array,left,mid);</span><br><span class="line">        mergeSort(array,mid + 1,right);</span><br><span class="line">        //合并</span><br><span class="line">        merge(array,left,mid,right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">static void merge(int []array,int left,int mid,int right) &#123;</span><br><span class="line">    System.out.println(&quot;merge-&gt;left:&quot;+left+&quot; mid:&quot;+mid+&quot; rgiht:&quot;+right);</span><br><span class="line">    int i = left;</span><br><span class="line">    int j = mid +1;</span><br><span class="line">    int tmp[] = new int[right-left+1];//构建tmp数组</span><br><span class="line">    int t = 0;//tmp数组索引</span><br><span class="line">    //填充tmp数组</span><br><span class="line">    for (;i&lt;=mid &amp;&amp; j&lt;=right;) &#123;</span><br><span class="line">        if(array[i] &lt; array[j]) &#123;</span><br><span class="line">            tmp[t++] = array[i++];</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            tmp[t++] = array[j++];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    while (i&lt;=mid) &#123;</span><br><span class="line">        tmp[t++] = array[i++];</span><br><span class="line">    &#125;</span><br><span class="line">    while (j&lt;=right) &#123;</span><br><span class="line">        tmp[t++] = array[j++];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //再把tmp复制到array</span><br><span class="line">    t = 0;</span><br><span class="line">    while (left&lt;=right) &#123;</span><br><span class="line">        array[left++] = tmp[t++];</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(&quot;  tmp:&quot;+ Arrays.toString(tmp));</span><br><span class="line">    System.out.println(&quot;merge:&quot;+ Arrays.toString(array));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><p>归并排序的时间复杂度是O(N*lgN)</p>
+<p>假设被排序的数列中有N个数。遍历一趟的时间复杂度是O(N)，需要遍历多少次呢？</p>
+<p>归并排序的形式就是一棵二叉树，它需要遍历的次数就是二叉树的深度，而根据完全二叉树的可以得出它的时间复杂度是O(N*lgN)</p>
+<table>
+<thead>
+<tr>
+<th>Best</th>
+<th>Average</th>
+<th>Worst</th>
+<th>Memory</th>
+<th align="center">Stable</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>n log(n)</td>
+<td>n log(n)</td>
+<td>n log(n)</td>
+<td>n</td>
+<td align="center">Yes</td>
+</tr>
+</tbody></table>
+<h1 id="VS-快速排序"><a href="#VS-快速排序" class="headerlink" title="VS 快速排序"></a>VS 快速排序</h1><p>归并排序（MergeSort）和<a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-fast.html">快速排序(QuickSort)</a>都是用了分治算法思想。</p>
+<p>所谓分治算法，顾名思义，就是分而治之，就是将原问题分割成同等结构的子问题，之后将子问题逐一解决后，原问题也就得到了解决。</p>
+<p>同时，归并排序（MergeSort）和<a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-fast.html">快速排序(QuickSort)</a>也代表了两类分治算法的思想。</p>
+<p>对于归并排序，我们对于待处理序列怎么分的问题上并没有太多关注，仅仅是简单地一刀切，将整个序列分成近乎均匀的两份，然后将子序列进行同样处理。但是，我们更多的关注点在于怎么把分开的部分合起来，也就是merge的过程。</p>
+<p>对于快速排序来说，我们则是花了很大的功夫放在了怎么分这个问题上，我们设定了枢轴（标定点），然后通过partition的过程将这个枢轴放在合适的位置，这样我们就不用特别关心合起来的过程，只需要一步一步地递归下去即可。</p>
+<p>归并排序是由下向上的，先处理子数组然后再合并。而快速排序正好相反，它的过程是由上向下的，先分出两个子区间，再对子区间进行排序。归并排序是稳定的时间复杂度为 O(n)O(n)，但它是非原地算法，在进行子数组合并的时候，我们需要临时申请一个数组来暂时存放排好序的数据。因为这个临时空间是可以重复利用的，因此归并排序的空间复杂度为 O(n)，最多需要存放 n 个数据；<br>而快排则是原地排序算法</p>
+<p><img src="http://images.zhuxingsheng.com/201812081122_255.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/algorithm/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/algorithm-slag-sort-heap-sort.html" rel="prev" title="算法渣-排序-堆排序">
+      <i class="fa fa-chevron-left"></i> 算法渣-排序-堆排序
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/algorithm---recursive-algorithm.html" rel="next" title="算法渣-递归算法">
+      算法渣-递归算法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%92%E5%B9%B6%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.1.1.</span> <span class="nav-text">归并步骤</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA"><span class="nav-number">1.2.</span> <span class="nav-text">演示</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">3.</span> <span class="nav-text">复杂度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#VS-%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F"><span class="nav-number">4.</span> <span class="nav-text">VS 快速排序</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

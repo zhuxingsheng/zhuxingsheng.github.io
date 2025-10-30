@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="RPC原理 什么是Stub？ Stub是一段代码，用来转换RPC过程中传递的参数。处理内容包括不同OS之间的大小端问题。另外，Client端一般叫Stub，Server端一般叫Skeleton。 生产方式：  手动生成，比较麻烦； 自动生成，使用IDL（InterfaceDescriptionLanguate），定义C&#x2F;S的接口  RPC的套路：自古深情留不住 唯有套路留人心 RPC最本">
+<meta property="og:type" content="article">
+<meta property="og:title" content="再识RPC-thrift">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/recognize-rpc-thrift-again.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="RPC原理 什么是Stub？ Stub是一段代码，用来转换RPC过程中传递的参数。处理内容包括不同OS之间的大小端问题。另外，Client端一般叫Stub，Server端一般叫Skeleton。 生产方式：  手动生成，比较麻烦； 自动生成，使用IDL（InterfaceDescriptionLanguate），定义C&#x2F;S的接口  RPC的套路：自古深情留不住 唯有套路留人心 RPC最本">
+<meta property="og:locale">
+<meta property="og:image" content="https://www.cs.rutgers.edu/~pxk/417/notes/images/rpc-flow.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201809192020_382.png">
+<meta property="article:published_time" content="2018-09-22T01:46:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.470Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="rpc">
+<meta property="article:tag" content="thrift">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.cs.rutgers.edu/~pxk/417/notes/images/rpc-flow.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/recognize-rpc-thrift-again.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>再识RPC-thrift | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/recognize-rpc-thrift-again.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          再识RPC-thrift
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-09-22 09:46:00" itemprop="dateCreated datePublished" datetime="2018-09-22T09:46:00+08:00">2018-09-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/source/" itemprop="url" rel="index"><span itemprop="name">源码解读</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="RPC"><a href="#RPC" class="headerlink" title="RPC"></a>RPC</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p><img src="https://www.cs.rutgers.edu/~pxk/417/notes/images/rpc-flow.png" alt="image"></p>
+<p>什么是Stub？</p>
+<p>Stub是一段代码，用来转换RPC过程中传递的参数。处理内容包括不同OS之间的大小端问题。另外，Client端一般叫Stub，Server端一般叫Skeleton。</p>
+<p>生产方式：</p>
+<ol>
+<li>手动生成，比较麻烦；</li>
+<li>自动生成，使用IDL（InterfaceDescriptionLanguate），定义C&#x2F;S的接口</li>
+</ol>
+<h2 id="RPC的套路："><a href="#RPC的套路：" class="headerlink" title="RPC的套路："></a>RPC的套路：</h2><p>自古深情留不住 唯有套路留人心</p>
+<p>RPC最本质的就是通过socket把方法信息传输到远程服务器并执行相应method</p>
+<p>在java界的rpc框架的实现手法：</p>
+<ul>
+<li>服务端：socket + 反射</li>
+<li>客户端：动态代理 + socket</li>
+</ul>
+<p>之前也解析过motain框架，<a href="https://mp.weixin.qq.com/s/kESoK3NmRp9Cwkg5GlI9DQ">《motain客服端分析》</a>、《motain服务端分析》</p>
+<h1 id="thrift"><a href="#thrift" class="headerlink" title="thrift"></a>thrift</h1><p>由于我司框架是通过thrift改造，发现这个框架没有按java套路出牌，可能这是跨语言类RPC的套路，有必要了解一下</p>
+<blockquote>
+<p>thrift最初由facebook开发用做系统内各语言之间的RPC通信 。2007年由facebook贡献到apache基金 ，08年5月进入apache孵化器,支持多种语言之间的RPC方式的通信：php语言client可以构造一个对象，调用相应的服务方法来调用java语言的服务 ，跨越语言的C&#x2F;S RPC调用
+　　</p>
+</blockquote>
+<p><img src="http://images.zhuxingsheng.com/201809192020_382.png" alt="thrift"></p>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><h3 id="IDL文件"><a href="#IDL文件" class="headerlink" title="IDL文件"></a>IDL文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//HelloService.thrfit</span><br><span class="line">namespace java com.jack.thrift</span><br><span class="line">service HelloService&#123;</span><br><span class="line">    string helloString(1:string what)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="生成代码"><a href="#生成代码" class="headerlink" title="生成代码"></a>生成代码</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">运行  thrift -gen HelloService.thrfit</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>会生成一个HelloService类</p>
+<h3 id="实现服务端与客服端"><a href="#实现服务端与客服端" class="headerlink" title="实现服务端与客服端"></a>实现服务端与客服端</h3><p>让服务端打印出客户端传入的参数</p>
+<h4 id="服务端"><a href="#服务端" class="headerlink" title="服务端"></a>服务端</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public class ThriftServer &#123;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 启动thrift服务器</span><br><span class="line">     * @param args</span><br><span class="line">     */</span><br><span class="line">    public static void main(String[] args) throws Exception &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            System.out.println(&quot;服务端开启....&quot;);</span><br><span class="line">            TProcessor tprocessor = new HelloService.Processor&lt;HelloService.Iface&gt;(new HelloServiceImpl());</span><br><span class="line">            // 简单的单线程服务模型</span><br><span class="line">            TServerSocket serverTransport = new TServerSocket(9898);</span><br><span class="line">            TServer.Args tArgs = new TServer.Args(serverTransport);</span><br><span class="line">            tArgs.processor(tprocessor);</span><br><span class="line">            tArgs.protocolFactory(new TBinaryProtocol.Factory());</span><br><span class="line">            TServer server = new TSimpleServer(tArgs);</span><br><span class="line">            server.serve();</span><br><span class="line">        &#125;catch (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="客户端"><a href="#客户端" class="headerlink" title="客户端"></a>客户端</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public class ThriftClient &#123;</span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        System.out.println(&quot;客户端启动....&quot;);</span><br><span class="line">        TTransport transport = null;</span><br><span class="line">        try &#123;</span><br><span class="line">            transport = new TSocket(&quot;localhost&quot;, 9898, 30000);</span><br><span class="line">            // 协议要和服务端一致</span><br><span class="line">            TProtocol protocol = new TBinaryProtocol(transport);</span><br><span class="line">            HelloService.Client client = new HelloService.Client(protocol);</span><br><span class="line">            transport.open();</span><br><span class="line">            String result = client.helloString(&quot;哈哈&quot;);</span><br><span class="line">            System.out.println(result);</span><br><span class="line">        &#125; catch (TTransportException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; catch (TException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            if (null != transport) &#123;</span><br><span class="line">                transport.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="解析"><a href="#解析" class="headerlink" title="解析"></a>解析</h2><p>可以看出server,client代码相对很简单，主要看看生成的HelloService类，这个类就是stub代码</p>
+<p>来看一下，这个类是如何封装，把method和args传输到远程的</p>
+<h3 id="client"><a href="#client" class="headerlink" title="client"></a>client</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">HelloService.Client client = new HelloService.Client(protocol);</span><br><span class="line">String result = client.helloString(&quot;哈哈&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>关键点在HelloService.Client.helloString()方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public String helloString(String what) throws org.apache.thrift.TException</span><br><span class="line">    &#123;</span><br><span class="line">      send_helloString(what);</span><br><span class="line">      return recv_helloString();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="发送消息"><a href="#发送消息" class="headerlink" title="发送消息"></a>发送消息</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public void send_helloString(String what) throws org.apache.thrift.TException</span><br><span class="line">    &#123;</span><br><span class="line">      helloString_args args = new helloString_args();</span><br><span class="line">      args.setWhat(what);</span><br><span class="line">      sendBase(&quot;helloString&quot;, args);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>把args抽象成了一个类</li>
+<li>属性赋值</li>
+<li>发送</li>
+</ol>
+<p>主要看下sendBase()方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">private void sendBase(String methodName, TBase&lt;?,?&gt; args, byte type) throws TException &#123;</span><br><span class="line">   oprot_.writeMessageBegin(new TMessage(methodName, type, ++seqid_));</span><br><span class="line">   args.write(oprot_);</span><br><span class="line">   oprot_.writeMessageEnd();</span><br><span class="line">   oprot_.getTransport().flush();</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1.oprot_.writeMessageBegin  根据Protocol写数据，比如这儿使用的TBinaryProtocol，以二进制写数据</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public void writeMessageBegin(TMessage message) throws TException &#123;</span><br><span class="line">    if (strictWrite_) &#123;</span><br><span class="line">      int version = VERSION_1 | message.type;</span><br><span class="line">      writeI32(version);</span><br><span class="line">      writeString(message.name);</span><br><span class="line">      writeI32(message.seqid);</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      writeString(message.name);</span><br><span class="line">      writeByte(message.type);</span><br><span class="line">      writeI32(message.seqid);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>再深入看看怎么写二进制数据的</p>
+<p>int类型</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public void writeI32(int i32) throws TException &#123;</span><br><span class="line">    inoutTemp[0] = (byte)(0xff &amp; (i32 &gt;&gt; 24));</span><br><span class="line">    inoutTemp[1] = (byte)(0xff &amp; (i32 &gt;&gt; 16));</span><br><span class="line">    inoutTemp[2] = (byte)(0xff &amp; (i32 &gt;&gt; 8));</span><br><span class="line">    inoutTemp[3] = (byte)(0xff &amp; (i32));</span><br><span class="line">    trans_.write(inoutTemp, 0, 4);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>string类型，先写长度，再写bytes</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public void writeString(String str) throws TException &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">      byte[] dat = str.getBytes(&quot;UTF-8&quot;);</span><br><span class="line">      writeI32(dat.length);</span><br><span class="line">      trans_.write(dat, 0, dat.length);</span><br><span class="line">    &#125; catch (UnsupportedEncodingException uex) &#123;</span><br><span class="line">      throw new TException(&quot;JVM DOES NOT SUPPORT UTF-8&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>这儿写最终还是使用Transport.write,比如这儿使用的TSocket</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public void write(byte[] buf, int off, int len) throws TTransportException &#123;</span><br><span class="line">    if (outputStream_ == null) &#123;</span><br><span class="line">      throw new TTransportException(TTransportException.NOT_OPEN, &quot;Cannot write to null outputStream&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    try &#123;</span><br><span class="line">      outputStream_.write(buf, off, len);</span><br><span class="line">    &#125; catch (IOException iox) &#123;</span><br><span class="line">      throw new TTransportException(TTransportException.UNKNOWN, iox);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>就是写到</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">outputStream_ = new BufferedOutputStream(socket_.getOutputStream(), 1024);</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>2.args.write(oprot_);</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public void write(org.apache.thrift.protocol.TProtocol oprot, helloString_args struct) throws org.apache.thrift.TException &#123;</span><br><span class="line">        struct.validate();</span><br><span class="line"></span><br><span class="line">        oprot.writeStructBegin(STRUCT_DESC);</span><br><span class="line">        if (struct.what != null) &#123;</span><br><span class="line">          oprot.writeFieldBegin(WHAT_FIELD_DESC);</span><br><span class="line">          oprot.writeString(struct.what);</span><br><span class="line">          oprot.writeFieldEnd();</span><br><span class="line">        &#125;</span><br><span class="line">        oprot.writeFieldStop();</span><br><span class="line">        oprot.writeStructEnd();</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+<p>这就是写field,也就是向输出流里写参数内容</p>
+<ul>
+<li><p>3.oprot_.writeMessageEnd();<br>这表示消息写完成了，各个协议处理不同，比如二进制就是空实现，但如json就需要写个”}”，以完成json格式</p>
+</li>
+<li><p>4.oprot_.getTransport().flush();  直接flush</p>
+</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">   * Flushes the underlying output stream if not null.</span><br><span class="line">   */</span><br><span class="line">  public void flush() throws TTransportException &#123;</span><br><span class="line">    if (outputStream_ == null) &#123;</span><br><span class="line">      throw new TTransportException(TTransportException.NOT_OPEN, &quot;Cannot flush null outputStream&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    try &#123;</span><br><span class="line">      outputStream_.flush();</span><br><span class="line">    &#125; catch (IOException iox) &#123;</span><br><span class="line">      throw new TTransportException(TTransportException.UNKNOWN, iox);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="client总结"><a href="#client总结" class="headerlink" title="client总结"></a>client总结</h4><p>整个发送消息就结束了，虽然没有按套路使用动态代理，而是通过生成的stub代码，把methodName,args给封装好了</p>
+<h3 id="server"><a href="#server" class="headerlink" title="server"></a>server</h3><p>服务端也没有通过反射的方式</p>
+<p>主要逻辑在生成的HelloService$Processor类中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">public static class Processor&lt;I extends Iface&gt; extends org.apache.thrift.TBaseProcessor&lt;I&gt; implements org.apache.thrift.TProcessor &#123;</span><br><span class="line">    private static final org.slf4j.Logger _LOGGER = org.slf4j.LoggerFactory.getLogger(Processor.class.getName());</span><br><span class="line">    public Processor(I iface) &#123;</span><br><span class="line">      super(iface, getProcessMap(new java.util.HashMap&lt;String, org.apache.thrift.ProcessFunction&lt;I, ? extends org.apache.thrift.TBase&gt;&gt;()));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    protected Processor(I iface, java.util.Map&lt;String, org.apache.thrift.ProcessFunction&lt;I, ? extends org.apache.thrift.TBase&gt;&gt; processMap) &#123;</span><br><span class="line">      super(iface, getProcessMap(processMap));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static &lt;I extends Iface&gt; java.util.Map&lt;String,  org.apache.thrift.ProcessFunction&lt;I, ? extends org.apache.thrift.TBase&gt;&gt; getProcessMap(java.util.Map&lt;String, org.apache.thrift.ProcessFunction&lt;I, ? extends  org.apache.thrift.TBase&gt;&gt; processMap) &#123;</span><br><span class="line">      processMap.put(&quot;helloString&quot;, new helloString());</span><br><span class="line">      return processMap;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static class helloString&lt;I extends Iface&gt; extends org.apache.thrift.ProcessFunction&lt;I, helloString_args&gt; &#123;</span><br><span class="line">      public helloString() &#123;</span><br><span class="line">        super(&quot;helloString&quot;);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      public helloString_args getEmptyArgsInstance() &#123;</span><br><span class="line">        return new helloString_args();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      protected boolean isOneway() &#123;</span><br><span class="line">        return false;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      @Override</span><br><span class="line">      protected boolean handleRuntimeExceptions() &#123;</span><br><span class="line">        return false;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      public helloString_result getResult(I iface, helloString_args args) throws org.apache.thrift.TException &#123;</span><br><span class="line">        helloString_result result = new helloString_result();</span><br><span class="line">        result.success = iface.helloString(args.what);</span><br><span class="line">        return result;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>1.先看构造函数</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">protected Processor(I iface, java.util.Map&lt;String, org.apache.thrift.ProcessFunction&lt;I, ? extends org.apache.thrift.TBase&gt;&gt; processMap) &#123;</span><br><span class="line">      super(iface, getProcessMap(processMap));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static &lt;I extends Iface&gt; java.util.Map&lt;String,  org.apache.thrift.ProcessFunction&lt;I, ? extends org.apache.thrift.TBase&gt;&gt; getProcessMap(java.util.Map&lt;String, org.apache.thrift.ProcessFunction&lt;I, ? extends  org.apache.thrift.TBase&gt;&gt; processMap) &#123;</span><br><span class="line">      processMap.put(&quot;helloString&quot;, new helloString());</span><br><span class="line">      return processMap;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这段把methodName与对应的处理类映射，那后面的事就简单了，当接受到消息，取得methodName,通过map获取对就的处理类回调就可以</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">public static class helloString&lt;I extends Iface&gt; extends org.apache.thrift.ProcessFunction&lt;I, helloString_args&gt; &#123;</span><br><span class="line">      public helloString() &#123;</span><br><span class="line">        super(&quot;helloString&quot;);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      public helloString_args getEmptyArgsInstance() &#123;</span><br><span class="line">        return new helloString_args();</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      protected boolean isOneway() &#123;</span><br><span class="line">        return false;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      @Override</span><br><span class="line">      protected boolean handleRuntimeExceptions() &#123;</span><br><span class="line">        return false;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      public helloString_result getResult(I iface, helloString_args args) throws org.apache.thrift.TException &#123;</span><br><span class="line">        helloString_result result = new helloString_result();</span><br><span class="line">        result.success = iface.helloString(args.what);</span><br><span class="line">        return result;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>处理类，继承ProcessFunction类，实现getResult(),这个方法就是调用了对应service.helloString()</p>
+<p>可以再深入看一下,在socket监听消息时</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">client = serverTransport_.accept();</span><br><span class="line">        if (client != null) &#123;</span><br><span class="line">          processor = processorFactory_.getProcessor(client);</span><br><span class="line">          inputTransport = inputTransportFactory_.getTransport(client);</span><br><span class="line">          outputTransport = outputTransportFactory_.getTransport(client);</span><br><span class="line">          inputProtocol = inputProtocolFactory_.getProtocol(inputTransport);</span><br><span class="line">          outputProtocol = outputProtocolFactory_.getProtocol(outputTransport);</span><br><span class="line">          if (eventHandler_ != null) &#123;</span><br><span class="line">            connectionContext = eventHandler_.createContext(inputProtocol, outputProtocol);</span><br><span class="line">          &#125;</span><br><span class="line">          while (true) &#123;</span><br><span class="line">            if (eventHandler_ != null) &#123;</span><br><span class="line">              eventHandler_.processContext(connectionContext, inputTransport, outputTransport);</span><br><span class="line">            &#125;</span><br><span class="line">            if(!processor.process(inputProtocol, outputProtocol)) &#123;</span><br><span class="line">              break;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br></pre></td></tr></table></figure>
+<p>关键行：processor.process(inputProtocol, outputProtocol)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">public boolean process(TProtocol in, TProtocol out) throws TException &#123;</span><br><span class="line">    TMessage msg = in.readMessageBegin();</span><br><span class="line">    ProcessFunction fn = processMap.get(msg.name);</span><br><span class="line">    if (fn == null) &#123;</span><br><span class="line">      TProtocolUtil.skip(in, TType.STRUCT);</span><br><span class="line">      in.readMessageEnd();</span><br><span class="line">      TApplicationException x = new TApplicationException(TApplicationException.UNKNOWN_METHOD, &quot;Invalid method name: &#x27;&quot;+msg.name+&quot;&#x27;&quot;);</span><br><span class="line">      out.writeMessageBegin(new TMessage(msg.name, TMessageType.EXCEPTION, msg.seqid));</span><br><span class="line">      x.write(out);</span><br><span class="line">      out.writeMessageEnd();</span><br><span class="line">      out.getTransport().flush();</span><br><span class="line">      return true;</span><br><span class="line">    &#125;</span><br><span class="line">    fn.process(msg.seqid, in, out, iface);</span><br><span class="line">    return true;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>这就很明显了，通过methodName从map中取得ProccessFunction，再执行process方法，调用相应service的方法</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>虽然thrift没有按以往java套路出牌，但最根本的把method发送到远程执行是一致的。可能对于多语言来讲，便于所以语言一致性，的确需要通过生成的stub代码手法来实现RPC</p>
+<p>当然thrift并不简单，还有很多的内容需要深挖学习，但至少这个简单示例可以了解跨语言型的RPC，相关IDL,Stub的知识，有清晰认知，而不局限于概念</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/rpc/" rel="tag"># rpc</a>
+              <a href="/tags/thrift/" rel="tag"># thrift</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/marketing-and-productivity-of-soft-skills-notes.html" rel="prev" title="《软技能》笔记之营销与生产力">
+      <i class="fa fa-chevron-left"></i> 《软技能》笔记之营销与生产力
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/fastthreadlocal-parsing.html" rel="next" title="FastThreadLocal解析">
+      FastThreadLocal解析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RPC"><span class="nav-number">1.</span> <span class="nav-text">RPC</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RPC%E7%9A%84%E5%A5%97%E8%B7%AF%EF%BC%9A"><span class="nav-number">1.2.</span> <span class="nav-text">RPC的套路：</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#thrift"><span class="nav-number">2.</span> <span class="nav-text">thrift</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.1.</span> <span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#IDL%E6%96%87%E4%BB%B6"><span class="nav-number">2.1.1.</span> <span class="nav-text">IDL文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E4%BB%A3%E7%A0%81"><span class="nav-number">2.1.2.</span> <span class="nav-text">生成代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%9C%8D%E5%8A%A1%E7%AB%AF%E4%B8%8E%E5%AE%A2%E6%9C%8D%E7%AB%AF"><span class="nav-number">2.1.3.</span> <span class="nav-text">实现服务端与客服端</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF"><span class="nav-number">2.1.3.1.</span> <span class="nav-text">服务端</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">2.1.3.2.</span> <span class="nav-text">客户端</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%A3%E6%9E%90"><span class="nav-number">2.2.</span> <span class="nav-text">解析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#client"><span class="nav-number">2.2.1.</span> <span class="nav-text">client</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81%E6%B6%88%E6%81%AF"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">发送消息</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#client%E6%80%BB%E7%BB%93"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">client总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#server"><span class="nav-number">2.2.2.</span> <span class="nav-text">server</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

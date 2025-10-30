@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="里氏代换原则 LSP，Liskov Substitution Principle  子类型必须能够替换掉它们的基类型   若对每个类型S的对象O1，都存在一个类型T的对象O2，使得在所有针对T编写的程序P中，用O1替换O2后，程序P行为功能不变，则S是T的子类型  LSP是继承关系设计基本原则，也是使OCP成为可能的主要原则之一。正是子类型的可替换性才使得使用基类类型的模块在无需修改的情况下就可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="SOLID之LSP">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/lsp-of-solid.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="里氏代换原则 LSP，Liskov Substitution Principle  子类型必须能够替换掉它们的基类型   若对每个类型S的对象O1，都存在一个类型T的对象O2，使得在所有针对T编写的程序P中，用O1替换O2后，程序P行为功能不变，则S是T的子类型  LSP是继承关系设计基本原则，也是使OCP成为可能的主要原则之一。正是子类型的可替换性才使得使用基类类型的模块在无需修改的情况下就可以">
+<meta property="og:locale">
+<meta property="article:published_time" content="2020-01-31T14:48:00.000Z">
+<meta property="article:modified_time" content="2021-09-29T07:24:30.460Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="SOLID">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/lsp-of-solid.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>SOLID之LSP | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/lsp-of-solid.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          SOLID之LSP
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-01-31 22:48:00" itemprop="dateCreated datePublished" datetime="2020-01-31T22:48:00+08:00">2020-01-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>里氏代换原则 LSP，Liskov Substitution Principle</p>
+<blockquote>
+<p>子类型必须能够替换掉它们的基类型</p>
+</blockquote>
+<blockquote>
+<p>若对每个类型S的对象O1，都存在一个类型T的对象O2，使得在所有针对T编写的程序P中，用O1替换O2后，程序P行为功能不变，则S是T的子类型</p>
+</blockquote>
+<p>LSP是继承关系设计基本原则，也是使OCP成为可能的主要原则之一。正是子类型的可替换性才使得使用基类类型的模块在无需修改的情况下就可以扩展，对于LSP的违反常常会导致以明显违反OCP的方式使用运行时类型辨别(RTTI),这种方式常常是使用一个显式的if语句或才if&#x2F;else链去确定一个对象的类型</p>
+<p>假设一个函数f，它的参数为指向某个基类B的指针或者引用。同样假设B的某个派生类D，如果把D对象作为B类型传递给f，会导致f出现错误的行为。那么D就违反了LSP。显然，D对于f来说是脆弱的。</p>
+<p>f的编写者会想去对D进行一些测试，以便于在把D的对象传递给f时，可以使f具有正确的行为。这个测试违反了OCP，因为此时f对于B的所有派生类都不再是封闭的</p>
+<h1 id="IS-A"><a href="#IS-A" class="headerlink" title="IS-A"></a>IS-A</h1><p>“IS-A”是严格的分类学意义上的定义，意思是一个类是另一个类的“一种”</p>
+<p>我们经常说继承是IS-A关系，也就是如果一个新类型的对象被认为和一个已有类的对象之间满足IS-A关系，那么这个新对象的类应该从这个已用对象的类派生</p>
+<p>从一般意义上讲，一个正方形就是一个矩形。因此，把Sequare类视为从Rectangle类派生是合乎逻辑的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">void f(Rectangle r) &#123;</span><br><span class="line">    r.setWidth(5);</span><br><span class="line">    r.setHeight(4);</span><br><span class="line">    assert(r.Area() == 20)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>此时，如果传入的是Sequare对象，那这个函数f不能正确处理，也就是Squauare不能替换Rectangle，也就违反了LSP，意味着LSP与通常的数学法则和生活常识有不可混淆的区别</p>
+<p>在OOD中IS-A关系是就行为方式而言，而不是属性，这也就是面向接口编程；派生类的行为方式和输出不能违反基类已经确立的任何限制。基类的用户不应该被派生类的输出扰乱</p>
+<p>简单判断就是“可替换性”，子类是否能替换父类并保持原有行为不变</p>
+<h1 id="LSP与架构"><a href="#LSP与架构" class="headerlink" title="LSP与架构"></a>LSP与架构</h1><p>LSP从诞生开始，也就差不多这些内容，主要是指导如何使用继承关系的一种方法。随着时间推移，在更宏观上，LSP逐渐演变成了一种更广泛的、指导接口与其实现方式的设计原则</p>
+<p>可以是java风格的接口，具有多个实现类：甚至可以是几个服务响应同一个rest接口，用户都依赖于一种接口，并且都期待实现该接口的类之间能具有可替换性</p>
+<p>一旦违背了可替换性，该系统架构就不得不为此增添大量复杂的应对机制</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SOLID/" rel="tag"># SOLID</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/ocp-of-solid.html" rel="prev" title="SOLID之OCP">
+      <i class="fa fa-chevron-left"></i> SOLID之OCP
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/layered-architecture.html" rel="next" title="分层架构">
+      分层架构 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#IS-A"><span class="nav-number">1.</span> <span class="nav-text">IS-A</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#LSP%E4%B8%8E%E6%9E%B6%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">LSP与架构</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

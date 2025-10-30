@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="架构师，程序员追求的最高title。 那么想成为一名架构师，就会出现一系列的疑问： 什么是架构师？ 怎么才能成为架构师？ 优秀架构师需要哪些素质？ 之前根据《郭东白的架构课》总结了《成为首席架构师的打怪升级之路》。这也是郭东白对架构师的思考之路。 其实在2021年5月28日的Qcon软件大会上郭东白就做了一场主题是《如何成为一名优秀的架构师》演讲。相当精彩。特地找到PPT，学习一下。可惜是没有找到">
+<meta property="og:type" content="article">
+<meta property="og:title" content="优秀架构师的四个素质">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/four-qualities-of-an-excellent-architect.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="架构师，程序员追求的最高title。 那么想成为一名架构师，就会出现一系列的疑问： 什么是架构师？ 怎么才能成为架构师？ 优秀架构师需要哪些素质？ 之前根据《郭东白的架构课》总结了《成为首席架构师的打怪升级之路》。这也是郭东白对架构师的思考之路。 其实在2021年5月28日的Qcon软件大会上郭东白就做了一场主题是《如何成为一名优秀的架构师》演讲。相当精彩。特地找到PPT，学习一下。可惜是没有找到">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220731180713_1659262033.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220731214230_1659274950.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220731223544_1659278144.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220731233918_1659281958.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220731234323_1659282203.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220731235225_1659282745.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220801001259_1659283979.jpg">
+<meta property="article:published_time" content="2022-08-11T06:01:00.000Z">
+<meta property="article:modified_time" content="2023-02-11T06:02:11.842Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="架构师">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20220731180713_1659262033.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/four-qualities-of-an-excellent-architect.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>优秀架构师的四个素质 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/four-qualities-of-an-excellent-architect.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          优秀架构师的四个素质
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-08-11 14:01:00" itemprop="dateCreated datePublished" datetime="2022-08-11T14:01:00+08:00">2022-08-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-02-11 14:02:11" itemprop="dateModified" datetime="2023-02-11T14:02:11+08:00">2023-02-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>架构师，程序员追求的最高title。</p>
+<p>那么想成为一名架构师，就会出现一系列的疑问：</p>
+<p>什么是架构师？</p>
+<p>怎么才能成为架构师？</p>
+<p>优秀架构师需要哪些素质？</p>
+<p>之前根据《郭东白的架构课》总结了<a href="https://www.zhuxingsheng.com/blog/the-way-to-become-the-chief-architect.html">《成为首席架构师的打怪升级之路》</a>。这也是郭东白对架构师的思考之路。</p>
+<p>其实在2021年5月28日的Qcon软件大会上郭东白就做了一场主题是《如何成为一名优秀的架构师》演讲。相当精彩。特地找到PPT，学习一下。可惜是没有找到完整的演讲视频。</p>
+<h1 id="什么是架构师"><a href="#什么是架构师" class="headerlink" title="什么是架构师"></a>什么是架构师</h1><p><img src="http://images.zhuxingsheng.com/20220731180713_1659262033.jpg"></p>
+<p>架构师:</p>
+<p>1)a person engaged in the design of certain large constructions. – dictionary.com</p>
+<p>设计人员从事某些大型建筑物设计的人</p>
+<p>2)a person who designs and guides a plan or undertaking. – Merriam-Webster</p>
+<p>设计和指导计划或事业的人。</p>
+<p>在之前的总结文章中，其实都没有给出架构师的定义，只是说比普通程序员更牛的程序员，以前提出了“技术+影响力+领导力”的能力模型。</p>
+<p>而郭东白给出了一个更确切的定义：</p>
+<blockquote>
+<p>具备架构能力的人。</p>
+</blockquote>
+<p><strong>架构能力是指为相对复杂的场景设计并引导一个或多个研发团队，来实施结构化软件系统的能力。</strong></p>
+<h2 id="兼职架构师与全职架构师"><a href="#兼职架构师与全职架构师" class="headerlink" title="兼职架构师与全职架构师"></a>兼职架构师与全职架构师</h2><p><img src="http://images.zhuxingsheng.com/20220731214230_1659274950.jpg"></p>
+<p>对于任何一家公司，架构设计永远是必要的。</p>
+<p>其实在很多公司，架构师职位是有职无岗的，就是有架构师职责的需要，但不会独立设置架构师的岗位。很多时候都是由TL兼任。</p>
+<h1 id="架构师的生存"><a href="#架构师的生存" class="headerlink" title="架构师的生存"></a>架构师的生存</h1><h2 id="必要条件一：目标正确"><a href="#必要条件一：目标正确" class="headerlink" title="必要条件一：目标正确"></a>必要条件一：目标正确</h2><p>一个优秀的架构师应该具备对软件做出正确的设计和决策的基本能力，在做这些决策时往往需要考虑很多限制条件，如：时间成本、人力成本、资金成本、范围要求、质量要求、组织结构等，架构师从来不是独行侠，他是上承需求，下接实现的一种角色。</p>
+<p><img src="http://images.zhuxingsheng.com/20220731223544_1659278144.jpg"></p>
+<p>总结一下就是要有工程化思维。</p>
+<h2 id="必要条件二：能力满足"><a href="#必要条件二：能力满足" class="headerlink" title="必要条件二：能力满足"></a>必要条件二：能力满足</h2><p><img src="http://images.zhuxingsheng.com/20220731233918_1659281958.jpg"></p>
+<p>这些能力，从硬实力再到软件实力，一条也不能落下。</p>
+<p>能力范围从普通研发到兼职架构师，再到全职架构师，层次递增。</p>
+<p><img src="http://images.zhuxingsheng.com/20220731234323_1659282203.jpg"></p>
+<p>对于能力攻关，是先宽度再深度，还是先深度再宽度？</p>
+<p>建议先深度再宽度，这样可以一通百通，没有深度是谈不上宽度的。</p>
+<h1 id="架构师的素质"><a href="#架构师的素质" class="headerlink" title="架构师的素质"></a>架构师的素质</h1><p>第一是：有眼光，什么叫有眼光？就是要有深度的业务理解，能看到好的机会；</p>
+<p>第二是：善于思考，有足够的技术视野能找到正确的技术和组织设计，亦即独立思考能力；</p>
+<p>第三是，有良知，这是一个架构师随着时间的流逝，沉淀在身上最重要的品质。什么是有良知？为人正直，选择做正确的事情。很多人是非常聪明的，业务理解能力强，技术实践丰富，但他不一定为公司或为组织做最正确的事情。有良知是非常重要的一个事情，如果架构师没有素质，他会让一家公司的损失很惨重。</p>
+<p>第四是：能感召，能感招是什么概念？他要能够引导组织作出正确的决策，大多数架构师不是决策者，但他是决策的建议者，因为他是个决策的建议者，所以他的沟通能力，表达能力可以引导一个组织最终走向正确的选择，这也是架构师必须具备的素质。</p>
+<p><img src="http://images.zhuxingsheng.com/20220731235225_1659282745.jpg"></p>
+<p>这几点，可以对应上前面的能力模型：技术、影响力、领导力。但这四点总结得更完善些</p>
+<p>1、眼光其实就是业务，有了业务理解深度，才能知道价值点，进而通过影响力发挥价值</p>
+<p>2、思考是根本，不管是对技术，还是业务。这是第一源能力</p>
+<p>3、良知是德</p>
+<p>4、感召力，对应上领导力，能引导他人一起走向正确的选择</p>
+<p>对于思考能力，再补充点，业务理解是什么？什么是业务理解不够？</p>
+<p>架构师的价值创造来自于独立、理性的、有深度的思考。从技术视角看业务，从业务中发现技术机会。通过复盘发现思考漏洞，提升思考质量。</p>
+<p><img src="http://images.zhuxingsheng.com/20220801001259_1659283979.jpg"></p>
+<p>讲一个技术人做业务理解，是在技术视角往上看到业务，从技术视角理解业务叫业务理解。</p>
+<p>并不是一个做业务的，把业务怎么做说的很详细，没用，要从技术视角看到对业务的理解，同样，技术洞察，从业务视角反过来看技术，找到洞察，这才是要的洞察。</p>
+<p>技术做技术的洞察，业务做业务的思考，这两个完全是割裂的。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>架构以及架构师，是程序员奋斗的事业和目标。所以虽然已经总结了很多了篇文章，但还是不时从高手那儿不停地吸取和反复思考。这是一个持续过程。现在有，未来还有。</p>
+<p>通过不断地思考架构的本源和架构师的价值，成为一名德才兼备的优秀架构师。</p>
+<p><a href="https://blog.llyweb.com/articles/2021/07/15/1626346284718.html">基于”如何成为一名优秀的架构师”的分享总结</a></p>
+<p><a href="https://ppt.infoq.cn/list/qconbj2021">QCon大会官方PPT下载（源PPT下载）</a></p>
+<p><a href="https://www.infoq.cn/video/album">InfoQ官方视频合辑（可能有视频上传）</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84%E5%B8%88/" rel="tag"># 架构师</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/programmers-need-to-understand-maslow-theory.html" rel="prev" title="程序员得懂点马斯洛理论">
+      <i class="fa fa-chevron-left"></i> 程序员得懂点马斯洛理论
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/three-stages-of-technician.html" rel="next" title="技术人的三个阶段">
+      技术人的三个阶段 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%9E%B6%E6%9E%84%E5%B8%88"><span class="nav-number">1.</span> <span class="nav-text">什么是架构师</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%BC%E8%81%8C%E6%9E%B6%E6%9E%84%E5%B8%88%E4%B8%8E%E5%85%A8%E8%81%8C%E6%9E%B6%E6%9E%84%E5%B8%88"><span class="nav-number">1.1.</span> <span class="nav-text">兼职架构师与全职架构师</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%B8%88%E7%9A%84%E7%94%9F%E5%AD%98"><span class="nav-number">2.</span> <span class="nav-text">架构师的生存</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%85%E8%A6%81%E6%9D%A1%E4%BB%B6%E4%B8%80%EF%BC%9A%E7%9B%AE%E6%A0%87%E6%AD%A3%E7%A1%AE"><span class="nav-number">2.1.</span> <span class="nav-text">必要条件一：目标正确</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%85%E8%A6%81%E6%9D%A1%E4%BB%B6%E4%BA%8C%EF%BC%9A%E8%83%BD%E5%8A%9B%E6%BB%A1%E8%B6%B3"><span class="nav-number">2.2.</span> <span class="nav-text">必要条件二：能力满足</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%B8%88%E7%9A%84%E7%B4%A0%E8%B4%A8"><span class="nav-number">3.</span> <span class="nav-text">架构师的素质</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

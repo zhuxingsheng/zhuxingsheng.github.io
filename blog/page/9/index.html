@@ -1,0 +1,1972 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="彪悍的人生需要书写">
+<meta property="og:type" content="website">
+<meta property="og:title" content="码农戏码">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/page/9/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="彪悍的人生需要书写">
+<meta property="og:locale">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/page/9/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ali-ddd-four-bombs-reading.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/ali-ddd-four-bombs-reading.html" class="post-title-link" itemprop="url">阿里DDD四弹拜读</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-11 10:34:00" itemprop="dateCreated datePublished" datetime="2021-01-11T10:34:00+08:00">2021-01-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>阿里殷浩大牛写了DDD系统文章，现在已经更新到每四篇，有很多异于常规的地方，收获良多，总结一下</p>
+<h1 id="Domain-primitive"><a href="#Domain-primitive" class="headerlink" title="Domain primitive"></a>Domain primitive</h1><p>对于DDD第一讲，作者介绍的Domain primitive,开始有些反感的，对DDD理论也深知一二，但从没听过有这概念，所以觉得作者是挂羊头卖狗肉的，但读完发现原来是对Value object的升华，牛人就是不一样</p>
+<p>Domain Primitive的概念和命名来自于Dan Bergh Johnsson &amp; Daniel Deogun的书 Secure by Design，特意找到了这本书的章节，<a href="https://livebook.manning.com/book/secure-by-design/chapter-5/1">https://livebook.manning.com/book/secure-by-design/chapter-5/1</a>，有兴趣可以看看</p>
+<p>对于DP，在《代码大全》中指出过类似概念：ADT</p>
+<p>抽象数据类型ADT是指一些数据以及对这些数据所进行的操作的集合</p>
+<p>关于使用ADT的建议：</p>
+<ol>
+<li>把常见的底层数据类型创建为ADT并且使用这些ADT，而不再使用底层数据类型</li>
+<li>把像文件这样的常用对象当成ADT</li>
+<li>简单的事物也可以当做ADT：这样可以提高代码的自我说明能力，让代码更容易修改。</li>
+<li>不要让ADT依赖于其存储介质</li>
+</ol>
+<p>ADT就是业务上的最小类型，不要去使用编程语言提供的基础类型</p>
+<p>在之前的DDD文章中，也指出很多时候的重构不过是大方法拆分成小方法，更SRP一些，其实也什么意义，DDD带来的好处是业务语义显现化，而DP就是一种手段</p>
+<p>使用DP后代码遵循了 DRY 原则和单一性原则，作者从四个维度提出DP带来的好处：接口的清晰度（可阅读性）、数据验证和错误处理、业务逻辑代码的清晰度、和可测试性</p>
+<p>在实际项目中碰到一个有意义的问题，我们通过OCR接受识别的增值税发票信息</p>
+<p>之前的接口是receiveInvoice(String invoiceCode,String invoiceNo,String checkCode,…),接受OCR给的发票结构化信息</p>
+<p>发票号码和发票代码是有业务语义，是业务的最小类型，invoiceCode可以从String升级为InvoiceCode</p>
+<p>接口变成：receiveInvoice(InvoiceCode invoiceCode,InvoiceNo invoiceNo,CheckCode checkCode),把业务最小单元提取出来了，接口清晰度，业务语义也显现了。可有个有意思的地方，OCR会出错的，一个正常的发票号码是8位，但会被识别成9位，业务上不能是InvoiceNo,可得固化存储这个识别结果，因此这个入口不能过于语义，总不能来一个WrongInvoiceNo</p>
+<p>这儿我可能有个误区，把DP作为有语义的数据验证工具类使用了，可DP应该是Value object的升华，得在domain层使用，参数校验还得用Validate</p>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>Domain Primitive 是一个在特定领域里，拥有精准定义的、可自我验证的、拥有行为的 Value Object 。</p>
+<ol>
+<li>DP是一个传统意义上的Value Object，拥有Immutable的特性</li>
+<li>DP是一个完整的概念整体，拥有精准定义</li>
+<li>DP使用业务域中的原生语言</li>
+<li>DP可以是业务域的最小组成部分、也可以构建复杂组合</li>
+</ol>
+<h2 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h2><ol>
+<li>将隐性的概念显性化(Make Implicit Concepts Explicit)</li>
+<li>将隐性的上下文显性化(Make Implicit Context Explicit)</li>
+<li>封装多对象行为(Encapsulate Multi-Object Behavior)</li>
+</ol>
+<h2 id="VS-Value-Object"><a href="#VS-Value-Object" class="headerlink" title="VS Value Object"></a>VS Value Object</h2><p>在 Evans 的 DDD 蓝皮书中，Value Object 更多的是一个非 Entity 的值对象</p>
+<p>在Vernon 的 DDD红皮书中，作者更多的关注了Value Object的Immutability、Equals方法、Factory方法等</p>
+<p>Domain Primitive 是 Value Object 的进阶版，在原始 VO 的基础上要求每个 DP 拥有概念的整体，而不仅仅是值对象。在 VO 的 Immutable 基础上增加了 Validity 和行为。当然同样的要求无副作用（side-effect free）</p>
+<h2 id="VS-DTO"><a href="#VS-DTO" class="headerlink" title="VS DTO"></a>VS DTO</h2><p><img src="http://images.zhuxingsheng.com/20210108165135_1610095895.jpg"></p>
+<hr>
+<h1 id="应用架构"><a href="#应用架构" class="headerlink" title="应用架构"></a>应用架构</h1><p>这一篇算是正常篇，很多文章都是这样的,也是以银行转账为例，但分析得更特彻</p>
+<p>应用架构，意指软件系统中固定不变的代码结构、设计模式、规范和组件间的通信方式</p>
+<p>一个好的架构应该需要实现以下几个目标：</p>
+<ol>
+<li>独立于框架：架构不应该依赖某个外部的库或框架，不应该被框架的结构所束缚</li>
+<li>独立于UI：前台展示的样式可能会随时发生变化</li>
+<li>独立于底层数据源：无论使用什么数据库，软件架构不应该因不同的底层数据储存方式而产生巨大改变</li>
+<li>独立于外部依赖：无论外部依赖如何变更、升级，业务的核心逻辑不应该随之而大幅变化</li>
+<li>可测试：无论外部依赖什么样的数据库、硬件、UI或服务，业务的逻辑应该都能够快速被验证正确性</li>
+</ol>
+<p>这是很多架构的目标，但想想，一个架构是这样，那还剩下什么，框架没了，数据库没了，对于习惯了CRUD的程序员，什么都没了，我们的架构为了什么。真的就是那个模型，一个软件之所以是这个软件的核心模型，也就是domain</p>
+<blockquote>
+<p>DDD是一种设计范式，主张以领域模型为中心驱动整个软件的设计。在DDD中，业务分析和领域建模是软件开发的关键活动。它不关心软件的架构是怎样的。随着技术的发展，我们可能在新版本中更换软件的架构，但是只要业务没有变更，领域模型就是稳定的，无需改动。</p>
+</blockquote>
+<h2 id="事务脚本弊端"><a href="#事务脚本弊端" class="headerlink" title="事务脚本弊端"></a>事务脚本弊端</h2><p><strong>一、可维护性能差</strong></p>
+<p>可维护性 &#x3D; 当依赖变化时，有多少代码需要随之改变</p>
+<p><strong>二、可拓展性差</strong></p>
+<p>可扩展性 &#x3D; 做新需求或改逻辑时，需要新增&#x2F;修改多少代码</p>
+<p><strong>三、可测试性能差</strong></p>
+<p>可测试性 &#x3D; 运行每个测试用例所花费的时间 * 每个需求所需要增加的测试用例数量</p>
+<h3 id="破坏原则"><a href="#破坏原则" class="headerlink" title="破坏原则"></a>破坏原则</h3><p>一、单一原则</p>
+<p>二、依赖反转原则</p>
+<p>三、开放封闭原则</p>
+<h2 id="DDD"><a href="#DDD" class="headerlink" title="DDD"></a>DDD</h2><blockquote>
+<p>如果今天能够重新写这段代码，考虑到最终的依赖关系，我们可能先写Domain层的业务逻辑，然后再写Application层的组件编排，最后才写每个外部依赖的具体实现。这种架构思路和代码组织结构就叫做Domain-Driven Design（领域驱动设计，或DDD）。所以DDD不是一个特殊的架构设计，而是所有Transction Script代码经过合理重构后一定会抵达的终点</p>
+</blockquote>
+<p>这段话一针见血，很多时候在讨论DDD时，只是学习战术，什么实体、值对象、聚合，可在做项目时，引入了这些器，其他还不是CRUD，谁真正想过domain,并且以此驱动开发</p>
+<p>DDD架构能有效解决传统架构中问题：</p>
+<ol>
+<li>高可维护性：当外部依赖变更时，内部代码只用变更跟外部对接的模块，其他业务逻辑不变</li>
+<li>高可扩展性：做新功能时，绝大部分代码都能利用，仅需要增加核心业务逻辑即可</li>
+<li>高可测试性：每个拆分出来的模块都符合单一性原则，绝大部分不依赖框架，可以快速的单元测试，做到100%覆盖</li>
+<li>代码结构清晰：通过POM module可以解决模块间的依赖关系，所有外接模块都可以单独独立成jar包被复用。当团队形成规范后，可以快速的定位到相关代码</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/20210319153253_1616139173.jpg"></p>
+<p>作者的模块划分和依赖关系，细分析之后发现了些妙处</p>
+<blockquote>
+<p>Infrastructure模块包含了Persistence、Messaging、External等模块。比如：Persistence模块包含数据库DAO的实现，包含Data Object、ORM Mapper、Entity到DO的转化类等。Persistence模块要依赖具体的ORM类库，比如MyBatis。如果需要用Spring-Mybatis提供的注解方案，则需要依赖Spring</p>
+</blockquote>
+<p>Persistence从infrastructure剥离出来，解决了之前碰到的循环依赖问题(repository接口在domain层，但现实在infra层，可从maven module依赖讲，domain又是依赖infra模块的)</p>
+<p>对于为什么拆分得这么细，是不是也解决这个问题，特意请教了作者,作者回复：</p>
+<blockquote>
+<p>这块儿可拆可不拆，拆的好处是每个模块职责比较简单，但不拆问题也不大的<br>domain没必要依赖infra啊？domain里自带Repository接口，所以从maven角度来看，infra是依赖domain<br>infra只依赖application、domain即可。这里面还有一个Start的模块，把infra依赖进来，然后Spring的DI会自动注入的<br>这里，domain或app依赖的外部的接口而已，这个一般是独立的jar包<br>这个也可以是ACL里面的Facade，但是具体的调用实现还是infra</p>
+</blockquote>
+<p>之前也思考过，的确得DIP，domain在最下层，infra在上面，但有个问题，把对外部依赖的接口都是放在infra里面的，所以倒置不了，以及之前在《DDD分层》里面提到的</p>
+<blockquote>
+<p>DDD引入repository放在了领域层，一是对应聚合根的概念，二是抽象了数据库访问，，但DDD限界上下文可能不仅限于访问数据库，还可能访问同样属于外部设备的文件、网络与消息队列。为了隔离领域模型与外部设备，同样需要为它们定义抽象的出口端口，这些出口端口该放在哪里呢？如果依然放在领域层，就很难自圆其说。例如，出口端口EventPublisher支持将事件消息发布到消息队列，要将这样的接口放在领域层，就显得不伦不类了。倘若不放在位于内部核心的领域层，就只能放在领域层外部，这又违背了整洁架构思想</p>
+</blockquote>
+<p>对于这段话，发给作者，让他点评了一下，作者回复：</p>
+<blockquote>
+<p>EventPublisher接口就是放在Domain层，只不过namespace不是xxx.domain，而是xxx.messaging之类的<br>这里面2个概念，一个是maven module怎么搞，一个是什么是Domain层。这两个不是同一件事<br>Repository、eventpublisher接口再Domain这个module里，但是他们从理论上是infra层的。</p>
+</blockquote>
+<blockquote>
+<p>我一般的理解：从外部收到的，属于interface层，比如RPC接口、HTTP接口、消息里面的消费者、定时任务等，这些需要转化为Command、Query、Event，然后给到App层。<br>App主动能去调用到的，比如DB、Message的Publisher、缓存、文件、搜索这些，属于infra层</p>
+</blockquote>
+<blockquote>
+<p>所以消息相关代码可能会同时存在2层里。这个主要还是看信息的流转方式，都是从interface-》Application-〉infra</p>
+</blockquote>
+<hr>
+<h1 id="Repository模式"><a href="#Repository模式" class="headerlink" title="Repository模式"></a>Repository模式</h1><p>这一篇对repository有了更深的了解，之前对repository的认知和实践都太浮浅</p>
+<ol>
+<li>repository只能操作聚合根</li>
+<li>repository类似dao,当作dao使用</li>
+<li>repository是领域层，但从菱形架构中得知，保持领域层的纯洁，放到南向网关</li>
+</ol>
+<p>对repository的认知和实践也就这些了，在实践时基本当成dao使用，当然也碰到了想不通的问题</p>
+<p>第一点：数据加载与性能平衡问题</p>
+<p>repository操作的对象是聚合根，因此加载一个聚合根，就得是一个完整的聚合根，可是有时我们只想加载部分数据，怎么办？<br>很多人指出依赖懒加载方式来解决，但也有人指出这是通过技术解决设计问题，我也迷茫，到底怎么办呢？写两个方法吧</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">findOrder(OrderId id);//获取完整的order聚合</span><br><span class="line"></span><br><span class="line">findOrderWithoutItems(OrderId id);//只取order不取明细</span><br></pre></td></tr></table></figure>
+
+<p>特别的别扭吧</p>
+<p>第二点：更新数据时，只从聚合根操作，那到了repository怎么知道具体操作哪个对象</p>
+<p>可能又需要类似第一点，写多个方法了</p>
+<p>这些都是很麻烦很现实的问题，为了domain纯洁性，为了DIP而特意加上不合格的repository，是不是更麻烦了呢？</p>
+<p>很多时候，其实技术、框架、依赖三方都不怎么变，变得恰恰是domain，产品需求一日三变，难道我们努力的方向有问题？</p>
+<h2 id="repository价值"><a href="#repository价值" class="headerlink" title="repository价值"></a>repository价值</h2><p>对于这个问题，就是为了DIP吧，作者又重新对比了DAO</p>
+<p>DAO的核心价值是封装了拼接SQL、维护数据库连接、事务等琐碎的底层逻辑，让业务开发可以专注于写代码，但是在本质上，DAO的操作还是数据库操作，DAO的某个方法还是在直接操作数据库和数据模型，只是少写了部分代码</p>
+<p>在Uncle Bob的《代码整洁之道》一书里，作者用了一个非常形象的描述：</p>
+<ul>
+<li>硬件（Hardware）：指创造了之后不可（或者很难）变更的东西。数据库对于开发来说，就属于”硬件“，数据库选型后基本上后面不会再变，比如：用了MySQL就很难再改为MongoDB，改造成本过高。</li>
+<li>软件（Software）：指创造了之后可以随时修改的东西。对于开发来说，业务代码应该追求做”软件“，因为业务流程、规则在不停的变化，我们的代码也应该能随时变化。</li>
+<li>固件（Firmware）：即那些强烈依赖了硬件的软件。我们常见的是路由器里的固件或安卓的固件等等。固件的特点是对硬件做了抽象，但仅能适配某款硬件，不能通用。所以今天不存在所谓的通用安卓固件，而是每个手机都需要有自己的固件</li>
+</ul>
+<p>从上面的描述我们能看出来，数据库在本质上属于“硬件”，DAO 在本质上属于“固件”，而我们自己的代码希望是属于“软件”。但是，固件有个非常不好的特性，那就是会传播，也就是说当一个软件强依赖了固件时，由于固件的限制，会导致软件也变得难以变更，最终让软件变得跟固件一样难以变更</p>
+<p>比如我们使用的mybaties,有各种mapper,原来放在dao中，现在放在repository，换汤不换药</p>
+<p>我们需要一个模式，能够隔离我们的软件（业务逻辑）和固件&#x2F;硬件（DAO、DB），让我们的软件变得更加健壮，而这个就是Repository的核心价值</p>
+<p>此刻，对菱形架构有点反思，是不是repository就应该是领域层，就是与外界数据来源的隔离，不关心具体是不是数据库，io,都是repository</p>
+<p><img src="http://images.zhuxingsheng.com/20210110225354_1610290434.jpg"></p>
+<p>作者把DTOAssembler放在了application层，是不是有点不太合理，至少不太符合<a href="http://www.zhuxingsheng.com/blog/layered-architecture.html">分层架构</a>，应该放在controller中呢？</p>
+<p><img src="http://images.zhuxingsheng.com/20210110225841_1610290721.jpg"></p>
+<p>从使用复杂度角度来看，区分了DO、Entity、DTO带来了代码量的膨胀（从1个变成了3+2+N个）。但是在实际复杂业务场景下，通过功能来区分模型带来的价值是功能性的单一和可测试、可预期，最终反而是逻辑复杂性的降低。</p>
+<h2 id="repository规范"><a href="#repository规范" class="headerlink" title="repository规范"></a>repository规范</h2><p>传统Data Mapper（DAO）属于“固件”，和底层实现（DB、Cache、文件系统等）强绑定，如果直接使用会导致代码“固化”。所以为了在Repository的设计上体现出“软件”的特性，主要需要注意以下三点：</p>
+<ol>
+<li>接口名称不应该使用底层实现的语法，insert,select,update,delete是sql语法</li>
+<li>出入参不应该使用底层数据格式，操作的是Aggregate Root,避免底层实现逻辑渗透到业务代码中的强保障</li>
+<li>应该避免所谓的“通用”repository模式</li>
+</ol>
+<h2 id="Change-Tracking-变更追踪"><a href="#Change-Tracking-变更追踪" class="headerlink" title="Change-Tracking 变更追踪"></a>Change-Tracking 变更追踪</h2><p>这是很多文章没提过的，这也解决了上面的第二点问题</p>
+<p>对于第一点问题，也特意请教了作者，作者这样回复：</p>
+<blockquote>
+<p>在业务系统里，最核心的目标就是要确保数据的一致性，而性能（包括2次数据库查询、序列化的成本）通常不是大问题。如果为了性能而牺牲一致性，就是捡了芝麻漏了西瓜，未来基本上必然会触发bug。</p>
+</blockquote>
+<blockquote>
+<p>如果性能实在是瓶颈，说明你的设计出了问题，说明你的查询目标（主订单信息）和写入目标（主子订单集合）是不一致的。这个时候一个通常的建议是用CQRS的方式，Read侧读取的可能是另一个存储（可能是搜索、缓存等），然后写侧是用完整的Aggregate来做变更操作，然后通过消息或binlog同步的方式做读写数据同步。</p>
+</blockquote>
+<hr>
+<h1 id="领域层设计规范"><a href="#领域层设计规范" class="headerlink" title="领域层设计规范"></a>领域层设计规范</h1><p>这一讲，对领域层讲解得很充分，大牛就是大牛，DDD只是一个外衣，遮挡不了牛人内涵的韵美，这个系列如果不与DDD联系，就取名牛人叫你怎么写代码，也是相当优秀</p>
+<p>一直以来我也认为DDD的基础是面向对象思想，我相对认为DDD与面向对象两者交集很大，重合度很高，结果作者这篇让我认知更深刻了，尤其以游戏为示例，让我更加佩服了，毕竟我在游戏业混了很久，一直自认写的代码还不错，也碰到文章指出的一些问题，可没再深入思考更优解决方案</p>
+<h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><p>为什么Composition-over-inheritance？以前只知道继承是强耦合，我们的道是高内聚低耦合，所以不要多过使用继承。之前同事讲过行为要多Composition，但数据层面还得inheritance</p>
+<p>作者从OCP角度再次解释这个问题</p>
+<p>继承虽然可以通过子类扩展新的行为，但因为子类可能直接依赖父类的实现，导致一个变更可能会影响所有对象</p>
+<p>继承虽然能Open for extension，但很难做到Closed for modification。所以今天解决OCP的主要方法是通过Composition-over-inheritance，即通过组合来做到扩展性，而不是通过继承</p>
+<h2 id="领域服务"><a href="#领域服务" class="headerlink" title="领域服务"></a>领域服务</h2><p>作者讲了三种场景的领域服务</p>
+<h3 id="单对象策略型"><a href="#单对象策略型" class="headerlink" title="单对象策略型"></a>单对象策略型</h3><p>这个示例，很有新意，实在的，没见过这样写的，有点不理解，特地请教了作者</p>
+<p>为什么通过Double Dispatch来反转调用领域服务的方法</p>
+<blockquote>
+<p>这里的问题就是你作为服务提供方，没办法保证Weapon入参一定是合法的。在这里依赖了另一个服务的提前校验，就说明Player没有做校验，那如果因为忘记或者bug没有提前校验呢？<br>在这里Entity的设计理念是要强保证一致性，这也是为什么要让服务通过参数注入</p>
+</blockquote>
+<p>可能这是事务脚本思维的原因，先判断再执行，而作者的意思是执行本身就应该包含判断，是个整体，不能分两步</p>
+<h3 id="跨对象事务型"><a href="#跨对象事务型" class="headerlink" title="跨对象事务型"></a>跨对象事务型</h3><p>这个常见，领域服务就是这样来的</p>
+<p>Player.attack(monster) 还是 Monster.receiveDamage(Weapon, Player)？放在领域服务就行了</p>
+<h3 id="通用组件型"><a href="#通用组件型" class="headerlink" title="通用组件型"></a>通用组件型</h3><p>这个平常大多被Utils类给取代了</p>
+<p>但如果再增加一个跳跃能力Jumpable呢？一个跑步能力Runnable呢？如果Player可以Move和Jump，Monster可以Move和Run，怎么处理继承关系？要知道Java（以及绝大部分语言）是不支持多父类继承的，所以只能通过重复代码来实现</p>
+<p>这个问题，最近在项目正好又碰到了，java继承没法处理，只能接口化处理</p>
+<p>但在实体上都得实现相应接口，有些重复，对此也特地请教了作者：</p>
+<p><img src="http://images.zhuxingsheng.com/20210110233033_1610292633.jpg"></p>
+<p>MovementSystem可以共用，但这些实体类都实现Movable，也得重复实现，这个情况是不是没法避免</p>
+<blockquote>
+<p>这个是很正常的，Movable本来就应该是说“我能够Move”，然后要Move就必须要有Position和Velocity。所以在Entity层面重复实现是必须的。只要是接口编程就必然需要这样（除非走mixin，但那个Java不支持）。没办法走Base类就是因为要避免继承，同时base类也没办法实现多父继承。<br>在有Mixin的语言里理论上是可以避免这种，但是Mixin有自己的问题，同时我们主流编程语言都没有mixin</p>
+</blockquote>
+<p>OOP、ECS、DDD三者的比较：</p>
+<ul>
+<li>基于继承关系的OOP代码：OOP的代码最好写，也最容易理解，所有的规则代码都写在对象里，但是当领域规则变得越来越复杂时，其结构会限制它的发展。新的规则有可能会导致代码的整体重构。</li>
+<li>基于组件化的ECS代码：ECS代码有最高的灵活性、可复用性、及性能，但极具弱化了实体类的内聚，所有的业务逻辑都写在了服务里，会导致业务的一致性无法保障，对商业系统会有较大的影响。</li>
+<li>基于领域对象 + 领域服务的DDD架构：DDD的规则其实最复杂，同时要考虑到实体类的内聚和保证不变性（Invariants），也要考虑跨对象规则代码的归属，甚至要考虑到具体领域服务的调用方式，理解成本比较高。</li>
+</ul>
+<h2 id="实体类"><a href="#实体类" class="headerlink" title="实体类"></a>实体类</h2><p>在这个过程中，作者也随带说了些实体的规范</p>
+<blockquote>
+<p>因为 Weapon 是实体类，但是Weapon能独立存在，Player不是聚合根，所以Player只能保存WeaponId，而不能直接指向Weapon;<br>这是对象之间关系的处理，都是这样推荐的，不要对象对联，使用ID关联。但聚合根可以直接对象关联</p>
+</blockquote>
+<blockquote>
+<p>Entity只能保留自己的状态（或非聚合根的对象）。任何其他的对象，无论是否通过依赖注入的方式弄进来，都会破坏Entity的Invariance，并且还难以单测</p>
+</blockquote>
+<p>对于为什么实体都特地加一个业务实体ID，之前学习有介绍：</p>
+<blockquote>
+<p>身份标识（Identity，或简称为 ID）是实体对象的必要标志，换言之，没有身份标识的领域对象就不是实体。实体的身份标识就好像每个公民的身份证号，用以判断相同类型的不同对象是否代表同一个实体。身份标识除了帮助我们识别实体的同一性之外，主要的目的还是为了管理实体的生命周期。实体的状态是可以变更的，这意味着我们不能根据实体的属性值进行判断，如果没有唯一的身份标识，就无法跟踪实体的状态变更，也就无法正确地保证实体从创建、更改到消亡的生命过程。</p>
+</blockquote>
+<blockquote>
+<p>一些实体只要求身份标识具有唯一性即可，如评论实体、博客实体或文章实体的身份标识，都可以使用自动增长的 Long 类型或者随机数与 UUID、GUID，这样的身份标识并没有任何业务含义。有些实体的身份标识则规定了一定的组合规则，例如公民实体、员工实体与订单实体的身份标识就不是随意生成的。遵循业务规则生成的身份标识体现了领域概念，例如公民实体的身份标识其实就是“身份证号”这一领域概念。定义规则的好处在于我们可以通过解析身份标识获取有用的领域信息，例如解析身份证号，可以直接获得该公民的部分基础信息，如籍贯、出生日期、性别等，解析订单号即可获知该订单的下单渠道、支付渠道、业务类型与下单日期等。</p>
+</blockquote>
+<blockquote>
+<p>在设计实体的身份标识时，通常可以将身份标识的类型分为两个层次：通用类型与领域类型。通用类型提供了系统所需的各种生成唯一标识的类型，如基于规则的标识、基于随机数的标识、支持分布式环境唯一性的标识等。这些类型都将放在系统层代码模型的 domain 包中，可以作为整个系统的共享内核</p>
+</blockquote>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>大牛写的文章就是深入浅出，丰富饱满，还是多拜读，多温故，不是因为DDD他们变得这么优秀，而是他们本身就很优秀，也许他们心中早有DDD了，只是没有DDD这个名字而已</p>
+<p>希望有一天我也能写出这么好的文章</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ddd-strategy-and-tactics.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/ddd-strategy-and-tactics.html" class="post-title-link" itemprop="url">DDD战略战术</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-11-15 20:53:00" itemprop="dateCreated datePublished" datetime="2020-11-15T20:53:00+08:00">2020-11-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><a href="http://www.zhuxingsheng.com/blog/ddd-opening-summary.html">《DDD开篇总结》</a>的前三篇已经阐述了几个内容</p>
+<ol>
+<li>DDD是什么</li>
+<li>复杂系统的特征</li>
+<li>DDD如何应对复杂系统</li>
+<li>模型概念</li>
+<li>软件开发流程</li>
+</ol>
+<p>但一般DDD资料中都会分为两部分讲述：战略和战术，所以按这两种分类，重新归纳整合一下</p>
+<h1 id="道"><a href="#道" class="headerlink" title="道"></a>道</h1><p>在讨论战略和战术前，先表述一下“道”</p>
+<p>DDD是一种软件开发的方法论，任何方法论，都必须落实到“减少代码复杂度”</p>
+<p>那么“道”是什么呢？</p>
+<p>一直认为DDD的战略就是道，结果搞错了</p>
+<p>软件开发的终极“道”就是“高内聚、低耦合”，它是任何有价值思想和方法的具象</p>
+<p>如何才能达到这个终极道呢？</p>
+<ul>
+<li><ol>
+<li>DRY</li>
+</ol>
+</li>
+<li><ol start="2">
+<li>分离关注点</li>
+</ol>
+<ul>
+<li>2.1. 业务和技术分离</li>
+<li>2.2. 业务和部署分离</li>
+<li>2.3. 变与不变分离</li>
+</ul>
+</li>
+<li><ol start="3">
+<li>缩小依赖范围</li>
+</ol>
+</li>
+<li><ol start="4">
+<li>向稳定方向依赖</li>
+</ol>
+</li>
+</ul>
+<p><img src="http://images.zhuxingsheng.com/20201114234734_1605368854.jpg"></p>
+<h1 id="战略"><a href="#战略" class="headerlink" title="战略"></a>战略</h1><p>DDD战略主要包含统一语言和限界上下文</p>
+<h2 id="统一语言"><a href="#统一语言" class="headerlink" title="统一语言"></a>统一语言</h2><p><img src="http://images.zhuxingsheng.com/20201115004854_1605372534.jpg"></p>
+<p>在以往OO开发过程中，会经过OOA，再到OOD，复杂系统中，没有人能全方位了解系统并实现系统，术业有专工，专业人士干伟业事，这是正确的</p>
+<p>但分工后，团队合作时沟通至关重要，，在整个系统开发过程中，是有一根主线的，那就是业务知识，业务知识在系统落地前经过层层传递，走样变形是常有的事，从开发人员经过多少次的返工情况就很清楚</p>
+<p>如果解决这个问题呢？DDD引入了统一语言，把业务名词含义事先确定好，减少不必要的翻译过程，车同轨，书同文，行同伦</p>
+<p>这也消除了业务与技术之间的重复，共同使用业务原语对话</p>
+<p>代码就是文档，代码就是领域知识</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">userService.love(Jack, Rose) =&gt; Jack.love(Rose)</span><br><span class="line">companyService.hire(company,employee) =&gt; Company.hire(employee)</span><br></pre></td></tr></table></figure>
+
+<h2 id="界限上下文"><a href="#界限上下文" class="headerlink" title="界限上下文"></a>界限上下文</h2><p>界限上下文囊括了实现道的方方面面，如分离关注点，每个上下文围绕一个关注点，通过整洁架构让各层向稳定方向依赖，合理的划分界限，使各个上下文之间减小依赖</p>
+<p>说白了界限上下文就是把一个大系统分而治之</p>
+<p>界限上下文算是DDD中的核心知识点，但常被技术人员忽视，对于实用主义的程序员来讲，战术常常更吸引人，其实大到微服务，小到实体类，背后都渗透着上下文的概念</p>
+<p>引入限界上下文的目的，不在于如何划分边界，而在于如何控制边界</p>
+<p>Alberto Brandolini认为bounded context are a mean of safety（限界上下文意味着安全），safety的意思是being in control and no surprise，对限界上下文是可控制的，就意味着你的系统架构与组织结构都是可控的</p>
+<p>显然，限界上下文并不是像大多数程序员理解的那样，是模块、服务、组件或子系统，而是你对领域模型、团队合作以及技术风险的控制</p>
+<p>限界上下文是“分而治之”架构原则的体现，我们引入它的目的其实为了控制（应对）软件的复杂度，它并非某种固定的设计单元，我们不能说它就是模块、服务或组件，而是通过它来帮助我们做出高内聚低耦合的设计。只要遵循了这个设计，则限界上下文就可能成为模块、服务或组件。所以，文章《Bounded Contexts as a Strategic Pattern Beyond DDD》才会写到：“限界上下文体现的是高层的抽象机制，它并非编程语言或框架的产出工件，而是体现了人们对领域思考的本质。”</p>
+<h1 id="战术"><a href="#战术" class="headerlink" title="战术"></a>战术</h1><p>对于开发人员而，战术是最实用的，比如聚合、实体、值对象、工厂、仓储、领域事件等等，<br>使用这些战术组件建模工具，DDD满足了软件真正的技术需求。这些战术设计工具使开发人员能够按照领域专家的思维开发软件</p>
+<p>战略部分讲了，界限上下文的思想是核心，在战术组件中都有体现，比如实体，实体就是一个最小上下文，聚合就是相对实体大一点的上下文</p>
+<p>但残酷的现实是，花费了大量的精力来学习这些DDD战术组件，却在实现项目中却用不上，为什么呢？因为事务脚本思维太深，分层也大多是从技术角度出发，没有抽象出领域模型，也就是没有OO抽象，没有一个完整的对象，实体都没有，像工厂，值对象也就成了水中花</p>
+<p>这也是我们虽然常重构代码，也不过是大类变小类，大函数拆分成小函数，符合一下代码规范，但对整个项目而言，其实没有实质性改进</p>
+<p>如何能有实质性改进，对于复杂系统如何运用上这些战术组件呢？</p>
+<p>此时，结构性思维发挥作用了</p>
+<p><strong>第一步：过程分解</strong>，把一个复杂的系统按流程拆解成各个阶段和步骤，这也是事务脚本的强项</p>
+<p><strong>第二步：对象建模</strong>，过程性拆解虽然可以降低了开发难度，但领域知识被割裂，代码的业务语义也不明确，在这方面OO是强项，提升代码复用性和内聚性</p>
+<p><img src="http://images.zhuxingsheng.com/20201115171835_1605431915.jpg"></p>
+<p>结合这两步，自上而下的结构化分解+自下而上的面向对象建模，过程化分析更好地清理了模型之间的关系，而对象模型提升代码复用性和业务语义表达能力</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>DDD是一套很好的方法论，有时我们常在理论纯洁性与实战性之间徘徊。这也许是初级阶段常有的纠结点</p>
+<p>DDD有适用场景，事务脚本有存在的优势</p>
+<p><img src="http://images.zhuxingsheng.com/20201115205151_1605444711.jpg"></p>
+<p>不能因为现在人们开口闭口都是DDD，就硬要开展DDD</p>
+<p>DDD难以落地除了本身带来了很多概念，还需要团队整体素质</p>
+<p>软件开发没有银弹，不能偏执于一种理论，实际开发是场硬仗，像混合格斗一样，不在于一招一式是哪门哪派，制敌才是终极目标，所以需要根据自身情况进行裁剪，灵活运用</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ddd-opening-summary.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/ddd-opening-summary.html" class="post-title-link" itemprop="url">DDD开篇总结</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-10-19 13:39:00" itemprop="dateCreated datePublished" datetime="2020-10-19T13:39:00+08:00">2020-10-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>之前写了两篇<a href="http://www.zhuxingsheng.com/blog/ddd-opening.html">《DDD开篇》</a>与<a href="http://www.zhuxingsheng.com/blog/ddd-copes-with-complexity.html">《DDD应对复杂》</a>，是时候总结一下了</p>
+<p>对于DDD的启蒙，不管是国内还是国外思维逻辑都是一样的。或者说如果你想写本关于DDD的书，大纲似乎是一样的</p>
+<p>首先DDD是什么？给出定义，定义有些抽象，难以一次性接受，那就通过以往问题引出DDD，这时模型、复杂度、开发流程都是自然附带出的概念，再后面就是DDD的知识结构是什么，最后就是讲解一个实例，也有些会把实例穿插到各个篇章中</p>
+<p>在DDD这个系列中，我也打算是这种思路，很平易近人</p>
+<p>经过了之前两篇，对于第一部分的DDD是什么？为什么需要DDD基本都问答清楚了。</p>
+<h1 id="DDD是什么"><a href="#DDD是什么" class="headerlink" title="DDD是什么"></a>DDD是什么</h1><p>DDD根本上是一种软件开发的建模方法论，其中使用了面向对象分析思想，并不是独立于外全新的体系</p>
+<p>模型是对现实世界的抽象，那建模是对现实世界的抽象过程，但模型毕竟是模型，不能代替现实，就像类比不能代替问题本身一样。建模过程与建模者的观察视角和对问题的认知有直接关系,所以我们要带着审视的眼光看待模型</p>
+<p>软件开发的最大问题之一便是业务人员和技术人员需求某种翻译才能交流，那么模型的质量就取决于翻译的还原度</p>
+<p>建模不仅要还原实现世界，更要把重要的东西进行显示化。是一个软件之所以是这个软件的核心</p>
+<p>建模可以通过<strong>建模&#x3D;构造块+语法</strong>范式表达，各类语言都可以通过这种范式表达出来</p>
+<p><img src="http://images.zhuxingsheng.com/20201018163201_1603009921.jpg"></p>
+<p>(1) 自然语言建模 </p>
+<p>构造块：常用的那几千个汉字（或者英语的10万单词）</p>
+<p>语法规则：主谓宾定状补</p>
+<p>(2)计算机语言建模 </p>
+<p>构造块：加&#x2F;减&#x2F;乘&#x2F;除，if-else, for, while.. </p>
+<p>语法规则：程序员最熟悉，此处就不说了</p>
+<p>(3)过程建模 </p>
+<p>构造块：函数 </p>
+<p>语法规则：整个系统描述成一个个过程，每个过程通过函数的层层调用组成</p>
+<p>(4)对象建模 </p>
+<p>构造块：对象 </p>
+<p>语法规则: 整个系统描述成对象与对象之间的关系</p>
+<p>(5) DDD领域建模 </p>
+<p>构造块：实体&#x2F;值对象&#x2F;领域服务&#x2F;领域事件&#x2F;聚合根&#x2F;工厂&#x2F;仓库&#x2F;限界上下文 </p>
+<p>语法规则：就是“构造块”之间的联系（不是很明显，这个需要深入研究。也正是DDD难掌握的地方）</p>
+<h1 id="为什么需要DDD"><a href="#为什么需要DDD" class="headerlink" title="为什么需要DDD"></a>为什么需要DDD</h1><p>之前介绍过软件复杂度以及应对复杂度之道，DDD是其中一种术</p>
+<ol>
+<li>使领域专家和开发者在一起工作，这样开发出来的软件能够准确地传送业务规则</li>
+<li>“准确传达业务规则”意思是说此时的软件就像如果领域专家是编码人员时所开发出来的一样</li>
+<li>帮助业务人员自我提高。没有任何一个领域专家或管理者敢说他对业务已经了如指掌，业务知识需要长期学习过程，在<br>DDD中，每个人都在学习，同时每个人又是知识贡献者</li>
+<li>关键在于对知识的集中，因为这样可以确保软件知识并不只是掌握在少数人手中</li>
+<li>在领域专家、开发者和软件本身之间不存在“翻译”，意思是当大家都使用相同的语言进行交流时，每个人都能听懂他人所说</li>
+<li>设计就是代码，代码就是设计。设计是关于软件如何工作的，最好的编码设计来自多次试验，这得益于敏捷的发现过程</li>
+<li>DDD同时提供了战略设计和战术设计两种方式,战略设计帮助我们理解哪些投入是最重要的，哪些既有软件资产是可以重新拿来使用的，哪些人应该被加到团队中？战术设计帮助我们创建DDD模型中各个部件</li>
+</ol>
+<p>上面的比较学术，简单讲：理解DDD的本质是统一语言、边界划分和面向对象分析的方法</p>
+<ol>
+<li>统一语言，主要思想是让应用能和业务相匹配，这是通过在业务与代码中的技术之间采用共同的语言达成的。也就是设计及代码，代码及设计</li>
+<li>面向对象，DDD核心是领域模型，先找到业务中的领域模型，以领域模型为中心，驱动项目开发，指引我们如何实现面向服务架构或业务驱动架构。领域模型设计精髓在于面向对象分析，对事物的抽象能力，一个领域驱动架构师必然是一个面向对象分析大师</li>
+<li>业务语义显示化，统一语言也好，面向对象也好，最终目标都是为代码可读性和可维护性服务，统一语言使得核心领域概念无损地在代码中呈现，从而提升代码的可理解性</li>
+<li>分离业务逻辑和技术细节，让两个维度的复杂度被解开和分治，比如整洁架构</li>
+</ol>
+<p><strong>对于最终目标来讲，在软件项目中，任何方法论如果最终不能落在“减少代码复杂度”，都是有待商榷的</strong></p>
+<h1 id="DDD挑战"><a href="#DDD挑战" class="headerlink" title="DDD挑战"></a>DDD挑战</h1><p>DDD在实践中有很高的门槛</p>
+<p><img src="http://images.zhuxingsheng.com/20201018175643_1603015003.jpg"></p>
+<ol>
+<li>持续地将领域专家引入项目</li>
+<li>为创建通用语言腾出时间和精力</li>
+<li>改变开发者对领域的思考方式</li>
+</ol>
+<p>最大挑战之一便是：需要花费大量的时间和精力来思考业务领域，研究概念和术语，并且和领域专家交流，以发现、捕捉和改进通用语言</p>
+<p>在开发过程中，最大的鸿沟之一便是在于领域专家和开发者之间，通常领域专家关注放在交付业务价值上，而开发者则将注意力放在技术实现上。并不是说开发者动机是错误的，面是说开发者的眼光被自然而然地吸引到实现层面。即使让领域专家与开发者一同工作也只是表面协作，这样在开发的软件中产生了一种映射：业务人员所想的映射到开发者所理解的，软件便不能完全反映领域专家的思维模型，随着时间推移，这种鸿沟将增加软件开发成本</p>
+<p>DDD将领域专家与开发人员聚焦在一起，这样所开发的软件能够反映出领域专家的思维模型，这并不意味着我们将精力都花在对“真实世界”的建模上，而是交付最具业务价值的软件，在实用和理想之间存在冲突时，根据它们的互异程序，在DDD中选择实用性</p>
+<p>领域专家与开发人员一起创建一套适用于领域建模的通用语言。通用语言必须在全队范围之内达成一致；所有成员都使用通用语言进行交流，通用语言是对软件模型的直接反映</p>
+<p>作为开发者，我们都是技术思想者，技术实现对于我们来说并不是什么难事。并不是说技术地思考不好，只是说有时少从技术层面去思考会更好。这么多年来，我们习惯了单从技术层面完成软件开发，那现在是时候考虑一种新的思考方式了。为你的业务领域开发一门通用语言便是一个好的出发点</p>
+<h1 id="技术负债"><a href="#技术负债" class="headerlink" title="技术负债"></a>技术负债</h1><p>程序员工作时间大部分在新增新功能，996式加班大多为了赶工上线，而对赶工出来的软件质量是在打个问题，而技术负债在软件质量领域是一个很能重要概念，对于软件工程来讲，这真是个特别的东西</p>
+<p><strong>Martin Fowler定义技术负债就是增加新功能所需要的额外成本</strong></p>
+<p>软件质量不同于其他商品质量。购买一个商品，在使用过程中会直接发现该商品质量问题，而软件质量不是直接被软件系统的使用者所感知的，也就是说客户如果同时使用两种质量不同的系统，用户是无法发现两者的区别，不过随着时间推移，自己的产品交付过程越来越长了</p>
+<p>软件质量问题不是直接面向用户，而是面向软件的开发团队。因为软件质量差，新程序员很难快速上手，无法形成生产力；修改别人的代码时可能一走在不得要领；bug丛生，修复一个可能使得系统崩溃，一个都不修复系统反而正常工作；修复bug时牵一动百，修改一处却引起其他连锁故障反应。。。，这些都是软件质量低下的外在表现</p>
+<p>正是由于软件质量不是最终用户所能感知的，导致行业内对软件质量没有过多重视–客户都没有提出改进要求，那么一切为客户服务的软件公司自然没有动力去提升软件质量，而且行业内对软件质量存在认知误区：便宜确实没好货，但是质量高必然导致成本 上升，而客户又不会察觉质量好坏，那么产品如何卖出好价格</p>
+<p>软件并不是质量越高，成本就越高。这似乎违反常识，背后其实也与技术负债有关。如果将技术负债看成是一种前进中的累赘，累赘遍布于代码各处，那么提高软件质量就是通过良好设计或重构来减轻这种累赘，从而能轻装上阵，新增功能就能更加快捷，交付效率也会大大提升。</p>
+<p>降低技术负债意味着软件质量提高，软件质量越高，修改拓展起来就越方便。</p>
+<p>如何降低技术负债？这存在一个适度问题，代码越多，复杂性越高，技术负债肯定越高，那么就需要惜墨如金。有时为了写正确可运行的简洁代码，可能要删除数十倍的代码，但也不是代码越少越好。有的代码只是考虑功能实现，没有考虑到功能的对接或扩展，那么当需要对功能实现扩展时，就发现难以下手，甚至需要采取黑客破解方式强行入侵系统，这此都是原来代码过于简单僵化的表现</p>
+<p>适度是在过度和不足中探索平衡的结果。代码适度的一个衡量标准是<a href="http://www.zhuxingsheng.com/blog/srp-of-solid.html">单一职责原则</a>，即每个函数或类只能有一个职责。</p>
+<p>面向对象编程中还有另一个原则：DRY原则。对这个原则的共同理解是代码不应该重复，如果两段代码表示的是同一个职责，那么合并它们。但这种抽象合并导致共享内核或共享库，最张造成代码各处对共享库或内核的依赖，这就很自然地引入了不必要的、偶然的复杂性–一旦共享库发生修改，牵一动百的事情就可能发生。很多时候重复的代码可能会带来相当大的优势，重复能拖延决策，这是软件开发的黄金。这样，延迟到适当时机从多个专业化角度重构，这比从单个方法层面进行抽象的重构要容易数倍。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ddd-coping-with-complex.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/ddd-coping-with-complex.html" class="post-title-link" itemprop="url">DDD应对复杂</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-10-13 22:37:00" itemprop="dateCreated datePublished" datetime="2020-10-13T22:37:00+08:00">2020-10-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="复杂"><a href="#复杂" class="headerlink" title="复杂"></a>复杂</h1><p>Eric Evans所著副标题–Tackling Complexity in the Heart of Software，对于简单系统其实没有必要使用DDD，只有在复杂系统中，才能体现DDD的价值</p>
+<p>那么何为“复杂”，或者说为什么软件是复杂的呢？</p>
+<p>即使是研究复杂系统的专家，如《复杂》一书的作者 Melanie Mitchell，都认为复杂没有一个明确得到公认的定义。不过，Melanie Mitchell 在接受 Ubiquity 杂志专访时，还是“勉为其难”地给出了一个通俗的复杂系统定义：由大量相互作用的部分组成的系统，与整个系统比起来，这些组成部分相对简单，没有中央控制，组成部分之间也没有全局性的通讯，并且组成部分的相互作用导致了复杂行为。</p>
+<p>这个定义同样可以表达软件复杂度的特征。定义中的组成部分对于软件系统来说，就是我所谓的“设计单元”，基于粒度的不同可以是函数、对象、模块、组件和服务。这些设计单元相对简单，然而彼此之间的相互作用却导致了软件系统的复杂行为。</p>
+<p>《管理3.0：培养和提升敏捷领导力》中从两个维度分析复杂：行为（预测能力）和结构（理解能力），分别举了实际生活中简单的例子</p>
+<p><img src="http://images.zhuxingsheng.com/20201012230954_1602515394.jpg"></p>
+<p>理解力维度分为 Simple 与 Comlicated 两个层次，预测能力维度则分为 Ordered、Complex 与 Chaotic 三个层次</p>
+<p>在英文中，表示复杂的有Complicated和Complex</p>
+<blockquote>
+<p>Simple &#x3D; easily knowable.</p>
+<p>Complicated &#x3D; not simple, but still knowable.</p>
+<p>Complex &#x3D; not fully knowable, but reasonably predictable.</p>
+<p>Chaotic &#x3D; neither knowable nor predictable.</p>
+</blockquote>
+<p>参考复杂的含义，Complicated 与 Simple（简单）相对，意指非常难以理解，而 Complex 则介于 Ordered（有序的）与 Chaotic（混沌的）之间，认为在某种程度上可以预测，但会有很多出乎意料的事情发生</p>
+<p>针对复杂的定义，分析角度以及应对的方法，绘制一张表格:</p>
+<table>
+    <tr>
+        <th>角度</th>
+        <th>维度</th>
+        <th>表象</th>
+        <th>应对</th>
+    </tr>
+    <tr>
+        <td rowspan="2" style="text-align:center;vertical-align:middle;">理解力</td>
+        <td>规模<br/><br/>软件的需求决定了系统的规模。当需求呈现线性增长的趋势时，为了实现这些功能，软件规模也会以近似的速度增长</td>
+        <td>
+函数存在副作用，调用时可能对函数的结果作了隐含的假设；
+<br/>
+类的职责繁多，不敢轻易修改，因为不知这种变化会影响到哪些模块；
+<br/>
+热点代码被频繁变更，职责被包裹了一层又一层，没有清晰的边界；
+<br/>
+在系统某个角落，隐藏着伺机而动的bug，当诱发条件具备时，则会让整条调用链瘫痪
+<br/>
+不同的业务场景包含了不同的例外场景，每种例外场景的处理方式都各不相同；
+<br/>
+同步处理与异步处理代码纠缠在一起，不可预知程序执行的顺序</td>
+<td>分而治之，控制规模</td>
+    </tr>
+    <tr>
+        <td>结构<br/><br/>
+        结构之所以变得复杂，在多数情况下还是因为系统的质量属性决定的
+        </td>
+        <td>
+代码没有显而易见的进入系统中的路径；
+<br/>
+不存在一致性、不存在风格、也没有统一的概念能够将不同的部分组织在一起；
+<br/>
+系统中的控制流让人觉得不舒服，无法预测；
+<br/>
+系统中有太多的“坏味道”，整个代码库散发着腐烂的气味儿
+<br/>
+数据很少放在使用它的地方，经常引入额外的巴罗克式缓存层，目的是试图让数据停留在更方便的地方
+        </td>
+        <td>保持结构的清晰与一致<br/>
+所有设计质量高的软件系统都有相同的特征，就是拥有清晰直观且易于理解的结构。
+</td>
+    </tr>
+    <tr>
+        <td>预测能力</td>
+        <td>变化</td>
+        <td>在设计软件系统时，变化让我们患得患失，不知道如何把握系统设计的度。若拒绝对变化做出理智的预测，系统的设计会变得僵化，一旦变化发生，修改的成本会非常的大；若过于看重变化产生的影响，渴望涵盖一切变化的可能，一旦预期的变化不曾发生，我们之前为变化付出的成本就再也补偿不回来了。这就是所谓的“过度设计”</td>
+        <td>拥抱变化<br/>
+        可进化性（Evolvability）<br/>
+可扩展性（Extensibility）<br/>
+可定制性（Customizability）<br/></td>
+    </tr>
+</table>
+
+<p>根据上面的总结，想起<a href="http://www.zhuxingsheng.com/blog/architecture-and-architect.html">《架构与架构师》</a>中提到的架构师需要面对应用程序的两个层面需求：功能需求与非功能需求，功能性需求越多越大那对应的软件规模增长越快，可变性越大；非功能需求就要考虑质量属性，也就是整体结构要清晰，明确的规范约束，易于理解好维护。而这两个层面需求正好又对应着业务复杂度与技术复杂度</p>
+<p>技术复杂度与业务复杂度并非完全独立，二者混合在一起产生的化合作用更让系统的复杂度变得不可预期，难以掌控。同时，技术的变化维度与业务的变化维度并不相同，产生变化的原因也不一致，倘若未能很好地界定二者之间的关系，系统架构缺乏清晰边界，会变得难以梳理。复杂度一旦增加，团队规模也将随之扩大，再揉以严峻的交付周期、人员流动等诸多因素，就好似将各种不稳定的易燃易爆气体混合在一个不可逃逸的密闭容器中一般，随时都可能爆炸：</p>
+<p><img src="http://images.zhuxingsheng.com/20201011232518_1602429918.jpg"></p>
+<h1 id="DDD应对"><a href="#DDD应对" class="headerlink" title="DDD应对"></a>DDD应对</h1><p>这让我回想起了“结构化思维”，逻辑+套路</p>
+<p>逻辑是一种能力，而套路是方法论，是经验。逻辑是道，方法论是术；逻辑可以学习很多思维模型理论，但套路有路径依赖，这也是去大厂的好处，可以接触到各种大牛，直接获取他们的经验和方法</p>
+<p>DDD是如何应对这些复杂性的呢？</p>
+<ol>
+<li>限界上下文分而治之，边界划分后，各子域相对整体规模就小了</li>
+<li>结构方面通过技术角度：分层架构、六边形架构…分离技术实现与业务逻辑</li>
+<li>变化，不再过程式编程，加强抽象领域模型，通过过程分解+对象模型，拆解并业务显示化，达到更好的复用性和易理解性</li>
+</ol>
+<p>banq提出类似总结解决复杂性两种方法：拆解成松耦合的组件+使用容易让人明白的套路表达出来</p>
+<p>拆解也就是引入了“领域或子域”以及“有界上下文”划分边界；再引入各种模式名词，比如聚合、实体、值对象、工厂、仓储、领域事件，让知晓这些模式的人能够一下子定位到功能对应实现的组件，随着人们逐步了解，对于理解DDD系统来说，就不再是复杂的</p>
+<h1 id="开发流程"><a href="#开发流程" class="headerlink" title="开发流程"></a>开发流程</h1><p>我们在开发、运营、维护软件的过程中很多技术、做法、习惯和思想。软件工程把这些相关的技术和过程统一到一个体系中，叫“软件开发流程”，软件开发流程的目的是为了提高软件开发、运营和维护的效率，以及提升用户满意度、软件的可靠性和可维护性</p>
+<p>发展了很多的流程，这儿复习一下最资深的瀑布模型</p>
+<h2 id="瀑布模型"><a href="#瀑布模型" class="headerlink" title="瀑布模型"></a>瀑布模型</h2><p>瀑布模型(Waterfall Model)1970年温斯顿·罗伊斯(Winston Royce)提出了著名的“瀑布模型”,直到80年代早期,它一直是唯一被广泛采用的软件开发模型</p>
+<p>当软件行业还在年幼时期，它从别的成熟行业(硬件设计，建筑工程)借用了不少经验和模型。在那些“硬”的行业中，产品大多数遵循[分析-&gt;设计-&gt;实现(制造)-&gt;销售-&gt;维护]这个流程</p>
+<p><img src="http://images.zhuxingsheng.com/20201013113922_1602560362.jpg"></p>
+<p>软件系统很难做到像建筑行业一样，程序员只要根据图样一步步实施就能完成项目。没人可以完整设计出一个大型项目的图样，这是瀑布软件工程方法的致命问题</p>
+<blockquote>
+<p>比如A拥有一家跑车公司，可以给客户自定义生产跑车。有一天一土豪来到A的公司，跟A商谈了一个跑车项目，他们谈好了车型，材料，马力等等细节。之后，A带着团队做了6个月，做成了这架跑车，交给了土豪。可是土豪开了一天之后回来要求重做，原因是当讨论方案的时候，双方都忘记给跑车安尾灯了！</p>
+<p>但是给跑车安装尾灯，需要重新设计车尾部，加上倒车灯，把车底拆开，安装线路，修改传动装置把倒车档和倒车灯联系起来</p>
+</blockquote>
+<p>软件多变，而且很长周期后才让用户看到最终产品，反反复复</p>
+<p>瀑布模型只能在产品的定义非常稳定；产品模块之间的接口、输入和输出能很好地用形式化的方法定义和验证</p>
+<h1 id="统一语言"><a href="#统一语言" class="headerlink" title="统一语言"></a>统一语言</h1><p>软件行业相对其它传统行业有独特的难，同为构建，建筑工程在施工队进场开始构造之前，各种工程图样和材料都已经非常精确地准备到位，但在软件中没有足够时间收集所有需地，即使收集了，需求也不是从创建软件角度去描述</p>
+<p>软件项目团队，从产品 到 开发，再到测试，应了那句不怕神一样的对手，就怕猪一样的队友，层层兜底，产品考虑不到的，开发帮兜底，开发不给力时，靠测试兜底，测试不走心的，那只能客户买单，名为兜底大队</p>
+<p>项目开始，产品没有足够时间收集需求，但快速行动的重要性扎根程序员内心，没有足够信息来构建，可项目有交付期限，程序员只能进行创造性假设，填补产品经理留下的空白，只是为了保持项目不断推进。但产品经理或者客户经常改变主意，这意味着程序员对留白处的创建性假设经常夭折</p>
+<p>项目实践需求与程序员的理解之间存在客观落差，但程序员负责最终完成项目，如果这种落差没有被注意或发现，就只能由程序员自己创造。这种创造是在没有指导或指示的情况下进行，当项目展示给客户时，客户才发现不是自己想要的，双方就容易争执<br><img src="http://images.zhuxingsheng.com/20201014225406_1602687246.jpg"></p>
+<p>更多时候，程序员之所以在项目开始迟迟不亡友，是因为他们希望有人告诉该怎么做，但这种情况一般不会发生，这时就发挥自己的创造力，但这个创造有时会使项目偏离正确方向。如何发挥程序员创造力，同时又能保持项目的方向不被程序员带偏呢？</p>
+<p>解决方法就是让程序员迟早参与创意过程，与业务专家、客户、产品经理一起参加头脑风暴会议，不断缩小双方思考或理解偏差。有逻辑性的正确设计会节省大量代码，因为编码实践来试错的代价是昂贵的。编码涉及大量技术细节，细到一个字段的字节数都需要考虑，一旦发现代码实现的功能完全不是客户要求的，就只能全部推倒重来。成千上万行代码被删除，好像它们没存在过，他们存在过的意义仅是让程序员明白：此路不通</p>
+<p>程序员需要将业务知识的学习和思考结合起来，领域驱动核心就是多了一个领域层，这个领域是业务相关原语，随着业务价值变化而变化，通常每个企业的核心业务域是千差万别的，所以，在技术实现的时候，反复要问我们团队，我们多少比例的代码是针对业务本身，而业务本身对业务消费者有多大的价值？作为业务的技术实现方，一定要有手段通过量化方法，衡量你的业务价值，从而能精细化迭代升级</p>
+<p>统一语言，并不是把从客户那里听到的内容翻译成程序自己的语言，减少误解，让客户更容易理解我们的草图，并且真正帮助纠正错误，帮助我们获取有关领域新知识，<strong>目标是创造可以被业务、技术和代码自身无歧义使用的共同术语</strong></p>
+<p><img src="http://images.zhuxingsheng.com/20201015160758_1602749278.jpg"></p>
+<p>在PRD文档，设计文档，代码以及团队日常交流中，都使用同一套领域术语，极大地提升沟通和工作效率</p>
+<p>简单理解起来的话，也就是把业务人员和开发人员的语言统一起来，用代码来感受一下大概就是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">userService.love(Jack, Rose) =&gt; Jack.love(Rose)</span><br><span class="line">companyService.hire(company,employee) =&gt; Company.hire(employee)</span><br></pre></td></tr></table></figure>
+
+<p>通过统一语言，领域驱动设计的核心是建立统一的领域模型。领域模型在软件架构中处于核心地位，软件开发过程中，必须以建立领域模型为中心，以保障领域模型的忠实体现，解决OOAD中OOA分析模型与OOD设计模型割裂的弊端</p>
+<p><img src="http://images.zhuxingsheng.com/20201015162020_1602750020.jpg"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ddd-opening.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/ddd-opening.html" class="post-title-link" itemprop="url">DDD开篇</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-10-11 21:34:00" itemprop="dateCreated datePublished" datetime="2020-10-11T21:34:00+08:00">2020-10-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>从知道DDD到现在已经很多年了，看了不少理论知识，在项目中也使用了DDD，碰到些问题，也有些思考，整理一下，上升一下，形成一种适合自身的方法论</p>
+<p>在回顾过程中，首先追根溯源，什么是DDD？为什么要使用DDD？如何给别人阐述这些最基本的概念与理念，真是个难题</p>
+<h1 id="什么是DDD"><a href="#什么是DDD" class="headerlink" title="什么是DDD"></a>什么是DDD</h1><p>DDD已经发展了很多年，现在的一些书也已经不太关注这个基本概念，<br>平时闲聊时，开口闭口都是DDD，已经不知道DDD的本体是什么，只是听得耳熟，说得顺口了，细细回想下，DDD是个什么？一时语顿，不得找一下Eric Evans大神最原味的解答</p>
+<p>DDD来源于Eric Evans的书：<br>《Domain-Driven Design - Tackling Complexity in the Heart of Software》<br>领域驱动设计 - 软件核心复杂性应对之道</p>
+<p>由此可看出DDD的全称Domain-Driven Design，之前常听到TDD，那何为Domain呢？</p>
+<p>书中解释：</p>
+<blockquote>
+<p>每人软件程序都会与其用户的活动或兴趣相关。用户在其中使用程序的主要环境称为软件的领域(domain)</p>
+</blockquote>
+<blockquote>
+<p>一些领域会涉及到物质世界：航线预订程序的领域涉及到现实中登机的人。一些领域是无形的：财务程序的领域就是货币和金融</p>
+</blockquote>
+<blockquote>
+<p>领域模型并不是某种特殊的图，而是图所要表达的思想。它并不仅仅是某个领域专家头脑中的知识，而是对相关知识进行严格的组织与选择性抽象</p>
+</blockquote>
+<blockquote>
+<p>领域模型并不是尽可能地制作一个逼真的模型。即使在一个可触及的真实世界事物的领域中，我们的模型也只是一个仿真的创造物</p>
+</blockquote>
+<p>看到这些，应该还是有点晕，到底是什么？解释这种基本元语，特别的难,有人感觉领域就是业务，那为什么不叫Business Driven Design呢？</p>
+<p>有点钻牛角尖的意思，这其实是人类学习新知识的一种惯性思维，从以往经验中寻求类似的事物，帮助理解新事物，好处就可以快速认知新知识，坏处可能永远掌握不了新知识。既然给不了一种清晰的类比解释，那就不求甚解地理解，这个新事务的代名词叫DDD，随着认识的深入，慢慢就会从抽象到具体</p>
+<p>但为了提前更好地理解DDD，还是有必要把一些现流行的解读罗列出来</p>
+<blockquote>
+<p>银行业务被银行的内部人员和专家所熟知。他们知道所有的细节、所有的困难、所有可能 出现的问题、所有的业务规则。这些就是我们永远的起始点：领域</p>
+</blockquote>
+<blockquote>
+<p>领域驱动设计当然不是架构方法，也并非设计模式。准确地说，它其实是“一种思维方式，也是一组优先任务，它旨在加速那些必须处理复杂领域的软件项目的开发”。领域驱动设计贯穿了整个软件开发的生命周期，包括对需求的分析、建模、架构、设计，甚至最终的编码实现，乃至对编码的测试与重构</p>
+</blockquote>
+<blockquote>
+<p>领域模型是关于某个特定业务领域的软件模型。通常，领域模型通过对象模型来实现，这些对象同时包含了数据和行为，并且表达了准确的业务含义</p>
+</blockquote>
+<blockquote>
+<p>DDD专门解决复杂性的方法论</p>
+</blockquote>
+<blockquote>
+<p>DDD是面向对象分析的方法论，它可以利用面向对象的特性（封装，多态）有效地化解复杂性，而传统的J2EE等事务性编程只关心数据</p>
+</blockquote>
+<blockquote>
+<p>DDD作为一种软件开发方法，它可以帮助我们设计高质量的软件模型</p>
+</blockquote>
+<p>由前人的种种总结，粗略可以把DDD理解为一种方法论，一种构造软件模型的方法论</p>
+<h2 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h2><p>软件的开发目的是什么？软件开发是为了解决由需求带来的各种问题，而解决的结果是一个可以运行的交付物。那么软件设计就是在需求和解决方案之间架设一座桥梁</p>
+<p>区别于解决简单的问题，软件的开发往往是一项长期的工作，会有许多人参与其中。在这种情况下，就需要建立起一个统一的结构，以便于所有人都能有一个共同的理解。这就如同建筑中的图纸，懂建筑的人看了之后，就会产生一个统一的认识。而在软件的开发过程中，这种统一的结构就是模型，而软件设计就是要构建出一套模型</p>
+<p>模型是对现实世界的简化抽象</p>
+<p>根据使用场景的不同，模型大致可以分为物理模型、概念模型、数学模型和思维模型等等</p>
+<p>物理模型是拥有体积及重量的物理形态概念实体物体，是根据相似性理论制造的按原系统比例缩小的实物</p>
+<p>概念模型是对真实世界中问题域内的事物的描述，是领域实体，而不是对软件设计的描述，它与技术无关。</p>
+<p>数学模型是用数学语言描述的一类模型，可以是一个或一组代数方程，微分方程、差分方程、积分方程或统计学方程，也可以是某种适当的组合数学模型</p>
+<p>思维模型是用简单易懂的图形、符号或者结构化语言等表达人们思考和解决问题的形式</p>
+<p>建立模型有很多方法，并不意味着要用特定符号、工具和流程。无论使用何种建模工具和表示法，只要有助于我们对问题域的理解，均可认为是好的模型。在处理问题时，我们最好隐藏那些不必要的细节，只专注于重要的方面，抓住问题的本质。这就是建模和抽象的价值所在</p>
+<p>在软件领域，影响最强的建模工具当属统一建模语言(Unified Modeling Language,UML)</p>
+<p><strong>模型，是一个软件的骨架，是一个软件之所以是这个软件的核心</strong>。一个电商平台，它不用关系型数据库，还可以用 NoSQL，但如果没有产品信息，没有订单，它就不再是电商平台了</p>
+<p>模型的粒度可大可小，一个类是模型，把一整个系统当作一个整体理解，就是个大模型。而常听说的“高内聚、低耦合”其实就是对模型的要求。一个高内聚低耦合的模型能够有效地隐藏细节，让人理解起来也更容易，甚至还可以在上面扩展</p>
+<p>在DDD中，模型的选择取决于三个基本用途：</p>
+<ol>
+<li><strong>模型与设计核心的相互塑型</strong>。正是模型与实现之间密切的联系使得模型与现实相关并且保证对于模型的讨论分析能够应用于最终产品–可运行的程序</li>
+<li><strong>模型是所有团队成员所使用语言的核心</strong>。由于模型与实现是相互绑定的，因此开发人员可以用这种语言来讨论程序</li>
+<li><strong>模型用来提炼知识</strong>。模型是团队在组织领域知识和辨别最感兴趣的原理时一致同意的方式</li>
+</ol>
+<h2 id="方法论"><a href="#方法论" class="headerlink" title="方法论"></a>方法论</h2><p>由上文可知DDD是一种开发方法，那在DDD之前，是怎么进行软件分析设计的呢？一般有两种方法：ER数据建模法和面向对象建模法</p>
+<p>在软件的世界里，任何的方法论如果最终不能落在“减少代码复杂度”这个焦点上，那么都是有待商榷的。</p>
+<h3 id="ER"><a href="#ER" class="headerlink" title="ER"></a>ER</h3><p>这是大多数人进行软件行业时，必学的方法，并且在学生时代，实践课程都是以此为示例，导致这种方法在脑海中根深蒂固</p>
+<p>ER数据建模法是在接受到需求以后直接开始数据表ER模型的设计、实体表和表关系的设计</p>
+<p>建模过程是一种翻译再表达的过程，其唯一要点就是翻译不走样，如果翻译过程过多引入其他干扰因素和知识，那么无疑会增加翻译的难度和复制的精确性</p>
+<p>由于人们对数据库特别看重，SQL普及化，以至将软件的理解浓缩成了CRUD</p>
+<p>但由于过于注重数据库技术而忽视了业务上下文。使用CRUD代替业务用语，例如使用“创建订单”替代“下单”，使用“创建帖子”代替“发贴”，使用“创建发票”替代“开票”，虽然也容易让人明白，但“开票”等用语才是真正的业务术语、业务行话，是这个行业内每个人都知晓的。作为软件系统不是去遵循这些用语习惯，而是进行转换改造，按照自己的理解生造出一些词，是不是会潜移默化地将业务需求引导到不同方向呢？</p>
+<p>这种方法门槛低，带来了效率的提升，但是高效率不代表高质量，而软件高质量却能带来高效率</p>
+<h3 id="OOAD"><a href="#OOAD" class="headerlink" title="OOAD"></a>OOAD</h3><p>业务初期，功能比较简单，CRUD基本可以满足。但随着系统的不断演化，业务系统越来越复杂，各模块间有着千丝万缕的关系，如何提升其扩展性</p>
+<p>OO最大的宣言就是Everything is object。所有的事物都有两个方面：有什么（属性）：用来描述对象；能够做什么（方法）：告诉外界对象有那些功能。</p>
+<p>把人们从低层的SQL计算机语言更加面向人类思维</p>
+<p>Object-Oriented Analysis (OOA)：面向对象的分析与设计的侧重点是业务领域分析，与软件所要应用的行业领域相关，而与软件技术关系不大，需要由领域专家进行。这一部分的工作被称为“需求分析”</p>
+<p>OOA的成果：</p>
+<p>业务领域用例图、活动图、协作图、大量的业务文档资料</p>
+<p>Object-oriented design (OOD)，用面向对象的方法为真实世界建立一个计算机中的虚拟模型，OOD的主要任务是跨越业务领域模型与可实际运行的软件系统之间的鸿沟，OOD的难度是非常大的，负责OOD工作的人被称为系统架构设计师</p>
+<p>系统架构设计师的任务：</p>
+<ol>
+<li>确定系统的总体框架—大多采用已有的领域框架</li>
+<li>正确理解需求分析得出的领域模型，用面向对象的思想设计出软件体系结构—系统概要设计</li>
+<li>分析现实的可获取的技术资源，分解出软件的各个组件，安排好开发任务流程—系统详细设计</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/20201009151925_1602227965.jpg"></p>
+<p><img src="http://images.zhuxingsheng.com/20201009185208_1602240728.jpg"></p>
+<p>从上面的表述，可以看出面向对象相比ER模型强大多了，但其实面向对象的思想至今都没有真正意义得到普及，至少我是这么认为的。为什么呢？看多少人在进行CRUD这种面向过程式编程就知道了，而且早年的J2EE开发模式，讲究 Web&#x2F;Service&#x2F;Dao三层结构。面向过程编程，对象只是数据的载体，没有行为。以数据为中心，以数据库ER设计作驱动。分层架构在这种开发模式下，可以理解为是对数据移动、处理和实现的过程。该对象我们称之为贫血领域对象</p>
+<p>贫血领域对象（Anemic Domain Object）：是指仅用作数据载体，而没有行为和动作的领域对象。大量的业务逻辑写在了Service层中，随着业务逻辑复杂，业务逻辑、状态会散落在Service层中的很多处理类或方法中。将数据和行为割裂，原来的代码意图会越来越模糊，代码的理解和维护成本会越来越高。</p>
+<p>虽然面向对象没有得到真正的普及，但面向对象还是带来了很多思想，我不确定这些思想是不是面向对象之后才有的，但至少很多思想的确是在学习面向对象后才知道的</p>
+<p>比如之前写过一个系列<a href="http://www.zhuxingsheng.com/tags/SOLID/">《SOLID》</a>，就是面向对象设计原则</p>
+<p>而且像Robert C.Martin认为一个可维护性较低的软件设计，通常由于如下4个原因造成：</p>
+<ol>
+<li>过于僵硬Rigidity</li>
+<li>过于脆弱Fragility</li>
+<li>复用率低Immobility</li>
+<li>黏度过高Viscosity</li>
+</ol>
+<p>软件工程和建模大师Peter Coad认为，一个好的系统设计应该具备如下三个性质：</p>
+<ol>
+<li>可扩展性</li>
+<li>灵活性</li>
+<li>可插入性</li>
+</ol>
+<p>而想规避缺点拥有优点，面向对象设计提供很大的便利，软件的复用(Reuse)或重用拥有众多优点，如可以提高软件的开发效率，提高软件质量，节约开发成本，恰当的复用还可以改善系统的可维护性，这些都是以面向对象设计原则为基础而来</p>
+<h2 id="对象与数据表的关系？"><a href="#对象与数据表的关系？" class="headerlink" title="对象与数据表的关系？"></a>对象与数据表的关系？</h2><p>在从ER建模转向OOAD时，常把对象类比成表，以前称为表，现在换个名字叫对象，他们好似是一样的，但其实他们的差别很大，就文章开关所述，这是人的经验主义，可能永远掌握不了新知识</p>
+<p>数据表是一种数据结构，数据表中的数据是需要SQL去操作的，也就是说，数据结构中的数据是被外部某些行为或函数操作的；虽然对象或类中封装的属性其实也是数据，但对象或类有行为方法，这些行为可以保护被封装的属性数据，外界需要改变对象中的属性数据时，必须通过公开的行为方法才能实现。因此，对象和数据结构两者的区别之一就于在对数据操作是主动还是被动，对象是主动操作数据，而数据结构是被动操作，这一区别使得两种方式下的分析设计思路和编程范式完全不同</p>
+<p>表达业务领域中的业务概念时，强调主动操作数据的类或对象更适合表达业务概念，因为业务领域中的业务策略或业务规则都需要动态操作，它们的逻辑性需要主动操作数据完成</p>
+<p>设计时，业务对象是定义业务行为，而数据表是定义业务数据结构。一个注重行为，一个注重数据。着重点不同，导致设计要求不同，数据表一旦形成，就不会因为一个特定的应用而进行调整，它必须服务于整个企业，因此，这种结构是许多不同应用之间平衡的选择；而使用对象可以针对具体应用进行设计，将业务行为放入对象中，更能精确反映领域概念，保证业务规则的真正逻辑一致地实现</p>
+<p>虽然OOAD很不错，但分析和设计之间常常落差很大，甚至是分裂的。分析阶段的成果不能顺利导入设计阶段，设计阶段引入太多细节而歪曲了分析的宗旨。分析和设计分裂的根本原因是它们导向目标不同，分析人员的目标是从需求领域收集基本概念，是面向需求的，而设计人员则不同，他们负责用代码实现这些概念，因此必须指明能在项目中使用编程工具构建的组件，这些组件必须能够在目标环境(比如java)中有效执行，并能够正确解决应用程序出现的问题。条条大路通罗马，分析人员负责指出罗马方向，而设计人员负责找出通往罗马的某条道路，但是技术细节有时会让这个过程中产生绕路和不必要的复杂性，甚至走错方向，南辕北辙</p>
+<hr>
+<h1 id="DDD"><a href="#DDD" class="headerlink" title="DDD"></a>DDD</h1><p>【<strong>程序员其实不是在编写代码，面是在摸索业务领域知识</strong>】</p>
+<p>这是很多程序员的真实写照，尤其复杂业务，为什么呢？</p>
+<p>很多时候你会遇到这样的情况：一个函数写了几百行，里面的if-else写了一大堆，计算各种业务规则。另一个人接手之后，分析了好几天，才把业务逻辑彻底理清楚。</p>
+<p>这个问题从表面来看，是代码写的不规范，要重构，把一个几百行的函数拆成一个个小的函数。从根本上来讲，就是“重要逻辑”隐藏在代码里面，没有“显性”的表达出来</p>
+<p>这只是一个函数，推而广之，到类、到模块、到系统，是同样的道理，比如：</p>
+<p>业务流程隐藏在多个对象的复杂调用关系里面；<br>某个业务核心概念没有提取出来，其职责分摊到了其他几个实体里面；<br>系统耦合，职责边界不清</p>
+<p>所以，建模的本质就是把“重要的东西进行显性化，并进而把这些显性化的构造块，互相串联起来，组成一个体系”</p>
+<p>而DDD就是为了解决这些痛点，DDD建模思想不同于以往的面向对象分析设计思想，建模和代码之间还存在落差，无法平滑衔接。它将分析和设计完美结合起来，通过引入上下文的特殊性，将项目的真正业务背景和集成复杂性引入设计建模阶段，虽然增加了设计的复杂性，但也提高 了设计的实用性。</p>
+<p>领域驱动设计当然不是架构方法，也并非设计模式。准确地说，它其实是“一种思维方式，也是一组优先任务，它旨在加速那些必须处理复杂领域的软件项目的开发”。领域驱动设计贯穿了整个软件开发的生命周期，包括对需求的分析、建模、架构、设计，甚至最终的编码实现，乃至对编码的测试与重构。</p>
+<p>领域驱动设计强调领域模型的重要性，并通过模型驱动设计来保障领域模型与程序设计的一致。从业务需求中提炼出统一语言（Ubiquitous Language），再基于统一语言建立领域模型；这个领域模型会指导着程序设计以及编码实现；最后，又通过重构来发现隐式概念，并运用设计模式改进设计与开发质量。这个过程如下图所示：</p>
+<p><img src="http://images.zhuxingsheng.com/20201010002925_1602260965.jpg"></p>
+<p>这个过程是一个覆盖软件全生命周期的设计闭环，每个环节的输出都可以作为下一个环节的输入，而在其中扮演重要指导作用的则是“领域模型”。这个设计闭环是一个螺旋式的迭代设计过程，领域模型会在这个迭代过程中逐渐演进，在保证模型完整性与正确性的同时，具有新鲜的活力，使得领域模型能够始终如一的贯穿领域驱动设计过程、阐释着领域逻辑、指导着程序设计、验证着编码质量。</p>
+<p>如果仔细审视这个设计闭环，会发现在针对问题域和业务期望提炼统一语言，并通过统一语言进行领域建模时，可能会面临高复杂度的挑战。这是因为对于一个复杂的软件系统而言，我们要处理的问题域实在太庞大了。在为问题域寻求解决方案时，需要从宏观层次划分不同业务关注点的子领域，然后再深入到子领域中从微观层次对领域进行建模。宏观层次是战略的层面，微观层次是战术的层面，只有将战略设计与战术设计结合起来，才是完整的领域驱动设计</p>
+<p><img src="http://images.zhuxingsheng.com/20201010003322_1602261202.jpg"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/.html" class="post-title-link" itemprop="url">Untitled</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-09-07 13:18:23" itemprop="dateCreated datePublished" datetime="2020-09-07T13:18:23+08:00">2020-09-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:19" itemprop="dateModified" datetime="2021-11-07T21:29:19+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/why-is-the-local-variable-modified-as-final.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/why-is-the-local-variable-modified-as-final.html" class="post-title-link" itemprop="url">局部变量为何修饰为final</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-08-09 23:49:00" itemprop="dateCreated datePublished" datetime="2020-08-09T23:49:00+08:00">2020-08-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近在团队中引入<a href="https://checkstyle.sourceforge.io/index.html">checkstyle</a> ，自动执行规范检查，加入到ci步骤里面，让流程工具化，工具自动化，摆脱人工检查，在团队开发中硬性统一，更便于协作顺畅</p>
+<p>checkstyle里面有个规范：所有local variable必须修饰为final</p>
+<p>这是为什么呢？</p>
+<blockquote>
+<p>final是Java中的一个保留关键字，它可以标记在成员变量、方法、类以及本地变量上。一旦我们将某个对象声明为了final的，那么我们将不能再改变这个对象的引用了。如果我们尝试将被修饰为final的对象重新赋值，编译器就会报错</p>
+</blockquote>
+<p>这么简单的一个关键字，怎么需要强制修饰一个局部变量</p>
+<h2 id="局部变量"><a href="#局部变量" class="headerlink" title="局部变量"></a>局部变量</h2><h3 id="class文件"><a href="#class文件" class="headerlink" title="class文件"></a>class文件</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String[] args) &#123;</span><br><span class="line">    String name = &quot;Whoops bug&quot;;</span><br><span class="line">    int pluginType = 3;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public void testFinal()&#123;</span><br><span class="line">    final String name = &quot;Whoops bug&quot;;</span><br><span class="line">    int pluginType = 3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>两个方法一个局部变量修饰为final,一个不修饰为final</p>
+<p>通过javap查看字节码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public static void main(java.lang.String[]);</span><br><span class="line">   Code:</span><br><span class="line">      0: ldc           #2                  // String Whoops bug</span><br><span class="line">      2: astore_1</span><br><span class="line">      3: iconst_3</span><br><span class="line">      4: istore_2</span><br><span class="line">      5: return</span><br><span class="line">   LineNumberTable:</span><br><span class="line">     line 13: 0</span><br><span class="line">     line 14: 3</span><br><span class="line">     line 15: 5</span><br><span class="line">   LocalVariableTable:</span><br><span class="line">     Start  Length  Slot  Name   Signature</span><br><span class="line">         0       6     0  args   [Ljava/lang/String;</span><br><span class="line">         3       3     1  name   Ljava/lang/String;</span><br><span class="line">         5       1     2 pluginType   I</span><br><span class="line"></span><br><span class="line"> public void testFinal();</span><br><span class="line">   Code:</span><br><span class="line">      0: ldc           #2                  // String Whoops bug</span><br><span class="line">      2: astore_1</span><br><span class="line">      3: iconst_3</span><br><span class="line">      4: istore_2</span><br><span class="line">      5: return</span><br><span class="line">   LineNumberTable:</span><br><span class="line">     line 18: 0</span><br><span class="line">     line 19: 3</span><br><span class="line">     line 20: 5</span><br><span class="line">   LocalVariableTable:</span><br><span class="line">     Start  Length  Slot  Name   Signature</span><br><span class="line">         0       6     0  this   Lcom/jack/lang/LocalFinalTest;</span><br><span class="line">         3       3     1  name   Ljava/lang/String;</span><br><span class="line">         5       1     2 pluginType   I</span><br></pre></td></tr></table></figure>
+<p>方法参数与局部变量用final修饰是纯编译时信息，到Class文件里就已经没有踪迹了，JVM根本不会知道方法参数或者局部变量有没有被final修饰</p>
+<p>曾经的阿里巴巴规范提出：</p>
+<blockquote>
+<p>推荐】final可提高程序响应效率，声明成final的情况：</p>
+</blockquote>
+<blockquote>
+<p>（1）不需要重新赋值的变量，包括类属性、局部变量；</p>
+</blockquote>
+<blockquote>
+<p>（2）对象参数前加final，表示不允许修改引用的指向；</p>
+</blockquote>
+<blockquote>
+<p>（3）类方法确定不允许被重写</p>
+</blockquote>
+<p>最新规范已经没有这种描述了，R大也回复过这个理由不成立，与性能无关</p>
+<h3 id="不变性"><a href="#不变性" class="headerlink" title="不变性"></a>不变性</h3><p>按上面class文件看，已经与性能无关，那么只能是它的本性：不变性</p>
+<blockquote>
+<p>final is one of the most under-used features of Java. Whenever you compute a value and you know it will never be changed subsequently put a final on it. Why?</p>
+</blockquote>
+<blockquote>
+<p>final lets other programmers (or you reviewing your code years later) know they don’t have to worry about the value being changed anywhere else.</p>
+</blockquote>
+<blockquote>
+<p>If you get in the habit of always using final, when it is missing, it warns people reading your code there is a redefinition of the value elsewhere.</p>
+</blockquote>
+<blockquote>
+<p>final won’t let you or someone else inadvertently change the value somewhere else in the code, often by setting it to null. final helps prevent or flush out bugs. It can sometimes catch an error where an expression is assigned to the wrong variable. You can always remove it later.</p>
+</blockquote>
+<blockquote>
+<p>final helps the compiler generate faster code, though I suspect a clever compiler could deducing finality, even when the final is missing. final values can sometimes be in-lined as literals. They can be further collapsed at compile time in other final expressions.</p>
+</blockquote>
+<blockquote>
+<p>I have got into the habit of using final everywhere, even on local variables and if I am in doubt, I use final on every declaration then take it off when the compiler points out that I modified it elsewhere. When I read my own code, a missing final is a red flag there is something complicated going on to compute a value.</p>
+</blockquote>
+<blockquote>
+<p>If you reference a static final in another class, that value often becomes part of your class at compile time. The source class then need not be loaded to get the value and the source class need not even be included in the jar. This helps conserve RAM (Random Access Memory) and keep your jars small.</p>
+</blockquote>
+<blockquote>
+<p>At the machine language level, static finals can be implemented with inline literals, the most efficient form of addressing data.</p>
+</blockquote>
+<blockquote>
+<p>A little known feature of Java is blank finals. You can declare member variables final, but not declare a value. This forces all constructors to initialise the blank final variables. A final idiom</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public void test() &#123;</span><br><span class="line">        // Use of final to ensure a variable is always assigned a value,</span><br><span class="line">// and is assigned a value once and only once.</span><br><span class="line">        int a = 4;</span><br><span class="line">        final int x;</span><br><span class="line"></span><br><span class="line">        if (a &gt; 0) &#123;</span><br><span class="line">            x = 14;</span><br><span class="line">        &#125; else if (a &lt; 0) &#123;</span><br><span class="line">            x = 0;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            x = 3;</span><br><span class="line">        &#125;</span><br><span class="line">        System.err.println(x);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>修饰为final是为了解决正确性、合理性、严谨性。用来提醒自己以及其他人，这里的参数&#x2F;变量是真的不能被修改，并让Java编译器去检查到底有没有被乱改</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public void testSwitch()&#123;</span><br><span class="line">    final String name;</span><br><span class="line">    int pluginType = 3;</span><br><span class="line">    switch (pluginType) &#123;</span><br><span class="line">        case 1:</span><br><span class="line">            name = &quot;Candidate Stuff&quot;;</span><br><span class="line">            //break;</span><br><span class="line">            //should have handled all the cases for pluginType</span><br><span class="line">        case 2:</span><br><span class="line">            name = &quot;fff&quot;;</span><br><span class="line">    &#125;</span><br><span class="line">    // code, code, code</span><br><span class="line">    // Below is not possible with final</span><br><span class="line">    //name = &quot;Whoops bug&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>如果switch遗漏了break，或者switch完整的，在外面给final变量再次赋值，编译器就会报错</p>
+<h2 id="类变量"><a href="#类变量" class="headerlink" title="类变量"></a>类变量</h2><p>对于final修饰的局部变量有了清晰的认识，再延伸一下final类变量</p>
+<p>这儿涉及到一个问题,为什么JUC中很多的方法在使用类final变量时，都在方法中先引用一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public class ArrayBlockingQueue&lt;E&gt; extends AbstractQueue&lt;E&gt;</span><br><span class="line">        implements BlockingQueue&lt;E&gt;, java.io.Serializable &#123;</span><br><span class="line">        /** Main lock guarding all access */</span><br><span class="line">    final ReentrantLock lock;</span><br><span class="line">    </span><br><span class="line">     public int remainingCapacity() &#123;</span><br><span class="line">        final ReentrantLock lock = this.lock;</span><br><span class="line">        lock.lock();</span><br><span class="line">        try &#123;</span><br><span class="line">            return items.length - count;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            lock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>Doug Lea给的答复是</p>
+<blockquote>
+<p>It’s ultimately due to the fundamental mismatch between memory models<br>and OOP<br>Just about every method in all of j.u.c adopts the policy of reading fields as locals whenever a value is used more than once.This way you are sure which value applies when.This is not often pretty, but is easier to visually verify.<br>The surprising case is doing this even for “final” fields.This is because JVMs are not always smart enough to exploit the fine points of the JMM and not reload read final values, as they would otherwise need to do across the volatile accesses entailed in locking. Some JVMs are smarter than they used to be about this, but still not always smart enough.</p>
+</blockquote>
+<p>翻译大意：</p>
+<blockquote>
+<p>归根究底是由于内存模型与OOP之间的原则不一致。<br>几乎j.u.c包中的每个方法都采用了这样一种策略：当一个值会被多次使用时，就将这个字段读出来赋值给局部变量。虽然这种做法不雅观，但检查起来会更直观。<br>final字段也会做这样处理，可能有些令人不解。这是因为JVM并不足够智能，不能充分利用JMM已经提供了安全保证的可优化点，比如可以不用重新加载final值到缓存。相比过去，JVM在这方面有很大进步，但仍不够智能</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private volatile Integer v1 = 1;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public void test()&#123;</span><br><span class="line">        Integer a = v1;</span><br><span class="line">        Integer b = v1;</span><br><span class="line">        System.err.println(v1);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+
+<p>看一下字节码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public class com.jack.lang.LocalFinalTest &#123;</span><br><span class="line">  private final java.lang.Integer v1;</span><br><span class="line">    descriptor: Ljava/lang/Integer;</span><br><span class="line">public void test();</span><br><span class="line">    descriptor: ()V</span><br><span class="line">    Code:</span><br><span class="line">       0: aload_0</span><br><span class="line">       1: getfield      #3                  // Field v1:Ljava/lang/Integer;</span><br><span class="line">       4: astore_1</span><br><span class="line">       5: aload_0</span><br><span class="line">       6: getfield      #3                  // Field v1:Ljava/lang/Integer;</span><br><span class="line">       9: astore_2</span><br><span class="line">      10: getstatic     #4                  // Field java/lang/System.err:Ljava/io/PrintStream;</span><br><span class="line">      13: aload_0</span><br><span class="line">      14: getfield      #3                  // Field v1:Ljava/lang/Integer;</span><br><span class="line">      17: invokevirtual #5                  // Method java/io/PrintStream.println:(Ljava/lang/Object;)V</span><br><span class="line">      20: return</span><br></pre></td></tr></table></figure>
+
+<p>使用局部变量引用一下</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private final Integer v1 = 1;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public void test()&#123;</span><br><span class="line">    final Integer v2 = v1;</span><br><span class="line">    Integer a = v2;</span><br><span class="line">    Integer b = v2;</span><br><span class="line">    System.err.println(v2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>对应字节码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">public void test();</span><br><span class="line">descriptor: ()V</span><br><span class="line">Code:</span><br><span class="line">   0: aload_0</span><br><span class="line">   1: getfield      #3                  // Field v1:Ljava/lang/Integer;</span><br><span class="line">   4: astore_1</span><br><span class="line">   5: aload_1</span><br><span class="line">   6: astore_2</span><br><span class="line">   7: aload_1</span><br><span class="line">   8: astore_3</span><br><span class="line">   9: getstatic     #4                  // Field java/lang/System.err:Ljava/io/PrintStream;</span><br><span class="line">  12: aload_1</span><br><span class="line">  13: invokevirtual #5                  // Method java/io/PrintStream.println:(Ljava/lang/Object;)V</span><br><span class="line">  16: return</span><br></pre></td></tr></table></figure>
+
+<p>少了很多次的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0: aload_0</span><br><span class="line">1: getfield </span><br></pre></td></tr></table></figure>
+<p>这就是Doug Lea所讲的没有充分利用JMM已经提供了安全保证的可优化点吗？</p>
+<p>其实还有一个关键字与final类似，那就是volatile</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">private volatile FieldType field；  </span><br><span class="line">   </span><br><span class="line"> FieldType getField()&#123;  </span><br><span class="line">    FieldType result = field;  </span><br><span class="line">    if(result == null)&#123;  // first check (no locking)  </span><br><span class="line">       synchronized(this)&#123;  </span><br><span class="line">          result = field;  </span><br><span class="line">          if(result == null) // second check (with locking)  </span><br><span class="line">             field = result = computeFieldValue();  </span><br><span class="line">       &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">    return result;  </span><br><span class="line"> &#125; </span><br></pre></td></tr></table></figure>
+<p>在单例模式懒汉方式下，加个局部的result变量，会有25%性能会提高（effective java 2第71条）</p>
+<p>这儿的性能提升，似乎也是这个原因</p>
+<p>其实final和volatile还有更多的内存语义，禁止重排序。但在class文件中没有，使用hsdis与jitwatch查看JIT后的汇编码，可以发现一些端倪</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">0x0000000114428e3e: inc    %edi</span><br><span class="line">0x0000000114428e40: mov    %edi,0xc(%rsi)</span><br><span class="line">0x0000000114428e43: lock addl $0x0,(%rsp)     ;*putfield v1</span><br><span class="line">                                ; - com.jack.lang.LocalFinalTest::test@9 (line 17)</span><br></pre></td></tr></table></figure>
+
+<p>在对volatile写操作时，会加上lock，就是内存屏障store指令</p>
+<p>而对于final没有看到相应汇编语句</p>
+<blockquote>
+<p>现在我们以 x86 处理器为例，说明 final 语义在处理器中的具体实现。<br>上面我们提到，写 final 域的重排序规则会要求译编器在 final 域的写之后，构造函数 return 之前，插入一个 StoreStore 障屏。读 final 域的重排序规则要求编译器在读 final 域的操作前面插入一个 LoadLoad 屏障。</p>
+</blockquote>
+<blockquote>
+<p>由于 x86 处理器不会对写 - 写操作做重排序，所以在 x86 处理器中，写 final 域需要的 StoreStore 障屏会被省略掉。同样，由于 x86 处理器不会对存在间接依赖关系的操作做重排序，所以在 x86 处理器中，读 final 域需要的 LoadLoad 屏障也会被省略掉。也就是说在 x86 处理器中，final 域的读 &#x2F; 写不会插入任何内存屏障！</p>
+</blockquote>
+<p>既然没有相应内存屏障指令，那对于类变量加个局部变量，更大的理由就是少了aload、getfield指令</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://www.mindprod.com/jgloss/final.html">final : Java Glossary</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/136819200">https://zhuanlan.zhihu.com/p/136819200</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ddd-layering.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/ddd-layering.html" class="post-title-link" itemprop="url">DDD分层</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-21 23:06:00" itemprop="dateCreated datePublished" datetime="2020-07-21T23:06:00+08:00">2020-07-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="为什么分层"><a href="#为什么分层" class="headerlink" title="为什么分层"></a>为什么分层</h1><p>引用《领域驱动设计模式、原理与实践》</p>
+<blockquote>
+<p>为了避免将代码库变成大泥球（BBoM）并因此减弱领域模型的完整性且最终减弱可用性，系统架构要支持技术复杂性与领域复杂性的分离。引起技术实现发生变化的原因与引起领域逻辑发生变化的原因显然不同，这就导致基础设施和领域逻辑问题会以不同速率发生变化</p>
+</blockquote>
+<p>每一层都有各自的职责，显然这也是符合SRP的</p>
+<h1 id="如何分层"><a href="#如何分层" class="headerlink" title="如何分层"></a>如何分层</h1><p>DDD的标准形态</p>
+<p><img src="http://images.zhuxingsheng.com/20200315195302_1584273182.jpg"></p>
+<ol>
+<li>User Interface是用户接口层，主要用于处理用户发送的Restful请求和解析用户输入的配置文件等，并将信息传递给Application层的接口</li>
+<li>Application层是应用层，负责多进程管理及调度、多线程管理及调度、多协程调度和维护业务实例的状态模型。当调度层收到用户接口层的请求后，委托Context层与本次业务相关的上下文进行处理</li>
+<li>Domain层是领域层，定义领域模型，不仅包括领域对象及其之间关系的建模，还包括对象的角色role的显式建模</li>
+<li>Infrastructure层是基础实施层，为其他层提供通用的技术能力：业务平台，编程框架，持久化机制，消息机制，第三方库的封装，通用算法，等等</li>
+</ol>
+<p>根据DDD细化业务逻辑层</p>
+<p><img src="http://images.zhuxingsheng.com/20200423202423_1587644663.jpg"></p>
+<h1 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h1><p>结合maven的module,项目中现在分了八个module</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;modules&gt;</span><br><span class="line">    &lt;module&gt;generator-assist-dao&lt;/module&gt; <!-- 生成的dao --></span><br><span class="line">    &lt;module&gt;generator-assist-client-api&lt;/module&gt; <!-- swagger api yaml --></span><br><span class="line">    &lt;module&gt;assist-client-api&lt;/module&gt; <!-- 生成的api --></span><br><span class="line">    &lt;module&gt;assist-controller&lt;/module&gt; <!-- controller --></span><br><span class="line">    &lt;module&gt;assist-service&lt;/module&gt; <!-- domain --></span><br><span class="line">    &lt;module&gt;assist-infrastructure&lt;/module&gt; <!-- infrastructure --></span><br><span class="line">    &lt;module&gt;assist-common&lt;/module&gt; <!-- 基础common --></span><br><span class="line">    &lt;module&gt;start&lt;/module&gt; <!-- 启动入口及test --></span><br><span class="line">&lt;/modules&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="start"><a href="#start" class="headerlink" title="start"></a>start</h2><p>入口模块</p>
+<p>包结构：</p>
+<ul>
+<li>start  只有一个启动类</li>
+<li>test 单元测试</li>
+</ul>
+<p>除了启动类，还有单元测试</p>
+<h2 id="generator-assist-dao"><a href="#generator-assist-dao" class="headerlink" title="generator-assist-dao"></a>generator-assist-dao</h2><p>生成的dao类</p>
+<p>包结构：</p>
+<ul>
+<li>repository<ul>
+<li>model  与数据库对应的实体类</li>
+</ul>
+</li>
+<li>repository<ul>
+<li>mapper  mybatis的mapper</li>
+</ul>
+</li>
+</ul>
+<p>现在实践落地时，这个模块是个空模块，why?</p>
+<p>DDD中明确了repository概念，并属于domain层，但dao是对底层数据库的封装，具体实现类放在infrastructure层更合理</p>
+<p>在COLA中，作者也是为了领域层的纯洁性，依赖反转了，repository接口定义在domain层，而实现在infra层</p>
+<p><img src="http://images.zhuxingsheng.com/202003151738_845.png"></p>
+<p>但在落地时，domain与infra出现了循环依赖，COLA把实现放在了app层，这样有些另类，所以暂时先把repository全部放在了service层</p>
+<p>迷思：</p>
+<p>1、基于mybatis的实现，mapper本身是接口，repository实现类放在domain层，不要接口，这样满足DDD分层规则，但离DIP差了一步</p>
+<p>2、在<a href="http://www.zhuxingsheng.com/blog/entropy-of-ddd.html">《DDD之熵》</a>中提过</p>
+<blockquote>
+<p>DDD引入repository放在了领域层，一是对应聚合根的概念，二是抽象了数据库访问，，但DDD限界上下文可能不仅限于访问数据库，还可能访问同样属于外部设备的文件、网络与消息队列。为了隔离领域模型与外部设备，同样需要为它们定义抽象的出口端口，这些出口端口该放在哪里呢？如果依然放在领域层，就很难自圆其说。例如，出口端口EventPublisher支持将事件消息发布到消息队列，要将这样的接口放在领域层，就显得不伦不类了。倘若不放在位于内部核心的领域层，就只能放在领域层外部，这又违背了整洁架构思想</p>
+</blockquote>
+<p>3、是不是有别的理论支撑解决问题2</p>
+<h2 id="generator-assist-client-api"><a href="#generator-assist-client-api" class="headerlink" title="generator-assist-client-api"></a>generator-assist-client-api</h2><p>为了生成api的swagger yaml文件</p>
+<p>包结构：</p>
+<ul>
+<li>swagger-spec<ul>
+<li>all  swagger所有yaml文件的整合文件</li>
+<li>apis swagger定义的api</li>
+<li>models swagger定义的api中的model</li>
+</ul>
+</li>
+<li>swagger-templates 模板文件</li>
+</ul>
+<h2 id="assist-client-api"><a href="#assist-client-api" class="headerlink" title="assist-client-api"></a>assist-client-api</h2><p>通过swagger生成的api接口与api中的model</p>
+<p>包结构：</p>
+<ul>
+<li>client<ul>
+<li>api swagger生成的api接口</li>
+<li>model  swagger生成的request,response对象</li>
+</ul>
+</li>
+</ul>
+<h2 id="assist-controller"><a href="#assist-controller" class="headerlink" title="assist-controller"></a>assist-controller</h2><p>controller层，放置controller</p>
+<p>包结构：</p>
+<ul>
+<li>controller 所有的controller</li>
+<li>xxljob  xxljob补偿任务</li>
+</ul>
+<p>按DDD分层规范，controller属于ui层，处理restful请求</p>
+<ul>
+<li>接受请求 —— 由spring提供能力</li>
+<li>请求格式校验及转换 —— 格式校验遵循java Validation规范</li>
+<li>权限校验 —— 由网关处理</li>
+<li>路由请求 —— 网关处理</li>
+<li>记录请求 —— 专门Accessfilter处理</li>
+<li>回复响应 —— 由spring提供能力</li>
+</ul>
+<p>为什么还有一个xxljob包，从能力区分，xxljob放到infra层才对。这个原因类似generator-assist-dao模块，xxljob的handler需要调用application service，需要依赖service module</p>
+<p>因此可以把xxljob作为远程请求的一个入口，与controller一样归在ui层</p>
+<p>这儿引出一点思考，controller真的是ui层吗？能划分到别的层吗？</p>
+<p>有几种设计思路</p>
+<ol>
+<li>ui层完全归属于大前端，不在后端，也就不在ddd中，后端都是从application service开始</li>
+<li>controller归于ui</li>
+<li>controller归于infra，controller毕竟是依赖具体底层框架能力的adapter</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/20200426001431_1587831271.jpg"></p>
+<p>controller是基于springboot的具体实现</p>
+<p>从上面的分析，可以看出controller逻辑上是归到infra层，但物理上不能放到infra模块；也不能简单把controller看作MVC中的C，还有很多像xxljob样的入口</p>
+<ol>
+<li>入口会有很多，如controller、xxljob，还有mq等等</li>
+<li>还有进程内的，如event，应用层，基础设施层，领域层都有event，怎么区分event是个问题</li>
+<li>application serivce与domain service区分也常常给人带来烦恼</li>
+</ol>
+<p>这儿是否可以借鉴<a href="http://www.zhuxingsheng.com/blog/shape-of-ddd.html">《DDD之形》</a>中的端口和适配器架构</p>
+<p><img src="http://images.zhuxingsheng.com/20200319171211_1584609131.jpg"></p>
+<p>把controller看作driving adapter，既然区分这么复杂，那可不可以简单点，加厚controller，整合入口与application service</p>
+<p>简单点分成两部分：远程服务与本地服务</p>
+<ul>
+<li>远程服务：定义会跨进程服务，分为资源（Resource）服务、供应者（Provider）服务、控制器（Controller）服务与事件订阅者（Event Subscriber）服务</li>
+<li>本地服务：所有远程服务需要调用领域服务，必须经过本地服务才能调用；明确隔离外界与领域，防止领域模型外泄</li>
+</ul>
+<h2 id="assist-service"><a href="#assist-service" class="headerlink" title="assist-service"></a>assist-service</h2><p>domain层，但现在还是三层结构的思路，什么类都有，app service，domain service，dto,event 甚至还有基础设施层类</p>
+<p>包结构</p>
+<ul>
+<li>BO</li>
+<li>builder</li>
+<li>common</li>
+<li>component</li>
+<li>convertor</li>
+<li>domain</li>
+<li>dto</li>
+<li>event</li>
+<li>interceptor</li>
+<li>listener</li>
+<li>model</li>
+<li>repository</li>
+<li>service</li>
+<li>thrid</li>
+<li>valid</li>
+</ul>
+<h2 id="assist-infrastructure"><a href="#assist-infrastructure" class="headerlink" title="assist-infrastructure"></a>assist-infrastructure</h2><p>基础设施层</p>
+<p>包结构</p>
+<ul>
+<li>config  配置信息</li>
+<li>adapter  外部调用封装<ul>
+<li>clients 外部调用实现</li>
+<li>pl 服务接口的契约 published language</li>
+</ul>
+</li>
+<li>dp domain primitive  这是不是应该在domain层</li>
+<li>common 公共类，(InvoiceType与InvoiceTypeEnum的问题)</li>
+<li>event<ul>
+<li>publish 事件发布者，此包为空，直接依赖spring不需要自实现了</li>
+</ul>
+</li>
+<li>exception 异常类</li>
+<li>gateway  网关，封装访问外部系统或资源行为的对象<ul>
+<li>wechat  外部名称<ul>
+<li>api 外接接口</li>
+<li>dto 外接接口dto</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>local<ul>
+<li>pl</li>
+</ul>
+</li>
+<li>ports<ul>
+<li>clients 外部调用接口</li>
+</ul>
+</li>
+<li>repository<ul>
+<li>model</li>
+</ul>
+</li>
+<li>resources 资源</li>
+<li>service 依赖外部的service</li>
+<li>util 工具类</li>
+</ul>
+<p>现在的包结构很丰富，最常见的包就是gateway，配合acl与外部交互</p>
+<p><img src="http://images.zhuxingsheng.com/20200602233618_1591112178.jpg"></p>
+<p>U表示上游（Upstream）的被依赖方，D表示下游（Downstream）的依赖方。防腐层（ACL）放在下游，将上游的消息转化为下游的领域模型</p>
+<p>结合generator-assist-dao模块的问题，是否可以扩大ACL，而不仅限于gateway中,像资源库一样，不必完全遵循DDD只抽象repository，像访问第三方应用，缓存，消息都可以抽象出来，契合端口履行的职责一样</p>
+<hr>
+<h1 id="改造"><a href="#改造" class="headerlink" title="改造"></a>改造</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;modules&gt;</span><br><span class="line">    &lt;module&gt;generator-assist-dao&lt;/module&gt; <!-- 生成的dao --></span><br><span class="line">    &lt;module&gt;generator-assist-client-api&lt;/module&gt; <!-- swagger api yaml --></span><br><span class="line">    &lt;module&gt;assist-client-api&lt;/module&gt; <!-- 生成的api --></span><br><span class="line">    &lt;module&gt;assist-ohs&lt;/module&gt; <!-- ohs --></span><br><span class="line">    &lt;module&gt;assist-service&lt;/module&gt; <!-- domain --></span><br><span class="line">    &lt;module&gt;assist-acl&lt;/module&gt; <!-- acl --></span><br><span class="line">    &lt;module&gt;start&lt;/module&gt; <!-- 启动入口及test --></span><br><span class="line">&lt;/modules&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="assist-controller-1"><a href="#assist-controller-1" class="headerlink" title="assist-controller"></a>assist-controller</h2><p>根据上面的分析，这一层可以更厚实些</p>
+<p>改名为assist-ohs</p>
+<p>OHS,open host service 开放主机服务，定义公开服务的协议，包括通信的方式、传递消息的格式（协议）</p>
+<p>包结构</p>
+<ul>
+<li>remote<ul>
+<li>controller</li>
+<li>openapi</li>
+<li>xxljob</li>
+<li>subscribe</li>
+</ul>
+</li>
+<li>local<ul>
+<li>appservices</li>
+<li>pl (plush language)   request,response</li>
+<li>convertor</li>
+</ul>
+</li>
+</ul>
+<h2 id="assist-service-1"><a href="#assist-service-1" class="headerlink" title="assist-service"></a>assist-service</h2><p>domain层</p>
+<p>包结构</p>
+<ul>
+<li>domain 领域对象</li>
+<li>service 领域服务</li>
+<li>factory 领域对象工厂</li>
+<li>builder 领域对象构造器</li>
+</ul>
+<h2 id="assist-acl"><a href="#assist-acl" class="headerlink" title="assist-acl"></a>assist-acl</h2><p>扩大了基础设施层，隔离领域层与外部依赖，对所有外部环境一视同仁，无需针对资源库做特殊化处理，如此也可保证架构的简单性，repository、client、cahce…</p>
+<p>领域层依赖port接口</p>
+<p>包结构</p>
+<ul>
+<li>config 配置信息</li>
+<li>port 依赖外部接口<ul>
+<li>repository 数据库接口</li>
+<li>client 第三方系统接口</li>
+<li>publisher 消息接口</li>
+<li>cache 缓存接口</li>
+</ul>
+</li>
+<li>adapter port的具体实现<ul>
+<li>repository</li>
+<li>pl</li>
+<li>client</li>
+</ul>
+</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>模块划分以及包结构还只是一家之言，一是有充足的理论体系支撑，不管按DDD标准，还是变形，更多地有理有据，与团队、也与自己达成一致；二是domain的抽象，一切都是为了领域模型的稳定性和扩展性，形只是表象</p>
+<p>我们这个项目还是太注重了形，最重要的domain还是过弱</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/deadlock-analysis-continuation.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/deadlock-analysis-continuation.html" class="post-title-link" itemprop="url">死锁分析延续</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-05 09:47:00" itemprop="dateCreated datePublished" datetime="2020-07-05T09:47:00+08:00">2020-07-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>根据上一篇【<a href="http://www.zhuxingsheng.com/blog/deadlock-analysis.html">死锁分析</a>】，又重新梳理了一下，画图表示更形象一些</p>
+<p><img src="http://images.zhuxingsheng.com/20200629234643_1593445603.jpg"></p>
+<table>
+<thead>
+<tr>
+<th>事务 1</th>
+<th>事务 2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-</td>
+<td>begin</td>
+</tr>
+<tr>
+<td>begin</td>
+<td>delete id&#x3D;1;(1)id加锁、(2)A加锁</td>
+</tr>
+<tr>
+<td>delete id&#x3D;2;(3)id加锁、(4)A加锁</td>
+<td>-</td>
+</tr>
+</tbody></table>
+<ul>
+<li>| update ? where user_id&#x3D;? and tenant_id&#x3D;? and no&#x3D;?;</li>
+<li>| 如果先走no索引，已经持有B锁，再去持D锁时等待<br>update ? where user_id&#x3D;? and tenant_id&#x3D;? and no&#x3D;?; | -<br>先走no索引，持B锁时等待；deadlock |-</li>
+</ul>
+<p>update ? where user_id&#x3D;? and tenant_id&#x3D;? and no&#x3D;?;如果先走（tenant_id,user_id） 则是日志一</p>
+<p>先走no，则是日志二</p>
+<p>索引交叉，则是日志三</p>
+<hr>
+<p>最近借着死锁事项，又温习了部分数据库的理论知识，后面有时间再整理。现在的程序员真难，得上知天文，下知地理；这应该是DBA的专长，作为开发也得去深究，真难</p>
+<p>在追查死锁的过程中，对照理论有一些实践，总结一下：</p>
+<p>查看事务自动提交选项</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">show session variables like &#x27;autocommit&#x27;;</span><br><span class="line">show global variables like &#x27;autocommit’;</span><br><span class="line"></span><br><span class="line">set session autocommit=0;</span><br><span class="line">set global autocommit=0;</span><br></pre></td></tr></table></figure>
+
+
+<p>查看事务隔离级别</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select @@tx_isolation</span><br></pre></td></tr></table></figure>
+
+<p>查看锁信息，想查看一条sql使用了什么锁，需要打开锁监听</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">show session variables like &#x27;%output%&#x27;;</span><br><span class="line"></span><br><span class="line">#开启InnoDB锁监控</span><br><span class="line">set global innodb_status_output_locks=on;</span><br><span class="line"></span><br><span class="line">set global innodb_status_output=on;</span><br><span class="line">#上面的语句可定期写入到标准错误输出（stderr，即error log，大概每15s写一次），你也可以使用 SHOW ENGINE INNODB STATUS 语句直接在客户端获取innodb信息</span><br><span class="line"></span><br><span class="line">show session variables like &#x27;%output%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>要启用InnoDB锁定监视器的 SHOW ENGINE INNODB STATUS输出，只需启用innodb_status_output_locks</p>
+<p>打开监控开关后，在mysql日志文件中会出现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">=====================================</span><br><span class="line">2020-06-30 15:44:46 7fdc8a76e700 INNODB MONITOR OUTPUT</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">----------------------------</span><br><span class="line">END OF INNODB MONITOR OUTPUT</span><br><span class="line">============================</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>打开锁监控，可以确定一下常用语句的锁信息</p>
+<p>执行完一条SQL，使用SHOW ENGINE INNODB STATUS打印出锁信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">delete from invoice_collection_info where id=1275244823997059072</span><br><span class="line"></span><br><span class="line">TABLE LOCK table `assist`.`invoice_collection_info` trx id 1636893 lock mode IX</span><br><span class="line">RECORD LOCKS space id 18491 page no 211 n bits 104 index `PRIMARY` of table `assist`.`invoice_collection_info` trx id 1636893 lock_mode X locks rec but not gap</span><br></pre></td></tr></table></figure>
+<p>delete语句，根据主键删除操作；可以明显看出上了表锁IX model,还有一个主键索引锁</p>
+<p>其实如果有二级索引，还会有二级索引锁，但那是隐式锁，所以没有显示出来，后面会有试验让隐式锁显示化</p>
+<hr>
+<p>使用二级索引删除操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">delete FROM invoice_item WHERE ( collection_id = 1275244823997059072 );</span><br><span class="line"></span><br><span class="line">TABLE LOCK table `assist`.`invoice_item` trx id 1636964 lock mode IX</span><br><span class="line">RECORD LOCKS space id 18493 page no 4 n bits 784 index `idx_collection_id` of table `assist`.`invoice_item` trx id 1636964 lock_mode X locks rec but not gap</span><br><span class="line">Record lock, heap no 563 PHYSICAL RECORD: n_fields 2; compact format; info bits 0</span><br><span class="line"> 0: len 8; hex 91b2946930001000; asc    i0   ;;</span><br><span class="line"> 1: len 8; hex 91b2ae5d61401000; asc    ]a@  ;;</span><br><span class="line"></span><br><span class="line">RECORD LOCKS space id 18493 page no 12 n bits 96 index `PRIMARY` of table `assist`.`invoice_item` trx id 1636964 lock_mode X locks rec but not gap</span><br><span class="line">Record lock, heap no 28 PHYSICAL RECORD: n_fields 23; compact format; info bits 0</span><br></pre></td></tr></table></figure>
+
+<p>先在二级索引上加锁，再在对应的主键索引上加锁</p>
+<hr>
+<p>使用二级索引查询</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">select * from invoice_collection_info where invoice_uiq_flag = &#x27;031001900104-62079412&#x27; for update</span><br><span class="line"></span><br><span class="line">TABLE LOCK table `assist`.`invoice_collection_info` trx id 1636947 lock mode IX</span><br><span class="line">RECORD LOCKS space id 18491 page no 642 n bits 344 index `idx_uniflag` of table `assist`.`invoice_collection_info` trx id 1636947 lock_mode X locks rec but not gap</span><br><span class="line"></span><br><span class="line">RECORD LOCKS space id 18491 page no 496 n bits 96 index `PRIMARY` of table `assist`.`invoice_collection_info` trx id 1636947 lock_mode X locks rec but not gap</span><br></pre></td></tr></table></figure>
+
+<p>从日志中看出，先在invoice_uiq_flg二级索引上加锁，再在主键索引加锁</p>
+<hr>
+<p>使用主键更新操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">update invoice_collection_info set invoice_uiq_flag = &#x27;031200190010-62079412&#x27; WHERE (  id = 1275244823997059072 );</span><br><span class="line"> </span><br><span class="line">TABLE LOCK table `assist`.`invoice_collection_info` trx id 1636958 lock mode IX</span><br><span class="line">RECORD LOCKS space id 18491 page no 741 n bits 88 index `PRIMARY` of table `assist`.`invoice_collection_info` trx id 1636958 lock_mode X locks rec but not gap</span><br></pre></td></tr></table></figure>
+
+<p>其实不仅会在主键加X，还会在二级索引上也加X，但没有显示出来；这儿跟delete一样，其实也是个隐式锁</p>
+<hr>
+<p>模拟测试了一下，两条sql，一条根据二级索引删除操作、另一条使用主键更新记录模拟并发死锁，把update中的二级索引锁显示出来了</p>
+<p><img src="http://images.zhuxingsheng.com/20200627233349_1593272029.jpg"></p>
+<hr>
+<p>上面的操作都是在RC级别下进行的，对于select操作，快照读都不会加锁，实验结果也与理论一致</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/deadlock-analysis.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/deadlock-analysis.html" class="post-title-link" itemprop="url">死锁分析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-05 09:41:00" itemprop="dateCreated datePublished" datetime="2020-07-05T09:41:00+08:00">2020-07-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近新项目上线，在压测和发布生产都出现了好几种死锁情况，分析一二</p>
+<h2 id="死锁日志"><a href="#死锁日志" class="headerlink" title="死锁日志"></a>死锁日志</h2><h3 id="日志一："><a href="#日志一：" class="headerlink" title="日志一："></a>日志一：</h3><p><img src="http://images.zhuxingsheng.com/20200620175222_1592646742.jpg"></p>
+<h3 id="日志二："><a href="#日志二：" class="headerlink" title="日志二："></a>日志二：</h3><p><img src="http://images.zhuxingsheng.com/20200627161404_1593245644.jpg"></p>
+<h3 id="日志三："><a href="#日志三：" class="headerlink" title="日志三："></a>日志三：</h3><p><img src="http://images.zhuxingsheng.com/20200627161702_1593245822.jpg"></p>
+<p>这三个死锁日志特别的有意思，都是同一条SQL，但各种组合样的死锁都齐活了</p>
+<p>日志一的两条sql，where里面的条件不同；</p>
+<p>日志二和日志三sql完全一样，其实是两次调用(同一时刻并发调用)，调用条件不同，但在程序处理时这条SQL的where条件一样而已</p>
+<h2 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h2><p>隔离级别RC</p>
+<h3 id="日志一，where里面的条件不同"><a href="#日志一，where里面的条件不同" class="headerlink" title="日志一，where里面的条件不同"></a>日志一，where里面的条件不同</h3><p>第一个事务在等待RECORD LOCKS，锁模式为X model;位置在space id 428 page no 178</p>
+<p>第二个事务持有RECORD LOCKS，锁模式为X model;位置也在space id 428 page no 178；等待的锁也是RECORD LOCKS，锁模式为X model，也在space id 428 page no 178</p>
+<p>这个死锁很是奇怪，同一条sql，都是在索引【idx_tenant_user】上加锁，完全不符合死锁的循环等待特征</p>
+<p>这张表上的索引</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">KEY `idx_collection_no` (`collection_no`) USING BTREE,</span><br><span class="line">KEY `idx_uniflag` (`invoice_uiq_flag`) USING BTREE,</span><br><span class="line">KEY `idx_tenant_user` (`tenant_id`,`user_id`) USING BTREE</span><br></pre></td></tr></table></figure>
+
+<p>通过explain查看此语句</p>
+<p><img src="http://images.zhuxingsheng.com/20200620224509_1592664309.jpg"></p>
+<p>索引上看使用idx_tenant_user,也与死锁日志一致，但怎么就死锁了呢？</p>
+<p>【SHOW ENGINE INNODB STATUS;】只能显示最终发生死锁时的sql,并不能显示全部的sql，从程序上下文中寻找，发现点蛛丝马迹</p>
+<p><img src="http://images.zhuxingsheng.com/20200627235238_1593273158.jpg"></p>
+<p>事务2在T1时刻执行了一条根据id更新数据的sql，这条sql会在id聚簇索引上加X锁，还会在二级索引上加X锁，所以先获得了(user_id,tenant_id)锁，</p>
+<p>事务1在T2时刻只能等待</p>
+<p>事务2在T3时刻形成了循环等待，deadlock</p>
+<h3 id="日志二-sql完全一样"><a href="#日志二-sql完全一样" class="headerlink" title="日志二,sql完全一样"></a>日志二,sql完全一样</h3><p>与前面解释，两个并发请求，入参不同，但到这个方法时，sql的条件是一样的</p>
+<p><img src="http://images.zhuxingsheng.com/20200629011347_1593364427.jpg"></p>
+<h3 id="日志三，sql也完全一样"><a href="#日志三，sql也完全一样" class="headerlink" title="日志三，sql也完全一样"></a>日志三，sql也完全一样</h3><p>虽然与日志二的SQL一样，但死锁日志却不同</p>
+<p><img src="http://images.zhuxingsheng.com/20200629011516_1593364516.jpg"></p>
+<hr>
+<p>为什么同样的SQL，却得出各样的结果？时而collection_no索引在前，时而组合索引在前</p>
+<p>苦思几日，在线上跑了下explain，发现了些问题</p>
+<p><img src="http://images.zhuxingsheng.com/20200620234440_1592667880.jpg"></p>
+<p>原来线上使用的index merge</p>
+<p>有官网上有介绍：<a href="https://dev.mysql.com/doc/refman/5.6/en/index-merge-optimization.html">https://dev.mysql.com/doc/refman/5.6/en/index-merge-optimization.html</a></p>
+<blockquote>
+<p>MySQL在分析执行计划时发现走单个索引的过滤效果都不是很好，于是对多个索引分别进行条件扫描，然后将多个索引单独扫描的结果进行合并的一种优化操作。合并的方式分为三种：intersection、union和sort_union</p>
+</blockquote>
+<blockquote>
+<p>index merge 之 intersect,简单而言，index intersect merge就是多个索引条件扫描得到的结果进行交集运算。显然在多个索引提交之间是 AND 运算时，才会出现 index intersect merge. </p>
+</blockquote>
+<p>正因为index merge,所以索引的真正执行顺序是不一样的，也就造成了各种表象</p>
+<h2 id="解决"><a href="#解决" class="headerlink" title="解决"></a>解决</h2><p>建立联合索引</p>
+<p>都使用主键更新</p>
+<p>关掉参数index_merge_intersection&#x3D;off，禁用index_merge功能</p>
+<h2 id="参照"><a href="#参照" class="headerlink" title="参照"></a>参照</h2><p><a href="http://blog.itpub.net/28939273/viewspace-2154349/">MySQL 优化之 index_merge</a></p>
+<p><a href="https://ruby-china.org/topics/38429?page=2">一个 MySQL 死锁案例分析</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/blog/page/8/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/blog/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/16/">16</a><a class="extend next" rel="next" href="/blog/page/10/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

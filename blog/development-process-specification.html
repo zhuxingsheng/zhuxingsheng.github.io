@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="这是近期在公司做的一次分享，这几年的互联网开发，算比较幸运，团队一直践行完善这套规范，没有太多的阻碍，得益于公司整体氛围，以及团队对规范和写文档的不排斥，形成了良好的开发习惯 在这次分享后，发现好些大V也在谈规范，写文档，估计是前段时间阿里又发布了开发手册(华山版)，借鉴于一下，对一些细节做些补充，整理出来 整体流程 这个流程整体分为三个大阶段：需求阶段，开发阶段，上线阶段 需求阶段需求分析这个阶">
+<meta property="og:type" content="article">
+<meta property="og:title" content="开发流程规范">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/development-process-specification.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="这是近期在公司做的一次分享，这几年的互联网开发，算比较幸运，团队一直践行完善这套规范，没有太多的阻碍，得益于公司整体氛围，以及团队对规范和写文档的不排斥，形成了良好的开发习惯 在这次分享后，发现好些大V也在谈规范，写文档，估计是前段时间阿里又发布了开发手册(华山版)，借鉴于一下，对一些细节做些补充，整理出来 整体流程 这个流程整体分为三个大阶段：需求阶段，开发阶段，上线阶段 需求阶段需求分析这个阶">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201908192235_181.png">
+<meta property="article:published_time" content="2019-09-18T15:20:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.468Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="规范">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201908192235_181.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/development-process-specification.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>开发流程规范 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/development-process-specification.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          开发流程规范
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-09-18 23:20:00" itemprop="dateCreated datePublished" datetime="2019-09-18T23:20:00+08:00">2019-09-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>这是近期在公司做的一次分享，这几年的互联网开发，算比较幸运，团队一直践行完善这套规范，没有太多的阻碍，得益于公司整体氛围，以及团队对规范和写文档的不排斥，形成了良好的开发习惯</p>
+<p>在这次分享后，发现好些大V也在谈规范，写文档，估计是前段时间阿里又发布了开发手册(华山版)，借鉴于一下，对一些细节做些补充，整理出来</p>
+<h2 id="整体流程"><a href="#整体流程" class="headerlink" title="整体流程"></a>整体流程</h2><p><img src="http://images.zhuxingsheng.com/201908192235_181.png"></p>
+<p>这个流程整体分为三个大阶段：需求阶段，开发阶段，上线阶段</p>
+<h3 id="需求阶段"><a href="#需求阶段" class="headerlink" title="需求阶段"></a>需求阶段</h3><h4 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h4><p>这个阶段主要是产品主导，收集痛点，归集需求，制定目标，与架构师讨论架构方案，与安全评估业务安全性</p>
+<p>这儿可根据需求大小，具体行事，比如有些需求涉及方比较多，可能需要多次分组开会，不管是可行性分析，还是讨论方案，不是一次就能完成的</p>
+<h4 id="需求评审"><a href="#需求评审" class="headerlink" title="需求评审"></a>需求评审</h4><p>当产品已经确定好这些方面，开始输出PRD，与研发、测试一起评审需求</p>
+<p>研发与测试需要理解需求，更要挑战需求；</p>
+<p>挑战需求的目的不是砍需求，而是确认产品在需求分析阶段的工作完备程度，比如遗留数据处理，对当前系统的影响层面，是否与当前系统重复度过高，业务价值</p>
+<p>只有经过充分讨论，才能理解需求，完善需求，防止后期需求返工，某个细节没有考虑，影响整体设计实现</p>
+<p>这儿各个团队实践方式各不相同，比如有些是所有团队成员都要参与，而有些只有具体参与开发测试参与</p>
+<p>个人推崇所有成员都参与，这样一是讨论可以更充分，二是信息共享，防止因某成员个人原因，推迟需求进度</p>
+<h4 id="需求排期"><a href="#需求排期" class="headerlink" title="需求排期"></a>需求排期</h4><p>对需求大家都达成了共识，此时就需要产品去需求确定优先级，排期开发</p>
+<p>确定开发周期，这儿也有很多具体做法，有些团队是TL根据需求难易程序，变动大小，结合具体开发人员直接给出时间；有些团队是具体开发自行评估时间</p>
+<p>一般都是由开发人员自行评估，只要在合理范围内，都给予认同</p>
+<p>当然在确定开发周期时，必须给出依据，依据来源于详细设计，对于详细设计文档具体形式后面再谈，至少开发人员知道需要增加多少接口，修改多少接口，大概逻辑；不然评估时长就是一个空谈，造成整个项目的失控</p>
+<h3 id="开发阶段"><a href="#开发阶段" class="headerlink" title="开发阶段"></a>开发阶段</h3><p>需求阶段，从产品需求分析到开发人员评估出开发周期就已经结束了；下一个阶段进入开发阶段</p>
+<p>开发阶段的进度，可以说八成是依赖第一阶段的成果。编码速度，实现手段只要是正常业务需求，一般都不会拖延时长</p>
+<p>第一阶段成果，对于开发人员来讲，就是详细设计文档，文档中有了相应流程图，伪代码，具体涉及接口也有了，此时就是一个代码翻译过程</p>
+<p>此阶段测试，需要输出测试用例，进行冒烟，回归测试；</p>
+<p>自动化脚本完善</p>
+<h3 id="上线阶段"><a href="#上线阶段" class="headerlink" title="上线阶段"></a>上线阶段</h3><p>测试完成之后，就准备上线了。</p>
+<p>根据确定的上线日期，提前核对checklist</p>
+<p>对一些需要提前的变更开始申请审批流程</p>
+<p>配合监控系统，需要对一些业务监控项进行配置</p>
+<p>产品开始对预发布环境进行验收，验收成功后；发布正式环境</p>
+<h4 id="上线收尾"><a href="#上线收尾" class="headerlink" title="上线收尾"></a>上线收尾</h4><p>收尾工作，这个阶段，还有大量工作需要去做</p>
+<ol>
+<li>产品对需求进行总结，收集数据，分析效果，为下一期需求做准备</li>
+<li>开发需要对代码进行整理，比如有些是为了灰度而生的无用代码可以删除</li>
+</ol>
+<hr>
+<p>一个完整的需求开发流程到此结束，当然这只是理想状态，还有很多不可预测问题，当然你也会吐槽，这是典型的瀑布开发模型，在敏捷大行其道时，是不是太守旧，太迟钝，都2091年了，为什么还在玩这一套</p>
+<p>理想是丰满的，现实是骨感的。好比敏捷开发的参与者是一群开发经验丰富和才华横溢的开发人员，而这样的团队有多少？强硬为了敏捷而敏捷会不会造成项目的不可控呢？</p>
+<p>当然瀑布模型也有天生的缺点：每个阶段的严格性，缺乏灵活性，而现实需求却是经常变化的</p>
+<p>所以单纯地选择哪个模型是不可取的，只能根据实际情况出发，为业务提供最大化服务</p>
+<hr>
+<h2 id="细则规范"><a href="#细则规范" class="headerlink" title="细则规范"></a>细则规范</h2><p>很多人都在要规范，但好像从没思考过为什么需要规范？</p>
+<blockquote>
+<p>《阿里巴巴java开发手册》：手册的愿景是码出高效，码出质量</p>
+</blockquote>
+<blockquote>
+<p>现代软件架构的复杂性需要协同开发完成，如何高效地协同呢？无规矩不成方圆，无规范难以协同，比如，制订交通法规表面上是要限制行车权，实际上是保障公众的人身安全，试想如果没有限速，没有红绿灯，谁还敢上路行驶？对软件来说，适当的规范和标准绝不是消灭代码内容的创造性、优雅性，而是限制过度个性化，以一种普遍认可的统一方式一起做事，提升协作效率，降低沟通成本。 代码的字里行间流淌的是软件系统的血液，质量的提<br>升是尽可能少踩坑，杜绝踩重复的坑，切实提升系统稳定性，码出质量</p>
+</blockquote>
+<p>从上段可以看出几个目的</p>
+<ol>
+<li>高效协同，降低沟通成本；书同文，车同轨</li>
+<li>码出质量，降低故障率；</li>
+<li>工匠精神，追求卓越</li>
+</ol>
+<hr>
+<h3 id="评审会议"><a href="#评审会议" class="headerlink" title="评审会议"></a>评审会议</h3><p>很多开发人员最怕开会，更要命的是很多会议是效率低下的。主要表现：</p>
+<ul>
+<li>在没有基本的认知共识就被拉去开会：这可能是主持者没有提前知会，同步资料；以及没有在线下达到一定共识就开会，结果会上各种讨论;也可能是参会人员本身也没有提前准备</li>
+<li>会后没有结论，或者结论不明确</li>
+</ul>
+<p>所以在参与评审后，需要有一份输出，文档或者邮件，主要包括以下内容</p>
+<ol>
+<li>评审日期与轮次</li>
+<li>业务需求的目的及价值描述</li>
+<li>参与人员及角色</li>
+<li>评审附件（PRD或邮件）</li>
+<li>评审结论</li>
+<li>评审遗留问题及跟进人</li>
+</ol>
+<h3 id="需求PRD"><a href="#需求PRD" class="headerlink" title="需求PRD"></a>需求PRD</h3><p>开发人员，最烦就是口头需求，一句话需求，需要明文禁止</p>
+<p>产品写PRD，其实是个基本职业素养，结果现在还要明文规定，也算是个悲哀。</p>
+<p>为什么要出PRD，其实不是开发人员故意为难产品，而是让产品深刻理解需求，看这又是个怪事，产品还有不理解业务需求的，但就是常有产品自己都不理解业务，还一本正经给研发提开发需求。</p>
+<p>写PRD的过程，就是梳理思考的过程，让需求更明确，流程更完整，细节更透彻，这样就不会出现提交给开发时，被开发一堆问题阻塞住。也可以防止在开发过程中，却发现整个业务没有形成闭环，造成返工，延时</p>
+<p>那么开发如何拒绝口头需求，一句话需求呢？</p>
+<p>有时产品比较强势，开发人员不好沟通，此时TL就应该对团队明确规定，禁止产品此类行为，也要禁止开发接受此类需求，不能为了一时快，而整个工期慢</p>
+<p>在接受到此类需求时，也需要一定的沟通技巧：</p>
+<ol>
+<li><p>多问几个为什么：这比如你这个需求背后的目的和价值是什么？做了之后有什么预期的收益，为什么这么做就可以达到这个收益，你可以不直接问业务方，但是你也需要问自己，业务方的这个目标和做这个需求的路径是否可以匹配得上，如果实现路径存在逻辑漏洞或者不是最佳的则这个需求也就没有做的必要性</p>
+</li>
+<li><p>给出替代方案：经过上面的步骤，其实你会发现你已经过滤了一批无效的一句话需求，而有些需求可能是有一定的存在价值，但是可能业务方提到的点并不是有效的方案或者说成本太大的方案，这时你就需要思考替代方案，尽量通过现有方案或者小成本的方式来满足业务方，间接的达到“拒绝”的效果</p>
+</li>
+<li><p>不能直接说不，但可以有条件的说是：当你确定这个需求是ok的，但你确实暂时抽不出时间来搞定这个事情的时候，这时关键在于我们不能直接拒绝业务方，长此以往会影响到后续的合作关系，这种情况你可以说，这个需求我接受，但是我可能需要较长一些的缓冲时间或者砍一些需求(部分满足)，又或者必须要按时上的话，不能保证项目的上线后的效果、质量等，让业务方来做部分的取舍</p>
+</li>
+</ol>
+<h3 id="详细设计文档"><a href="#详细设计文档" class="headerlink" title="详细设计文档"></a>详细设计文档</h3><p>首先禁止没有文档，直接修改代码；这跟需求PRD类似，强迫开发人员思考需求，完善需求，胸中有丘壑，下笔自有神；不能在编码过程，边写边思考，不仅慢，还会漏洞百出</p>
+<p>其实让团队写文档，也是个难事，推动很难，尤其管理者没有引起重视，就更难。这是个怪事，不喜欢写文档，却喜欢被返工，在开发过程因需求逻辑不完备而加班赶点，从上到下默认了这种怪事的正常化</p>
+<p>为什么要写设计文档？</p>
+<ul>
+<li>对自己，让自己在动手写代码之前，帮助自己想得更清楚；</li>
+<li>对项目，保证信息的一致性，保证项目的可控性，减少项目风险；</li>
+<li>对团队，确保知识的沉淀与传承；</li>
+</ul>
+<p>项目涉及多少个子系统，每个子系统涉及多少个模块，模块间的依赖关系如何，彼此要提供多少个接口，每个接口的参数如何，接口实现过程中上下游交互如何，核心逻辑用什么技术方案实现…</p>
+<p>难道相关技术人都一清二楚么？很多自信的技术大神，“以为”懂了，但却讲不明白，其实就是不懂。很多“讲得明白”，却“写不清楚”，其实就是没懂透。把一个项目，一个技术问题，按照逻辑，用文字来一遍，才表示真正的想清楚了</p>
+<p>这也是现在流行的，一解释都懂，一问都不知，一讨论就吵架</p>
+<hr>
+<p>不再写过多为什么要写文档了，一个习惯的改变不可能一下子就改变，这需要一个过程，也需要自我大胆尝试</p>
+<p>这儿给出一些实践，详细设计文档写些什么</p>
+<p>其实一份详细设计文档，整体分为两个部分：功能需求与非功能需求</p>
+<p>1、需求信息</p>
+<p>这儿包括需求背景，业务价值，预计上线时间，架构设计wiki,产品及开发负责人，涉及到的服务，上下游服务</p>
+<p>2、系统流程图</p>
+<p>阐述整体设计思路，涉及算法时，还需要详细算法思路</p>
+<p>包含上下游系统交互和数据流向，建议viso或者astash图，要保存原图文件以防后期维护修改</p>
+<p>当然最好还要把设计思路背景说明一下，有多种方案时也罗列一下，因为系统现有状况，进度安排，历史数据等等原因，而选择了当前方案，这样自我分析完整，也免将来别人接手时可以追溯 </p>
+<p>3、接口列表</p>
+<p>这儿列出所有涉及到的接口列表</p>
+<p>标明新增加或者修改，以及接口详细入参，返回值</p>
+<p>一般会有api doc，或者类似swagger工具，接口变化时，也可以相应变化；如果没有，那只能在文档中详细输出</p>
+<p>4、定时任务</p>
+<p>有些任务不需要，有些任务可能有很多，需要指出任务功能，频率</p>
+<p>5、存储变更</p>
+<p>比如缓存，数据结构，过期时间，预计数据增长</p>
+<p>DB表设计，表修改，索引信息，数据增长量；有新的业务场景，一定要请DBA帮忙评估索引或者其他信息</p>
+<p>6、配置组件</p>
+<p>配置：比如配置中心，增加修改配置项，常为了灰度增加一些开关之类</p>
+<p>组件：第三方依赖jar，不管是公司自研，还是外部开源；关注新特性给系统带来的变化；这个对开发工作量很小，只需要修改版本号，但测试可能需要一些回归量，尤其常出现的包冲突，造成日志不能正常输出</p>
+<p>7、非功能需求</p>
+<p>接口在日常和大促时的调用量评估，是否有降级方案，灰度方案，能不能重试，需不需要压测，这些都是围绕服务治理做预案</p>
+<p>这其实是个很大的模块，很多已经深入骨髓，变成常态，比如灰度，现在都是7*24小时在线服务的，前后版本的兼容必须考虑到</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>当然这些并不是必须的，可以根据实际情况变通，有增有减；当然你也可能从不写文档，很多人喜欢看源码，而不看文档；其实这有些本末倒置，源码只是告诉你了how,而文档才解释了what,why</p>
+<p>架构师是很多码农的追求，架构师如何设计系统，如何让开发人员去实施呢？当然是文档，总不能直接给代码吧</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%A7%84%E8%8C%83/" rel="tag"># 规范</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/monitored-traceid.html" rel="prev" title="监控之traceid">
+      <i class="fa fa-chevron-left"></i> 监控之traceid
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/srp-of-solid.html" rel="next" title="SOLID之SRP">
+      SOLID之SRP <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">整体流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E9%98%B6%E6%AE%B5"><span class="nav-number">1.1.</span> <span class="nav-text">需求阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="nav-number">1.1.1.</span> <span class="nav-text">需求分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E8%AF%84%E5%AE%A1"><span class="nav-number">1.1.2.</span> <span class="nav-text">需求评审</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9C%80%E6%B1%82%E6%8E%92%E6%9C%9F"><span class="nav-number">1.1.3.</span> <span class="nav-text">需求排期</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E9%98%B6%E6%AE%B5"><span class="nav-number">1.2.</span> <span class="nav-text">开发阶段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E7%BA%BF%E9%98%B6%E6%AE%B5"><span class="nav-number">1.3.</span> <span class="nav-text">上线阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8A%E7%BA%BF%E6%94%B6%E5%B0%BE"><span class="nav-number">1.3.1.</span> <span class="nav-text">上线收尾</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%86%E5%88%99%E8%A7%84%E8%8C%83"><span class="nav-number">2.</span> <span class="nav-text">细则规范</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%84%E5%AE%A1%E4%BC%9A%E8%AE%AE"><span class="nav-number">2.1.</span> <span class="nav-text">评审会议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9C%80%E6%B1%82PRD"><span class="nav-number">2.2.</span> <span class="nav-text">需求PRD</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%A6%E7%BB%86%E8%AE%BE%E8%AE%A1%E6%96%87%E6%A1%A3"><span class="nav-number">2.3.</span> <span class="nav-text">详细设计文档</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

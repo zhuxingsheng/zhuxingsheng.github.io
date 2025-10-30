@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="在做程序测试时，常会用到测试替身来协助我们快速完成测试。  有时候被测试系统(system under test(SUT))很难测试，因为在测试环境下依赖的组件不能正常使用。如外部系统。 当在一个不能使用真实依赖组件(depended-on component(DOC))的地方写test时，我们可以使用Test Double。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="可测试性系列之测试替身Test Double">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/test-double-of-testability-series.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="在做程序测试时，常会用到测试替身来协助我们快速完成测试。  有时候被测试系统(system under test(SUT))很难测试，因为在测试环境下依赖的组件不能正常使用。如外部系统。 当在一个不能使用真实依赖组件(depended-on component(DOC))的地方写test时，我们可以使用Test Double。">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220405181931_1649153971.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220405154955_1649144995.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220405105706_1649127426.jpg">
+<meta property="article:published_time" content="2022-04-06T10:49:00.000Z">
+<meta property="article:modified_time" content="2022-04-10T13:19:38.521Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="可测试性">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20220405181931_1649153971.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/test-double-of-testability-series.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>可测试性系列之测试替身Test Double | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/test-double-of-testability-series.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          可测试性系列之测试替身Test Double
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-04-06 18:49:00" itemprop="dateCreated datePublished" datetime="2022-04-06T18:49:00+08:00">2022-04-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-04-10 21:19:38" itemprop="dateModified" datetime="2022-04-10T21:19:38+08:00">2022-04-10</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在做程序测试时，常会用到测试替身来协助我们快速完成测试。</p>
+<p><img src="http://images.zhuxingsheng.com/20220405181931_1649153971.jpg"></p>
+<p>有时候被测试系统(system under test(SUT))很难测试，因为在测试环境下依赖的组件不能正常使用。如外部系统。</p>
+<p>当在一个不能使用真实依赖组件(depended-on component(DOC))的地方写test时，我们可以使用<a href="http://xunitpatterns.com/Test%20Double.html">Test Double</a>。</p>
+<span id="more"></span>
+
+<h1 id="Test-Double"><a href="#Test-Double" class="headerlink" title="Test Double"></a>Test Double</h1><p>Test Double概括起来，有以下几种：</p>
+<p><img src="http://images.zhuxingsheng.com/20220405154955_1649144995.jpg"></p>
+<p>Martin Fowler在<a href="https://martinfowler.com/articles/mocksArentStubs.html">Mocks Aren’t Stubs
+</a>中给出解释：</p>
+<p><img src="http://images.zhuxingsheng.com/20220405105706_1649127426.jpg"></p>
+<p>Martin Fowler解释的还不是太明白，我又<a href="https://code-examples.net/en/q/34c8d7">收集了更明白一点的解释</a>：</p>
+<ul>
+<li>Dummy - just bogus values to stisfy the API</li>
+</ul>
+<blockquote>
+<p>Example: If you’re testing a method of a class which requires many mandatory parameters in a constructor which have no effect on your test, then you may create dummy objects for the purpose of creating new instances of a class.</p>
+</blockquote>
+<ul>
+<li>Fake - create a test implementation of a class which may have a dependency on some external infrastructure. (It’s good practice that your unit test does NOT actually interact with external infrastructure.)</li>
+</ul>
+<blockquote>
+<p>Example: Create fake implementation for accessing a database, replace it with in-memory collection.</p>
+</blockquote>
+<ul>
+<li>Stub - override methods to return hard-coded values,also refered to as state-based</li>
+</ul>
+<blockquote>
+<p>Example:Your test class depends on a method calculate() taking 5 minutes to complete.Rather than warit for 5 minutes you can replace its real implementation with stub that returns hard-coded values;taking only a small faction of the time.</p>
+</blockquote>
+<ul>
+<li>Mock - very similar to Stub But interaction-based rather than state-based.This means you don’t expect from Mock to return some value,but to assume that specific order of method calls are made.</li>
+</ul>
+<blockquote>
+<p>Example:You’re testing a user registration class.After calling save,it should call send ConfirmationEmail.</p>
+</blockquote>
+<p>上面的解释已经很明白了，简单总结一下：</p>
+<p>Dummy:主要是用来填充参数，以构造需要测试的对象</p>
+<p>Fake:简单模拟实现，如Dao,但只是空实现</p>
+<p>Stub:相对fake多了点硬编码返回值，两者很相似</p>
+<p>Mock:相对状态验证更多的是行为验证</p>
+<p>阅读到这儿大概率已经明白了，也就fake与stub还有点模糊，要想明白更清晰的区别，需要先了解一下生命周期和验证方式：</p>
+<p><strong>1、生命周期</strong></p>
+<p>每个测试都是由四个依次执行的阶段：</p>
+<p>初始化（SetUp）、执行测试（Exercise）、验证结果（Verify）和复原（Teardown）</p>
+<p><strong>2、验证方式</strong></p>
+<p>在验证阶段，通常有两种验证方式：状态验证与行为验证</p>
+<p>状态验证：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//肯定会使用的assert</span><br><span class="line">assertEquals(expected,actual);</span><br></pre></td></tr></table></figure>
+
+<p>行为验证:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//Mockito中的verify</span><br><span class="line">verify(mock, times(3)).do();</span><br></pre></td></tr></table></figure>
+
+<p>徐昊老师有个生动的描述：</p>
+<p>万恶淫为首，论迹不论心，论心世上少完人；不关心过程，只看结果。结果验证</p>
+<p>百善孝为先，论心不论迹，论迹贫家无孝子；看重过程，不看重结果。行为推断</p>
+<p>所以我们判断淫棍总比判断孝子准确</p>
+<hr>
+<p>测试策略是要保证有效性的同时，尽可能降低测试成本。</p>
+<p>fake、stub、spy、mock 以此排序，成本越来越低，同时有效性也越来越低。</p>
+<p>spy与mock在使用Mockito时能明显感受到它们俩的区别，fake与stub的区别，从上面的定义看，很接近。</p>
+<p>徐昊老师引入进程的视角来进一步区分：</p>
+<p>跨进程边界是fake，进程之间的stub就是fake。</p>
+<p>结合上面的解释明确多了，当使用数据库时，fake一个内存数据库。</p>
+<p><strong>以进程划分：</strong></p>
+<p>进程间替身:dummy fake spy</p>
+<p>进程内替身:stub mock spy</p>
+<p><strong>以验证方式划分：</strong></p>
+<p>严格来说，我们状态验证使用fake stub，行为验证使用mock。</p>
+<p>dummy和spy都不验证，dummy是不能验，spy是还没验。</p>
+<p>spy可以按状态（比如回放）也可以按行为（比如对比）验证。</p>
+<p>spy已经在行为验证和状态验证的边上。spy是记录调用，对调用加上验证就是mock</p>
+<p>如果用记录来reply就是录播测试，比如你在两个系统间做了spy，把请求和结果播放出来，这样相当于用spy的数据做了stub。</p>
+<p>把请求结果和目标结果做对比，实际相当于拿spy数据做了mock</p>
+<p>spy本身只取数据不验证，但是正常的doc内部数据不可知，因而spy是一种替身技术，并不是验证技术。</p>
+<p><strong>spy is dumb mock</strong></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>测试策略是要保证有效性的同时，尽可能降低测试成本。因此Test Double是SUT中测试中不可或缺的，Test Double的形式有dummy fake stub spy mock,以进程维度与验证方式维度能更好地区分它们。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%8F%AF%E6%B5%8B%E8%AF%95%E6%80%A7/" rel="tag"># 可测试性</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/bad-taste-and-clean-code-series.html" rel="prev" title="Clean Code系列之坏味道及重构">
+      <i class="fa fa-chevron-left"></i> Clean Code系列之坏味道及重构
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/what's-your-best-career-advice.html" rel="next" title="你最好的一条职业建议是什么？">
+      你最好的一条职业建议是什么？ <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Test-Double"><span class="nav-number">1.</span> <span class="nav-text">Test Double</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

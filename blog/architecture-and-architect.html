@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="究竟什么才是“软件架构”？架构师的工作内容究竟是什么？ 架构“架构”这个词给人的直观感受就充满了权力与神秘感，因此谈论架构总让人有一种正在进行责任重大的决策或者深度技术分析的感觉。毕竟，进阶到软件架构这一层次是我们走技术路线的人的终极目标 应用程序有两个层面需求，第一类是功能性需求；第二类是非功能性需求  架构的重要性就在于非功能需求，这些非功能需求决定一个应用程序在运行时质量，比如可扩展性和可靠">
+<meta property="og:type" content="article">
+<meta property="og:title" content="架构与架构师">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/architecture-and-architect.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="究竟什么才是“软件架构”？架构师的工作内容究竟是什么？ 架构“架构”这个词给人的直观感受就充满了权力与神秘感，因此谈论架构总让人有一种正在进行责任重大的决策或者深度技术分析的感觉。毕竟，进阶到软件架构这一层次是我们走技术路线的人的终极目标 应用程序有两个层面需求，第一类是功能性需求；第二类是非功能性需求  架构的重要性就在于非功能需求，这些非功能需求决定一个应用程序在运行时质量，比如可扩展性和可靠">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/202002162142_54.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/202002162309_209.png">
+<meta property="article:published_time" content="2021-02-24T15:38:00.000Z">
+<meta property="article:modified_time" content="2022-07-31T10:04:24.725Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="架构师">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/202002162142_54.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/architecture-and-architect.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>架构与架构师 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/architecture-and-architect.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          架构与架构师
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-02-24 23:38:00" itemprop="dateCreated datePublished" datetime="2021-02-24T23:38:00+08:00">2021-02-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-07-31 18:04:24" itemprop="dateModified" datetime="2022-07-31T18:04:24+08:00">2022-07-31</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>究竟什么才是“软件架构”？架构师的工作内容究竟是什么？</p>
+<h1 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h1><p>“架构”这个词给人的直观感受就充满了权力与神秘感，因此谈论架构总让人有一种正在进行责任重大的决策或者深度技术分析的感觉。毕竟，进阶到软件架构这一层次是我们走技术路线的人的终极目标</p>
+<p>应用程序有两个层面需求，第一类是功能性需求；第二类是非功能性需求</p>
+<p><img src="http://images.zhuxingsheng.com/202002162142_54.png"></p>
+<p>架构的重要性就在于非功能需求，这些非功能需求决定一个应用程序在运行时质量，比如可扩展性和可靠性。它们也决定了开发阶段的质量，包括可维护性、可测试性、可扩展性和可部署性。</p>
+<p>架构设计的主要目标是支撑软件系统的全生命周期，设计良好的架构可以让系统便于理解、易于修改、方便维护、并且能轻松部署。软件架构的终极目标就是最大化程序员的生产力，同时最小化系统的总运营成本。</p>
+<blockquote>
+<p>软件的系统架构应该为该系统的用例提供支持；软件系统的架构设计图也应该非常明确地凸显该应用程序会有哪些用例</p>
+</blockquote>
+<blockquote>
+<p>架构设计不是与框架相关的，不应该是基于框架来完成，框架只是一个可用的工具和手段</p>
+</blockquote>
+<blockquote>
+<p>一个良好的架构设计应该围绕着用例来展开，这样的架构设计可以在脱离框架、工具以及使用环境的情况下完整地描述用例</p>
+</blockquote>
+<blockquote>
+<p>不管什么样的架构，它们都具有同一个设计目标：按照不同关注点对软件进行切割。也就是这些架构都会将软件切割成不同的层，至少有一层是只包含该软件的业务逻辑的，而用户接口、系统接口则属于其他层</p>
+</blockquote>
+<blockquote>
+<p>计算机系统的软件架构是构建这个系统所需要的一组架构，包括软件元素、它们之间的关系以及两者的属性</p>
+</blockquote>
+<blockquote>
+<p>所谓“架构”，是“以组件、组件之间的关系、组件与环境之间的关系为内容的某一系统的基本组织结构，以及指导上述内容设计与演化的原则”。之所以要确定系统的组件、组件关系以及设计与演化的原则，目的是通过不同层面的结构视图来促进团队的交流，为设计与开发提供指导。架构不仅仅是指我们设计产生的输出文档，还包括整个设计分析与讨论的过程，这个过程产生的所有决策、方案都可以视为是架构的一部分</p>
+</blockquote>
+<p>架构这么多定义，怎么描述架构呢？</p>
+<p>Phillip Krutchen在他经典的论文《Architectural Blueprints —The 4+1 View Model of Software Architecture》中提出了软件架构的4+1视图</p>
+<p><img src="http://images.zhuxingsheng.com/202002162309_209.png"></p>
+<ul>
+<li><p>逻辑视图：开发人员创建的软件元素。在面向对象的语言中，这些元素是类和包。它们之间的关系是类和包之间的关系，包括继承、关联和依赖。</p>
+</li>
+<li><p>实现视图：构建编译系统的输出。此视图由表示打包代码的模块和组件组成，组件是由一个或多个模块组成的可执行或可部署单元。在JAVA中，模块是JAR文件，组件通常是WAR文件或可执行JAR文件。它们之间的关系包括模块之间的依赖关系以及组件和模块之间的组合关系。</p>
+</li>
+<li><p>进程视图：运行时的组件。每个元素都是一个进程，进程之间的关系代表进程间通信。</p>
+</li>
+<li><p>部署视图：进程如何映射到机器。此视图中的元素由（物理或虚拟）计算机和进程组成。机器之间的关系代表网络。该视图还描述了进程和机器之间的关系。</p>
+</li>
+</ul>
+<p>除了这四个视图以外，4+1中的+1是指场景，它负责把视图串联在一起。每个场景负责描述在一个视图中的多个架构元素如何协作，以完成一个请求。例如，在逻辑视图中的场景，展现了类是如何协作的。同样，在进程视图中的场景，展现了进程是如何协作的</p>
+<p>4+1视图是描述应用程序架构的绝佳方式。每一个视图都描述了架构的一个重要侧面。场景把视图中的元素如何协作串联在一起</p>
+<p>良好的架构有如下特点：</p>
+<ul>
+<li>独立于框架</li>
+<li>要被测试</li>
+<li>独立于UI</li>
+<li>独立于数据库</li>
+<li>独立于任何外部机构</li>
+</ul>
+<hr>
+<h1 id="架构师"><a href="#架构师" class="headerlink" title="架构师"></a>架构师</h1><p>架构师干什么？画PPT吗？写不写代码？</p>
+<p>首先，软件架构师自身需要是程序员，并且必须一直坚持做一线程序员，绝对不要听从那些说应该让软件架构师从代码中解放出来以专心解决高阶问题的伪建议</p>
+<p>软件架构师应该是能力最强的一群程序员，他们通常会在自身承接编程任务的同时，逐渐引导整个团队向一个能够最大化生产力的系统设计方向前进</p>
+<p>概括一下：</p>
+<p>有人讲【优秀程序员的价值,不在于其所掌握的几招屠龙之术,而是在细节中见真著】，那么架构师则不仅要有屠龙刀，还得有绣花针</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84%E5%B8%88/" rel="tag"># 架构师</a>
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/code-review.html" rel="prev" title="code review">
+      <i class="fa fa-chevron-left"></i> code review
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/architecture-and-architect-2.html" rel="next" title="架构与架构师2">
+      架构与架构师2 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">架构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%B8%88"><span class="nav-number">2.</span> <span class="nav-text">架构师</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

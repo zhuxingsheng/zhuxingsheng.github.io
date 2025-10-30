@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="前言最近对于职业规划做了些思考，时间不等人，时机不等人；又是金三银四的好时机，今天当面试官虐人，明天被面试被人虐，相互伤害，爱恨情仇，一切都是缘分。 一份简历，一两张A4纸，就要体现出一个人的真实水平，没点功力，还真是难。 技术人都比较实在，不明白之前，感觉很高深，有难点，学了之后必有进步；但在搞过之后，发现不过如此，感觉都是理所当然，简单如是，不好意思跟人讲研究了什么，实在是太简单； 正因为有如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="ThreadLocal解析">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/threadlocal-parsing.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="前言最近对于职业规划做了些思考，时间不等人，时机不等人；又是金三银四的好时机，今天当面试官虐人，明天被面试被人虐，相互伤害，爱恨情仇，一切都是缘分。 一份简历，一两张A4纸，就要体现出一个人的真实水平，没点功力，还真是难。 技术人都比较实在，不明白之前，感觉很高深，有难点，学了之后必有进步；但在搞过之后，发现不过如此，感觉都是理所当然，简单如是，不好意思跟人讲研究了什么，实在是太简单； 正因为有如">
+<meta property="og:locale">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/threadlocal-mm.jpg">
+<meta property="article:published_time" content="2017-03-15T03:09:00.000Z">
+<meta property="article:modified_time" content="2022-07-23T03:55:38.375Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="ThreadLocal">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qnimages.zhuxingsheng.com/threadlocal-mm.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/threadlocal-parsing.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>ThreadLocal解析 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/threadlocal-parsing.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          ThreadLocal解析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-03-15 11:09:00" itemprop="dateCreated datePublished" datetime="2017-03-15T11:09:00+08:00">2017-03-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-07-23 11:55:38" itemprop="dateModified" datetime="2022-07-23T11:55:38+08:00">2022-07-23</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近对于职业规划做了些思考，时间不等人，时机不等人；又是金三银四的好时机，今天当面试官虐人，明天被面试被人虐，相互伤害，爱恨情仇，一切都是缘分。</p>
+<p>一份简历，一两张A4纸，就要体现出一个人的真实水平，没点功力，还真是难。</p>
+<p>技术人都比较实在，不明白之前，感觉很高深，有难点，学了之后必有进步；但在搞过之后，发现不过如此，感觉都是理所当然，简单如是，不好意思跟人讲研究了什么，实在是太简单；</p>
+<p>正因为有如此思维，所以在写简历时无处下笔，感觉没什么优势可写，毫无亮点。<br>要么就是简单写写项目经历，要么对着招聘简介看看，摘抄一些了</p>
+<p>不管怎么写，还是要写出自己的特长，把自己拿手的写出来，少不可怕，只要写出来的不被面试官难倒，就算成功。</p>
+<p>当然也不能为了体现多面手，乱写，熟悉XX，精通OO，了解MM，掌握GG；到面试时，被问得打脸就不好了。</p>
+<p>面试时态度端正也很重要，正面回答问题，有时其实对问题答案掌握不好，回避问题甚至绕弯弯，当然这还是看度的，不可绕太多，行家一出手就知有没有，诚恳点，知道多少说多少，知之为知之。</p>
+<hr>
+<p>面试官，我当得也不好，层次不清，岗位定位不清，有时为了招些优秀的，会问些不合岗位的问题，问得过难；</p>
+<p>还是要好好挖掘候选人简历，毕竟简历是展现的第一窗口，技术人书写能力差，不能很好的推销自己，所以还是要从简历中挖掘亮点，有时很精通，但写出来的很笼统，需要面试官去发现亮点了</p>
+<h1 id="ThreadLocal的意义"><a href="#ThreadLocal的意义" class="headerlink" title="ThreadLocal的意义"></a>ThreadLocal的意义</h1><p>这个类，好早就有了，JDK1.2就出现了。有时也会用一用，但他的作用是什么，很难表达了，难以表达，不能形成文字，说明了解的深度不够。</p>
+<blockquote>
+<p>ThreadLocal为解决多线程程序的并发问题提供了一种新的思路；</p>
+<p>ThreadLocal的目的是为了解决多线程访问资源时的共享问题。</p>
+</blockquote>
+<p>这基本上搜索到的threadlocal文章开头都是这样写的。</p>
+<p>然，谎言说多了就成了真理。</p>
+<p>但在JDK文档里面</p>
+<blockquote>
+<p>该类提供了线程局部 (thread-local)变量。<br>这些变量不同于它们的普通对应物，因为访问某个变量（通过其 get 或 set 方法）的每个线程都有自己的局部变量，它独立于变量的初始化副本。<br>ThreadLocal 实例通常是类中的 private static 字段，它们希望将状态与某一个线程（例如，用户 ID 或事务 ID）相关联。</p>
+</blockquote>
+<p><strong>ThreadLocal的作用是提供线程内的局部变量，这种变量在线程的生命周期内起作用，减少同一个线程内多个函数或者组件之间一些公共变量的传递的复杂度。</strong></p>
+<p>ThreadLocal和多线程并发没有什么关系。ThreadLocal模式是为了解决单线程内的跨类跨方法调用的</p>
+<blockquote>
+<p>ThreadLocal不是用来解决对象共享访问问题的，而是为了处理在多线程环境中，某个方法处理一个业务，需要递归依赖其他方法时，而要在这些方法中共享参数的问题。</p>
+<p>例如有方法a()，在该方法中调用了方法b()，而在b方法中又调用了方法c()，即a–&gt;b—&gt;c，如果a，b，c都需要使用用户对象，那么我们常用做法就是a(User user)–&gt;b(User user)—c(User user)。</p>
+<p>但是如果使用ThreadLocal我们就可以用另外一种方式解决：<br>  在某个接口中定义一个静态的ThreadLocal 对象，<br>  例如 public static ThreadLocal  threadLocal&#x3D;new ThreadLocal ();<br>  然后让a，b，c方法所在的类假设是类A，类B，类C都实现1中的接口<br>  在调用a时，使用A.threadLocal.set(user) 把user对象放入ThreadLocal环境<br>  这样我们在方法a，方法b，方法c可以在不用传参数的前提下，在方法体中使用threadLocal.get()方法就可以得到user对象。</p>
+<p>上面的类A，类B ，类C就可以分别对应我们做web开发时的 web层的Action—&gt;业务逻辑层的Service–&gt;数据访问层的DAO，当我们要在这三层中共享参数时，那么我们就可以使用ThreadLocal 了。</p>
+</blockquote>
+<p>在使用hibernate中常见的方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">public class HibernateUtil &#123;</span><br><span class="line">    private static Log log = LogFactory.getLog(HibernateUtil.class);</span><br><span class="line">    private static final SessionFactory sessionFactory;     //定义SessionFactory</span><br><span class="line"> </span><br><span class="line">    static &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            // 通过默认配置文件hibernate.cfg.xml创建SessionFactory</span><br><span class="line">            sessionFactory = new Configuration().configure().buildSessionFactory();</span><br><span class="line">        &#125; catch (Throwable ex) &#123;</span><br><span class="line">            log.error(&quot;初始化SessionFactory失败！&quot;, ex);</span><br><span class="line">            throw new ExceptionInInitializerError(ex);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //创建线程局部变量session，用来保存Hibernate的Session</span><br><span class="line">    public static final ThreadLocal session = new ThreadLocal();</span><br><span class="line"> </span><br><span class="line">    /**</span><br><span class="line">     * 获取当前线程中的Session</span><br><span class="line">     * @return Session</span><br><span class="line">     * @throws HibernateException</span><br><span class="line">     */</span><br><span class="line">    public static Session currentSession() throws HibernateException &#123;</span><br><span class="line">        Session s = (Session) session.get();</span><br><span class="line">        // 如果Session还没有打开，则新开一个Session</span><br><span class="line">        if (s == null) &#123;</span><br><span class="line">            s = sessionFactory.openSession();</span><br><span class="line">            session.set(s);         //将新开的Session保存到线程局部变量中</span><br><span class="line">        &#125;</span><br><span class="line">        return s;</span><br><span class="line">    &#125;</span><br><span class="line"> </span><br><span class="line">    public static void closeSession() throws HibernateException &#123;</span><br><span class="line">        //获取线程局部变量，并强制转换为Session类型</span><br><span class="line">        Session s = (Session) session.get();</span><br><span class="line">        session.set(null);</span><br><span class="line">        if (s != null)</span><br><span class="line">            s.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="Threadlocal源码"><a href="#Threadlocal源码" class="headerlink" title="Threadlocal源码"></a>Threadlocal源码</h1><p>这个类有以下方法：</p>
+<ol>
+<li>get()：返回当前线程拷贝的局部线程变量的值。</li>
+<li>initialValue()：返回当前线程赋予局部线程变量的初始值。</li>
+<li>remove()：移除当前线程赋予局部线程变量的值。</li>
+<li>set(T value)：为当前线程拷贝的局部线程变量设置一个特定的值。</li>
+</ol>
+<h2 id="get-方法"><a href="#get-方法" class="headerlink" title="get()方法"></a>get()方法</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public T get() &#123;</span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        if (map != null) &#123;</span><br><span class="line">            ThreadLocalMap.Entry e = map.getEntry(this);</span><br><span class="line">            if (e != null)</span><br><span class="line">                return (T)e.value;</span><br><span class="line">        &#125;</span><br><span class="line">        return setInitialValue();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>根据当前线程，拿到ThreadLocalMap，通过当前threadloal对象取到value.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">private T setInitialValue() &#123;</span><br><span class="line">        T value = initialValue();</span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        if (map != null)</span><br><span class="line">            map.set(this, value);</span><br><span class="line">        else</span><br><span class="line">            createMap(t, value);</span><br><span class="line">        return value;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">ThreadLocalMap getMap(Thread t) &#123;</span><br><span class="line">        return t.threadLocals;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">void createMap(Thread t, T firstValue) &#123;</span><br><span class="line">        t.threadLocals = new ThreadLocalMap(this, firstValue);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>Thread.java 里面</p>
+<p>ThreadLocalMap是Thread的属性</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/* ThreadLocal values pertaining to this thread. This map is maintained</span><br><span class="line">     * by the ThreadLocal class. */</span><br><span class="line">    ThreadLocal.ThreadLocalMap threadLocals = null;</span><br></pre></td></tr></table></figure>
+
+
+<p>这个还跟之前的理解不太一样，以为是以当前threadId为key,取到值</p>
+<p>数据结构是这样的：</p>
+<p>threadlocal&lt;threadId,value&gt;</p>
+<p>事实上结构是这样的：</p>
+<p><strong>thread &lt;-&gt; threadlocalmap&lt;threadlocal,value&gt;</strong></p>
+<p><strong>每个Thread维护一个ThreadLocalMap映射表，这个映射表的key是ThreadLocal实例本身，value是真正需要存储的Object。</strong></p>
+<blockquote>
+<p>这样设计的主要有以下几点优势：</p>
+<ol>
+<li>这样设计之后每个Map的Entry数量变小了：之前是Thread的数量，现在是ThreadLocal的数量，能提高性能，据说性能的提升不是一点两点</li>
+<li>当 Thread销毁之后对应的ThreadLocalMap也就随之销毁了，能减少内存使用量。</li>
+</ol>
+</blockquote>
+<h1 id="内存泄露"><a href="#内存泄露" class="headerlink" title="内存泄露"></a>内存泄露</h1><p>有些人认为在使用此类时，容易出现OOM</p>
+<p><img src="http://qnimages.zhuxingsheng.com/threadlocal-mm.jpg" alt="image"></p>
+<blockquote>
+<p>如上图，ThreadLocalMap使用ThreadLocal的弱引用作为key，如果一个ThreadLocal没有外部强引用引用他，那么系统gc的时候，这个ThreadLocal势必会被回收，这样一来，ThreadLocalMap中就会出现key为null的Entry，就没有办法访问这些key为null的Entry的value，如果当前线程再迟迟不结束的话，这些key为null的Entry的value就会一直存在一条强引用链：</p>
+<p><strong>Thread Ref -&gt; Thread -&gt; ThreaLocalMap -&gt; Entry -&gt; value</strong></p>
+<p>永远无法回收，造成内存泄露。</p>
+</blockquote>
+<p>进一步分析一下ThreadlocalMap</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">     * ThreadLocalMap is a customized hash map suitable only for</span><br><span class="line">     * maintaining thread local values. No operations are exported</span><br><span class="line">     * outside of the ThreadLocal class. The class is package private to</span><br><span class="line">     * allow declaration of fields in class Thread.  To help deal with</span><br><span class="line">     * very large and long-lived usages, the hash table entries use</span><br><span class="line">     * WeakReferences for keys. However, since reference queues are not</span><br><span class="line">     * used, stale entries are guaranteed to be removed only when</span><br><span class="line">     * the table starts running out of space.</span><br><span class="line">     */</span><br><span class="line">    static class ThreadLocalMap &#123;</span><br></pre></td></tr></table></figure>
+<p>根据注释和代码，发现ThreadLocalMap并没有使用HashMap，而是重新实现了一个map<br>，里面放的Entry</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">         * The entries in this hash map extend WeakReference, using</span><br><span class="line">         * its main ref field as the key (which is always a</span><br><span class="line">         * ThreadLocal object).  Note that null keys (i.e. entry.get()</span><br><span class="line">         * == null) mean that the key is no longer referenced, so the</span><br><span class="line">         * entry can be expunged from table.  Such entries are referred to</span><br><span class="line">         * as &quot;stale entries&quot; in the code that follows.</span><br><span class="line">         */</span><br><span class="line">        static class Entry extends WeakReference&lt;ThreadLocal&gt; &#123;</span><br><span class="line">            /** The value associated with this ThreadLocal. */</span><br><span class="line">            Object value;</span><br><span class="line"></span><br><span class="line">            Entry(ThreadLocal k, Object v) &#123;</span><br><span class="line">                super(k);</span><br><span class="line">                value = v;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line">         * Construct a new map initially containing (firstKey, firstValue).</span><br><span class="line">         * ThreadLocalMaps are constructed lazily, so we only create</span><br><span class="line">         * one when we have at least one entry to put in it.</span><br><span class="line">         */</span><br><span class="line">        ThreadLocalMap(ThreadLocal firstKey, Object firstValue) &#123;</span><br><span class="line">            //默认16长度</span><br><span class="line">            table = new Entry[INITIAL_CAPACITY];</span><br><span class="line">            //hashcode取模，得到坑位</span><br><span class="line">            int i = firstKey.threadLocalHashCode &amp; (INITIAL_CAPACITY - 1);</span><br><span class="line">            table[i] = new Entry(firstKey, firstValue);</span><br><span class="line">            size = 1;</span><br><span class="line">            setThreshold(INITIAL_CAPACITY);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        /**</span><br><span class="line">         * Set the resize threshold to maintain at worst a 2/3 load factor.</span><br><span class="line">         */</span><br><span class="line">        private void setThreshold(int len) &#123;</span><br><span class="line">            threshold = len * 2 / 3;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        private void set(ThreadLocal key, Object value) &#123;</span><br><span class="line"></span><br><span class="line">			// We don&#x27;t use a fast path as with get() because it is at</span><br><span class="line">			// least as common to use set() to create new entries as</span><br><span class="line">			// it is to replace existing ones, in which case, a fast</span><br><span class="line">			// path would fail more often than not.</span><br><span class="line">			Entry[] tab = table;</span><br><span class="line">			int len = tab.length;</span><br><span class="line">			int i = key.threadLocalHashCode &amp; (len - 1);</span><br><span class="line"></span><br><span class="line">			for (Entry e = tab[i]; e != null; e = tab[i = nextIndex(i, len)]) &#123;</span><br><span class="line">				ThreadLocal k = e.get();</span><br><span class="line"></span><br><span class="line">				if (k == key) &#123;</span><br><span class="line">					e.value = value;</span><br><span class="line">					return;</span><br><span class="line">				&#125;</span><br><span class="line">				//key在gc时，会被回收，变成null</span><br><span class="line">				if (k == null) &#123;</span><br><span class="line">					replaceStaleEntry(key, value, i);</span><br><span class="line">					return;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			tab[i] = new Entry(key, value);</span><br><span class="line">			int sz = ++size;</span><br><span class="line">			if (!cleanSomeSlots(i, sz) &amp;&amp; sz &gt;= threshold)</span><br><span class="line">				rehash();</span><br><span class="line">		&#125;</span><br><span class="line">private void replaceStaleEntry(ThreadLocal key, Object value, int staleSlot) &#123;</span><br><span class="line">			Entry[] tab = table;</span><br><span class="line">			int len = tab.length;</span><br><span class="line">			Entry e;</span><br><span class="line"></span><br><span class="line">			// Back up to check for prior stale entry in current run.</span><br><span class="line">			// We clean out whole runs at a time to avoid continual</span><br><span class="line">			// incremental rehashing due to garbage collector freeing</span><br><span class="line">			// up refs in bunches (i.e., whenever the collector runs).</span><br><span class="line">			int slotToExpunge = staleSlot;</span><br><span class="line">                        //替换掉之前有key=null的</span><br><span class="line">			for (int i = prevIndex(staleSlot, len); (e = tab[i]) != null; i = prevIndex(i, len))</span><br><span class="line">				if (e.get() == null)</span><br><span class="line">					slotToExpunge = i;</span><br><span class="line"></span><br><span class="line">			// Find either the key or trailing null slot of run, whichever</span><br><span class="line">			// occurs first</span><br><span class="line">			for (int i = nextIndex(staleSlot, len); (e = tab[i]) != null; i = nextIndex(i, len)) &#123;</span><br><span class="line">				ThreadLocal k = e.get();</span><br><span class="line"></span><br><span class="line">				// If we find key, then we need to swap it</span><br><span class="line">				// with the stale entry to maintain hash table order.</span><br><span class="line">				// The newly stale slot, or any other stale slot</span><br><span class="line">				// encountered above it, can then be sent to expungeStaleEntry</span><br><span class="line">				// to remove or rehash all of the other entries in run.</span><br><span class="line">				if (k == key) &#123;</span><br><span class="line">					e.value = value;</span><br><span class="line"></span><br><span class="line">					tab[i] = tab[staleSlot];</span><br><span class="line">					tab[staleSlot] = e;</span><br><span class="line"></span><br><span class="line">					// Start expunge at preceding stale entry if it exists</span><br><span class="line">					if (slotToExpunge == staleSlot)</span><br><span class="line">						slotToExpunge = i;</span><br><span class="line">					cleanSomeSlots(expungeStaleEntry(slotToExpunge), len);</span><br><span class="line">					return;</span><br><span class="line">				&#125;</span><br><span class="line"></span><br><span class="line">				// If we didn&#x27;t find stale entry on backward scan, the</span><br><span class="line">				// first stale entry seen while scanning for key is the</span><br><span class="line">				// first still present in the run.</span><br><span class="line">				if (k == null &amp;&amp; slotToExpunge == staleSlot)</span><br><span class="line">					slotToExpunge = i;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			// If key not found, put new entry in stale slot</span><br><span class="line">			tab[staleSlot].value = null;</span><br><span class="line">			tab[staleSlot] = new Entry(key, value);</span><br><span class="line"></span><br><span class="line">			// If there are any other stale entries in run, expunge them</span><br><span class="line">			if (slotToExpunge != staleSlot)</span><br><span class="line">				cleanSomeSlots(expungeStaleEntry(slotToExpunge), len);</span><br><span class="line">		&#125;</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在这个过程中遇到的key为null的Entry都会被擦除，那么Entry内的value也就没有强引用链，自然会被回收。将key为null的这些Entry都删除，防止内存泄露。</p>
+</blockquote>
+<blockquote>
+<p>但是光这样还是不够的，上面的设计思路依赖一个前提条件：<br>要调用ThreadLocalMap的getEntry函数或者set函数。这当然是不可能任何情况都成立的，所以很多情况下需要使用者手动调用ThreadLocal的remove函数，手动删除不再需要的ThreadLocal，防止内存泄露。<br>所以JDK建议将ThreadLocal变量定义成private static的，<br>这样的话ThreadLocal的生命周期就更长，由于一直存在ThreadLocal的强引用，所以ThreadLocal也就不会被回收，也就能保证任何时候都能根据ThreadLocal的弱引用访问到Entry的value值，然后remove它，防止内存泄露</p>
+</blockquote>
+<h1 id="为什么使用弱引用"><a href="#为什么使用弱引用" class="headerlink" title="为什么使用弱引用"></a>为什么使用弱引用</h1><blockquote>
+<p>To help deal with very large and long-lived usages, the hash table entries use WeakReferences for keys.<br>为了应对非常大和长时间的用途，哈希表使用弱引用的 key</p>
+</blockquote>
+<ul>
+<li><strong>key 使用强引用</strong>：引用的ThreadLocal的对象被回收了，但是ThreadLocalMap还持有ThreadLocal的强引用，如果没有手动删除，ThreadLocal不会被回收，导致Entry内存泄漏。</li>
+<li><strong>key 使用弱引用</strong>：引用的ThreadLocal的对象被回收了，由于ThreadLocalMap持有ThreadLocal的弱引用，即使没有手动删除，ThreadLocal也会被回收。value在下一次ThreadLocalMap调用set,get，remove的时候会被清除</li>
+</ul>
+<p>比较两种情况，我们可以发现：由于ThreadLocalMap的生命周期跟Thread一样长，如果都没有手动删除对应key，都会导致内存泄漏，但是使用弱引用可以多一层保障：弱引用ThreadLocal不会内存泄漏，对应的value在下一次ThreadLocalMap调用set,get,remove的时候会被清除。</p>
+<p>因此，ThreadLocal内存泄漏的根源是：由于ThreadLocalMap的生命周期跟Thread一样长，如果没有手动删除对应key就会导致内存泄漏，而不是因为弱引用。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><strong>ThreadLocal的作用是提供线程内的局部变量，这种变量在线程的生命周期内起作用，减少同一个线程内多个函数或者组件之间一些公共变量的传递的复杂度。</strong></p>
+<ul>
+<li><p>不是为了解决多线程共享同步之类的作用</p>
+</li>
+<li><p>ThreadLocal变量定义成private static,不要定义成局部变量</p>
+</li>
+</ul>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="http://www.iteye.com/topic/617368">http://www.iteye.com/topic/617368</a></p>
+<p><a href="http://qifuguang.me/2015/09/02/[Java%E5%B9%B6%E5%8F%91%E5%8C%85%E5%AD%A6%E4%B9%A0%E4%B8%83]%E8%A7%A3%E5%AF%86ThreadLocal/">http://qifuguang.me/2015/09/02/[Java%E5%B9%B6%E5%8F%91%E5%8C%85%E5%AD%A6%E4%B9%A0%E4%B8%83]%E8%A7%A3%E5%AF%86ThreadLocal/</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ThreadLocal/" rel="tag"># ThreadLocal</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/jit-optimization.html" rel="prev" title="JIT优化之道">
+      <i class="fa fa-chevron-left"></i> JIT优化之道
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/game-introduction.html" rel="next" title="游戏小传序">
+      游戏小传序 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ThreadLocal%E7%9A%84%E6%84%8F%E4%B9%89"><span class="nav-number">2.</span> <span class="nav-text">ThreadLocal的意义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Threadlocal%E6%BA%90%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">Threadlocal源码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#get-%E6%96%B9%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">get()方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E6%B3%84%E9%9C%B2"><span class="nav-number">4.</span> <span class="nav-text">内存泄露</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BD%BF%E7%94%A8%E5%BC%B1%E5%BC%95%E7%94%A8"><span class="nav-number">5.</span> <span class="nav-text">为什么使用弱引用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">7.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

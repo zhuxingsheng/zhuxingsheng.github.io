@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="监控之前只总结了一篇《微服务-监控》，比较宏观。其中很多细节没有过深关注到，主要还是没有实践过，更没有去深度思考，所以很多有意思的技术点都错过了，比如traceid的生成，传递 大牛圈总的大作《微服务系统架构之分布式traceId追踪参考实现》已经给出解决方案，但还是再主动总结一下 意义为什么需要traceid，为了查看完整的调用链，一旦调用过程中出现问题，可以第一时间定位到问题现场 整个调用链是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="监控之traceid">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/monitored-traceid.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="监控之前只总结了一篇《微服务-监控》，比较宏观。其中很多细节没有过深关注到，主要还是没有实践过，更没有去深度思考，所以很多有意思的技术点都错过了，比如traceid的生成，传递 大牛圈总的大作《微服务系统架构之分布式traceId追踪参考实现》已经给出解决方案，但还是再主动总结一下 意义为什么需要traceid，为了查看完整的调用链，一旦调用过程中出现问题，可以第一时间定位到问题现场 整个调用链是">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-05-10T02:41:00.000Z">
+<meta property="article:modified_time" content="2022-07-23T03:55:01.050Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="ThreadLocal">
+<meta property="article:tag" content="链路追踪">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/monitored-traceid.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>监控之traceid | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/monitored-traceid.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          监控之traceid
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-05-10 10:41:00" itemprop="dateCreated datePublished" datetime="2019-05-10T10:41:00+08:00">2019-05-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-07-23 11:55:01" itemprop="dateModified" datetime="2022-07-23T11:55:01+08:00">2022-07-23</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>监控之前只总结了一篇<a href="http://www.zhuxingsheng.com/blog/microservice-monitoring.html">《微服务-监控》</a>，比较宏观。其中很多细节没有过深关注到，主要还是没有实践过，更没有去深度思考，所以很多有意思的技术点都错过了，比如traceid的生成，传递</p>
+<p>大牛圈总的大作<a href="https://www.jianshu.com/p/95d9f9f3fdc5">《微服务系统架构之分布式traceId追踪参考实现》</a>已经给出解决方案，但还是再主动总结一下</p>
+<h2 id="意义"><a href="#意义" class="headerlink" title="意义"></a>意义</h2><p>为什么需要traceid，为了查看完整的调用链，一旦调用过程中出现问题，可以第一时间定位到问题现场</p>
+<p>整个调用链是一棵树形结构，traceid的传递涉及到主干与支干，进程内与进程外</p>
+<h2 id="生成"><a href="#生成" class="headerlink" title="生成"></a>生成</h2><p><strong>原则是唯一不重复</strong>，比如现成的UUID</p>
+<p>但UUID一是丑、无意义，二是string；</p>
+<p>从字面意义以及未来落盘都不能说是最佳方案，比如想让traceid包含信息更丰富一些，能一眼看出此traceid是主干还是分支</p>
+<p>此traceid有没有最终落盘(这儿涉及到落盘抽样率，每天服务处理海量请求，总不能每个traceid都落盘)</p>
+<h3 id="Random"><a href="#Random" class="headerlink" title="Random"></a>Random</h3><p>这儿引申到如何更好地获取一个随机数又是一个课题，另开篇吧</p>
+<h2 id="传递"><a href="#传递" class="headerlink" title="传递"></a>传递</h2><p>在<a href="http://www.zhuxingsheng.com/blog/micro-service-fuse-mechanism.html">《熔断机制》</a>中提过，服务调用是一个1-&gt;N扇出，调用链展现出对应的树形结构，但调用嵌套都不会深，一般两层就差不多了</p>
+<ul>
+<li>traceId1<ul>
+<li>traceId1.1<ul>
+<li>traceId1.1.1</li>
+</ul>
+</li>
+<li>traceId2.1</li>
+<li>traceId3.1</li>
+</ul>
+</li>
+</ul>
+<h3 id="进程外"><a href="#进程外" class="headerlink" title="进程外"></a>进程外</h3><p>服务之间的传递</p>
+<p>serverA –&gt; serverB – serverC</p>
+<p>这儿在设计传输协议时，在协议头里面带上traceid</p>
+<h3 id="进程内"><a href="#进程内" class="headerlink" title="进程内"></a>进程内</h3><h4 id="主干"><a href="#主干" class="headerlink" title="主干"></a>主干</h4><p>这种场景ThreadLocal是最佳手法</p>
+<h4 id="支干"><a href="#支干" class="headerlink" title="支干"></a>支干</h4><p>比如serviceA – &gt; remote.serviceB</p>
+<p>trace是个树形结构，可以将remote.serviceB的traceId.parentId &#x3D; serviceA.traceId</p>
+<h4 id="异步子任务"><a href="#异步子任务" class="headerlink" title="异步子任务"></a>异步子任务</h4><p>子线程可以通过InheritableThreadLocal传递traceid</p>
+<p>顺带一下，InheritableThreadLocal的详细实现，先可补习一下ThreadLocal《解析ThreadLocal》</p>
+<p>在创建Thread时，会从父线程的inheritableThreadLocals复制到子线程中去，这样在子线程中就能拿到在父线程中的赋值</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">/* ThreadLocal values pertaining to this thread. This map is maintained</span><br><span class="line"> * by the ThreadLocal class. */</span><br><span class="line">ThreadLocal.ThreadLocalMap threadLocals = null;</span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line"> * InheritableThreadLocal values pertaining to this thread. This map is</span><br><span class="line"> * maintained by the InheritableThreadLocal class.</span><br><span class="line"> */</span><br><span class="line">ThreadLocal.ThreadLocalMap inheritableThreadLocals = null;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if (parent.inheritableThreadLocals != null)</span><br><span class="line">        this.inheritableThreadLocals =</span><br><span class="line">            ThreadLocal.createInheritedMap(parent.inheritableThreadLocals);</span><br></pre></td></tr></table></figure>
+
+<h4 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h4><p>如果没有线程池，以上就算是解决所有问题了，可实现毕竟是实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 子线程从父线程中取值</span><br><span class="line"> * @throws InterruptedException</span><br><span class="line"> */</span><br><span class="line">private static void testThreadpool() throws InterruptedException &#123;</span><br><span class="line">    ExecutorService executorService = Executors.newFixedThreadPool(1);</span><br><span class="line">    final ThreadLocal&lt;String&gt;  threadLocal = threadLocal();//new InheritableThreadLocal&lt;&gt;()</span><br><span class="line">    threadLocal.set(&quot;parent&quot;);</span><br><span class="line">    for(int i=0;i&lt;1;i++) &#123;</span><br><span class="line">        Runnable runnable = new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                System.out.println(Thread.currentThread().getName() +&quot; get parent value:&quot; + threadLocal.get());</span><br><span class="line">                threadLocal.set(&quot;sun&quot;);</span><br><span class="line">                System.out.println(Thread.currentThread().getId() + &quot;==&quot; + threadLocal.get());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        executorService.execute(runnable);</span><br><span class="line">        Thread.sleep(100);</span><br><span class="line">        executorService.execute(runnable);</span><br><span class="line">        Thread.sleep(100);</span><br><span class="line">        System.out.println(&quot;main:&quot; + threadLocal.get());</span><br><span class="line">    &#125;</span><br><span class="line">    executorService.shutdown();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了好重现问题，线程池大小为1，但会连续跑两次任务</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">pool-1-thread-1 get parent value:parent</span><br><span class="line">11==sun</span><br><span class="line">pool-1-thread-1 get parent value:sun</span><br><span class="line">11==sun</span><br><span class="line">main:parent</span><br></pre></td></tr></table></figure>
+<p>在第二次取父线程值时，却是第一次任务线程中的赋值，在线程池中子线程不能正常获取父线程值</p>
+<p>线程池中，线程会复用，线程中的inheritableThreadLocals没有被清空</p>
+<p><strong>解决方法一是：池中线程数大于任务线程，让线程没有重用机会</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ExecutorService executor = Executors.newFixedThreadPool(&gt;=[任务线程数])</span><br></pre></td></tr></table></figure>
+<p>但在多线程应用中，明显不能解决问题，任务数肯定远远超过线程数</p>
+<p><strong>解决方法二是：自定义实现在使用完线程主动清空inheritableThreadLocals</strong></p>
+<p>阿里开源transmittable-thread-local就实现这样的功能</p>
+<p>整体思路也是从主线程复制，使用，再清理</p>
+<blockquote>
+<p>TtlRunnable 构造方法中，调用了 TransmittableThreadLocal.Transmitter.capture() 获取当前线程中所有的上下文，并储存在 AtomicReference 中</p>
+</blockquote>
+<blockquote>
+<p>当线程执行时，调用 TtlRunnable run 方法，TtlRunnable 会从 AtomicReference 中获取出调用线程中所有的上下文，并把上下文给 TransmittableThreadLocal.Transmitter.replay 方法把上下文复制到当前线程。并把上下文备份</p>
+</blockquote>
+<blockquote>
+<p>当线程执行完，调用 TransmittableThreadLocal.Transmitter.restore 并把备份的上下文传入，恢复备份的上下文，把后面新增的上下文删除，并重新把上下文复制到当前线程</p>
+</blockquote>
+<p>transmittable-thread-local代码不多，但有很多亮点，可以自行膜拜</p>
+<p>在此场景，transmittable-thread-local还是太重了，其实可以简单借鉴一下transmittable-thread-local的思路，自定义Runnable</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public TransRunnable(Runnable runnable)&#123;</span><br><span class="line">    this.runnable = runnable;</span><br><span class="line">    //在创建时，获取父traceId</span><br><span class="line">    this.parentId = TranceContext.getParentTrace();</span><br><span class="line">&#125;</span><br><span class="line">@Override</span><br><span class="line">public void run() &#123;</span><br><span class="line">    //</span><br><span class="line">    String old = TranceContext.getParentTrace();</span><br><span class="line">    //设置父traceid</span><br><span class="line">    TranceContext.setParentTrace(parentId);</span><br><span class="line">    runnable.run();</span><br><span class="line">    //还原</span><br><span class="line">    TranceContext.setParentTrace(old);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在创建子线程时，把父traceId带进去，就能在子线程业务方法中拿到父traceId,这样整个调用链也不会断</p>
+<h3 id="schedule"><a href="#schedule" class="headerlink" title="schedule"></a>schedule</h3><p>traceid生成，有主动请求时，会生成，但如果是个系统的定时任务呢？</p>
+<ol>
+<li>让taskService调用一下入口，类似模拟用户行为</li>
+<li>主动生成一个parent traceId</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>到此，对于traceid的知识结构丰满了很多</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ThreadLocal/" rel="tag"># ThreadLocal</a>
+              <a href="/tags/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA/" rel="tag"># 链路追踪</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/a-copy-of-jvm-parameters.html" rel="prev" title="一份JVM参数">
+      <i class="fa fa-chevron-left"></i> 一份JVM参数
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/development-process-specification.html" rel="next" title="开发流程规范">
+      开发流程规范 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%84%8F%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">意义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E6%88%90"><span class="nav-number">2.</span> <span class="nav-text">生成</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Random"><span class="nav-number">2.1.</span> <span class="nav-text">Random</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%A0%E9%80%92"><span class="nav-number">3.</span> <span class="nav-text">传递</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%A4%96"><span class="nav-number">3.1.</span> <span class="nav-text">进程外</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E5%86%85"><span class="nav-number">3.2.</span> <span class="nav-text">进程内</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E5%B9%B2"><span class="nav-number">3.2.1.</span> <span class="nav-text">主干</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%94%AF%E5%B9%B2"><span class="nav-number">3.2.2.</span> <span class="nav-text">支干</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%82%E6%AD%A5%E5%AD%90%E4%BB%BB%E5%8A%A1"><span class="nav-number">3.2.3.</span> <span class="nav-text">异步子任务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0"><span class="nav-number">3.2.4.</span> <span class="nav-text">线程池</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#schedule"><span class="nav-number">3.3.</span> <span class="nav-text">schedule</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

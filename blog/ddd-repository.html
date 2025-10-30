@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="之前的DDD文章中也指出过，现在从理论角度对于repository是错误，但一直没有摸索出最佳实践，都是当DAO使用，区别在于repository是领域层，也没有深入思考过 最近再次温习《DDD第二弹》时，看到了这个评论  domain service不应该直接调用repository，这打破了我对repository的认知，对此让我不得不纠结一下repository,在之前的学习中，从没有听到此">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDD之Repository">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/ddd-repository.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="之前的DDD文章中也指出过，现在从理论角度对于repository是错误，但一直没有摸索出最佳实践，都是当DAO使用，区别在于repository是领域层，也没有深入思考过 最近再次温习《DDD第二弹》时，看到了这个评论  domain service不应该直接调用repository，这打破了我对repository的认知，对此让我不得不纠结一下repository,在之前的学习中，从没有听到此">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210308140145_1615183305.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210308133647_1615181807.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210318092459_1616030699.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210319162236_1616142156.jpg">
+<meta property="article:published_time" content="2021-03-20T12:17:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.674Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20210308140145_1615183305.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/ddd-repository.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>DDD之Repository | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ddd-repository.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DDD之Repository
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-03-20 20:17:00" itemprop="dateCreated datePublished" datetime="2021-03-20T20:17:00+08:00">2021-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>之前的DDD文章中也指出过，现在从理论角度对于repository是错误，但一直没有摸索出最佳实践，都是当DAO使用，区别在于repository是领域层，也没有深入思考过</p>
+<p>最近再次温习《DDD第二弹》时，看到了这个评论</p>
+<p><img src="http://images.zhuxingsheng.com/20210308140145_1615183305.jpg"></p>
+<p><strong>domain service不应该直接调用repository</strong>，这打破了我对repository的认知，对此让我不得不纠结一下repository,在之前的学习中，从没有听到此规则，repository与domain service都是领域层的，为什么两都不能相互调用呢？</p>
+<p>从源头重新梳理一下repository的知识，重新翻阅Eric Evans的《领域驱动设计》和Vaughn Vernon的《实现领域驱动设计》</p>
+<h1 id="repository"><a href="#repository" class="headerlink" title="repository"></a>repository</h1><p>repository是在《领域驱动设计》第六章领域对象的生命周期提出</p>
+<p><img src="http://images.zhuxingsheng.com/20210308133647_1615181807.jpg"></p>
+<blockquote>
+<p>factory用来创建领域对象，而repository就是在生命周期的中间和末尾使用，来提供查找和检索持久化对象并封装庞大基础设施的手段</p>
+</blockquote>
+<p>这句话就把repository的职责讲清楚了：</p>
+<ol>
+<li>提供查找和检索对象</li>
+<li>协调领域和数据映射层</li>
+</ol>
+<p>在现有技术范畴中，都使用DAO方式，为什么还需要引入repository呢？</p>
+<blockquote>
+<p>尽管repository和factory本身并不是来源于领域，但它们在领域设计中扮演着重要的角色。这些结构提供了易于掌握的模型对象处理方式，使model-driven design更完备</p>
+</blockquote>
+<blockquote>
+<p>领域驱动设计的目标是通过关注领域模型(而不是技术)来创建更好的软件。假设开发人员构造了一个SQL查询，并将它传递给基础设施层中的某个查询服务，然后再根据得到的表行数据的结果集提取出所需信息，最后将这些信息传递给构造函数或factory。开发人员执行这一连串操作的时候，早已不再把模型当作重点了。我们很自然地会把对象看作容器来放置查询出来的数据，这样整个设计就转向了数据处理风格。虽然具体的技术细节有所不同，但问题仍然存在–客户处理的是技术，而不是模型概念</p>
+</blockquote>
+<p>在DDD思想中，领域模型是最重要的，所有的一切手段都是为了让团队专注于模型，屏蔽一切非模型的技术细节，这样也才能做到通用语言，交流的都是模型</p>
+<h1 id="VS-DAO"><a href="#VS-DAO" class="headerlink" title="VS DAO"></a>VS DAO</h1><p>有人总结<strong>DDD就是分与合，分是手段、合是目的</strong>；对于DDD战略来讲，就是通过分来形成各个上下文界限，在各个上下文中，再去合，很类似归并算法</p>
+<p>而聚合就是最小的合，repository相对dao，是来管理聚合，管理领域对象生命周期</p>
+<ol>
+<li>为客户提供简单的模型，可用来获取持久化对象并管理生命周期</li>
+<li>使应用程序和领域设计与持久化技术（多种数据库策略甚至是多个数据源）解耦</li>
+<li>体现对象访问的设计决策</li>
+<li>可以很容易将它们替换为“哑实现”，以便在测试中使用（通常使用内存中的集合）</li>
+</ol>
+<hr>
+<p>而DAO的核心价值是封装了拼接SQL、维护数据库连接、事务等琐碎的底层逻辑，让业务开发可以专注于写代码。但是在本质上，DAO的操作还是数据库操作，DAO的某个方法还是在直接操作数据库和数据模型，只是少写了部分代码,并且可以操作任意表对象；在Uncle Bob的《代码整洁之道》一书里，作者用了一个非常形象的描述：</p>
+<ul>
+<li><strong>硬件（Hardware）</strong>：指创造了之后不可（或者很难）变更的东西。数据库对于开发来说，就属于”硬件“，数据库选型后基本上后面不会再变，比如：用了MySQL就很难再改为MongoDB，改造成本过高。</li>
+<li><strong>软件（Software）</strong>：指创造了之后可以随时修改的东西。对于开发来说，业务代码应该追求做”软件“，因为业务流程、规则在不停的变化，我们的代码也应该能随时变化。</li>
+<li><strong>固件（Firmware）</strong>：即那些强烈依赖了硬件的软件。我们常见的是路由器里的固件或安卓的固件等等。固件的特点是对硬件做了抽象，但仅能适配某款硬件，不能通用。所以今天不存在所谓的通用安卓固件，而是每个手机都需要有自己的固件。</li>
+</ul>
+<p>从上面的描述我们能看出来，数据库在本质上属于”硬件“，DAO 在本质上属于”固件“，而我们自己的代码希望是属于”软件“。但是，固件有个非常不好的特性，那就是会传播，也就是说当一个软件强依赖了固件时，由于固件的限制，会导致软件也变得难以变更，最终让软件变得跟固件一样难以变更</p>
+<p>举个软件很容易被“固化”的例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">private OrderDAO orderDAO;</span><br><span class="line">public Long addOrder(RequestDTO request) &#123;</span><br><span class="line">    // 此处省略很多拼装逻辑</span><br><span class="line">    OrderDO orderDO = new OrderDO();</span><br><span class="line">    orderDAO.insertOrder(orderDO);</span><br><span class="line">    return orderDO.getId();</span><br><span class="line">&#125;</span><br><span class="line">public void updateOrder(OrderDO orderDO, RequestDTO updateRequest) &#123;</span><br><span class="line">    orderDO.setXXX(XXX); // 省略很多</span><br><span class="line">    orderDAO.updateOrder(orderDO);</span><br><span class="line">&#125;</span><br><span class="line">public void doSomeBusiness(Long id) &#123;</span><br><span class="line">    OrderDO orderDO = orderDAO.getOrderById(id);</span><br><span class="line">    // 此处省略很多业务逻辑</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在上面的这段简单代码里，该对象依赖了DAO，也就是依赖了DB。虽然乍一看感觉并没什么毛病，但是假设未来要加一个缓存逻辑，代码则需要改为如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">private OrderDAO orderDAO;</span><br><span class="line">private Cache cache;</span><br><span class="line">public Long addOrder(RequestDTO request) &#123;</span><br><span class="line">    // 此处省略很多拼装逻辑</span><br><span class="line">    OrderDO orderDO = new OrderDO();</span><br><span class="line">    orderDAO.insertOrder(orderDO);</span><br><span class="line">    cache.put(orderDO.getId(), orderDO);</span><br><span class="line">    return orderDO.getId();</span><br><span class="line">&#125;</span><br><span class="line">public void updateOrder(OrderDO orderDO, RequestDTO updateRequest) &#123;</span><br><span class="line">    orderDO.setXXX(XXX); // 省略很多</span><br><span class="line">    orderDAO.updateOrder(orderDO);</span><br><span class="line">    cache.put(orderDO.getId(), orderDO);</span><br><span class="line">&#125;</span><br><span class="line">public void doSomeBusiness(Long id) &#123;</span><br><span class="line">    OrderDO orderDO = cache.get(id);</span><br><span class="line">    if (orderDO == null) &#123;</span><br><span class="line">        orderDO = orderDAO.getOrderById(id);</span><br><span class="line">    &#125;</span><br><span class="line">    // 此处省略很多业务逻辑</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这时，你会发现因为插入的逻辑变化了，导致在所有的使用数据的地方，都需要从1行代码改为至少3行。而当你的代码量变得比较大，然后如果在某个地方你忘记了查缓存，或者在某个地方忘记了更新缓存，轻则需要查数据库，重则是缓存和数据库不一致，导致bug。当你的代码量变得越来越多，直接调用DAO、缓存的地方越来越多时，每次底层变更都会变得越来越难，越来越容易导致bug。这就是软件被“固化”的后果。</p>
+<p>所以，我们需要一个模式，能够隔离我们的软件（业务逻辑）和固件&#x2F;硬件（DAO、DB），让我们的软件变得更加健壮，而这个就是Repository的核心价值</p>
+<hr>
+<p>这也是上面所述的第二点：协调领域和数据映射层</p>
+<p>如果说DAO是低层抽象，那么Repository是高层抽象，也更衬托出repository的本质：管理领域的生命周期，不管数据来源于何方，只要把聚合根完整地构建出来就可以</p>
+<h1 id="data-model与domain-model"><a href="#data-model与domain-model" class="headerlink" title="data model与domain model"></a>data model与domain model</h1><p>数据模型与领域模型，按照Robert在《整洁架构》里面的观点，领域模型是核心，数据模型是技术细节。然而现实情况是，二者都很重要</p>
+<p><img src="http://images.zhuxingsheng.com/20210318092459_1616030699.jpg"></p>
+<p><strong>数据模型负责的是数据存储，其要义是扩展性、灵活性、性能</strong></p>
+<p><strong>而领域模型负责业务逻辑的实现，其要义是业务语义显性化的表达，以及充分利用OO的特性增加代码的业务表征能力</strong></p>
+<h1 id="调用关系"><a href="#调用关系" class="headerlink" title="调用关系"></a>调用关系</h1><p>对于domain service不要调用repository，这个规则我不太明白，只能请教作者了，为什么要这样限制？ 作者回复：</p>
+<blockquote>
+<p>Domain Service是业务规则的集合，不是业务流程，所以Domain Service不应该有需要调用到Repo的地方。如果需要从另一个地方拿数据，最好作为入参，而不是在内部调用。DomainService需要是无状态的，加了Repo就有状态了。</p>
+</blockquote>
+<blockquote>
+<p>我一般的思考方式是：domainService是规则引擎，appService才是流程引擎。Repo跟规则无关</p>
+</blockquote>
+<p>业务规则与业务流程怎么区分？</p>
+<blockquote>
+<p>有个很简单的办法区分，业务规则是有if&#x2F;else的，业务流程没有</p>
+</blockquote>
+<p>作者这样回答，我还是觉得太抽象了，在domain service拿数据太常见，还在看DDD第四讲时，作者有个示例是用domain service直接调用repository的，以此为矛再次追问作者</p>
+<p><img src="http://images.zhuxingsheng.com/20210319162236_1616142156.jpg"></p>
+<p>这儿的domain service是直接使用repo的，如果里面的数据都使用入参，结构就有些怪啊</p>
+<blockquote>
+<p>在这个例子里确实是有点问题的（因为当时的关注点不是在这个细节上），一个更合理的方法是在AppService里查到Weapon，然后performAttack(Player, Monster, Weapon)。如果嫌多个入参太麻烦，可以封装一个AttackContext的集合对象。</p>
+</blockquote>
+<blockquote>
+<p>为什么要这么做？最直接的就是DomainService变得“无副作用”。如果你了解FP的话，可以认为他像一个pure function（当然只是像而已，本身不是pure的，因为会变更Entity，但至少不会有内存外的调用）。这个更多是一个选择，我更倾向于让DomainService无副作用（在这里副作用是是否有持久化的数据变更）。</p>
+</blockquote>
+<blockquote>
+<p>如果说Weapon无非是提供一些数据而已，那么我们假设扩展一下，每次attack都会降低Weapon的durability，那你在performAttack里面如果用了repo，是不是应该调用repo.save(weapon)？那为什么不直接在完成后直接用UserRepo.save(player)、MonsterRepo.save(monster)？然后再延伸一下，如果这些都做了，还要AppService干啥？这个Service到底是“业务规则”还是“业务流程”呢？</p>
+</blockquote>
+<blockquote>
+<p>从另一个角度来看，有的时候也不需要那么教条。DomainService不是完全不能用Repo，有时候一些复杂的规则肯定是要从”某个地方“拿数据的，特别是“只读”型的数据。但是我说DomainService不要调用repo时的核心思考是不希望大家在DomainService里有“副作用”。</p>
+</blockquote>
+<p>对于这种限制，我现在只能想到domain service要纯内存操作，不依赖repository可以提升可测试性</p>
+<h1 id="性能安全"><a href="#性能安全" class="headerlink" title="性能安全"></a>性能安全</h1><p>这是在落地时，很多人都会想到的问题</p>
+<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>查询聚合与性能的平衡，比如Order聚合根，但有时只想查订单主信息，不需要明细信息，但repository构建Order都全部查出来了，怎么办？在《实现领域驱动设计》中，也是不推荐这么干的，使用延迟加载，很多人也觉得这应该是设计问题，不能依赖延迟加载</p>
+<p>对此问题请教了作者：</p>
+<blockquote>
+<p>在业务系统里，最核心的目标就是要确保数据的一致性，而性能（包括2次数据库查询、序列化的成本）通常不是大问题。如果为了性能而牺牲一致性，就是捡了芝麻漏了西瓜，未来基本上必然会触发bug。</p>
+</blockquote>
+<blockquote>
+<p>如果性能实在是瓶颈，说明你的设计出了问题，说明你的查询目标（主订单信息）和写入目标（主子订单集合）是不一致的。这个时候一个通常的建议是用CQRS的方式，Read侧读取的可能是另一个存储（可能是搜索、缓存等），然后写侧是用完整的Aggregate来做变更操作，然后通过消息或binlog同步的方式做读写数据同步。</p>
+</blockquote>
+<p>这也涉及到业务类型，比如电商，一个订单下的订单明细是很少量的，而像票税，一张巨额业务单会有很多很多的订单明细，真要构建一个完整的聚合根相当吃内存</p>
+<h3 id="对象追踪"><a href="#对象追踪" class="headerlink" title="对象追踪"></a>对象追踪</h3><p>repostiory都是操作的聚合根，每次保存保存大多只会涉及部分数据，所以得对变化的对象进行追踪</p>
+<p>《实现领域驱动设计》中提到两种方法：</p>
+<ol>
+<li>隐式读时复制（Implicit Copy-on-Read）[Keith &amp; Stafford]：在从数据存储中读取一个对象时，持久化机制隐式地对该对象进行复制，在提交时，再将该复制对象与客户端中的对象进行比较。详细过程如下：当客户端请求持久化机制从数据存储中读取一个对象时，该持久化机制一方面将获取到的对象返回给客户端，一方面立即创建一份该对象的备份（除去延迟加载部分，这些部分可以在之后实际加载时再进行复制）。当客户端提交事务时，持久化机制把该复制对象与客户端中的对象进行比较。所有的对象修改都将更新到数据存储中。</li>
+<li>隐式写时复制Implicit Copy-on-Write）[Keith &amp; Stafford]：持久化机制通过委派来管理所有被加载的持久化对象。在加载每个对象时，持久化机制都会为其创建一个微小的委派并将其交给客户端。客户端并不知道自己调用的是委派对象中的行为方法，委派对象会调用真实对象中的行为方法。当委派对象首次接收到方法调用时，它将创建一份对真实对象的备份。委派对象将跟踪发生在真实对象上的改变，并将其标记为“肮脏的”（dirty）。当事务提交时，该事务检查所有的“肮脏”对象并将对它们的修改更新到数据存储中。</li>
+</ol>
+<p>以上两种方式之间的优势和区别可能会根据具体情况而不同。对于你的系统来说，如果两种方案都存在各自的优缺点，那么此时你便需要慎重考虑了。当然，你可以选择自己最喜欢的方式，但是这不见得是最安全的选择。<br>无论如何，这两种方式都有一个相同的优点，即它们都可以隐式地跟踪发生在持久化对象中的变化，而不需要客户端自行处理。这里的底线是，持久化机制，比如Hibernate，能够允许我们创建一个传统的、面向集合的资源库。<br>另一方面，即便我们能够使用诸如Hibernate这样的持久化机制来创建面向集合的资源库，我们依然会遇到一些不合适的场景。如果你的领域对性能要求非常高，并且在任何一个时候内存中都存在大量的对象，那么持久化机制将会给系统带来额外的负担。此时，你需要考虑并决定这样的持久化机制是否适合于你。当然，在很多情况下，Hibernate都是可以工作得很好的。因此，虽然我是在提醒大家这些持久化机制有可能带来的问题，但这并不意味着你就不应该采用它们。对任何工具的使用都需要多方位权衡</p>
+<p>《DDD第二弹》中也提到 业界有两个主流的变更追踪方案：这两个方案只是上面两种方案另取的两外名字而已，意思是一样的</p>
+<ol>
+<li>基于Snapshot的方案：当数据从DB里取出来后，在内存中保存一份snapshot，然后在数据写入时和snapshot比较。常见的实现如Hibernate</li>
+<li>基于Proxy的方案：当数据从DB里取出来后，通过weaving的方式将所有setter都增加一个切面来判断setter是否被调用以及值是否变更，如果变更则标记为Dirty。在保存时根据Dirty判断是否需要更新。常见的实现如Entity Framework</li>
+</ol>
+<p>Snapshot方案的好处是比较简单，成本在于每次保存时全量Diff的操作（一般用Reflection），以及保存Snapshot的内存消耗。<br>Proxy方案的好处是性能很高，几乎没有增加的成本，但是坏处是实现起来比较困难，且当有嵌套关系存在时不容易发现嵌套对象的变化（比如子List的增加和删除等），有可能导致bug。</p>
+<p>由于Proxy方案的复杂度，业界主流（包括EF Core）都在使用Snapshot方案。这里面还有另一个好处就是通过Diff可以发现哪些字段有变更，然后只更新变更过的字段，再一次降低UPDATE的成本。</p>
+<h2 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h2><p>设计聚合时，聚合要小，一是事务考虑，二是安全性考虑。当并发高时，对聚合根操作时，都需要增加乐观锁</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://blog.csdn.net/significantfrank/article/details/112570279">一文教你认清领域模型和数据模型</a></p>
+<p><a href="https://mp.weixin.qq.com/s/1bcymUcjCkOdvVygunShmw">第三讲 - Repository模式</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/java-exception-practice.html" rel="prev" title="Java异常实践">
+      <i class="fa fa-chevron-left"></i> Java异常实践
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/programmer-growth-rank.html" rel="next" title="程序员成长职级">
+      程序员成长职级 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#repository"><span class="nav-number">1.</span> <span class="nav-text">repository</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#VS-DAO"><span class="nav-number">2.</span> <span class="nav-text">VS DAO</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#data-model%E4%B8%8Edomain-model"><span class="nav-number">3.</span> <span class="nav-text">data model与domain model</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B0%83%E7%94%A8%E5%85%B3%E7%B3%BB"><span class="nav-number">4.</span> <span class="nav-text">调用关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E5%AE%89%E5%85%A8"><span class="nav-number">5.</span> <span class="nav-text">性能安全</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD"><span class="nav-number">5.1.</span> <span class="nav-text">性能</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E8%BF%BD%E8%B8%AA"><span class="nav-number">5.1.1.</span> <span class="nav-text">对象追踪</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8"><span class="nav-number">5.2.</span> <span class="nav-text">安全</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

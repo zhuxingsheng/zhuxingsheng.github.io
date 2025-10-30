@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="“学而优则仕”的传统文化渗透在各行各业。 那么”码而优则仕”则是这种文化的延伸，自然而然的结果。 当然很多程序员对做管理不感兴趣，想很纯粹的研究技术，成为一名技术专家。人各有志，但客观讲，技术专家与技术管理相比较，成为技术专家比技术管理难度大得多，只有做到在一个区域，一个行业屈指可数的顶尖专家，才有更加广阔的前景。尤其在国内的环境大多数都是业务型公司，技术本身没有直接价值，没有太高的壁垒，有太多能">
+<meta property="og:type" content="article">
+<meta property="og:title" content="码而优则仕的3个底层认知">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/three-underlying-cognition-of-code-and-excellence.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="“学而优则仕”的传统文化渗透在各行各业。 那么”码而优则仕”则是这种文化的延伸，自然而然的结果。 当然很多程序员对做管理不感兴趣，想很纯粹的研究技术，成为一名技术专家。人各有志，但客观讲，技术专家与技术管理相比较，成为技术专家比技术管理难度大得多，只有做到在一个区域，一个行业屈指可数的顶尖专家，才有更加广阔的前景。尤其在国内的环境大多数都是业务型公司，技术本身没有直接价值，没有太高的壁垒，有太多能">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210527230733_1622128053.jpg">
+<meta property="article:published_time" content="2022-03-20T08:16:00.000Z">
+<meta property="article:modified_time" content="2022-03-31T12:22:29.094Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="管理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20210527230733_1622128053.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/three-underlying-cognition-of-code-and-excellence.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>码而优则仕的3个底层认知 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/three-underlying-cognition-of-code-and-excellence.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          码而优则仕的3个底层认知
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-03-20 16:16:00" itemprop="dateCreated datePublished" datetime="2022-03-20T16:16:00+08:00">2022-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-03-31 20:22:29" itemprop="dateModified" datetime="2022-03-31T20:22:29+08:00">2022-03-31</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>“学而优则仕”的传统文化渗透在各行各业。</p>
+<p>那么”码而优则仕”则是这种文化的延伸，自然而然的结果。</p>
+<p>当然很多程序员对做管理不感兴趣，想很纯粹的研究技术，成为一名技术专家。人各有志，但客观讲，技术专家与技术管理相比较，成为技术专家比技术管理难度大得多，只有做到在一个区域，一个行业屈指可数的顶尖专家，才有更加广阔的前景。尤其在国内的环境大多数都是业务型公司，技术本身没有直接价值，没有太高的壁垒，有太多能取代你位置的人。</p>
+<p>当然，技术管理也有难度，尤其对于程序员群体。但只要做到一个团队内的最佳，则拿到了敲门砖，随时准备幸运之神的降临。跨越技术纯粹性的舒适性，技术管理之路就开启了。</p>
+<span id="more"></span>
+
+<hr>
+<p>当被首次提拔为技术管理时，会本能地做些什么呢？</p>
+<p>“我要让他们这样写代码”“以后这种事的流程这么走”“以后每周我们进行一次code review”“大家high起来”···</p>
+<p>这些很笼统，作为一名非管理专业且刚入门的管理新手，如何华丽转身？</p>
+<p>唯一驱动自我成长的帮助，就是寻找各种管理资料。</p>
+<p>各门各派的管理学说：</p>
+<p><strong>1、</strong> 管理没那么复杂，只要做好四件事：把管、理、人、事组成四象限</p>
+<p><img src="http://images.zhuxingsheng.com/20210527230733_1622128053.jpg"></p>
+<p><strong>2、</strong> 管理第一件事就是招聘</p>
+<p>招聘第一原则：宁缺毋滥</p>
+<p>基本要求：</p>
+<ol>
+<li>coding能力</li>
+<li>对技术的热情</li>
+<li>能简明扼要地沟通</li>
+<li>积极乐观</li>
+<li>对团队目标的认同</li>
+</ol>
+<p><strong>3、</strong> 打造团队是日常工作首当其冲的任务</p>
+<p>作为团队Leader，都要走在团队前面，为团队规划方向、定义技术路线和架构模型、建立与之匹配的团队组织结构、团队骨干和backup</p>
+<p><strong>4、</strong> Leader的基本要求 </p>
+<p>不仅基本功要扎实，还得有架构能力、抽象能力、设计能力，包括前瞻性技术规划的能力</p>
+<p><strong>5、</strong> 设计规范与制定流程</p>
+<p>如开发规范：命名规范、代码模板、maven规范、comment规范、统一API规范、异常规范、分支规范、日志规范</p>
+<p>制定流程：需求管理、架构评审、代码评审、发布评审</p>
+<p><strong>6、</strong> 技术管理能力</p>
+<p>技术视野和技术格局，以及诸如交付能力、运行保障能力、带团队能力等等，真正落在具体工作场景中的核心技术能力，团队规划、绩效考核、团队建设</p>
+<p><strong>7、</strong> 研发Leader的职责</p>
+<ol>
+<li>团队任务管理：开发工作量评估、开发任务分配</li>
+<li>团队生产质量提升：代码审核、开发风险识别&#x2F;报告&#x2F;协调解决</li>
+<li>团队生产力提升：代码模板研发与推广、最佳实践规范总结与推广、自动化研发生产工具研发与推广</li>
+<li>团队专业力提升：招聘面试、新人指导、领导复盘总结改进</li>
+</ol>
+<p>···</p>
+<p>···</p>
+<p>···</p>
+<hr>
+<p>看了上面的各个流派，是不是蒙圈了，没法干了，不知道到底要干什么？</p>
+<p>后面我去查找了管理的学术资料，管理的定义很简单：<strong>通过他人完成工作</strong>。</p>
+<p>明确不要再务实了，天天跟下属抢活干。</p>
+<p>并参加了一些管理培训，管理的4个任务</p>
+<ol>
+<li>达成目标：承接上级意图，带领团队追求卓越成果</li>
+<li>带好团队：明确方向，建立运作规则，奖罚公正</li>
+<li>发展自我：提升岗位能力，面向未来追求进步</li>
+<li>传承文化：身体力行，树立榜样</li>
+</ol>
+<p>根据所学，把管理定义进行一下扩句：</p>
+<ol>
+<li>让他人完成工作</li>
+<li>让他人高效完成工作</li>
+<li>让他人高效高质量完成工作</li>
+<li>让他人愉快高效高质量完成工作</li>
+<li>让他人主动愉快高效高质量完成工作</li>
+</ol>
+<hr>
+<p>虽然流派众多，干法万千，然而这些都是别人的，管理是艺术，终究需要结合自身特点，汇融众派集一身，形成自己的管理特色。</p>
+<p>在如此众多纷繁的方法论面前，怎么才能寻找到自己的特色，刘润说在快速变化的环境里面，我们要寻找底层逻辑，在乔新亮的CTO复盘中，发现了三个底层认知。</p>
+<p><strong>第一个：组织调整到位</strong></p>
+<p>乔老师讲的是职能型团队与产品型团队。</p>
+<p>对于一线管理者，组织调整，我想更多的是人才梯队。一个团队不可能都是强者，强强联合不如强弱组合。</p>
+<p><strong>第二个：加强协同效率</strong></p>
+<p>为什么要搞一堆开发规范，开会章程？不也是为了书同文，车同轨，让协作更流畅。</p>
+<p>为什么要建立坦诚透明的文化？也是为了减少信息差，上下同心，避免相互推诿。</p>
+<p><strong>第三个：激活团队活力</strong></p>
+<p>为什么要团建？公司是钱多请客吃饭？</p>
+<p>为什么搞考评淘汰，晋升制度？</p>
+<p>在招聘时，都要考察价值观？</p>
+<p>这些手段都是为了激活团队活力。</p>
+<p>当团队中越来越多的自律、自驱的同路人。先管，向管理要效益；然后慢慢不管，团队自律、自驱，管理达到无为状态。</p>
+<p>这三个底层认知是所有方法论的抽象，而在落地做事时，又得具象化。</p>
+<p>然而我想最根本的一条管理解法：业务持续高速发展，就如同个人一样：“何以解优，唯有暴富”。</p>
+<p>当公司业务在高速发展，野蛮扩张时，谁会关心管理细则，业务推着每个人前进，心中有成就感，财富也源源而来。心满意，钱到位。员工全火力猛干，老板也没空来看考勤记录，人员成本管控。</p>
+<p>但高速发展不会是常态，也就是管理不能永远缺席。管理是公司风险控制的重要保障。</p>
+<p>老子曾说：太上，不知有之；其次，亲而誉之；其次，畏之；其次，侮之。信不足焉，有不信焉。所以管理终极目标是不管。<strong>管理的目的是为了将不那么自我驱动的人，变得更主动、更积极，而不是当个监工，越管越严。</strong></p>
+<p>而且管理者的职责不是保证每个人的成功，而是保证组织以及留 在组织中成员成功。如果管理者只做好人，最后大家短期开心，长期组织死掉了，最终把所有人都害了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%A1%E7%90%86/" rel="tag"># 管理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/caching-is-a-face-project.html" rel="prev" title="缓存是个面子工程">
+      <i class="fa fa-chevron-left"></i> 缓存是个面子工程
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/ddd-layered-parameter-conversion-of-clean-code-series.html" rel="next" title="Clean Code系列之DDD分层参数转换">
+      Clean Code系列之DDD分层参数转换 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

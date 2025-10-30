@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="mapmap() method -&gt; Data Transformation map() takes Stream as input and return Stream Stream map(Stream input){} 1&lt;R&gt; Stream&lt;R&gt; map(Function&lt;? super T, ? extends R&gt; mapper);  It’s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JDK8的map与flatmap区别">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/the-difference-between-jdk8-map-and-flatmap.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="mapmap() method -&gt; Data Transformation map() takes Stream as input and return Stream Stream map(Stream input){} 1&lt;R&gt; Stream&lt;R&gt; map(Function&lt;? super T, ? extends R&gt; mapper);  It’s">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220924234105_1664034065.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220924235912_1664035152.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220925000252_1664035372.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220924234512_1664034312.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220924235040_1664034640.jpg">
+<meta property="article:published_time" content="2022-09-25T04:06:52.000Z">
+<meta property="article:modified_time" content="2022-09-25T04:21:26.953Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20220924234105_1664034065.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/the-difference-between-jdk8-map-and-flatmap.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>JDK8的map与flatmap区别 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/the-difference-between-jdk8-map-and-flatmap.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JDK8的map与flatmap区别
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-09-25 12:06:52 / Modified: 12:21:26" itemprop="dateCreated datePublished" datetime="2022-09-25T12:06:52+08:00">2022-09-25</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="http://images.zhuxingsheng.com/20220924234105_1664034065.jpg"></p>
+<h1 id="map"><a href="#map" class="headerlink" title="map"></a>map</h1><p>map() method -&gt; Data Transformation</p>
+<p>map() takes Stream<T> as input and return Stream<R></p>
+<p>Stream<R> map(Stream<T> input){}</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;R&gt; Stream&lt;R&gt; map(Function&lt;? super T, ? extends R&gt; mapper);</span><br></pre></td></tr></table></figure>
+
+<p>It’s mapper function produces single value for each input value.hence it is also called One-To-One mapping.</p>
+<p><img src="http://images.zhuxingsheng.com/20220924235912_1664035152.jpg"></p>
+<p>这个方法比较好理解，把一个事物映射为另一个事物，是一对一的关系。</p>
+<p>在没有stream.map()时，就在使用apache和guava的类似api</p>
+<p>apache中的ListUtils</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public static &lt;E&gt; List&lt;E&gt; transformedList(final List&lt;E&gt; list,final Transformer&lt;? super E, ? extends E&gt; transformer) </span><br></pre></td></tr></table></figure>
+
+<p>guava中的Lists</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public static &lt;F, T&gt; List&lt;T&gt; transform(List&lt;F&gt; fromList, Function&lt;? super F, ? extends T&gt; function)</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="flatMap"><a href="#flatMap" class="headerlink" title="flatMap"></a>flatMap</h1><p>flatMap() -&gt; map() + Flattering</p>
+<p>flatMap() takes Stream&lt;Stream<T>&gt; as input and return Stream<R></p>
+<p>Stream<R> map(Stream&lt;Stream<T>&gt; input){}</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;R&gt; Stream&lt;R&gt; flatMap(Function&lt;? super T, ? extends Stream&lt;? extends R&gt;&gt; mapper);</span><br></pre></td></tr></table></figure>
+
+<p>It’s mapper function produces multiple value for each input value.hence it is also called One-To-Many mapping.</p>
+<p><img src="http://images.zhuxingsheng.com/20220925000252_1664035372.jpg"></p>
+<h2 id="flattering"><a href="#flattering" class="headerlink" title="flattering"></a>flattering</h2><p>flatMap()其实是两个方法的合并，map()好理解，主要是flattering。</p>
+<p><img src="http://images.zhuxingsheng.com/20220924234512_1664034312.jpg"></p>
+<p><strong>Before Flattening: [[t,u], [v,w,x], [y,x]]</strong></p>
+<p><strong>After Flattening: [t,u,v,w,x,y,x]</strong></p>
+<p>其实就是把两层数组打平了。</p>
+<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><p>在stackoverflow上找的一个示例：</p>
+<p><a href="https://stackoverflow.com/questions/26684562/whats-the-difference-between-map-and-flatmap-methods-in-java-8">What’s the difference between map() and flatMap() methods in Java 8?</a></p>
+<p><strong>flatMap helps to flatten a Collection&lt;Collection<T>&gt; into a Collection<T>. In the same way, it will also flatten an Optional&lt;Optional<T>&gt; into Optional<T>.</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public class Parcel &#123;</span><br><span class="line"></span><br><span class="line">    String name;</span><br><span class="line">    List&lt;String&gt; items;</span><br><span class="line"></span><br><span class="line">    public Parcel(final String name, final String... items) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.items = Arrays.asList(items);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public List&lt;String&gt; getItems() &#123;</span><br><span class="line">        return items;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(final String[] args) &#123;</span><br><span class="line">        final Parcel amazon = new Parcel(&quot;amazon&quot;, &quot;Laptop&quot;, &quot;Phone&quot;);</span><br><span class="line">        final Parcel ebay = new Parcel(&quot;ebay&quot;, &quot;Mouse&quot;, &quot;Keyboard&quot;);</span><br><span class="line">        final List&lt;Parcel&gt; parcels = Arrays.asList(amazon, ebay);</span><br><span class="line"></span><br><span class="line">        System.out.println(&quot;-------- Without flatMap() ---------------------------&quot;);</span><br><span class="line">        final List&lt;List&lt;String&gt;&gt; mapReturn = parcels.stream()</span><br><span class="line">            .map(Parcel::getItems)</span><br><span class="line">            .collect(Collectors.toList());</span><br><span class="line">        System.out.println(&quot;\t collect() returns: &quot; + mapReturn);</span><br><span class="line"></span><br><span class="line">        System.out.println(&quot;\n-------- With flatMap() ------------------------------&quot;);</span><br><span class="line">        final List&lt;String&gt; flatMapReturn = parcels.stream()</span><br><span class="line">            .map(Parcel::getItems)</span><br><span class="line">            .flatMap(Collection::stream)</span><br><span class="line">            .collect(Collectors.toList());</span><br><span class="line">        System.out.println(&quot;\t collect() returns: &quot; + flatMapReturn);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-------- Without flatMap() ---------------------------</span><br><span class="line">	 collect() returns: [[Laptop, Phone], [Mouse, Keyboard]]</span><br><span class="line"></span><br><span class="line">-------- With flatMap() ------------------------------</span><br><span class="line">	 collect() returns: [Laptop, Phone, Mouse, Keyboard]</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://images.zhuxingsheng.com/20220924235040_1664034640.jpg"></p>
+<p>As you can see, with map() only:</p>
+<ul>
+<li>The intermediate type is Stream&lt;List<Item>&gt;</li>
+<li>The return type is List&lt;List<Item>&gt;</li>
+</ul>
+<p>and with flatMap():</p>
+<ul>
+<li>The intermediate type is Stream<Item></li>
+<li>The return type is List<Item></li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.javatpoint.com/flatmap-method-in-java-8">flatMap() Method in Java 8
+</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/technology-or-management.html" rel="prev" title="做技术还是做管理">
+      <i class="fa fa-chevron-left"></i> 做技术还是做管理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/how-do-architects-view-unified-language.html" rel="next" title="架构师如何看待统一语言">
+      架构师如何看待统一语言 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#map"><span class="nav-number">1.</span> <span class="nav-text">map</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#flatMap"><span class="nav-number">2.</span> <span class="nav-text">flatMap</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#flattering"><span class="nav-number">2.1.</span> <span class="nav-text">flattering</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B"><span class="nav-number">3.</span> <span class="nav-text">实例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

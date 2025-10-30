@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="为什么分层引用《领域驱动设计模式、原理与实践》  为了避免将代码库变成大泥球（BBoM）并因此减弱领域模型的完整性且最终减弱可用性，系统架构要支持技术复杂性与领域复杂性的分离。引起技术实现发生变化的原因与引起领域逻辑发生变化的原因显然不同，这就导致基础设施和领域逻辑问题会以不同速率发生变化  每一层都有各自的职责，显然这也是符合SRP的 如何分层DDD的标准形态   User Interface是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDD分层">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/ddd-layering.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="为什么分层引用《领域驱动设计模式、原理与实践》  为了避免将代码库变成大泥球（BBoM）并因此减弱领域模型的完整性且最终减弱可用性，系统架构要支持技术复杂性与领域复杂性的分离。引起技术实现发生变化的原因与引起领域逻辑发生变化的原因显然不同，这就导致基础设施和领域逻辑问题会以不同速率发生变化  每一层都有各自的职责，显然这也是符合SRP的 如何分层DDD的标准形态   User Interface是">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200315195302_1584273182.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200423202423_1587644663.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/202003151738_845.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200426001431_1587831271.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200319171211_1584609131.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200602233618_1591112178.jpg">
+<meta property="article:published_time" content="2020-07-21T15:06:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.469Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20200315195302_1584273182.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/ddd-layering.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>DDD分层 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ddd-layering.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DDD分层
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-21 23:06:00" itemprop="dateCreated datePublished" datetime="2020-07-21T23:06:00+08:00">2020-07-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="为什么分层"><a href="#为什么分层" class="headerlink" title="为什么分层"></a>为什么分层</h1><p>引用《领域驱动设计模式、原理与实践》</p>
+<blockquote>
+<p>为了避免将代码库变成大泥球（BBoM）并因此减弱领域模型的完整性且最终减弱可用性，系统架构要支持技术复杂性与领域复杂性的分离。引起技术实现发生变化的原因与引起领域逻辑发生变化的原因显然不同，这就导致基础设施和领域逻辑问题会以不同速率发生变化</p>
+</blockquote>
+<p>每一层都有各自的职责，显然这也是符合SRP的</p>
+<h1 id="如何分层"><a href="#如何分层" class="headerlink" title="如何分层"></a>如何分层</h1><p>DDD的标准形态</p>
+<p><img src="http://images.zhuxingsheng.com/20200315195302_1584273182.jpg"></p>
+<ol>
+<li>User Interface是用户接口层，主要用于处理用户发送的Restful请求和解析用户输入的配置文件等，并将信息传递给Application层的接口</li>
+<li>Application层是应用层，负责多进程管理及调度、多线程管理及调度、多协程调度和维护业务实例的状态模型。当调度层收到用户接口层的请求后，委托Context层与本次业务相关的上下文进行处理</li>
+<li>Domain层是领域层，定义领域模型，不仅包括领域对象及其之间关系的建模，还包括对象的角色role的显式建模</li>
+<li>Infrastructure层是基础实施层，为其他层提供通用的技术能力：业务平台，编程框架，持久化机制，消息机制，第三方库的封装，通用算法，等等</li>
+</ol>
+<p>根据DDD细化业务逻辑层</p>
+<p><img src="http://images.zhuxingsheng.com/20200423202423_1587644663.jpg"></p>
+<h1 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h1><p>结合maven的module,项目中现在分了八个module</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;modules&gt;</span><br><span class="line">    &lt;module&gt;generator-assist-dao&lt;/module&gt; <!-- 生成的dao --></span><br><span class="line">    &lt;module&gt;generator-assist-client-api&lt;/module&gt; <!-- swagger api yaml --></span><br><span class="line">    &lt;module&gt;assist-client-api&lt;/module&gt; <!-- 生成的api --></span><br><span class="line">    &lt;module&gt;assist-controller&lt;/module&gt; <!-- controller --></span><br><span class="line">    &lt;module&gt;assist-service&lt;/module&gt; <!-- domain --></span><br><span class="line">    &lt;module&gt;assist-infrastructure&lt;/module&gt; <!-- infrastructure --></span><br><span class="line">    &lt;module&gt;assist-common&lt;/module&gt; <!-- 基础common --></span><br><span class="line">    &lt;module&gt;start&lt;/module&gt; <!-- 启动入口及test --></span><br><span class="line">&lt;/modules&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="start"><a href="#start" class="headerlink" title="start"></a>start</h2><p>入口模块</p>
+<p>包结构：</p>
+<ul>
+<li>start  只有一个启动类</li>
+<li>test 单元测试</li>
+</ul>
+<p>除了启动类，还有单元测试</p>
+<h2 id="generator-assist-dao"><a href="#generator-assist-dao" class="headerlink" title="generator-assist-dao"></a>generator-assist-dao</h2><p>生成的dao类</p>
+<p>包结构：</p>
+<ul>
+<li>repository<ul>
+<li>model  与数据库对应的实体类</li>
+</ul>
+</li>
+<li>repository<ul>
+<li>mapper  mybatis的mapper</li>
+</ul>
+</li>
+</ul>
+<p>现在实践落地时，这个模块是个空模块，why?</p>
+<p>DDD中明确了repository概念，并属于domain层，但dao是对底层数据库的封装，具体实现类放在infrastructure层更合理</p>
+<p>在COLA中，作者也是为了领域层的纯洁性，依赖反转了，repository接口定义在domain层，而实现在infra层</p>
+<p><img src="http://images.zhuxingsheng.com/202003151738_845.png"></p>
+<p>但在落地时，domain与infra出现了循环依赖，COLA把实现放在了app层，这样有些另类，所以暂时先把repository全部放在了service层</p>
+<p>迷思：</p>
+<p>1、基于mybatis的实现，mapper本身是接口，repository实现类放在domain层，不要接口，这样满足DDD分层规则，但离DIP差了一步</p>
+<p>2、在<a href="http://www.zhuxingsheng.com/blog/entropy-of-ddd.html">《DDD之熵》</a>中提过</p>
+<blockquote>
+<p>DDD引入repository放在了领域层，一是对应聚合根的概念，二是抽象了数据库访问，，但DDD限界上下文可能不仅限于访问数据库，还可能访问同样属于外部设备的文件、网络与消息队列。为了隔离领域模型与外部设备，同样需要为它们定义抽象的出口端口，这些出口端口该放在哪里呢？如果依然放在领域层，就很难自圆其说。例如，出口端口EventPublisher支持将事件消息发布到消息队列，要将这样的接口放在领域层，就显得不伦不类了。倘若不放在位于内部核心的领域层，就只能放在领域层外部，这又违背了整洁架构思想</p>
+</blockquote>
+<p>3、是不是有别的理论支撑解决问题2</p>
+<h2 id="generator-assist-client-api"><a href="#generator-assist-client-api" class="headerlink" title="generator-assist-client-api"></a>generator-assist-client-api</h2><p>为了生成api的swagger yaml文件</p>
+<p>包结构：</p>
+<ul>
+<li>swagger-spec<ul>
+<li>all  swagger所有yaml文件的整合文件</li>
+<li>apis swagger定义的api</li>
+<li>models swagger定义的api中的model</li>
+</ul>
+</li>
+<li>swagger-templates 模板文件</li>
+</ul>
+<h2 id="assist-client-api"><a href="#assist-client-api" class="headerlink" title="assist-client-api"></a>assist-client-api</h2><p>通过swagger生成的api接口与api中的model</p>
+<p>包结构：</p>
+<ul>
+<li>client<ul>
+<li>api swagger生成的api接口</li>
+<li>model  swagger生成的request,response对象</li>
+</ul>
+</li>
+</ul>
+<h2 id="assist-controller"><a href="#assist-controller" class="headerlink" title="assist-controller"></a>assist-controller</h2><p>controller层，放置controller</p>
+<p>包结构：</p>
+<ul>
+<li>controller 所有的controller</li>
+<li>xxljob  xxljob补偿任务</li>
+</ul>
+<p>按DDD分层规范，controller属于ui层，处理restful请求</p>
+<ul>
+<li>接受请求 —— 由spring提供能力</li>
+<li>请求格式校验及转换 —— 格式校验遵循java Validation规范</li>
+<li>权限校验 —— 由网关处理</li>
+<li>路由请求 —— 网关处理</li>
+<li>记录请求 —— 专门Accessfilter处理</li>
+<li>回复响应 —— 由spring提供能力</li>
+</ul>
+<p>为什么还有一个xxljob包，从能力区分，xxljob放到infra层才对。这个原因类似generator-assist-dao模块，xxljob的handler需要调用application service，需要依赖service module</p>
+<p>因此可以把xxljob作为远程请求的一个入口，与controller一样归在ui层</p>
+<p>这儿引出一点思考，controller真的是ui层吗？能划分到别的层吗？</p>
+<p>有几种设计思路</p>
+<ol>
+<li>ui层完全归属于大前端，不在后端，也就不在ddd中，后端都是从application service开始</li>
+<li>controller归于ui</li>
+<li>controller归于infra，controller毕竟是依赖具体底层框架能力的adapter</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/20200426001431_1587831271.jpg"></p>
+<p>controller是基于springboot的具体实现</p>
+<p>从上面的分析，可以看出controller逻辑上是归到infra层，但物理上不能放到infra模块；也不能简单把controller看作MVC中的C，还有很多像xxljob样的入口</p>
+<ol>
+<li>入口会有很多，如controller、xxljob，还有mq等等</li>
+<li>还有进程内的，如event，应用层，基础设施层，领域层都有event，怎么区分event是个问题</li>
+<li>application serivce与domain service区分也常常给人带来烦恼</li>
+</ol>
+<p>这儿是否可以借鉴<a href="http://www.zhuxingsheng.com/blog/shape-of-ddd.html">《DDD之形》</a>中的端口和适配器架构</p>
+<p><img src="http://images.zhuxingsheng.com/20200319171211_1584609131.jpg"></p>
+<p>把controller看作driving adapter，既然区分这么复杂，那可不可以简单点，加厚controller，整合入口与application service</p>
+<p>简单点分成两部分：远程服务与本地服务</p>
+<ul>
+<li>远程服务：定义会跨进程服务，分为资源（Resource）服务、供应者（Provider）服务、控制器（Controller）服务与事件订阅者（Event Subscriber）服务</li>
+<li>本地服务：所有远程服务需要调用领域服务，必须经过本地服务才能调用；明确隔离外界与领域，防止领域模型外泄</li>
+</ul>
+<h2 id="assist-service"><a href="#assist-service" class="headerlink" title="assist-service"></a>assist-service</h2><p>domain层，但现在还是三层结构的思路，什么类都有，app service，domain service，dto,event 甚至还有基础设施层类</p>
+<p>包结构</p>
+<ul>
+<li>BO</li>
+<li>builder</li>
+<li>common</li>
+<li>component</li>
+<li>convertor</li>
+<li>domain</li>
+<li>dto</li>
+<li>event</li>
+<li>interceptor</li>
+<li>listener</li>
+<li>model</li>
+<li>repository</li>
+<li>service</li>
+<li>thrid</li>
+<li>valid</li>
+</ul>
+<h2 id="assist-infrastructure"><a href="#assist-infrastructure" class="headerlink" title="assist-infrastructure"></a>assist-infrastructure</h2><p>基础设施层</p>
+<p>包结构</p>
+<ul>
+<li>config  配置信息</li>
+<li>adapter  外部调用封装<ul>
+<li>clients 外部调用实现</li>
+<li>pl 服务接口的契约 published language</li>
+</ul>
+</li>
+<li>dp domain primitive  这是不是应该在domain层</li>
+<li>common 公共类，(InvoiceType与InvoiceTypeEnum的问题)</li>
+<li>event<ul>
+<li>publish 事件发布者，此包为空，直接依赖spring不需要自实现了</li>
+</ul>
+</li>
+<li>exception 异常类</li>
+<li>gateway  网关，封装访问外部系统或资源行为的对象<ul>
+<li>wechat  外部名称<ul>
+<li>api 外接接口</li>
+<li>dto 外接接口dto</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>local<ul>
+<li>pl</li>
+</ul>
+</li>
+<li>ports<ul>
+<li>clients 外部调用接口</li>
+</ul>
+</li>
+<li>repository<ul>
+<li>model</li>
+</ul>
+</li>
+<li>resources 资源</li>
+<li>service 依赖外部的service</li>
+<li>util 工具类</li>
+</ul>
+<p>现在的包结构很丰富，最常见的包就是gateway，配合acl与外部交互</p>
+<p><img src="http://images.zhuxingsheng.com/20200602233618_1591112178.jpg"></p>
+<p>U表示上游（Upstream）的被依赖方，D表示下游（Downstream）的依赖方。防腐层（ACL）放在下游，将上游的消息转化为下游的领域模型</p>
+<p>结合generator-assist-dao模块的问题，是否可以扩大ACL，而不仅限于gateway中,像资源库一样，不必完全遵循DDD只抽象repository，像访问第三方应用，缓存，消息都可以抽象出来，契合端口履行的职责一样</p>
+<hr>
+<h1 id="改造"><a href="#改造" class="headerlink" title="改造"></a>改造</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&lt;modules&gt;</span><br><span class="line">    &lt;module&gt;generator-assist-dao&lt;/module&gt; <!-- 生成的dao --></span><br><span class="line">    &lt;module&gt;generator-assist-client-api&lt;/module&gt; <!-- swagger api yaml --></span><br><span class="line">    &lt;module&gt;assist-client-api&lt;/module&gt; <!-- 生成的api --></span><br><span class="line">    &lt;module&gt;assist-ohs&lt;/module&gt; <!-- ohs --></span><br><span class="line">    &lt;module&gt;assist-service&lt;/module&gt; <!-- domain --></span><br><span class="line">    &lt;module&gt;assist-acl&lt;/module&gt; <!-- acl --></span><br><span class="line">    &lt;module&gt;start&lt;/module&gt; <!-- 启动入口及test --></span><br><span class="line">&lt;/modules&gt;</span><br></pre></td></tr></table></figure>
+
+<h2 id="assist-controller-1"><a href="#assist-controller-1" class="headerlink" title="assist-controller"></a>assist-controller</h2><p>根据上面的分析，这一层可以更厚实些</p>
+<p>改名为assist-ohs</p>
+<p>OHS,open host service 开放主机服务，定义公开服务的协议，包括通信的方式、传递消息的格式（协议）</p>
+<p>包结构</p>
+<ul>
+<li>remote<ul>
+<li>controller</li>
+<li>openapi</li>
+<li>xxljob</li>
+<li>subscribe</li>
+</ul>
+</li>
+<li>local<ul>
+<li>appservices</li>
+<li>pl (plush language)   request,response</li>
+<li>convertor</li>
+</ul>
+</li>
+</ul>
+<h2 id="assist-service-1"><a href="#assist-service-1" class="headerlink" title="assist-service"></a>assist-service</h2><p>domain层</p>
+<p>包结构</p>
+<ul>
+<li>domain 领域对象</li>
+<li>service 领域服务</li>
+<li>factory 领域对象工厂</li>
+<li>builder 领域对象构造器</li>
+</ul>
+<h2 id="assist-acl"><a href="#assist-acl" class="headerlink" title="assist-acl"></a>assist-acl</h2><p>扩大了基础设施层，隔离领域层与外部依赖，对所有外部环境一视同仁，无需针对资源库做特殊化处理，如此也可保证架构的简单性，repository、client、cahce…</p>
+<p>领域层依赖port接口</p>
+<p>包结构</p>
+<ul>
+<li>config 配置信息</li>
+<li>port 依赖外部接口<ul>
+<li>repository 数据库接口</li>
+<li>client 第三方系统接口</li>
+<li>publisher 消息接口</li>
+<li>cache 缓存接口</li>
+</ul>
+</li>
+<li>adapter port的具体实现<ul>
+<li>repository</li>
+<li>pl</li>
+<li>client</li>
+</ul>
+</li>
+</ul>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>模块划分以及包结构还只是一家之言，一是有充足的理论体系支撑，不管按DDD标准，还是变形，更多地有理有据，与团队、也与自己达成一致；二是domain的抽象，一切都是为了领域模型的稳定性和扩展性，形只是表象</p>
+<p>我们这个项目还是太注重了形，最重要的domain还是过弱</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/deadlock-analysis-continuation.html" rel="prev" title="死锁分析延续">
+      <i class="fa fa-chevron-left"></i> 死锁分析延续
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/why-is-the-local-variable-modified-as-final.html" rel="next" title="局部变量为何修饰为final">
+      局部变量为何修饰为final <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E5%88%86%E5%B1%82"><span class="nav-number">1.</span> <span class="nav-text">为什么分层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%88%86%E5%B1%82"><span class="nav-number">2.</span> <span class="nav-text">如何分层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A8%A1%E5%9D%97"><span class="nav-number">3.</span> <span class="nav-text">模块</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#start"><span class="nav-number">3.1.</span> <span class="nav-text">start</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#generator-assist-dao"><span class="nav-number">3.2.</span> <span class="nav-text">generator-assist-dao</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#generator-assist-client-api"><span class="nav-number">3.3.</span> <span class="nav-text">generator-assist-client-api</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#assist-client-api"><span class="nav-number">3.4.</span> <span class="nav-text">assist-client-api</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#assist-controller"><span class="nav-number">3.5.</span> <span class="nav-text">assist-controller</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#assist-service"><span class="nav-number">3.6.</span> <span class="nav-text">assist-service</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#assist-infrastructure"><span class="nav-number">3.7.</span> <span class="nav-text">assist-infrastructure</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%94%B9%E9%80%A0"><span class="nav-number">4.</span> <span class="nav-text">改造</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#assist-controller-1"><span class="nav-number">4.1.</span> <span class="nav-text">assist-controller</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#assist-service-1"><span class="nav-number">4.2.</span> <span class="nav-text">assist-service</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#assist-acl"><span class="nav-number">4.3.</span> <span class="nav-text">assist-acl</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

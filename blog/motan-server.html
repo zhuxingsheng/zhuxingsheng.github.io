@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="前引新年回来上班，记录下服务端的处理过程，就当热个身 服务端的处理也有套路，不管上层怎么玩，最后还得是通过反射得到Method对象，再调用invoke() 根据这张序列图，可以把服务端分为两部分  NettyServer前面的算一部分，搭基础构建Exporter对象 nettyserver后面的算一部分，找到对应method，invoke,通过网络返回  构建Exporter对象结合spring其">
+<meta property="og:type" content="article">
+<meta property="og:title" content="motan服务端">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/motan-server.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="前引新年回来上班，记录下服务端的处理过程，就当热个身 服务端的处理也有套路，不管上层怎么玩，最后还得是通过反射得到Method对象，再调用invoke() 根据这张序列图，可以把服务端分为两部分  NettyServer前面的算一部分，搭基础构建Exporter对象 nettyserver后面的算一部分，找到对应method，invoke,通过网络返回  构建Exporter对象结合spring其">
+<meta property="og:locale">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/motan-server.png">
+<meta property="article:published_time" content="2017-02-06T08:03:00.000Z">
+<meta property="article:modified_time" content="2021-09-29T07:24:30.476Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="motan">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qnimages.zhuxingsheng.com/motan-server.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/motan-server.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>motan服务端 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/motan-server.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          motan服务端
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-02-06 16:03:00" itemprop="dateCreated datePublished" datetime="2017-02-06T16:03:00+08:00">2017-02-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/source/" itemprop="url" rel="index"><span itemprop="name">源码解读</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前引"><a href="#前引" class="headerlink" title="前引"></a>前引</h1><p>新年回来上班，记录下服务端的处理过程，就当热个身</p>
+<p>服务端的处理也有套路，不管上层怎么玩，最后还得是通过反射得到Method对象，再调用invoke()</p>
+<p><img src="http://qnimages.zhuxingsheng.com/motan-server.png" alt="image"><br>根据这张序列图，可以把服务端分为两部分</p>
+<ol>
+<li>NettyServer前面的算一部分，搭基础构建Exporter对象</li>
+<li>nettyserver后面的算一部分，找到对应method，invoke,通过网络返回</li>
+</ol>
+<h1 id="构建Exporter对象"><a href="#构建Exporter对象" class="headerlink" title="构建Exporter对象"></a>构建Exporter对象</h1><h2 id="结合spring"><a href="#结合spring" class="headerlink" title="结合spring"></a>结合spring</h2><p>其实在《motan客户端》时有提过，但没有深究；spring扩展自定义xml是个很老的技术了<br><a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/xml-custom.html#extensible-xml-using">spring扩展xml文档</a></p>
+<blockquote>
+<p>spring通过XML解析程序将其解析为DOM树，通过NamespaceHandler指定对应的Namespace的BeanDefinitionParser将其转换成BeanDefinition。再通过Spring自身的功能对BeanDefinition实例化对象。</p>
+</blockquote>
+<blockquote>
+<p>在期间，Spring还会加载两项资料：</p>
+<ol>
+<li>META-INF&#x2F;spring.handlers</li>
+</ol>
+</blockquote>
+<blockquote>
+<p>指定NamespaceHandler(实现org.springframework.beans.factory.xml.NamespaceHandler)接口，或使用org.springframework.beans.factory.xml.NamespaceHandlerSupport的子类。<br>2. META-INF&#x2F;spring.schemas </p>
+</blockquote>
+<blockquote>
+<p>在解析XML文件时将XSD重定向到本地文件，避免在解析XML文件时需要上网下载XSD文件。通过现实org.xml.sax.EntityResolver接口来实现该功能。</p>
+</blockquote>
+<h2 id="ConfigHandler"><a href="#ConfigHandler" class="headerlink" title="ConfigHandler"></a>ConfigHandler</h2><p>解析完xml后，服务器通过ServiceConfigBean来监听spring容器加载完成。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">    public void onApplicationEvent(ContextRefreshedEvent event) &#123;</span><br><span class="line">        if (!getExported().get()) &#123;</span><br><span class="line">            export();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>调用export()，构建Exporter；</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">public synchronized void export() &#123;</span><br><span class="line">        if (exported.get()) &#123;</span><br><span class="line">            LoggerUtil.warn(String.format(&quot;%s has already been expoted, so ignore the export request!&quot;, interfaceClass.getName()));</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        checkInterfaceAndMethods(interfaceClass, methods);</span><br><span class="line"></span><br><span class="line">        List&lt;URL&gt; registryUrls = loadRegistryUrls();</span><br><span class="line">        if (registryUrls == null || registryUrls.size() == 0) &#123;</span><br><span class="line">            throw new IllegalStateException(&quot;Should set registry config for service:&quot; + interfaceClass.getName());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        Map&lt;String, Integer&gt; protocolPorts = getProtocolAndPort();</span><br><span class="line">        for (ProtocolConfig protocolConfig : protocols) &#123;</span><br><span class="line">            Integer port = protocolPorts.get(protocolConfig.getId());</span><br><span class="line">            if (port == null) &#123;</span><br><span class="line">                throw new MotanServiceException(String.format(&quot;Unknow port in service:%s, protocol:%s&quot;, interfaceClass.getName(),</span><br><span class="line">                        protocolConfig.getId()));</span><br><span class="line">            &#125;</span><br><span class="line">            doExport(protocolConfig, port, registryUrls);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        afterExport();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这个方法主要就做了两件事</p>
+<ol>
+<li>loadRegistryUrls()，根据<a href="motan:registry">motan:registry</a>,生成URL对象。URL也算是整个框架的核心，一个url包含了配置中的所有内容。就像一个领域对象一样。</li>
+</ol>
+<p>如果使用的是zookeeper，对就的URL就是：zookeeper:&#x2F;&#x2F;127.0.0.1:2181&#x2F;com.weibo.api.motan.registry.RegistryService?group&#x3D;default_rpc</p>
+<p>这是注册中心的URL</p>
+<p>而服务URL是以参数为embed为key包含在里面，里面包含了所有的服务参数</p>
+<p>motan:&#x2F;&#x2F;127.0.0.1:8002&#x2F;com.share.rpc.service.DEMOService?module&#x3D;match-rpc&amp;loadbalance&#x3D;activeWeight&amp;nodeType&#x3D;service&amp;accessLog&#x3D;true&amp;minWorkerThread&#x3D;2&amp;protocol&#x3D;motan&amp;isDefault&#x3D;true&amp;maxWorkerThread&#x3D;10&amp;refreshTimestamp&#x3D;1486448597095&amp;id&#x3D;com.weibo.api.motan.config.springsupport.ServiceConfigBean&amp;export&#x3D;protocolMatch:8002&amp;requestTimeout&#x3D;60000&amp;group&#x3D;match-rpc&amp;</p>
+<ol start="2">
+<li>doExport()</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ConfigHandler configHandler = ExtensionLoader.getExtensionLoader(ConfigHandler.class).getExtension(MotanConstants.DEFAULT_VALUE);</span><br><span class="line"> exporters.add(configHandler.export(interfaceClass, ref, urls));</span><br></pre></td></tr></table></figure>
+<p>到这儿就是委托给ConfigHandler处理了。</p>
+<p>默认的实现类：SimpleConfigHandler</p>
+<p>这个类里面有两个重要的方法：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">    public &lt;T&gt; T refer(Class&lt;T&gt; interfaceClass, List&lt;Cluster&lt;T&gt;&gt; clusters, String proxyType) &#123;</span><br><span class="line">        ProxyFactory proxyFactory = ExtensionLoader.getExtensionLoader(ProxyFactory.class).getExtension(proxyType);</span><br><span class="line">        return proxyFactory.getProxy(interfaceClass, new RefererInvocationHandler&lt;T&gt;(interfaceClass, clusters));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public &lt;T&gt; Exporter&lt;T&gt; export(Class&lt;T&gt; interfaceClass, T ref, List&lt;URL&gt; registryUrls) &#123;</span><br><span class="line"></span><br><span class="line">        String serviceStr = StringTools.urlDecode(registryUrls.get(0).getParameter(URLParamType.embed.getName()));</span><br><span class="line">        URL serviceUrl = URL.valueOf(serviceStr);</span><br><span class="line"></span><br><span class="line">        // export service</span><br><span class="line">        // 利用protocol decorator来增加filter特性</span><br><span class="line">        String protocolName = serviceUrl.getParameter(URLParamType.protocol.getName(), URLParamType.protocol.getValue());</span><br><span class="line">        Protocol protocol = new ProtocolFilterDecorator(ExtensionLoader.getExtensionLoader(Protocol.class).getExtension(protocolName));</span><br><span class="line">        Provider&lt;T&gt; provider = new DefaultProvider&lt;T&gt;(ref, serviceUrl, interfaceClass);</span><br><span class="line">        Exporter&lt;T&gt; exporter = protocol.export(provider, serviceUrl);</span><br><span class="line"></span><br><span class="line">        // register service</span><br><span class="line">        register(registryUrls, serviceUrl);</span><br><span class="line"></span><br><span class="line">        return exporter;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>refer()就是RefererConfig配置完后的调用的方法，就看到了客户端的核心类RefererInvocationHandler</p>
+<p>export()就是服务端使用的方法了。</p>
+<p>构造provider</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public interface Provider&lt;T&gt; extends Caller&lt;T&gt; &#123;</span><br><span class="line"></span><br><span class="line">    Class&lt;T&gt; getInterface();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实就是外面服务类的代理类,里面就一个服务类的引用。在初始化时，把所有的方法全部缓存</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">private void initMethodMap(Class&lt;T&gt; clz) &#123;</span><br><span class="line">        Method[] methods = clz.getMethods();</span><br><span class="line"></span><br><span class="line">        for (Method method : methods) &#123;</span><br><span class="line">            String methodDesc = ReflectUtil.getMethodDesc(method);</span><br><span class="line">            methodMap.put(methodDesc, method);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>Protocol的export就是启动一个netty server，提供对外服务。</p>
+<h2 id="register-注册服务"><a href="#register-注册服务" class="headerlink" title="register 注册服务"></a>register 注册服务</h2><p>按上面export()，先启动一个netty server，服务一切就绪后，再向注册中心进行注册了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">private void register(List&lt;URL&gt; registryUrls, URL serviceUrl) &#123;</span><br><span class="line"></span><br><span class="line">        for (URL url : registryUrls) &#123;</span><br><span class="line">            // 根据check参数的设置，register失败可能会抛异常，上层应该知晓</span><br><span class="line">            RegistryFactory registryFactory = ExtensionLoader.getExtensionLoader(RegistryFactory.class).getExtension(url.getProtocol());</span><br><span class="line">            if (registryFactory == null) &#123;</span><br><span class="line">                throw new MotanFrameworkException(new MotanErrorMsg(500, MotanErrorMsgConstant.FRAMEWORK_REGISTER_ERROR_CODE,</span><br><span class="line">                        &quot;register error! Could not find extension for registry protocol:&quot; + url.getProtocol()</span><br><span class="line">                                + &quot;, make sure registry module for &quot; + url.getProtocol() + &quot; is in classpath!&quot;));</span><br><span class="line">            &#125;</span><br><span class="line">            Registry registry = registryFactory.getRegistry(url);</span><br><span class="line">            registry.register(serviceUrl);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>根据注册协议选择注册中心<br>RegistryFacotry有三种：1. direct 2.local 3.zookeeper</p>
+<p>对应的registry也是这三种</p>
+<p>在zookeeperregistry里面，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">protected void doRegister(URL url) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            serverLock.lock();</span><br><span class="line">            // 防止旧节点未正常注销</span><br><span class="line">            removeNode(url, ZkNodeType.AVAILABLE_SERVER);</span><br><span class="line">            removeNode(url, ZkNodeType.UNAVAILABLE_SERVER);</span><br><span class="line">            createNode(url, ZkNodeType.UNAVAILABLE_SERVER);</span><br><span class="line">        &#125; catch (Throwable e) &#123;</span><br><span class="line">            throw new MotanFrameworkException(String.format(&quot;Failed to register %s to zookeeper(%s), cause: %s&quot;, url, getUrl(), e.getMessage()), e);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            serverLock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这儿注册后，这个服务还是unavailable，需要调用<br>MotanSwitcherUtil.setSwitcherValue(MotanConstants.REGISTRY_HEARTBEAT_SWITCHER, true);才能变成available</p>
+<h1 id="NettyServer"><a href="#NettyServer" class="headerlink" title="NettyServer"></a>NettyServer</h1><p>一样的套路，有一个默认ChannelHandler，其实什么事都不干，只是包装一下自定义Handler</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">final NettyChannelHandler handler = new NettyChannelHandler(NettyServer.this, messageHandler,</span><br><span class="line">				standardThreadExecutor);</span><br><span class="line"></span><br><span class="line">		bootstrap.setPipelineFactory(new ChannelPipelineFactory() &#123;</span><br><span class="line">			// FrameDecoder非线程安全，每个连接一个 Pipeline</span><br><span class="line">			public ChannelPipeline getPipeline() &#123;</span><br><span class="line">				ChannelPipeline pipeline = Channels.pipeline();</span><br><span class="line">				pipeline.addLast(&quot;channel_manage&quot;, channelManage);</span><br><span class="line">				pipeline.addLast(&quot;decoder&quot;, new NettyDecoder(codec, NettyServer.this, maxContentLength));</span><br><span class="line">				pipeline.addLast(&quot;encoder&quot;, new NettyEncoder(codec, NettyServer.this));</span><br><span class="line">				pipeline.addLast(&quot;handler&quot;, handler);</span><br><span class="line">				return pipeline;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>这儿有个有意思的MessageHandler:ProviderProtectedMessageRouter<br>从名字看，有保护功能</p>
+<blockquote>
+<ol>
+<li>如果接口只有一个方法，那么直接return true </li>
+<li>如果接口有多个方法，那么如果单个method超过 maxThread &#x2F; 2 &amp;&amp; totalCount &gt;  (maxThread * 3 &#x2F; 4)，那么return false;</li>
+<li>如果接口有多个方法(4个)，同时总的请求数超过 maxThread * 3 &#x2F; 4，同时该method的请求数超过 maxThead * 1 &#x2F; 4， 那么return false</li>
+<li>其他场景return true</li>
+</ol>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">protected boolean isAllowRequest(int requestCounter, int totalCounter, int maxThread, Request request) &#123;</span><br><span class="line">        if (methodCounter.get() == 1) &#123;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 该方法第一次请求，直接return true</span><br><span class="line">        if (requestCounter == 1) &#123;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 不简单判断 requsetCount &gt; (maxThread / 2) ，因为假如有2或者3个method对外提供，</span><br><span class="line">        // 但是只有一个接口很大调用量，而其他接口很空闲，那么这个时候允许单个method的极限到 maxThread * 3 / 4</span><br><span class="line">        if (requestCounter &gt; (maxThread / 2) &amp;&amp; totalCounter &gt; (maxThread * 3 / 4)) &#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 如果总体线程数超过 maxThread * 3 / 4个，并且对外的method比较多，那么意味着这个时候整体压力比较大，</span><br><span class="line">        // 那么这个时候如果单method超过 maxThread * 1 / 4，那么reject</span><br><span class="line">        return !(methodCounter.get() &gt;= 4 &amp;&amp; totalCounter &gt; (maxThread * 3 / 4) &amp;&amp; requestCounter &gt; (maxThread * 1 / 4));</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>拒绝的结果就是放一个异常：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">private Response reject(String method, int requestCounter, int totalCounter, int maxThread) &#123;</span><br><span class="line">        DefaultResponse response = new DefaultResponse();</span><br><span class="line">        MotanServiceException exception =</span><br><span class="line">                new MotanServiceException(&quot;ThreadProtectedRequestRouter reject request: request_counter=&quot; + requestCounter</span><br><span class="line">                        + &quot; total_counter=&quot; + totalCounter + &quot; max_thread=&quot; + maxThread, MotanErrorMsgConstant.SERVICE_REJECT);</span><br><span class="line">        exception.setStackTrace(new StackTraceElement[0]);</span><br><span class="line">        response.setException(exception);</span><br><span class="line">        LoggerUtil.error(&quot;ThreadProtectedRequestRouter reject request: request_method=&quot; + method + &quot; request_counter=&quot; + requestCounter</span><br><span class="line">                + &quot; =&quot; + totalCounter + &quot; max_thread=&quot; + maxThread);</span><br><span class="line">        return response;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="other"><a href="#other" class="headerlink" title="other"></a>other</h1><h2 id="RpcContext"><a href="#RpcContext" class="headerlink" title="RpcContext"></a>RpcContext</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private static final ThreadLocal&lt;RpcContext&gt; localContext = new ThreadLocal&lt;RpcContext&gt;() &#123;</span><br><span class="line">        protected RpcContext initialValue() &#123;</span><br><span class="line">            return new RpcContext();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    public static RpcContext getContext() &#123;</span><br><span class="line">        return localContext.get();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这个ThreadLocal尽然还可以设置默认初始值，以前尽然没用过</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>服务端相对客户端还是很简单的。</p>
+<p>没有ha,loadbalance，就是原生netty就把请求处理完了。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/motan/" rel="tag"># motan</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/motan-client.html" rel="prev" title="motan客户端">
+      <i class="fa fa-chevron-left"></i> motan客户端
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/gc-and-jvm-parameters.html" rel="next" title="GC及JVM参数">
+      GC及JVM参数 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E5%BC%95"><span class="nav-number">1.</span> <span class="nav-text">前引</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%84%E5%BB%BAExporter%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.</span> <span class="nav-text">构建Exporter对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E5%90%88spring"><span class="nav-number">2.1.</span> <span class="nav-text">结合spring</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ConfigHandler"><span class="nav-number">2.2.</span> <span class="nav-text">ConfigHandler</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#register-%E6%B3%A8%E5%86%8C%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.3.</span> <span class="nav-text">register 注册服务</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#NettyServer"><span class="nav-number">3.</span> <span class="nav-text">NettyServer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#other"><span class="nav-number">4.</span> <span class="nav-text">other</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RpcContext"><span class="nav-number">4.1.</span> <span class="nav-text">RpcContext</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

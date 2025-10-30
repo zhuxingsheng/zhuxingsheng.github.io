@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="成功就是简单道理的深刻理解与灵活运用  前不久，阿里大牛虾总在群里抛出一个问题：“从深层次讲解一下如何理解IOC，IOC和DI是一回事吗？” 这个问题真是让人平静而又不平静 平静源于此问题就像问中国人怎么使用筷子，天天使用筷子，难道还不会使用筷子？ 但又不平静，你能写出一份详细的说明书，让一个不会使用筷子的人按此说明成功地使用上筷子吗？  天天使用spring，是否还记得那些简单原理？现如今会写">
+<meta property="og:type" content="article">
+<meta property="og:title" content="IOC理解">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/ioc-understanding.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="成功就是简单道理的深刻理解与灵活运用  前不久，阿里大牛虾总在群里抛出一个问题：“从深层次讲解一下如何理解IOC，IOC和DI是一回事吗？” 这个问题真是让人平静而又不平静 平静源于此问题就像问中国人怎么使用筷子，天天使用筷子，难道还不会使用筷子？ 但又不平静，你能写出一份详细的说明书，让一个不会使用筷子的人按此说明成功地使用上筷子吗？  天天使用spring，是否还记得那些简单原理？现如今会写">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201901101401_336.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201901101434_102.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201901101541_849.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201901101541_386.png">
+<meta property="article:published_time" content="2019-01-10T08:32:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.469Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="IOC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201901101401_336.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/ioc-understanding.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>IOC理解 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ioc-understanding.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          IOC理解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-10 16:32:00" itemprop="dateCreated datePublished" datetime="2019-01-10T16:32:00+08:00">2019-01-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>成功就是简单道理的深刻理解与灵活运用</p>
+</blockquote>
+<p>前不久，阿里大牛虾总在群里抛出一个问题：“从深层次讲解一下如何理解IOC，IOC和DI是一回事吗？”</p>
+<p>这个问题真是让人平静而又不平静</p>
+<p>平静源于此问题就像问中国人怎么使用筷子，天天使用筷子，难道还不会使用筷子？</p>
+<p>但又不平静，你能写出一份详细的说明书，让一个不会使用筷子的人按此说明成功地使用上筷子吗？</p>
+<hr>
+<p>天天使用spring，是否还记得那些简单原理？现如今会写六种回字的你，还记得回的本意吗？</p>
+<blockquote>
+<p>那些曾经刻骨铭心的记忆,你有多久没有想起了</p>
+</blockquote>
+<hr>
+<h1 id="IOC"><a href="#IOC" class="headerlink" title="IOC"></a>IOC</h1><p>不管是平时交流，还是面试，当谈谈spring时，除了api使用，最主要还是要聊聊IOC</p>
+<p><strong>Ioc—Inversion of Control，即“控制反转”</strong></p>
+<p>从语文的角度解析一下，如果“控制”当成一个动作，那就需要完善主语与宾语，也就是“谁”控制了“谁”；</p>
+<p>“反转”：没有反转是什么情况，what反转，why反转，how反转</p>
+<p>分两种情况讨论，1、没有IOC容器，2、有IOC容器</p>
+<h2 id="没有IOC容器"><a href="#没有IOC容器" class="headerlink" title="没有IOC容器"></a>没有IOC容器</h2><h3 id="参与者"><a href="#参与者" class="headerlink" title="参与者"></a>参与者</h3><p>回答“谁”控制了“谁”中的两个“谁”</p>
+<p>抽象讲：某个对象A控制了另一个某对象B</p>
+<p>宏观讲 某个对象A可能就是应用程序，比如读取或者修改一个文件，那么此处的文件也就是某对象B了</p>
+<p>微观讲，objectA 操作了 objectB，比如给objectB的属性赋值</p>
+<p>从由内向外的角度 由两个参与者：某一对象（任意的对象类），以及对象外的各种资源（需要的其它对象、或者是对象需要的文件资源等等）</p>
+<h3 id="控制"><a href="#控制" class="headerlink" title="控制"></a>控制</h3><p>常规情况下的应用程序，如果要在A里面使用C，当然是直接去创建C的对象，也就是说，是在A类中主动去获取所需要的外部资源C</p>
+<p><img src="http://images.zhuxingsheng.com/201901101401_336.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A a = new AImpl(); </span><br><span class="line">C c = new CImpl(); </span><br><span class="line">a.setC(c);</span><br></pre></td></tr></table></figure>
+<p>当前类控制了一切：<strong>主动实例化、获取依赖、主动装配</strong></p>
+<p>这儿示例简单了点，一些项目会使用上Factory模式，让程序更面向接口，最小化变化，最大化地“开-闭”原则</p>
+<p><strong>但不管如何，还是会面临一些问题：</strong></p>
+<ol>
+<li>更换实现需要重新编译源代码</li>
+<li>依赖变更很难更换实现、难于测试</li>
+<li>耦合实例生产者和实例消费者</li>
+</ol>
+<h2 id="有IOC容器"><a href="#有IOC容器" class="headerlink" title="有IOC容器"></a>有IOC容器</h2><p>引入IOC容器</p>
+<h3 id="参与者-1"><a href="#参与者-1" class="headerlink" title="参与者"></a>参与者</h3><p>除了对象与对象外的资源，增加了IOC容器</p>
+<h3 id="控制-1"><a href="#控制-1" class="headerlink" title="控制"></a>控制</h3><p>引入IOC容器后，就不再是直接控制了，而是被动等待，等待IoC&#x2F;DI的容器获取一个C的实例，然后反向的注入到A类中</p>
+<p><img src="http://images.zhuxingsheng.com/201901101434_102.png"></p>
+<p>此时，对象不再主动去new,而IoC容器来创建这些对象，即由Ioc容器来控制对象的创建；</p>
+<p>再来看“谁”控制了“谁”?</p>
+<p>IoC 容器控制了对象；控制什么？主要控制了外部资源获取（不只是对象包括比如文件等）</p>
+<h3 id="反转"><a href="#反转" class="headerlink" title="反转"></a>反转</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A a = new AImpl(); </span><br><span class="line">C c = new CImpl(); </span><br><span class="line">a.setC(c);</span><br></pre></td></tr></table></figure>
+<p>还是看这段代码，包含了 <strong>主动实例化、获取依赖</strong>，<strong>主动装配</strong></p>
+<p>根据【控制】，IOC做到了<strong>主动实例化、获取依赖</strong>；而【反转】体现在了<strong>主动装配</strong>这一点</p>
+<p>传统应用程序是由我们自己在对象中主动控制去直接获取并set依赖对象，是为【正转】；</p>
+<p>而【反转】则是由容器来帮忙创建及注入依赖对象；</p>
+<p><strong>为何是反转？</strong></p>
+<p>因为由容器帮我们查找及注入依赖对象，对象只是被动的接受依赖对象，所以是反转；哪些方面反转了？依赖对象的获取、装配被反转了</p>
+<hr>
+<h2 id="IOC总结"><a href="#IOC总结" class="headerlink" title="IOC总结"></a>IOC总结</h2><p><strong>IoC很好的体现了面向对象设计法则之一—— 好莱坞法则：“别找我们，我们找你”</strong>；即由IoC容器帮对象找相应的依赖对象并注入，而不是由对象主动去找</p>
+<p><img src="http://images.zhuxingsheng.com/201901101541_849.png"></p>
+<p><em>传统关系转变成</em></p>
+<p><img src="http://images.zhuxingsheng.com/201901101541_386.png"></p>
+<p>IoC对编程带来的最大改变不是从代码上，而是从思想上，发生了“主从换位”的变化。应用程序原本是老大，要获取什么资源都是主动出击，但是在IoC思想中，应用程序就变成被动的了，被动的等待IoC容器来创建并注入它所需要的资源了</p>
+<p><strong>这么小小的一个改变其实是编程思想的一个大进步，这样就有效的分离了对象和它所需要的外部资源，使得它们松散耦合，有利于功能复用，更重要的是使得程序的整个体系结构变得非常灵活</strong></p>
+<h1 id="DI"><a href="#DI" class="headerlink" title="DI"></a>DI</h1><p><strong>DI—Dependency Injection，即“依赖注入”</strong>：组件之间依赖关系由容器在运行期决定，形象的说，即由容器动态的将某个依赖关系注入到组件之中。依赖注入的目的并非为软件系统带来更多功能，而是为了提升组件重用的频率，并为系统搭建一个灵活、可扩展的平台。</p>
+<p>通过依赖注入机制，我们只需要通过简单的配置，而无需任何代码就可指定目标需要的资源，完成自身的业务逻辑，而不需要关心具体的资源来自何处，由谁实现。　　</p>
+<p>理解DI的关键是：<strong>“谁依赖谁，为什么需要依赖，谁注入谁，注入了什么”</strong></p>
+<p>那我们来深入分析一下：</p>
+<ul>
+<li><strong>谁依赖于谁</strong>：当然是应用程序依赖于IoC容器；　　</li>
+<li><strong>为什么需要依赖</strong>：应用程序需要IoC容器来提供对象需要的外部资源；　　</li>
+<li><strong>谁注入谁</strong>：很明显是IoC容器注入应用程序某个对象，应用程序依赖的对象；　　</li>
+<li><strong>注入了什么</strong>：就是注入某个对象所需要的外部资源（包括对象、资源、常量数据）</li>
+</ul>
+<h1 id="IOC-VS-DI"><a href="#IOC-VS-DI" class="headerlink" title="IOC VS DI"></a>IOC VS DI</h1><p><strong>IoC和DI什么关系？</strong></p>
+<p>貌似是个仁者见仁的问题，有人认为两者是同一个东西，也有人认为是不同的概念；</p>
+<p>摘抄一些见解</p>
+<hr>
+<blockquote>
+<p>根据上面的讲述，应该能看出来，依赖注入和控制反转是对同一件事情的不同描述，从某个方面讲，就是它们描述的角度不同。依赖注入是从应用程序的角度在描述，可以把依赖注入描述完整点：应用程序依赖容器创建并注入它所需要的外部资源；而控制反转是从容器的角度在描述，描述完整点：容器控制应用程序，由容器反向的向应用程序注入应用程序所需要的外部资源。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>DI仅是用一个单独的对象（装配器）来装配对象之间的依赖关系，一般有setter、构造、接口注入等，与IOC不是一回事，仅是IOC依赖管理层面的东西</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>IOC是思想，DI是IOC的具体实现</p>
+</blockquote>
+<p>也可看看鼻祖Martin Fowler的表述</p>
+<blockquote>
+<p>As a result I think we need a more specific name for this pattern. Inversion of Control is too generic a term, and thus people find it confusing. As a result with a lot of discussion with various IoC advocates we settled on the name Dependency Injection.</p>
+</blockquote>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://www.martinfowler.com/articles/injection.html">Inversion of Control Containers and the Dependency Injection pattern</a><br><a href="https://jinnianshilongnian.iteye.com/blog/1413846">IOC是什么</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/IOC/" rel="tag"># IOC</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/algorithm---sort---cardinal-sort.html" rel="prev" title="算法渣-排序-基数排序">
+      <i class="fa fa-chevron-left"></i> 算法渣-排序-基数排序
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/parsing-distributed-locks.html" rel="next" title="剖析分布式锁">
+      剖析分布式锁 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#IOC"><span class="nav-number">1.</span> <span class="nav-text">IOC</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B2%A1%E6%9C%89IOC%E5%AE%B9%E5%99%A8"><span class="nav-number">1.1.</span> <span class="nav-text">没有IOC容器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E4%B8%8E%E8%80%85"><span class="nav-number">1.1.1.</span> <span class="nav-text">参与者</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6"><span class="nav-number">1.1.2.</span> <span class="nav-text">控制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%89IOC%E5%AE%B9%E5%99%A8"><span class="nav-number">1.2.</span> <span class="nav-text">有IOC容器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E4%B8%8E%E8%80%85-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">参与者</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%8D%E8%BD%AC"><span class="nav-number">1.2.3.</span> <span class="nav-text">反转</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#IOC%E6%80%BB%E7%BB%93"><span class="nav-number">1.3.</span> <span class="nav-text">IOC总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DI"><span class="nav-number">2.</span> <span class="nav-text">DI</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#IOC-VS-DI"><span class="nav-number">3.</span> <span class="nav-text">IOC VS DI</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

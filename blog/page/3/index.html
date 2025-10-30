@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="彪悍的人生需要书写">
+<meta property="og:type" content="website">
+<meta property="og:title" content="码农戏码">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/page/3/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="彪悍的人生需要书写">
+<meta property="og:locale">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/page/3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/several-package-styles-of-ddd-project-code-model.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/several-package-styles-of-ddd-project-code-model.html" class="post-title-link" itemprop="url">DDD工程代码模型的几种包风格</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-10-22 23:07:00" itemprop="dateCreated datePublished" datetime="2022-10-22T23:07:00+08:00">2022-10-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在团队中，一直在灌输DDD的理念，最近review一些新开发的项目时，发现工程包结构每个人的理解都是不一样的，命名也是各有特色。</p>
+<p>因此，觉得有必要把之前整理的工程结构重新梳理下。</p>
+<p>而在梳理的过程中，恍惚间，有种看山是山、看山不是山、看山还是山的体会。特别有意思。</p>
+<h1 id="传统风格"><a href="#传统风格" class="headerlink" title="传统风格"></a>传统风格</h1><p><img src="http://images.zhuxingsheng.com/20221018231040_1666105840.jpg"></p>
+<p>之前的总结<a href="http://www.zhuxingsheng.com/blog/ddd-layering.html">DDD分层</a>，每一层都是明确的。</p>
+<p>整个工程的包结构就是这样的：</p>
+<ul>
+<li>interface</li>
+<li>application</li>
+<li>domain</li>
+<li>infrastraction</li>
+</ul>
+<p>但是在落地时遇到了很多的问题，在DDD系列文章中也提到过：</p>
+<p>1、循环依赖：</p>
+<p>domain是依赖于infrastraction，但如repository接口是在domain层的，DDD也是这么定义的，但具体的ORM实现是在infrastraction。因此infrastraction又需要依赖domain。形成循环依赖。</p>
+<p>2、domain的厚度</p>
+<p>以前都是MVC，贫血模型。所以刚开始时，domain是很薄的，以致于没有存在感。很多service都被application干完了。常有application service与domain service区别的讨论。落地时也常搞混。</p>
+<h1 id="依赖倒置"><a href="#依赖倒置" class="headerlink" title="依赖倒置"></a>依赖倒置</h1><p>不知道是不是整洁架构，还是洋葱架构之后或之前吧，依赖倒置成了程序员认知的共识。</p>
+<p><img src="http://images.zhuxingsheng.com/20221020002206_1666196526.jpg"></p>
+<p>为了脱离大泥球，人们注意到整体中各个部分的需求变化速率不同，进而通过关注点分离来降低系统复杂度。这是分层架构的起源。</p>
+<p>倒置的原因，是因为领域层被赋于最稳定层。</p>
+<p>1、展现层</p>
+<p>逻辑是最容易改变的，新的交互模式以及不同视觉模板。</p>
+<p>2、应用层</p>
+<p>随着业务流程以及功能点的变化而改变。如流程重组和优化、新功能点引入，都会改变应用层逻辑。</p>
+<p>3、领域层</p>
+<p>核心领域概念的提取，只要领域概念和核心逻辑不变，基本是不变的。一旦领域层出现重大改变，就意味着重大业务调整，整个系统都被推倒重来。</p>
+<p>4、基础设施层</p>
+<p>逻辑由所选择的技术栈决定，更改技术组件、替换所使用的框架，都会改变基础设施层的逻辑。因而基础设施层的变化频率跟所用的技术组件有很大关系。越是核心的组件，变化就越缓慢，比如待定数据库系统后，不太可能频繁更换它，不太可能频繁地更换它。而如果是缓存系统，那么变化的频率会快很多。</p>
+<p>但基础设施层可能存在不可预知的突变。历数过往诸多思潮，NoSQL、大数据、云计算等等，都为基础设计层带来过未曾预期的突变。</p>
+<p>此外，周围系统生态的演化与变更，也会给基础设施层带来不可预知的突变的可能。比如，所依赖的消息通知系统从短信变成微信，支付方式从网银支付变成移动支付，等等。</p>
+<p>整个工程的包结构就是这样的：</p>
+<ul>
+<li>infrastraction</li>
+<li>interface</li>
+<li>application</li>
+<li>domain</li>
+</ul>
+<p>整体包结构是没有变化的，虽然理论是美好的，落地时问题依旧存在。尤其infrastraction与其它三层的不可调和的关系更浓烈了。</p>
+<p>从以往感观，其他三层是必须要依赖infrastraction的，结果现在却在最顶层。</p>
+<p>其实在之前文章中就提到，controller是在interface还是infrastraction，角度不同，在哪一层都可以。</p>
+<p>而像一些基础的，如mq，应用层要发消息，怎么办呢？依赖结构决定了无法使用。</p>
+<p>因此有人提出，<strong>基础设施层不是层</strong>的结论。每一层都是要依赖基础设施的。</p>
+<h1 id="菱形架构"><a href="#菱形架构" class="headerlink" title="菱形架构"></a>菱形架构</h1><p><img src="http://images.zhuxingsheng.com/20221010123012_1665376212.jpg"></p>
+<p>经过了一番学习，发现了菱形架构，解决了之前的很多问题。</p>
+<p>OHS：</p>
+<p>对外主机服务，提供一切入口服务，分为remote和local.</p>
+<p>remote:</p>
+<p>提供一切对外服务，来源有传统的web，还是MQ的订阅等等。</p>
+<p>local:</p>
+<p>本地服务，是application的演变，如果远程服务要访问domain，必须通过local才能到达。</p>
+<p>domain:</p>
+<p>意义不变，就是domain</p>
+<p>acl:</p>
+<p>是原先infrastraction,但把范围给扩大了。把所有对外部的依赖都纳入其中，甚至repository。</p>
+<p>port是表示接口，而adapter表示具体实现。</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/ddd-tactical-practice-guide.html">《DDD实践指南》</a>中有对菱形架构更详细的介绍。</p>
+<p>这样解决了上述两种方案的缺点，理解起来也简单。</p>
+<p>但后来还是不太喜欢，为啥，因为传统，传统的DDD理论中，repository是领域层，这儿却在acl中，所以一直在寻找别的方式来解决。</p>
+<h1 id="六边形风格"><a href="#六边形风格" class="headerlink" title="六边形风格"></a>六边形风格</h1><ul>
+<li>inputadapter</li>
+<li>application</li>
+<li>domain</li>
+<li>outputadapter</li>
+</ul>
+<p>这也是有相当数量受众的架构风格，类似于菱形风格，从外形理解也简单。</p>
+<h1 id="facade风格"><a href="#facade风格" class="headerlink" title="facade风格"></a>facade风格</h1><ul>
+<li>facade<ul>
+<li>query</li>
+<li>entity</li>
+<li>appliation</li>
+<li>adapter</li>
+</ul>
+</li>
+</ul>
+<p>这是在实践中，演变来的一种风格，对外一切都是facade，受CQRS影响</p>
+<p>分为query查询与entity单对象的创建、更新操作；</p>
+<p>application刚是业务原语的操作，简单理解为一个业务行为，会操作多个单entity；</p>
+<p>adapter刚是封装的infrastraction或第三方接口,提供给外部使用。</p>
+<h1 id="混合格斗风格"><a href="#混合格斗风格" class="headerlink" title="混合格斗风格"></a>混合格斗风格</h1><p>经过一系列的学习，输出一个融合风格。</p>
+<ul>
+<li>ohs<ul>
+<li>controller<ul>
+<li>pl</li>
+</ul>
+</li>
+<li>openapi<ul>
+<li>pl</li>
+</ul>
+</li>
+<li>xxljob</li>
+<li>subscriber<ul>
+<li>mq</li>
+<li>event</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>application<ul>
+<li>service</li>
+</ul>
+</li>
+<li>domain<ul>
+<li>entity</li>
+<li>vo</li>
+<li>aggregate</li>
+<li>repository</li>
+</ul>
+</li>
+<li>acl<ul>
+<li>port</li>
+<li>adapter</li>
+</ul>
+</li>
+<li>persistent</li>
+<li>foundation</li>
+<li>infrastraction<ul>
+<li>configuration</li>
+</ul>
+</li>
+</ul>
+<p>依赖关系：</p>
+<p>ohs -&gt; application</p>
+<p>ohs -&gt; infrastraction</p>
+<p>请求入口都在ohs，不然是api，还是队列监听。</p>
+<p>像队列底层属于infrastraction,但只面向接口编程，由ohs层实现。</p>
+<p>application -&gt; domain</p>
+<p>domain -&gt; foundation</p>
+<p>application是domain的facade</p>
+<p>domain -&gt; acl</p>
+<p>虽然可以通过供应商模式，其他层都依赖domain，但还有是会出来一些domain的依赖。放在acl中，供所有层使用。</p>
+<p>这样也可以把需要主动调用的内容从infrastraction中剥离开，解决掉了以往提到的循环依赖。</p>
+<h1 id="回归传统风格"><a href="#回归传统风格" class="headerlink" title="回归传统风格"></a>回归传统风格</h1><p>经过以上一系列的变化，可以说是由简到繁的过程。</p>
+<p>再回头看经历过的项目现状，想想每次项目初始化，自己内心的纠结，在团队中也需要宣贯，需要解释，需要深化。</p>
+<p>不如来得简单明了些，就使用最经典的DDD风格，只要有一点DDD理论知识，大家都看得明白。不会去问ohs是啥。</p>
+<p><img src="http://images.zhuxingsheng.com/20221022224958_1666450198.jpg"></p>
+<p>interface:有api、dto、assembler三个包，api接受外部请求，有传统的controller，还有rpc,callback,listener来的消息。dto就是传输对象。assembler则是interface-&gt;application时，把dto转换成application的command、query。</p>
+<p>application: 还是CQRS的思路，分成query、command;还有event，由内部及domain抛出的event。</p>
+<p>domain:还是核心概念，entity、vo、aggregate。但没有service，为啥，当有service时，经常会与application service相互干扰，并且会慢慢回到贫血模型。通过强制没有service，可以更加OO。</p>
+<p>infrastraction:被拆成不同部分。</p>
+<p>基础设施层，不单单是基础设施。得分成两种，一种像是acl,封装第三方接口；另一种像是mq,email等基础设施。</p>
+<p>1、我们常见的mq,cache,io,email等等都是基础设施层，domain不是直接依赖他们，而是通过DIP来倒置。表现形式是domain都是接口，而基础设施变成了能力供应商。</p>
+<p>2、而依赖的第三方接口，则是直接被domain,application调用。</p>
+<p>因此infrastraction被分成两部分，同时解除了循环依赖的困境。</p>
+<p>在之前文章中，提到过COLA的持久操作在application,当时很反感，后来感觉好像也对，也是供应商模式的一种体现。</p>
+<p><img src="http://images.zhuxingsheng.com/20221022230209_1666450929.jpg"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>当然，最核心的还是domain的设计，专注修炼OO，没有丰满的domain，一切都是花架子，形似无神。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/spring-boot-2.6.-x-and-swagger-3-compatibility-issue-tracking.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/spring-boot-2.6.-x-and-swagger-3-compatibility-issue-tracking.html" class="post-title-link" itemprop="url">springboot2.6.x与swagger3兼容问题追踪</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-10-12 23:05:00" itemprop="dateCreated datePublished" datetime="2022-10-12T23:05:00+08:00">2022-10-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-10-22 23:06:18" itemprop="dateModified" datetime="2022-10-22T23:06:18+08:00">2022-10-22</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近项目中使用了高版本的springboot-2.6.4，以及swagger3</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;io.springfox&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;springfox-boot-starter&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;3.0.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>结果启动应用程序失败，报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Failed to start bean &#x27;documentationPluginsBootstrapper&#x27;; nested exception is java.lang.NullPointerException</span><br></pre></td></tr></table></figure>
+
+<p>这个问题，网上资料不少，主要原因是因为springboot2.6.x后，把pathMatcher默认值修改了，springfox年久失修，与springboot出现了兼容性问题。</p>
+<p>找到一个Spring Boot下的Issue：<a href="https://github.com/spring-projects/spring-boot/issues/28794">https://github.com/spring-projects/spring-boot/issues/28794</a>，但这个issue已经关闭了，目前这个问题的主要讨论在springfox，具体issue是这个：<a href="https://github.com/springfox/springfox/issues/3462">https://github.com/springfox/springfox/issues/3462</a></p>
+<p>主要项目中还需要使用springboot-actuator,所以简单的修改一下配置spring.mvc.pathmatch.matching-strategy&#x3D;ant-path-matcher还不行。可参考：<a href="https://www.jianshu.com/p/8d23ba70bc4f">Spring Boot 2.6.x 集成swagger3.0.0报错解决方案</a>，<a href="https://fullstackcode.dev/2022/06/12/swagger-is-not-working-with-spring-boot-2-6-x/">Swagger is not working with Spring Boot 2.6.X</a></p>
+<p>在此问题追踪过程中，第一个就是原先的Ant方式与当前的PathPattern有什么区别：</p>
+<h1 id="AntPathMatcher-vs-PathPattern"><a href="#AntPathMatcher-vs-PathPattern" class="headerlink" title="AntPathMatcher vs PathPattern"></a>AntPathMatcher vs PathPattern</h1><h2 id="诞生时间"><a href="#诞生时间" class="headerlink" title="诞生时间"></a>诞生时间</h2><p>AntPathMatcher是一个早在2003年(Spring的第一个版本)就已存在的路径匹配器，</p>
+<p>而PathPattern是Spring 5新增的，旨在用于替换掉较为“古老”的AntPathMatcher。</p>
+<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>PathPattern性能比AntPathMatcher优秀。</p>
+<p>理论上pattern越复杂，PathPattern的优势越明显</p>
+<h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><p>1、PathPattern只适用于web环境，AntPathMatcher可用于非web环境。</p>
+<p>2、PathPattern去掉了Ant字样，但保持了很好的向下兼容性。</p>
+<p>3、除了不支持将 ** 写在path中间之外（以消除歧义），其它的匹配规则从行为上均保持和AntPathMatcher一致</p>
+<p>4、并且还新增了强大的{*pathVariable}的支持</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void test() &#123;</span><br><span class="line">    System.out.println(&quot;=======&#123;*pathVariable&#125;语法======&quot;);</span><br><span class="line">    PathPattern pattern = PathPatternParser.defaultInstance.parse(&quot;/api/com/zhuxingsheng/&#123;*pathVariable&#125;&quot;);</span><br><span class="line"></span><br><span class="line">    // 提取匹配到的的变量值</span><br><span class="line">    System.out.println(&quot;是否匹配：&quot; + pattern.matches(PathContainer.parsePath(&quot;/api/com/zhuxingsheng/a/b/c&quot;)));</span><br><span class="line">    PathPattern.PathMatchInfo pathMatchInfo = pattern.matchAndExtract(PathContainer.parsePath(&quot;/api/com/zhuxingsheng/a/b/c&quot;));</span><br><span class="line">    System.out.println(&quot;匹配到的值情况：&quot; + pathMatchInfo.getUriVariables());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">=======&#123;*pathVariable&#125;语法======</span><br><span class="line">是否匹配：true</span><br><span class="line">匹配到的值情况：&#123;pathVariable=/a/b/c&#125;</span><br></pre></td></tr></table></figure>
+<p>在没有PathPattern之前，虽然也可以通过&#x2F;**来匹配成功，但却无法得到匹配到的值，现在可以了！</p>
+<p>5、整体上可认为后者兼容了前者的功能</p>
+<p>具体介绍可查看：<br><a href="https://www.51cto.com/article/667796.html">《Spring5新宠PathPattern，AntPathMatcher：那我走？》</a></p>
+<p>在源码中也有详细说明：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">org.springframework.web.util.pattern.PathPattern</span><br><span class="line"></span><br><span class="line">? matches one character</span><br><span class="line">* matches zero or more characters within a path segment</span><br><span class="line">** matches zero or more path segments until the end of the path</span><br><span class="line">&#123;spring&#125; matches a path segment and captures it as a variable named &quot;spring&quot;</span><br><span class="line">&#123;spring:[a-z]+&#125; matches the regexp [a-z]+ as a path variable named &quot;spring&quot;</span><br><span class="line">&#123;*spring&#125; matches zero or more path segments until the end of the path and captures it as a variable named &quot;spring&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Note: In contrast to org.springframework.util.AntPathMatcher,</span><br><span class="line"></span><br><span class="line">** is supported only at the end of a pattern. For example /pages/&#123;**&#125; is valid but /pages/&#123;**&#125;/details is not. The same applies also to the capturing variant &#123;*spring&#125;. </span><br><span class="line"></span><br><span class="line">The aim is to eliminate ambiguity when comparing patterns for specificity</span><br></pre></td></tr></table></figure>
+
+<p>在springboot 2.6后，Spring MVC处理程序映射匹配请求路径的默认策略已<strong>从AntPathMatcher更改为PathPatternParser</strong></p>
+<p>Actuator端点现在也使用基于 PathPattern 的 URL 匹配。需要注意的是，Actuator端点的路径匹配策略无法通过配置属性进行配置。</p>
+<p>如果需要将默认切换回 AntPathMatcher，可以将 spring.mvc.pathmatch.matching-strategy 设置为 ant-path-matcher</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring.mvc.pathmatch.matching-strategy=ant-path-matcher</span><br></pre></td></tr></table></figure>
+
+<h1 id="springboot2-6-X与swagger3兼容"><a href="#springboot2-6-X与swagger3兼容" class="headerlink" title="springboot2.6.X与swagger3兼容"></a>springboot2.6.X与swagger3兼容</h1><p>为什么改变了下pathmatch方式，就会影响到swagger，没想明白，毕竟swagger的路径，PathPattern也是可以正常解析的。</p>
+<p>debug了下代码：</p>
+<p>不配置spring.mvc.pathmatch.matching-strategy</p>
+<p>应用在启动时，会自动设置PatternPaser</p>
+<p><img src="http://images.zhuxingsheng.com/20221016153622_1665905782.jpg"></p>
+<p>可以看到默认值就是PATH_PATTERN_PARSER，也正是springboot2.6后的默认方式：</p>
+<p><img src="http://images.zhuxingsheng.com/20221016153859_1665905939.jpg"></p>
+<p>不配置时spring.mvc.pathmatch.matching-strategy，pathPatterns是被赋值的：</p>
+<p><img src="http://images.zhuxingsheng.com/20221016155051_1665906651.jpg"></p>
+<p>springfox.documentation.spring.web.WebMvcRequestHandler#getPatternsCondition时，就是null。</p>
+<p><img src="http://images.zhuxingsheng.com/20221016155556_1665906956.jpg"></p>
+<p>这样也就出现了文章开头的兼容问题。</p>
+<p>在配置ant-path-matcher后，RequestMappingInfo中的pathPatterns和patterns的赋值变化，pathPatterns是无值，patterns是有值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring.mvc.pathmatch.matching-strategy=ant-path-matcher</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://images.zhuxingsheng.com/20221016152702_1665905222.jpg"></p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p><a href="https://blog.csdn.net/u011943534/article/details/121656010">解决springboot2.6和swagger冲突的问题</a>这篇文章算是列举方案比较全的。</p>
+<p>如果只是通过BeanProcessor修改了HandleMapping，但不修改pathmatch，会访问不了swagger，会出现以下错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">o.s.web.servlet.PageNotFound             : No mapping for GET /webjars/js/chunk-vendors.90e8ba20.js</span><br><span class="line">o.s.web.servlet.PageNotFound             : No mapping for GET /webjars/js/chunk-735c675c.be4e3cfe.js</span><br><span class="line">o.s.web.servlet.PageNotFound             : No mapping for GET /webjars/css/app.f802fc13.css</span><br></pre></td></tr></table></figure>
+<p>可以追加一下swagger资源的映射，最终出的方案：<a href="https://www.jianshu.com/p/1ea987c75073%EF%BC%9B">https://www.jianshu.com/p/1ea987c75073；</a></p>
+<p>在整合actuator时，<a href="https://blog.csdn.net/kkorkk/article/details/123774484">SpringBoot 2.6.* 整合springfox 3.0报错</a>中也指出了，并且解释了原理。但没有理解作者表达的springfox.documentation.spring.web.WebMvcRequestHandler#getPatternsCondition时为null的过滤掉。</p>
+<p>代码里面反而是把为null的提取出来了呀。</p>
+<h2 id="springdoc"><a href="#springdoc" class="headerlink" title="springdoc"></a>springdoc</h2><p>既然swagger3.0更新不及时，就不用再纠结，直接使用springdoc也是很好的方案。</p>
+<p>使用springdoc来替换swagger3.0，<a href="https://springdoc.org/migrating-from-springfox.html">《从springfox迁移到springdoc》</a></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>虽然解决了问题，但原理尚需追踪。不如用springdoc来得简单些。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/how-do-architects-view-unified-language.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/how-do-architects-view-unified-language.html" class="post-title-link" itemprop="url">架构师如何看待统一语言</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-10-07 22:47:00" itemprop="dateCreated datePublished" datetime="2022-10-07T22:47:00+08:00">2022-10-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="DDD统一语言"><a href="#DDD统一语言" class="headerlink" title="DDD统一语言"></a>DDD统一语言</h1><p>统一语言，最早听到这个概念是在学习DDD的时候。</p>
+<p>统一语言在DDD中，是一个很重要的概念。</p>
+<p>DDD中的几个大词：问题域，解决域，战略，战术，统一语言，界限上下文</p>
+<p><img src="http://images.zhuxingsheng.com/20220925202428_1664108668.jpg"></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/how-do-architects-view-unified-language.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/the-difference-between-jdk8-map-and-flatmap.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/the-difference-between-jdk8-map-and-flatmap.html" class="post-title-link" itemprop="url">JDK8的map与flatmap区别</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-09-25 12:06:52 / Modified: 12:21:26" itemprop="dateCreated datePublished" datetime="2022-09-25T12:06:52+08:00">2022-09-25</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="http://images.zhuxingsheng.com/20220924234105_1664034065.jpg"></p>
+<h1 id="map"><a href="#map" class="headerlink" title="map"></a>map</h1><p>map() method -&gt; Data Transformation</p>
+<p>map() takes Stream<T> as input and return Stream<R></p>
+<p>Stream<R> map(Stream<T> input){}</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;R&gt; Stream&lt;R&gt; map(Function&lt;? super T, ? extends R&gt; mapper);</span><br></pre></td></tr></table></figure>
+
+<p>It’s mapper function produces single value for each input value.hence it is also called One-To-One mapping.</p>
+<p><img src="http://images.zhuxingsheng.com/20220924235912_1664035152.jpg"></p>
+<p>这个方法比较好理解，把一个事物映射为另一个事物，是一对一的关系。</p>
+<p>在没有stream.map()时，就在使用apache和guava的类似api</p>
+<p>apache中的ListUtils</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public static &lt;E&gt; List&lt;E&gt; transformedList(final List&lt;E&gt; list,final Transformer&lt;? super E, ? extends E&gt; transformer) </span><br></pre></td></tr></table></figure>
+
+<p>guava中的Lists</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public static &lt;F, T&gt; List&lt;T&gt; transform(List&lt;F&gt; fromList, Function&lt;? super F, ? extends T&gt; function)</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="flatMap"><a href="#flatMap" class="headerlink" title="flatMap"></a>flatMap</h1><p>flatMap() -&gt; map() + Flattering</p>
+<p>flatMap() takes Stream&lt;Stream<T>&gt; as input and return Stream<R></p>
+<p>Stream<R> map(Stream&lt;Stream<T>&gt; input){}</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;R&gt; Stream&lt;R&gt; flatMap(Function&lt;? super T, ? extends Stream&lt;? extends R&gt;&gt; mapper);</span><br></pre></td></tr></table></figure>
+
+<p>It’s mapper function produces multiple value for each input value.hence it is also called One-To-Many mapping.</p>
+<p><img src="http://images.zhuxingsheng.com/20220925000252_1664035372.jpg"></p>
+<h2 id="flattering"><a href="#flattering" class="headerlink" title="flattering"></a>flattering</h2><p>flatMap()其实是两个方法的合并，map()好理解，主要是flattering。</p>
+<p><img src="http://images.zhuxingsheng.com/20220924234512_1664034312.jpg"></p>
+<p><strong>Before Flattening: [[t,u], [v,w,x], [y,x]]</strong></p>
+<p><strong>After Flattening: [t,u,v,w,x,y,x]</strong></p>
+<p>其实就是把两层数组打平了。</p>
+<h1 id="实例"><a href="#实例" class="headerlink" title="实例"></a>实例</h1><p>在stackoverflow上找的一个示例：</p>
+<p><a href="https://stackoverflow.com/questions/26684562/whats-the-difference-between-map-and-flatmap-methods-in-java-8">What’s the difference between map() and flatMap() methods in Java 8?</a></p>
+<p><strong>flatMap helps to flatten a Collection&lt;Collection<T>&gt; into a Collection<T>. In the same way, it will also flatten an Optional&lt;Optional<T>&gt; into Optional<T>.</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public class Parcel &#123;</span><br><span class="line"></span><br><span class="line">    String name;</span><br><span class="line">    List&lt;String&gt; items;</span><br><span class="line"></span><br><span class="line">    public Parcel(final String name, final String... items) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">        this.items = Arrays.asList(items);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public List&lt;String&gt; getItems() &#123;</span><br><span class="line">        return items;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public static void main(final String[] args) &#123;</span><br><span class="line">        final Parcel amazon = new Parcel(&quot;amazon&quot;, &quot;Laptop&quot;, &quot;Phone&quot;);</span><br><span class="line">        final Parcel ebay = new Parcel(&quot;ebay&quot;, &quot;Mouse&quot;, &quot;Keyboard&quot;);</span><br><span class="line">        final List&lt;Parcel&gt; parcels = Arrays.asList(amazon, ebay);</span><br><span class="line"></span><br><span class="line">        System.out.println(&quot;-------- Without flatMap() ---------------------------&quot;);</span><br><span class="line">        final List&lt;List&lt;String&gt;&gt; mapReturn = parcels.stream()</span><br><span class="line">            .map(Parcel::getItems)</span><br><span class="line">            .collect(Collectors.toList());</span><br><span class="line">        System.out.println(&quot;\t collect() returns: &quot; + mapReturn);</span><br><span class="line"></span><br><span class="line">        System.out.println(&quot;\n-------- With flatMap() ------------------------------&quot;);</span><br><span class="line">        final List&lt;String&gt; flatMapReturn = parcels.stream()</span><br><span class="line">            .map(Parcel::getItems)</span><br><span class="line">            .flatMap(Collection::stream)</span><br><span class="line">            .collect(Collectors.toList());</span><br><span class="line">        System.out.println(&quot;\t collect() returns: &quot; + flatMapReturn);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>结果输出：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-------- Without flatMap() ---------------------------</span><br><span class="line">	 collect() returns: [[Laptop, Phone], [Mouse, Keyboard]]</span><br><span class="line"></span><br><span class="line">-------- With flatMap() ------------------------------</span><br><span class="line">	 collect() returns: [Laptop, Phone, Mouse, Keyboard]</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://images.zhuxingsheng.com/20220924235040_1664034640.jpg"></p>
+<p>As you can see, with map() only:</p>
+<ul>
+<li>The intermediate type is Stream&lt;List<Item>&gt;</li>
+<li>The return type is List&lt;List<Item>&gt;</li>
+</ul>
+<p>and with flatMap():</p>
+<ul>
+<li>The intermediate type is Stream<Item></li>
+<li>The return type is List<Item></li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://www.javatpoint.com/flatmap-method-in-java-8">flatMap() Method in Java 8
+</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/technology-or-management.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/technology-or-management.html" class="post-title-link" itemprop="url">做技术还是做管理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-09-12 11:36:00 / Modified: 12:36:27" itemprop="dateCreated datePublished" datetime="2022-09-12T11:36:00+08:00">2022-09-12</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>新晋管理者都有一些相同的烦恼和忧愁。</p>
+<p>“管理事太杂了，没时间写代码，越来越虚”</p>
+<p>“如何平稳技术与管理？”</p>
+<p>“管理事太琐碎，离技术越来越远，未来职业怎么规划？”</p>
+<p>“做管理最大的挑战，就是舍弃技术，特别难”</p>
+<p>这些问题的本源是因为新晋管理者正在进入一个全新的领域，离开以往的舒适区。</p>
+<p>以往的舒适区是技术范围，而且主要是技术实现。接受一个功能需求，通过技术实现出来。</p>
+<p>而成为管理后，不再是技术实现，而是任务分配，团队建设，资源协调等等脱离技术的事项。</p>
+<p><strong>走出舒适区是相当痛苦的，它会让人产生不安全感，让人容易自我质疑，以及自我否定，进而退回舒适区</strong>。</p>
+<p>新晋管理者都有类似这种前怕狼后怕虎的焦虑。</p>
+<p>前怕狼后怕虎，狼是啥？管理之路不好走，事很杂，心里虚。虎是啥？离技术越来越远，失去了技术优势。</p>
+<p>从自身安身立命安全感角度讲，是青黄不接的时候，管理还没有摸出门道，不知道怎么搞定，倍感焦虑；而熟练掌握的技术，却投入的时间越来越少。</p>
+<p>这种纠结的状态，归纳为一个词叫：患得患失。还没有得到时，担心得不到；得到后，又担心失去。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/technology-or-management.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/the-dilemma-of-ddd-aggregation-design.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/the-dilemma-of-ddd-aggregation-design.html" class="post-title-link" itemprop="url">DDD聚合设计的困境</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-08-28 21:17:00" itemprop="dateCreated datePublished" datetime="2022-08-28T21:17:00+08:00">2022-08-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>为什么学了一堆DDD理论，但就是无法落地呢？很多人认为它只是个理论。</p>
+<p>最近又看了一遍《IDDD》第十章聚合，结合已有的理论知识，来反思下这个问题。</p>
+<h1 id="DDD聚合是什么？"><a href="#DDD聚合是什么？" class="headerlink" title="DDD聚合是什么？"></a>DDD聚合是什么？</h1><p>最容易与DDD聚合混淆的就是OO聚合关系。</p>
+<p><img src="http://images.zhuxingsheng.com/20220825003339_1661358819.jpg"></p>
+<p>由上图可以看出，OO聚合表示了一种关联关系；而DDD聚合表示了一种边界。</p>
+<p>OO聚合关系(Aggregation) 表示一个整体与部分的关系。通常在定义一个整体类后，再去分析这个整体类的组成结构，从而找出一些成员类，该整体类和成员类之间就形成了聚合关系。</p>
+<p>如上图中Question与Answer的关系。一个问题与很多的回答构成一个完整的问答关系。</p>
+<p>在OO中还有一种比聚合关系更强的关联关系：</p>
+<p>组合关系(Composition)也表示类之间整体和部分的关系，但是组合关系中部分和整体具有统一的生存周期。一旦整体对象不存在，部分对象也将不存在，部分对象与整体对象之间<strong>具有相同的生命周期</strong>。</p>
+<p>继续以上图为例，Answer都是因Question存在而存在，当Question消亡时，Answer也自然消亡。</p>
+<p>但像知乎，就算Question没了，Answer也会留存。</p>
+<p>OO聚合与DDD聚合是什么样的关系呢？</p>
+<p>因为聚合有隐含的构建关系和级联生命周期，通常会把OO组合关系构建成DDD聚合，<strong>其实组合关系只是聚合的必要条件，而非充分条件</strong>。</p>
+<p>如果是聚合，那么聚合根与实体自然是组合，存在级联生命周期，但不代表存在级连生命周期都是聚合。</p>
+<p>特别是，混淆了数据生命周期和对象生命周期，</p>
+<p>例如在“获取客户订单”这一业务场景下，Customer 与 Order 之间也存在整体&#x2F;部分的组合关系，但它们却不应该放在同一个 DDD 聚合内。</p>
+<p>从数据生命周期看，一般如果数据库中顾客数据删除了，那么他对应的订单也会删除。</p>
+<p>但不适合建模成聚合。</p>
+<p>因为这两个类并没有共同体现一个完整的领域概念；同时，这两个类也不存在不变量的约束关系。</p>
+<p>而且聚合后，订单就不再具有独立身份，每次查询订单时候，必须提供客户身份和订单身份，构成级连身份才可以。类似于当仅仅使用订单号查询订单时，是不行的，必须带上身份证和订单号一起，才能查询到订单。</p>
+<h1 id="聚合困境"><a href="#聚合困境" class="headerlink" title="聚合困境"></a>聚合困境</h1><p>看似把一堆实体和值对象放一起就组成聚合，在《IDDD》中提供了一个示例。使用过JIRA的人应该很容易理解。我简单按书中的思路叙述下。</p>
+<h2 id="第一次尝试"><a href="#第一次尝试" class="headerlink" title="第一次尝试"></a>第一次尝试</h2><p><img src="http://images.zhuxingsheng.com/20220822230742_1661180862.jpg"></p>
+<p>这次尝试，应该是完全按产品需求直接建模。</p>
+<p>Product,BacklogItem,Release,Sprint的确是一组组合关系。</p>
+<p>而且Product是聚合根。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class Product &#123;</span><br><span class="line">    private Set&lt;BacklogItem&gt; backlogItems;</span><br><span class="line">    </span><br><span class="line">    private Set&lt;Release&gt; releases;</span><br><span class="line">    </span><br><span class="line">    private Set&lt;Sprint&gt; sprints;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>虽然这完整表达了模型，但实现很残酷。不得不考虑的问题：</p>
+<p>1、持久化时，乐观并发，增加了操作失败概率</p>
+<p>2、影响系统性能和可伸缩性</p>
+<h2 id="第二次尝试"><a href="#第二次尝试" class="headerlink" title="第二次尝试"></a>第二次尝试</h2><p><img src="http://images.zhuxingsheng.com/20220822230808_1661180888.jpg"></p>
+<p>将一个大的Product聚合拆分成了4个相对较小聚合。</p>
+<p>虽然解决了事务问题，多个用户请求可以同时创建任何数量的BacklogItem、Release和Sprint实例。</p>
+<p>但对客户端来说，这4个较小的聚合却多少会带来一些不便。</p>
+<h2 id="设计小聚合"><a href="#设计小聚合" class="headerlink" title="设计小聚合"></a>设计小聚合</h2><p>一个完整的聚合</p>
+<p><img src="http://images.zhuxingsheng.com/20220822231759_1661181479.jpg"></p>
+<p>如果要加载一个完整的聚合，需要把所有这些实体与值对象都加载出来。那系统性能和可伸缩性大受影响。</p>
+<p>为了解决这些问题，所有提出要设计小聚合。</p>
+<p>小聚合不仅有性能和可伸缩性上的好处，它还有助于事务的成功执行，即它可以减少事务提交冲突。这样一来，系统的可用性也得到增强。在你的领域中，迫使你设计大聚合的不变条件约束并不多。当你遇到这样的情况时，可以考虑添加实体或者是集合，但无论如何，我们都应该将聚合设计得尽量小。</p>
+<p>聚合之间不能直接加载到同一个边界之内，得通过唯一标识引用其他聚合。</p>
+<p><img src="http://images.zhuxingsheng.com/20220822231841_1661181521.jpg"></p>
+<p>通过标识引用并不意味着完全丧失了对象导航性。有时在聚合中使用Repository来定位其他聚合。这种作法也被称为失联领域模型(Disconnected Domain Model)。</p>
+<p>这就是矛盾体，一方面希望保障模型的完整性，我们需要完整的聚合；另一方面又有各种实现限制条件。</p>
+<p>这些原因正是<a href="http://www.zhuxingsheng.com/blog/three-ways-to-implement-business-logic-transaction-script-anemia-model-and-ddd.html">《实现业务逻辑的本种方式》</a>中提到的单体架构演变为分层架构的局限性。</p>
+<p>总结越来，聚合有三点特性：</p>
+<p>1、Global entities(aggregation root and entity) is the boundary of consistency</p>
+<p>2、Global entities(aggregation root and entity) is the boundary of lifecycle</p>
+<p>3、Object model assumes same lifecycle boundary within the global entity</p>
+<h1 id="DDD困境"><a href="#DDD困境" class="headerlink" title="DDD困境"></a>DDD困境</h1><p>由聚合的困境，管窥一斑，DDD落地的困境何尝不是类似原因：</p>
+<p>1、Domain Driven Design,but technology may have a say</p>
+<p>2、Using fundamentalism DDD,it only works for simple cases,so does transaction script,procedure of oriented programming</p>
+<p>3、Smaller aggregation works as fine as a EJB2-refurbished architecture</p>
+<p>由上面的聚合示例观察，第一点的确是现实。</p>
+<p>我们使用DDD，就是想Domain Driven，可考虑了很多技术落地因素，打破了完整的模型。选择模型还是选择性能，是放在我们面前的第一道选择题。</p>
+<p>而第二点在现如今多运行时分布式架构中，肯定不可能像在一个单休中加载完整的聚合对象。因此当要使用原味的DDD时，只能在简单的项目中，而DDD却说要在复杂场景下再去使用。不要简单问题复杂化。这又是个矛盾体。</p>
+<p>这些问题怎么解决？</p>
+<p>当前能想到的解决方案似乎只有在<a href="http://www.zhuxingsheng.com/blog/ddds-repository-object-lifecycle-management.html">《DDD对象生命周期管理》</a>提到的关联对象模式。既能保证模型的完整，又能兼顾性能。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>聚合设计时，尽量使用小聚合。这对吗？解决设计困境了吗？</p>
+<p>如果使用小聚合，会造成一种现象。会出现很多的service。</p>
+<p>只有使用service，才能在聚合间跨越对象生命周期，维持一致性。</p>
+<p>这会慢慢演化成贫血模型，因为一部分逻辑在对象中，另一部分会放到service中。</p>
+<p>所以我们得重新审视一些指导原则。或者时时提醒是不是过多的考虑了实现细节，破坏了模型。</p>
+<p>怎么才能更好地保证模型完整性，而兼顾当前的技术限制。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/three-stages-of-technician.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/three-stages-of-technician.html" class="post-title-link" itemprop="url">技术人的三个阶段</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-08-13 22:41:00" itemprop="dateCreated datePublished" datetime="2022-08-13T22:41:00+08:00">2022-08-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>技术人员的未来是什么？</p>
+<p>我想作为一名技术人，在夜深人静时候，都会想想这个直击灵魂的问题。</p>
+<p>作为一名搬砖人，哪里需要哪里搬？</p>
+<p>不甘于作为工具人，但出路在何方？</p>
+<p>新技术层出不穷，学到何年何月？怎么保持活到老学到老的状态？</p>
+<p>在之前的一系列文章中，写过<a href="http://www.zhuxingsheng.com/blog/programmer-growth-rank.html">《程序员成长职级》</a>、<a href="http://www.zhuxingsheng.com/blog/what's-your-best-career-advice.html">《最好的职业建议》</a>、<a href="http://www.zhuxingsheng.com/blog/the-way-to-become-the-chief-architect.html">《首席架构师的打怪之路》</a>等，其实也都是来源于对上述问题的思考。</p>
+<p>怎么突破呢？其实市场也给了部分答案，比如市场要求从几年前的<strong>T型人才</strong>到<strong>π型人才</strong>，这也是作为一名技术人，需要三条腿：技术、业务、管理。</p>
+<p>尤其业务，对于技术人员的重要性，很多技术人不理解，甚至工作多年的人也不理解。技术只是工具，达到目标的手段。而业务才是最终目标。不懂业务，最后必然会成为工具人。</p>
+<p>很多技术人被沦为随时可替代的工具人也不自知，甚至对自身技术自鸣得意，孤芳自赏。</p>
+<p>也许会有人反驳，我再深入解释一下。技术人想干什么？技术牛啊，怎么体现技术牛呢？写个数据库，写个操作系统，写个docker，或者写个开源框架等等。</p>
+<p>为什么是这些东东呢？因为这些技术通用，与技术紧密关联，但其实这些只是更具技术属性而已，它们对外的统一特征是产品，首先是个产品，其次是个技术属性偏强的产品。</p>
+<p>如果你对自己要达到的目标都不了解，再牛的技术也会有种无力感，报国无门空自怨。</p>
+<p>回归到主题，技术人员的三个阶段。最近看到陶勇医生著作的《自造》，他讲了学医的三个阶段，我常见得对技术人是通用的。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/three-stages-of-technician.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/four-qualities-of-an-excellent-architect.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/four-qualities-of-an-excellent-architect.html" class="post-title-link" itemprop="url">优秀架构师的四个素质</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-08-11 14:01:00" itemprop="dateCreated datePublished" datetime="2022-08-11T14:01:00+08:00">2022-08-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2023-02-11 14:02:11" itemprop="dateModified" datetime="2023-02-11T14:02:11+08:00">2023-02-11</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>架构师，程序员追求的最高title。</p>
+<p>那么想成为一名架构师，就会出现一系列的疑问：</p>
+<p>什么是架构师？</p>
+<p>怎么才能成为架构师？</p>
+<p>优秀架构师需要哪些素质？</p>
+<p>之前根据《郭东白的架构课》总结了<a href="https://www.zhuxingsheng.com/blog/the-way-to-become-the-chief-architect.html">《成为首席架构师的打怪升级之路》</a>。这也是郭东白对架构师的思考之路。</p>
+<p>其实在2021年5月28日的Qcon软件大会上郭东白就做了一场主题是《如何成为一名优秀的架构师》演讲。相当精彩。特地找到PPT，学习一下。可惜是没有找到完整的演讲视频。</p>
+<h1 id="什么是架构师"><a href="#什么是架构师" class="headerlink" title="什么是架构师"></a>什么是架构师</h1><p><img src="http://images.zhuxingsheng.com/20220731180713_1659262033.jpg"></p>
+<p>架构师:</p>
+<p>1)a person engaged in the design of certain large constructions. – dictionary.com</p>
+<p>设计人员从事某些大型建筑物设计的人</p>
+<p>2)a person who designs and guides a plan or undertaking. – Merriam-Webster</p>
+<p>设计和指导计划或事业的人。</p>
+<p>在之前的总结文章中，其实都没有给出架构师的定义，只是说比普通程序员更牛的程序员，以前提出了“技术+影响力+领导力”的能力模型。</p>
+<p>而郭东白给出了一个更确切的定义：</p>
+<blockquote>
+<p>具备架构能力的人。</p>
+</blockquote>
+<p><strong>架构能力是指为相对复杂的场景设计并引导一个或多个研发团队，来实施结构化软件系统的能力。</strong></p>
+<h2 id="兼职架构师与全职架构师"><a href="#兼职架构师与全职架构师" class="headerlink" title="兼职架构师与全职架构师"></a>兼职架构师与全职架构师</h2><p><img src="http://images.zhuxingsheng.com/20220731214230_1659274950.jpg"></p>
+<p>对于任何一家公司，架构设计永远是必要的。</p>
+<p>其实在很多公司，架构师职位是有职无岗的，就是有架构师职责的需要，但不会独立设置架构师的岗位。很多时候都是由TL兼任。</p>
+<h1 id="架构师的生存"><a href="#架构师的生存" class="headerlink" title="架构师的生存"></a>架构师的生存</h1><h2 id="必要条件一：目标正确"><a href="#必要条件一：目标正确" class="headerlink" title="必要条件一：目标正确"></a>必要条件一：目标正确</h2><p>一个优秀的架构师应该具备对软件做出正确的设计和决策的基本能力，在做这些决策时往往需要考虑很多限制条件，如：时间成本、人力成本、资金成本、范围要求、质量要求、组织结构等，架构师从来不是独行侠，他是上承需求，下接实现的一种角色。</p>
+<p><img src="http://images.zhuxingsheng.com/20220731223544_1659278144.jpg"></p>
+<p>总结一下就是要有工程化思维。</p>
+<h2 id="必要条件二：能力满足"><a href="#必要条件二：能力满足" class="headerlink" title="必要条件二：能力满足"></a>必要条件二：能力满足</h2><p><img src="http://images.zhuxingsheng.com/20220731233918_1659281958.jpg"></p>
+<p>这些能力，从硬实力再到软件实力，一条也不能落下。</p>
+<p>能力范围从普通研发到兼职架构师，再到全职架构师，层次递增。</p>
+<p><img src="http://images.zhuxingsheng.com/20220731234323_1659282203.jpg"></p>
+<p>对于能力攻关，是先宽度再深度，还是先深度再宽度？</p>
+<p>建议先深度再宽度，这样可以一通百通，没有深度是谈不上宽度的。</p>
+<h1 id="架构师的素质"><a href="#架构师的素质" class="headerlink" title="架构师的素质"></a>架构师的素质</h1><p>第一是：有眼光，什么叫有眼光？就是要有深度的业务理解，能看到好的机会；</p>
+<p>第二是：善于思考，有足够的技术视野能找到正确的技术和组织设计，亦即独立思考能力；</p>
+<p>第三是，有良知，这是一个架构师随着时间的流逝，沉淀在身上最重要的品质。什么是有良知？为人正直，选择做正确的事情。很多人是非常聪明的，业务理解能力强，技术实践丰富，但他不一定为公司或为组织做最正确的事情。有良知是非常重要的一个事情，如果架构师没有素质，他会让一家公司的损失很惨重。</p>
+<p>第四是：能感召，能感招是什么概念？他要能够引导组织作出正确的决策，大多数架构师不是决策者，但他是决策的建议者，因为他是个决策的建议者，所以他的沟通能力，表达能力可以引导一个组织最终走向正确的选择，这也是架构师必须具备的素质。</p>
+<p><img src="http://images.zhuxingsheng.com/20220731235225_1659282745.jpg"></p>
+<p>这几点，可以对应上前面的能力模型：技术、影响力、领导力。但这四点总结得更完善些</p>
+<p>1、眼光其实就是业务，有了业务理解深度，才能知道价值点，进而通过影响力发挥价值</p>
+<p>2、思考是根本，不管是对技术，还是业务。这是第一源能力</p>
+<p>3、良知是德</p>
+<p>4、感召力，对应上领导力，能引导他人一起走向正确的选择</p>
+<p>对于思考能力，再补充点，业务理解是什么？什么是业务理解不够？</p>
+<p>架构师的价值创造来自于独立、理性的、有深度的思考。从技术视角看业务，从业务中发现技术机会。通过复盘发现思考漏洞，提升思考质量。</p>
+<p><img src="http://images.zhuxingsheng.com/20220801001259_1659283979.jpg"></p>
+<p>讲一个技术人做业务理解，是在技术视角往上看到业务，从技术视角理解业务叫业务理解。</p>
+<p>并不是一个做业务的，把业务怎么做说的很详细，没用，要从技术视角看到对业务的理解，同样，技术洞察，从业务视角反过来看技术，找到洞察，这才是要的洞察。</p>
+<p>技术做技术的洞察，业务做业务的思考，这两个完全是割裂的。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>架构以及架构师，是程序员奋斗的事业和目标。所以虽然已经总结了很多了篇文章，但还是不时从高手那儿不停地吸取和反复思考。这是一个持续过程。现在有，未来还有。</p>
+<p>通过不断地思考架构的本源和架构师的价值，成为一名德才兼备的优秀架构师。</p>
+<p><a href="https://blog.llyweb.com/articles/2021/07/15/1626346284718.html">基于”如何成为一名优秀的架构师”的分享总结</a></p>
+<p><a href="https://ppt.infoq.cn/list/qconbj2021">QCon大会官方PPT下载（源PPT下载）</a></p>
+<p><a href="https://www.infoq.cn/video/album">InfoQ官方视频合辑（可能有视频上传）</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/programmers-need-to-understand-maslow-theory.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/programmers-need-to-understand-maslow-theory.html" class="post-title-link" itemprop="url">程序员得懂点马斯洛理论</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-07-23 17:31:00" itemprop="dateCreated datePublished" datetime="2022-07-23T17:31:00+08:00">2022-07-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>马斯洛需求层次理论是管理心理学中人际关系理论、群体动力理论、权威理论、需要层次理论、社会测量理论的五大理论支柱之一。</p>
+<p><img src="http://images.zhuxingsheng.com/20220626232621_1656257181.jpg"></p>
+<p>以往对马斯洛需求层次理论的理解很肤浅：人对需求是有层次的，层次间都有依赖关系。当低层次的需求被满足后，才会去考虑更高一层次的需求。</p>
+<p>而且好像也没什么用处。知道之后既不能提升硬技能，也不能升职加薪。</p>
+<h1 id="马斯洛理论定义"><a href="#马斯洛理论定义" class="headerlink" title="马斯洛理论定义"></a>马斯洛理论定义</h1><p>通过《郭东白的架构课》的学习，了解到马斯洛理论的本意是：我们可能同时并行存在着多个需求，这些需求之间并不存在依赖或层次关系。</p>
+<p>包含两个重点：</p>
+<p><strong>第一点：不是需求有层次，而是动机有优先级</strong></p>
+<p>如果这些需求得不到满足，那么它们各自会诱发动机。但<strong>动机有优先级，且具备抢占性质</strong>。所以任何时候，只有一个动机在主导着整个人的意识和行为。</p>
+<p><strong>第二点：动机跃迁模型</strong></p>
+<p>人有且只有一个主导动机。这个动机由人的内在需求所驱动，并独占且主导你当前的一切意识和行为，你整个人，包括你的视觉、听觉、嗅觉，你的思考、记忆、行为等。直到这个动机背后的需求被完全满足之后，更高层次的动机才可能进入主导位置。</p>
+<p>学习了理论本意后，由于理论抽象度高，需要更具象的事才能更好地理解，经过反复思考，找到了一些日常工作中的常见的场景，可以用为进一步理解此理论的抓手。</p>
+<h1 id="指导架构"><a href="#指导架构" class="headerlink" title="指导架构"></a>指导架构</h1><p>郭东白讲架构活动需要尊重和顺应人性，架构师必须洞察研发人员的人性，在方案设计和架构活动组织中充分考虑研发的人性，才能保障方案的正确性，以及方案的高效实施。</p>
+<p>什么样的架构才算是尊重和顺应人性呢？不得不再次搬出当下两个流行的事物：中台和微服务</p>
+<h2 id="中台"><a href="#中台" class="headerlink" title="中台"></a>中台</h2><p>对于中台概念，可以温习之前写的<a href="http://www.zhuxingsheng.com/blog/what-is-zhongtai.html">中台是什么</a>。定义中台为企业级能力复用平台。</p>
+<p>在做企业级业务架构时，做出来的模型，需要考虑两点：</p>
+<p>1、凡是公用的部分，应该照顾到所有利益相关方的需求；</p>
+<p>2、凡是已实现的功能都应该对新的需求方开放并支持必要的扩展。</p>
+<p>部门利益是做企业级的最大障碍，跨越这个障碍是对业务架构师设计能力的最高挑战。</p>
+<blockquote>
+<p>中台建设虽然需要兼顾各方的利益，但更多主要还是解决企业管理层对于公司长期生存与可持续发展的恐惧与焦虑问题</p>
+</blockquote>
+<p>中台建设的这两个考虑点，似乎是郭东白架构课程中重要价值输出的浓缩版本。</p>
+<p>前半段结合马斯洛理论，中台的建设通常都会伴随企业内的组织重构以及利益和职责的再分配，中台必然会触碰到前端业务团队利益，这自然威胁到了业务团队。</p>
+<p>尤其很多公司建设中台是跟风式的，本身就没有明确的战略意图，相当于架构活动没有正确目标，甚至没有目标，更没有清晰的构建路径，冒然简单粗暴地下沉前端业务功能，让原本根错综复杂的前端业务团队缺失了安全感，按马斯洛理论，业务团队满足安全需求的动机占据主导位置，可以想象，整个中台的推进速度。</p>
+<p>后半段则是任何企业活动的目标，都是为企业带来长期生存的优势。管理层、架构师都得考虑当下的活动是否真的带来生存优势。生存优势我简单理解为降本增效，ROI越高越有优势。</p>
+<h2 id="微服务"><a href="#微服务" class="headerlink" title="微服务"></a>微服务</h2><p>之前谈到微服务常会提到<a href="http://www.zhuxingsheng.com/blog/conway-law-and-inverse-conway-law.html">《康威定律与反康威定律》</a>，随着近些年互联网行业的不景色，从以前的拆掉中台到现在的<a href="http://www.zhuxingsheng.com/blog/remove-the-micro-service-after-removing-the-middle-console.html">《拆掉微服务》</a>。</p>
+<p>康威定律有个常用示例：如果有四个小组合作开发一个编译器，那么你将得到一款具有四个步骤的编辑器。</p>
+<p>结合马斯洛理论，每个小组都有了自己的一亩三分地，也就有了归属感和安全感，从人性角度，团队会更有活力、进取心和责任感。</p>
+<h1 id="技术管理"><a href="#技术管理" class="headerlink" title="技术管理"></a>技术管理</h1><p>作为TL，在<a href="http://www.zhuxingsheng.com/blog/three-underlying-cognition-of-code-and-excellence.html">《码而优则仕》</a>中提出三件重要事情。尤其激活团队。</p>
+<p>TL如何激励团队？</p>
+<p>都说现在00后是来整顿职场的，所以不能再像过去，员工以生存为目的，无条件接受资本主义压榨。</p>
+<p>现在生活条件大大改善，对应马斯洛最底层需求已经完全满足。管理者怎么办呢？会通过内部激励机制，如晋升职级；和红线制度，明确惩罚事项。</p>
+<p>有没有更高阶的方式方法呢？脱离上述的靠外部驱动。</p>
+<p>马斯洛理论给出指导方针：让员工有更多的归属和尊重。激发他们内部需求。</p>
+<p><img src="http://images.zhuxingsheng.com/20220710194952_1657453792.jpg"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>一个看似无用的理论，经过高人的讲解，可以感知到原来这个理论贯穿在每日生活的细节中。</p>
+<p>马斯洛理论就是这样，不管是做架构还是做管理，只要有人参与的活动，都渗透着它的威力。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/classloader-of-springboot.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/classloader-of-springboot.html" class="post-title-link" itemprop="url">springboot之ClassLoader</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-07-23 13:06:00" itemprop="dateCreated datePublished" datetime="2022-07-23T13:06:00+08:00">2022-07-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>上篇<a href="http://www.zhuxingsheng.com/blog/ways-and-differences-for-jvm-to-obtain-resources.html">《ClassLoader#getResource与Class#getResource的差别》</a>了解原生java获取资源方式以及方式之间的区别。</p>
+<p>这篇介绍一下springboot的加载方式。</p>
+<p>要想调试springboot加载方式，不能直接在idea中运行主程序，要使用真实场景下的java -jar方式运行，需要做两件事：</p>
+<p>1、需要打包springboot应用程序</p>
+<p>2、在IDEA中用java -jar springboot.jar来运行才能debug</p>
+<p>springboot使用maven plugin打包成可运行的jar文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">&lt;/plugin&gt;</span><br></pre></td></tr></table></figure>
+
+<p>SpringBoot打出的jar包，可以直接通过解压的方式查看内部的构造。一般情况下有三个目录。</p>
+<ol>
+<li>BOOT-INF：这个文件夹下有两个文件夹classes用来存放用户类，也就是原始jar.original里的类；还有一个是lib，就是这个原始jar.original引用的依赖。</li>
+<li>META-INF：这里是通过java -jar启动的入口信息，记录了入口类的位置等信息。</li>
+<li>org:Springboot loader的代码，通过它来启动。</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/20220618233756_1655566676.jpg"></p>
+<p>MANIFEST.MF文件的内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Manifest-Version: 1.0</span><br><span class="line">Implementation-Title: springboot-test</span><br><span class="line">Implementation-Version: 1.0-SNAPSHOT</span><br><span class="line">Start-Class: com.zhuxingsheng.App</span><br><span class="line">Spring-Boot-Classes: BOOT-INF/classes/</span><br><span class="line">Spring-Boot-Lib: BOOT-INF/lib/</span><br><span class="line">Build-Jdk-Spec: 1.8</span><br><span class="line">Spring-Boot-Version: 2.2.1.RELEASE</span><br><span class="line">Created-By: Maven Jar Plugin 3.2.0</span><br><span class="line">Main-Class: org.springframework.boot.loader.JarLauncher</span><br></pre></td></tr></table></figure>
+
+<p>里面有两个重要的参数:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Main-Class: org.springframework.boot.loader.JarLauncher</span><br><span class="line">Start-Class: com.zhuxingsheng.App</span><br></pre></td></tr></table></figure>
+
+<p>Main-Class：记录了java -jar的启动入口，当使用该命令启动时就会调用这个入口类的main方法，显然可以看出，Springboot转移了启动的入口，不是应用自身的com.zhuxingsheng.App入口类。</p>
+<p>Start-Class：应用自身的com.zhuxingsheng.App入口类，当内嵌的jar包加载完成之后，会使用LaunchedURLClassLoader线程加载类来加载这个用户编写的入口类。</p>
+<p>在IDEA中正常启动应用程序，整个类加载体系与直接使用java -jar springboot.jar是不一样的，想<br>要在IDEA里面debug springboot应用程序</p>
+<p>先引入loader依赖：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-loader&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.1.0.RELEASE&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>再对应用程序通过maven package打包成jar</p>
+<p>再在IDEA中设置：</p>
+<p><img src="http://images.zhuxingsheng.com/20220618235031_1655567431.jpg"></p>
+<p>并指定Path to JAR.</p>
+<p>启动之后，先进入JarLauncher：</p>
+<p><img src="http://images.zhuxingsheng.com/20220618235239_1655567559.jpg"></p>
+<p>debug进入后，会使用springboot自定义的LaunchedURLClassLoader加载应用程序，LaunchedURLClassLoader类体系：</p>
+<p><img src="http://images.zhuxingsheng.com/20220614114138_1655178098.jpg"></p>
+<p>加载资源的过程如在<a href="http://www.zhuxingsheng.com/blog/ways-and-differences-for-jvm-to-obtain-resources.html">《Classloader加载资源的方式》</a>中提到的一样。</p>
+<p>与之前的做个小实验，但这次做点小变动，在依赖的jar中也放一个META-INF&#x2F;app.properties文件。</p>
+<p>并在工程本身的resources里面也放一个META-INF&#x2F;app.properties</p>
+<p>此时系统中有两个META-INF&#x2F;app.properties，通过下面的四种情况来加载资源文件，会获取到哪一个文件？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">//第一种场景</span><br><span class="line"> final URL resource = Thread.currentThread().getContextClassLoader().getResource(&quot;/META-INF/app.properties&quot;);</span><br><span class="line"></span><br><span class="line">//第二种场景</span><br><span class="line"> final URL resource = Thread.currentThread().getContextClassLoader().getResource(&quot;META-INF/app.properties&quot;);</span><br><span class="line"> </span><br><span class="line">//第三种场景</span><br><span class="line">final URL resource1 = App.class.getResource(&quot;/META-INF/app.properties&quot;);</span><br><span class="line">        </span><br><span class="line">//第四种场景</span><br><span class="line">final URL resource1 = App.class.getResource(&quot;META-INF/app.properties&quot;);</span><br></pre></td></tr></table></figure>
+
+<h1 id="第一种-ClassLoader绝对路径"><a href="#第一种-ClassLoader绝对路径" class="headerlink" title="第一种 ClassLoader绝对路径"></a>第一种 ClassLoader绝对路径</h1><p>按《Classloader加载资源的方式》结论，应该会返回null。</p>
+<p>然而实事并非无此：</p>
+<p>这不得不提到在URLClassPath里面有两个内部Loader：</p>
+<p><img src="http://images.zhuxingsheng.com/20220619094742_1655603262.jpg"></p>
+<p>FileLoader 是加载文件夹中的文件</p>
+<p>JarLoader 是加载jar中的文件</p>
+<p>在《Classloader加载资源的方式》中的结论是基于FileLoader加载的，而现在的方式是使用JarLoader。</p>
+<p>使用ClassLoader.getResource时，都是基于根节点查找，这点是没错的，只是根节点是BOOT-INF下的lib和classes：</p>
+<p><img src="http://images.zhuxingsheng.com/20220619004216_1655570536.jpg"></p>
+<p>去加载每一个jar中的文件，判断是不是存在：</p>
+<p><img src="http://images.zhuxingsheng.com/20220619003540_1655570140.jpg"></p>
+<p>可以看出，因为根节点不同，所以文件没有加载到，项目根目录里面的META-INF&#x2F;app.properties，是在整体工程根目录的META-INF&#x2F;app.properties中。</p>
+<p>此时，找到的文件目录是在：</p>
+<blockquote>
+<p>jar:file:&#x2F;Users&#x2F;zhuxingsheng&#x2F;workspace&#x2F;springboot-demo&#x2F;springboot-test&#x2F;target&#x2F;app.jar!&#x2F;BOOT-INF&#x2F;lib&#x2F;general-tool-utils-1.1.0-SNAPSHOT.jar!&#x2F;META-INF&#x2F;app.properties</p>
+</blockquote>
+<p><img src="http://images.zhuxingsheng.com/20220619004446_1655570686.jpg"></p>
+<h1 id="第二种-ClassLoader-相对路径"><a href="#第二种-ClassLoader-相对路径" class="headerlink" title="第二种 ClassLoader 相对路径"></a>第二种 ClassLoader 相对路径</h1><p><img src="http://images.zhuxingsheng.com/20220619005140_1655571100.jpg"></p>
+<p><img src="http://images.zhuxingsheng.com/20220619101333_1655604813.jpg"></p>
+<p>可以看出使用的是AppClassLoader，加载的路径为</p>
+<blockquote>
+<p>jar:file:&#x2F;Users&#x2F;zhuxingsheng&#x2F;workspace&#x2F;springboot-demo&#x2F;springboot-test&#x2F;target&#x2F;app.jar!&#x2F;META-INF&#x2F;app.properties</p>
+</blockquote>
+<p>可以看出 相对路径 与绝对路径的区别，以及与FileLoader的区别：</p>
+<p>1、绝对路径是LaunchedURLClassLoader从classpath根节点查找；相对路径是AppClassLoader从当前jar为根目录查找</p>
+<p>2、FileLoader绝对路径是:file:&#x2F;META-INF&#x2F;app.properties,而JarLoader的绝对路径则不同了，会带上整个classpath</p>
+<h1 id="第三种-Class-绝对路径"><a href="#第三种-Class-绝对路径" class="headerlink" title="第三种 Class 绝对路径"></a>第三种 Class 绝对路径</h1><p>由<a href="http://www.zhuxingsheng.com/blog/ways-and-differences-for-jvm-to-obtain-resources.html">《Classloader加载资源的方式》</a>知道，这种方式与第二种场景效果一致：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//第二种场景</span><br><span class="line"> final URL resource = Thread.currentThread().getContextClassLoader().getResource(&quot;META-INF/app.properties&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>路径地址在：</p>
+<blockquote>
+<p>jar:file:&#x2F;Users&#x2F;zhuxingsheng&#x2F;workspace&#x2F;springboot-demo&#x2F;springboot-test&#x2F;target&#x2F;app.jar!&#x2F;META-INF&#x2F;app.properties</p>
+</blockquote>
+<h1 id="第三种-Class-相对路径"><a href="#第三种-Class-相对路径" class="headerlink" title="第三种 Class 相对路径"></a>第三种 Class 相对路径</h1><p>类似于：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">final URL resource = Thread.currentThread().getContextClassLoader().getResource(&quot;com/zhuxingsheng/META-INF/app.properties&quot;);</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>此篇一是介绍了怎么在IDEA中debug出运行java -jar springboot.jar的效果。二是介绍springboot类加载机制，以及绝对路径与相对路径的区别。</p>
+<p>当依赖jar包中有与工程目录下有同路径同名资源文件时，为了不必要的冲突，在classloader#getResource时，不要使用绝对路径。</p>
+<p>如在apollo的源码中：</p>
+<p><img src="http://images.zhuxingsheng.com/20220619111234_1655608354.jpg"></p>
+<p>也会特意使用substring处理掉绝对路径。保证加载资源的正确性。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/blog/page/2/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><a class="page-number" href="/blog/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/blog/page/4/">4</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/16/">16</a><a class="extend next" rel="next" href="/blog/page/4/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

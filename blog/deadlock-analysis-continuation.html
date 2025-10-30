@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="根据上一篇【死锁分析】，又重新梳理了一下，画图表示更形象一些     事务 1 事务 2    - begin   begin delete id&#x3D;1;(1)id加锁、(2)A加锁   delete id&#x3D;2;(3)id加锁、(4)A加锁 -    | update ? where user_id&#x3D;? and tenant_id&#x3D;? and no&#x3D;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="死锁分析延续">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/deadlock-analysis-continuation.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="根据上一篇【死锁分析】，又重新梳理了一下，画图表示更形象一些     事务 1 事务 2    - begin   begin delete id&#x3D;1;(1)id加锁、(2)A加锁   delete id&#x3D;2;(3)id加锁、(4)A加锁 -    | update ? where user_id&#x3D;? and tenant_id&#x3D;? and no&#x3D;">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200629234643_1593445603.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200627233349_1593272029.jpg">
+<meta property="article:published_time" content="2020-07-05T01:47:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.469Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20200629234643_1593445603.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/deadlock-analysis-continuation.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>死锁分析延续 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/deadlock-analysis-continuation.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          死锁分析延续
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-05 09:47:00" itemprop="dateCreated datePublished" datetime="2020-07-05T09:47:00+08:00">2020-07-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>根据上一篇【<a href="http://www.zhuxingsheng.com/blog/deadlock-analysis.html">死锁分析</a>】，又重新梳理了一下，画图表示更形象一些</p>
+<p><img src="http://images.zhuxingsheng.com/20200629234643_1593445603.jpg"></p>
+<table>
+<thead>
+<tr>
+<th>事务 1</th>
+<th>事务 2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>-</td>
+<td>begin</td>
+</tr>
+<tr>
+<td>begin</td>
+<td>delete id&#x3D;1;(1)id加锁、(2)A加锁</td>
+</tr>
+<tr>
+<td>delete id&#x3D;2;(3)id加锁、(4)A加锁</td>
+<td>-</td>
+</tr>
+</tbody></table>
+<ul>
+<li>| update ? where user_id&#x3D;? and tenant_id&#x3D;? and no&#x3D;?;</li>
+<li>| 如果先走no索引，已经持有B锁，再去持D锁时等待<br>update ? where user_id&#x3D;? and tenant_id&#x3D;? and no&#x3D;?; | -<br>先走no索引，持B锁时等待；deadlock |-</li>
+</ul>
+<p>update ? where user_id&#x3D;? and tenant_id&#x3D;? and no&#x3D;?;如果先走（tenant_id,user_id） 则是日志一</p>
+<p>先走no，则是日志二</p>
+<p>索引交叉，则是日志三</p>
+<hr>
+<p>最近借着死锁事项，又温习了部分数据库的理论知识，后面有时间再整理。现在的程序员真难，得上知天文，下知地理；这应该是DBA的专长，作为开发也得去深究，真难</p>
+<p>在追查死锁的过程中，对照理论有一些实践，总结一下：</p>
+<p>查看事务自动提交选项</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">show session variables like &#x27;autocommit&#x27;;</span><br><span class="line">show global variables like &#x27;autocommit’;</span><br><span class="line"></span><br><span class="line">set session autocommit=0;</span><br><span class="line">set global autocommit=0;</span><br></pre></td></tr></table></figure>
+
+
+<p>查看事务隔离级别</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select @@tx_isolation</span><br></pre></td></tr></table></figure>
+
+<p>查看锁信息，想查看一条sql使用了什么锁，需要打开锁监听</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">show session variables like &#x27;%output%&#x27;;</span><br><span class="line"></span><br><span class="line">#开启InnoDB锁监控</span><br><span class="line">set global innodb_status_output_locks=on;</span><br><span class="line"></span><br><span class="line">set global innodb_status_output=on;</span><br><span class="line">#上面的语句可定期写入到标准错误输出（stderr，即error log，大概每15s写一次），你也可以使用 SHOW ENGINE INNODB STATUS 语句直接在客户端获取innodb信息</span><br><span class="line"></span><br><span class="line">show session variables like &#x27;%output%&#x27;;</span><br></pre></td></tr></table></figure>
+
+<p>要启用InnoDB锁定监视器的 SHOW ENGINE INNODB STATUS输出，只需启用innodb_status_output_locks</p>
+<p>打开监控开关后，在mysql日志文件中会出现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">=====================================</span><br><span class="line">2020-06-30 15:44:46 7fdc8a76e700 INNODB MONITOR OUTPUT</span><br><span class="line">=====================================</span><br><span class="line"></span><br><span class="line">----------------------------</span><br><span class="line">END OF INNODB MONITOR OUTPUT</span><br><span class="line">============================</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>打开锁监控，可以确定一下常用语句的锁信息</p>
+<p>执行完一条SQL，使用SHOW ENGINE INNODB STATUS打印出锁信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">delete from invoice_collection_info where id=1275244823997059072</span><br><span class="line"></span><br><span class="line">TABLE LOCK table `assist`.`invoice_collection_info` trx id 1636893 lock mode IX</span><br><span class="line">RECORD LOCKS space id 18491 page no 211 n bits 104 index `PRIMARY` of table `assist`.`invoice_collection_info` trx id 1636893 lock_mode X locks rec but not gap</span><br></pre></td></tr></table></figure>
+<p>delete语句，根据主键删除操作；可以明显看出上了表锁IX model,还有一个主键索引锁</p>
+<p>其实如果有二级索引，还会有二级索引锁，但那是隐式锁，所以没有显示出来，后面会有试验让隐式锁显示化</p>
+<hr>
+<p>使用二级索引删除操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">delete FROM invoice_item WHERE ( collection_id = 1275244823997059072 );</span><br><span class="line"></span><br><span class="line">TABLE LOCK table `assist`.`invoice_item` trx id 1636964 lock mode IX</span><br><span class="line">RECORD LOCKS space id 18493 page no 4 n bits 784 index `idx_collection_id` of table `assist`.`invoice_item` trx id 1636964 lock_mode X locks rec but not gap</span><br><span class="line">Record lock, heap no 563 PHYSICAL RECORD: n_fields 2; compact format; info bits 0</span><br><span class="line"> 0: len 8; hex 91b2946930001000; asc    i0   ;;</span><br><span class="line"> 1: len 8; hex 91b2ae5d61401000; asc    ]a@  ;;</span><br><span class="line"></span><br><span class="line">RECORD LOCKS space id 18493 page no 12 n bits 96 index `PRIMARY` of table `assist`.`invoice_item` trx id 1636964 lock_mode X locks rec but not gap</span><br><span class="line">Record lock, heap no 28 PHYSICAL RECORD: n_fields 23; compact format; info bits 0</span><br></pre></td></tr></table></figure>
+
+<p>先在二级索引上加锁，再在对应的主键索引上加锁</p>
+<hr>
+<p>使用二级索引查询</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">select * from invoice_collection_info where invoice_uiq_flag = &#x27;031001900104-62079412&#x27; for update</span><br><span class="line"></span><br><span class="line">TABLE LOCK table `assist`.`invoice_collection_info` trx id 1636947 lock mode IX</span><br><span class="line">RECORD LOCKS space id 18491 page no 642 n bits 344 index `idx_uniflag` of table `assist`.`invoice_collection_info` trx id 1636947 lock_mode X locks rec but not gap</span><br><span class="line"></span><br><span class="line">RECORD LOCKS space id 18491 page no 496 n bits 96 index `PRIMARY` of table `assist`.`invoice_collection_info` trx id 1636947 lock_mode X locks rec but not gap</span><br></pre></td></tr></table></figure>
+
+<p>从日志中看出，先在invoice_uiq_flg二级索引上加锁，再在主键索引加锁</p>
+<hr>
+<p>使用主键更新操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">update invoice_collection_info set invoice_uiq_flag = &#x27;031200190010-62079412&#x27; WHERE (  id = 1275244823997059072 );</span><br><span class="line"> </span><br><span class="line">TABLE LOCK table `assist`.`invoice_collection_info` trx id 1636958 lock mode IX</span><br><span class="line">RECORD LOCKS space id 18491 page no 741 n bits 88 index `PRIMARY` of table `assist`.`invoice_collection_info` trx id 1636958 lock_mode X locks rec but not gap</span><br></pre></td></tr></table></figure>
+
+<p>其实不仅会在主键加X，还会在二级索引上也加X，但没有显示出来；这儿跟delete一样，其实也是个隐式锁</p>
+<hr>
+<p>模拟测试了一下，两条sql，一条根据二级索引删除操作、另一条使用主键更新记录模拟并发死锁，把update中的二级索引锁显示出来了</p>
+<p><img src="http://images.zhuxingsheng.com/20200627233349_1593272029.jpg"></p>
+<hr>
+<p>上面的操作都是在RC级别下进行的，对于select操作，快照读都不会加锁，实验结果也与理论一致</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/deadlock-analysis.html" rel="prev" title="死锁分析">
+      <i class="fa fa-chevron-left"></i> 死锁分析
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/ddd-layering.html" rel="next" title="DDD分层">
+      DDD分层 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="中台，在过去两年是个流量顶级词汇，谈什么都得带上中台，干什么都得扯点中台，不说中台，那绝对不是个合格的技术人 但经过了谈中台、建中台、拆中台，潮起潮落，不管是看好，还是贬低；可以看出在技术大词的浪潮里，不管是应激者怕掉队，还是投机者想上位，真正懂它的人不多，或者大多都还停留在以以往经验来判定的新事物 在历史遗忘之际，我来重温一下它 起源在中台的发展进程中，首先得回到它的起源，至少有两个版本： 一是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="中台是什么">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/what-is-zhongtai.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="中台，在过去两年是个流量顶级词汇，谈什么都得带上中台，干什么都得扯点中台，不说中台，那绝对不是个合格的技术人 但经过了谈中台、建中台、拆中台，潮起潮落，不管是看好，还是贬低；可以看出在技术大词的浪潮里，不管是应激者怕掉队，还是投机者想上位，真正懂它的人不多，或者大多都还停留在以以往经验来判定的新事物 在历史遗忘之际，我来重温一下它 起源在中台的发展进程中，首先得回到它的起源，至少有两个版本： 一是">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-09-04T12:09:00.000Z">
+<meta property="article:modified_time" content="2021-09-29T07:29:53.896Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="中台">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/what-is-zhongtai.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>中台是什么 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/what-is-zhongtai.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          中台是什么
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-04 20:09:00" itemprop="dateCreated datePublished" datetime="2021-09-04T20:09:00+08:00">2021-09-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:29:53" itemprop="dateModified" datetime="2021-09-29T15:29:53+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>中台，在过去两年是个流量顶级词汇，谈什么都得带上中台，干什么都得扯点中台，不说中台，那绝对不是个合格的技术人</p>
+<p>但经过了谈中台、建中台、拆中台，潮起潮落，不管是看好，还是贬低；可以看出在技术大词的浪潮里，不管是应激者怕掉队，还是投机者想上位，真正懂它的人不多，或者大多都还停留在以以往经验来判定的新事物</p>
+<p>在历史遗忘之际，我来重温一下它</p>
+<h1 id="起源"><a href="#起源" class="headerlink" title="起源"></a>起源</h1><p>在中台的发展进程中，首先得回到它的起源，至少有两个版本：</p>
+<p>一是正史，马云一行，参观了芬兰一家游戏公司supercell，大受震撼，回来就提出了“中台战略”</p>
+<p>一是野史，张勇的挟中台以令诸侯</p>
+<p>从这两史中至少可以看出一些东西：</p>
+<ol>
+<li>中台是由企业掌舵者提出以及使用的，它不是一个技术人员提出的，甚至说是CTO级别提出的，提出的起源与技术占不上边</li>
+<li>中台的战略地位，不管是愿景实现还是战略落地，都发挥着巨大作用</li>
+</ol>
+<p>所以很多技术人不解的地方，为什么谈到中台，需要谈企业战略，需要企业级组织变更，而不仅仅在于研发内部，不是使用的技术多牛，而是因为中台本身就有战略属性</p>
+<p>因此在讨论中台时，需要从业务环境，组织结构，人力构成和技术架构各方面统筹考虑，抛开这些单从技术角度，是没有全局视角衡量中台的优劣，也是没有意义的，所以中台得结合企业本身综合情况，而不是技术迁移就能完成的</p>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>现在提到中台，一连串的词汇会涌现出现，比如共享、复用、积木化</p>
+<p>那么什么才叫中台呢？至少指出者没有给出定义，但它有特性，就是在高速发展环境之下，企业需要具备相应的响应速度去支撑企业运营的需求，而依靠小而灵活的前台团队，频繁而低成本的试错是一种应对此商业环境具有竞争力的模式</p>
+<p>“小而灵活”是关键：小意味着人员少，成本低；灵活意味着对外快速响应市场，对内流程敏捷，快速失败</p>
+<p>而能支撑这种小而灵活前台团队的系统就称为中台，这是从中台的作用来描述它，经过这几年的发展，有各式各样的定义</p>
+<p>我比较认同王健老师的定义：<strong>企业级能力复用平台</strong></p>
+<p><strong>企业级：</strong></p>
+<p>定义了中台的范围。它不是单业务级，是从企业全局出发，考虑多条业务线；一个企业也不是只有一个中台，可以有多个中台。也就是企业与中台的关系是多对多的</p>
+<p>企业级这表明了中台不单是技术问题，而是上升到企业架构的问题</p>
+<p><strong>能力：</strong></p>
+<p>定义了中台主要承载的对象。能力的抽象解释了为什么有那么多种类的中台，也解释了为什么每家中台都是不一样的，因为每家企业的核心能力是不一样的</p>
+<p><strong>复用：</strong></p>
+<p>定义了中台的核心价值，建设中台的过程就是推倒烟囱系统的过程，也是去重复用的过程；“去重”讲的更多是向后看，是技术驱动；“复用”讲的更多是向前看，是业务驱动和用户驱动的</p>
+<p>中台需要从“去重”到“复用”的视角转变</p>
+<p>“复用”是中台更加关注的目标</p>
+<p>“可复用性”和“易复用性”是衡量中台建设好坏的重要指标</p>
+<p>“业务响应力”和“业务满意度”是考核中台建设进度的重要标准</p>
+<p><strong>平台：</strong></p>
+<p>定义了中台的主要形式。区别于传统的应用系统拼凑的方式，通过对于更细粒度能力的识别与平台化沉淀，实现企业能力的柔性复用，更好地支撑前台业务</p>
+<h1 id="种类"><a href="#种类" class="headerlink" title="种类"></a>种类</h1><p>自从中台概念流行，各个词都与中台组词了，研发中台、技术中台、组织中台、业务中台…只要把以前谈的词语带上中台，就是高大上的</p>
+<p>经过过去几年的喧嚣，沉寂。人们对中台品种达成了一定的共识：<strong>业务数据双中台</strong></p>
+<p>网易副总裁汪源曾在网易云创峰会上提到：“所有中台都是业务中台”。从中台起源出发，的确，中台就是为业务，为企业更好地以更低成本、更高质量、更快响应速度售出产品、换取利润服务的</p>
+<p>而数据中台，更多的是大数据时代到来，大势所趋，业务中台是产生数据，数据中台是做数据二次加工，并将结果再服务于业务，为业务进行数据和智能的赋能</p>
+<h1 id="创新"><a href="#创新" class="headerlink" title="创新"></a>创新</h1><p>这两年，拆中台的声音呼啸而起。尤其以当年带起中台的阿里等一系列巨头，都在拆。人们又开始跟风中台不行了</p>
+<p>戏称，我们作业才抄到一半，你说写错了</p>
+<p>为什么要拆呢？想那盒马不就是中台成功的典范，但在犀牛制造却提出不拿中台一针一线了，自己从零开始</p>
+<p>这其实就是任何软件平台的特性</p>
+<p>平台的能力越丰富，上层应用可以利用的越多，去完成某类功能的成本就越低，因而平台能力通常被看作效能下限</p>
+<p>应用利用平台能力获得效能，是通过放弃一部分自主性获取，而低自主性就影响创新的可能，所以应用自主度被看作创新上限</p>
+<p>“效能下限”与“创新上限”就像翘翘板，产生了哑铃效应，而中台则是追求效能的极致，同时却也降低了创新上限</p>
+<p>对于像巨头在中台已经沉淀多年，有了相当应对当前市场的能力，但想要争取更多的市场份额，创新需求日益剧增,尤其需要颠覆式创新</p>
+<p>因此，别人拆的时候，你能拆吗？建中台需要综合考虑，拆中台同样需要考虑</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>中台曾经的顶级流量热词，不管当初的是应激怕掉队，还是投机想上位，浪潮退去之时，我们才能静下心来思考它是什么，它能干什么</p>
+<p>虽然现在已经冷却，但威力不减，提升企业竞争力一把好手，它的出发点不是技术基建，而是寻找更好的组织结构和技术架构，以支持业务的快速增长和发展</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E4%B8%AD%E5%8F%B0/" rel="tag"># 中台</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/coupling-inevitability.html" rel="prev" title="耦合必然性">
+      <i class="fa fa-chevron-left"></i> 耦合必然性
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/mo-daojun-goes-early.html" rel="next" title="莫道君行早">
+      莫道君行早 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B5%B7%E6%BA%90"><span class="nav-number">1.</span> <span class="nav-text">起源</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">2.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A7%8D%E7%B1%BB"><span class="nav-number">3.</span> <span class="nav-text">种类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%9B%E6%96%B0"><span class="nav-number">4.</span> <span class="nav-text">创新</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

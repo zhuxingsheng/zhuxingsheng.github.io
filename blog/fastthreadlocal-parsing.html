@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="前言之前《TreadLocal解析》说过Threadlocal的结构：  但netty却重新搞了一个fastthreadlocal,从各方面对比一下两者的区别。也不得不说一下netty真不愧是款优秀框架，里面中有很多优秀类和方法值得细品 VS ThreadLocal1、性能第一点，从性能开始，为什么要重造轮子，可能就是之前的轮子达不到性能要求 123456789101112131415161718">
+<meta property="og:type" content="article">
+<meta property="og:title" content="FastThreadLocal解析">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/fastthreadlocal-parsing.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="前言之前《TreadLocal解析》说过Threadlocal的结构：  但netty却重新搞了一个fastthreadlocal,从各方面对比一下两者的区别。也不得不说一下netty真不愧是款优秀框架，里面中有很多优秀类和方法值得细品 VS ThreadLocal1、性能第一点，从性能开始，为什么要重造轮子，可能就是之前的轮子达不到性能要求 123456789101112131415161718">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201810221114_591.png">
+<meta property="article:published_time" content="2018-10-05T03:11:27.000Z">
+<meta property="article:modified_time" content="2022-07-23T03:54:38.589Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="ThreadLocal">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201810221114_591.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/fastthreadlocal-parsing.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>FastThreadLocal解析 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/fastthreadlocal-parsing.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          FastThreadLocal解析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-05 11:11:27" itemprop="dateCreated datePublished" datetime="2018-10-05T11:11:27+08:00">2018-10-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-07-23 11:54:38" itemprop="dateModified" datetime="2022-07-23T11:54:38+08:00">2022-07-23</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前《TreadLocal解析》说过Threadlocal的结构：</p>
+<p><img src="http://images.zhuxingsheng.com/201810221114_591.png" alt="ThreadLocal结构"></p>
+<p>但netty却重新搞了一个fastthreadlocal,从各方面对比一下两者的区别。也不得不说一下netty真不愧是款优秀框架，里面中有很多优秀类和方法值得细品</p>
+<h1 id="VS-ThreadLocal"><a href="#VS-ThreadLocal" class="headerlink" title="VS ThreadLocal"></a>VS ThreadLocal</h1><h2 id="1、性能"><a href="#1、性能" class="headerlink" title="1、性能"></a>1、性能</h2><p>第一点，从性能开始，为什么要重造轮子，可能就是之前的轮子达不到性能要求</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line">public class FastThreadLocalTest &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    public static void main(String[] args) &#123;</span><br><span class="line">        testFast(100);</span><br><span class="line">        testSlow(100);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static void testFast(int threadLocalCount) &#123;</span><br><span class="line">        final FastThreadLocal&lt;String&gt;[] caches = new FastThreadLocal[threadLocalCount];</span><br><span class="line">        final Thread mainThread = Thread.currentThread();</span><br><span class="line">        for (int i = 0; i &lt; threadLocalCount; i++) &#123;</span><br><span class="line">            caches[i] = new FastThreadLocal();</span><br><span class="line">        &#125;</span><br><span class="line">        Thread t = new FastThreadLocalThread(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                for (int i = 0; i &lt; threadLocalCount; i++) &#123;</span><br><span class="line">                    caches[i].set(&quot;float.lu&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                long start = System.nanoTime();</span><br><span class="line">                for (int i = 0; i &lt; threadLocalCount; i++) &#123;</span><br><span class="line">                    for (int j = 0; j &lt; 1000000; j++) &#123;</span><br><span class="line">                        caches[i].get();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                long end = System.nanoTime();</span><br><span class="line">                System.out.println(&quot;take[&quot; + TimeUnit.NANOSECONDS.toMillis(end - start) +</span><br><span class="line">                        &quot;]ms&quot;);</span><br><span class="line">                LockSupport.unpark(mainThread);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;);</span><br><span class="line">        t.start();</span><br><span class="line">        LockSupport.park(mainThread);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private static void testSlow(int threadLocalCount) &#123;</span><br><span class="line">        final ThreadLocal&lt;String&gt;[] caches = new ThreadLocal[threadLocalCount];</span><br><span class="line">        final Thread mainThread = Thread.currentThread();</span><br><span class="line">        for (int i=0;i&lt;threadLocalCount;i++) &#123;</span><br><span class="line">            caches[i] = new ThreadLocal();</span><br><span class="line">        &#125;</span><br><span class="line">        Thread t = new Thread(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                for (int i=0;i&lt;threadLocalCount;i++) &#123;</span><br><span class="line">                    caches[i].set(&quot;float.lu&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">                long start = System.nanoTime();</span><br><span class="line">                for (int i=0;i&lt;threadLocalCount;i++) &#123;</span><br><span class="line">                    for (int j=0;j&lt;1000000;j++) &#123;</span><br><span class="line">                        caches[i].get();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                long end = System.nanoTime();</span><br><span class="line">                System.out.println(&quot;take[&quot; + TimeUnit.NANOSECONDS.toMillis(end - start) +</span><br><span class="line">                        &quot;]ms&quot;);</span><br><span class="line">                LockSupport.unpark(mainThread);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;);</span><br><span class="line">        t.start();</span><br><span class="line">        LockSupport.park(mainThread);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">//输出</span><br><span class="line">fast[15]ms</span><br><span class="line">slow[302]ms</span><br></pre></td></tr></table></figure>
+<p>从输出可见性能提升很大</p>
+<h2 id="2、数据结构"><a href="#2、数据结构" class="headerlink" title="2、数据结构"></a>2、数据结构</h2><p>两者的数据结构大体相似，都是thread带上map属性，threadlocal实例为key；但在细节算法处理时，不一样</p>
+<h3 id="get"><a href="#get" class="headerlink" title="get()"></a>get()</h3><p>整体思路：通过thread取到map，再从map中取value</p>
+<h4 id="ThreadLocal-get"><a href="#ThreadLocal-get" class="headerlink" title="ThreadLocal.get()"></a>ThreadLocal.get()</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public T get() &#123;</span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        if (map != null) &#123;</span><br><span class="line">            ThreadLocalMap.Entry e = map.getEntry(this);</span><br><span class="line">            if (e != null) &#123;</span><br><span class="line">                @SuppressWarnings(&quot;unchecked&quot;)</span><br><span class="line">                T result = (T)e.value;</span><br><span class="line">                return result;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return setInitialValue();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>从map中取值：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">private Entry getEntry(ThreadLocal&lt;?&gt; key) &#123;</span><br><span class="line">            int i = key.threadLocalHashCode &amp; (table.length - 1);</span><br><span class="line">            Entry e = table[i];</span><br><span class="line">            if (e != null &amp;&amp; e.get() == key)</span><br><span class="line">                return e;</span><br><span class="line">            else</span><br><span class="line">                return getEntryAfterMiss(key, i, e);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">private Entry getEntryAfterMiss(ThreadLocal&lt;?&gt; key, int i, Entry e) &#123;</span><br><span class="line">            Entry[] tab = table;</span><br><span class="line">            int len = tab.length;</span><br><span class="line"></span><br><span class="line">            while (e != null) &#123;</span><br><span class="line">                ThreadLocal&lt;?&gt; k = e.get();</span><br><span class="line">                if (k == key)</span><br><span class="line">                    return e;</span><br><span class="line">                if (k == null)</span><br><span class="line">                    expungeStaleEntry(i);</span><br><span class="line">                else</span><br><span class="line">                    i = nextIndex(i, len);</span><br><span class="line">                e = tab[i];</span><br><span class="line">            &#125;</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<p>如果key值相等，直接返回value</p>
+<p>如果key不相等，使用循环线性探测，一直找到最后一个元素</p>
+<h4 id="FastThreadLocal-get"><a href="#FastThreadLocal-get" class="headerlink" title="FastThreadLocal.get()"></a>FastThreadLocal.get()</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public final V get(InternalThreadLocalMap threadLocalMap) &#123;</span><br><span class="line">        Object v = threadLocalMap.indexedVariable(index);</span><br><span class="line">        if (v != InternalThreadLocalMap.UNSET) &#123;</span><br><span class="line">            return (V) v;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return initialize(threadLocalMap);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">public Object indexedVariable(int index) &#123;</span><br><span class="line">        Object[] lookup = indexedVariables;</span><br><span class="line">        return index &lt; lookup.length? lookup[index] : UNSET;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这个明显就快些，有index,直接数组拿值,不需要再去处理循环</p>
+<h3 id="set"><a href="#set" class="headerlink" title="set()"></a>set()</h3><p>主要在于向map中放值</p>
+<h4 id="ThreadLocal-set"><a href="#ThreadLocal-set" class="headerlink" title="ThreadLocal.set()"></a>ThreadLocal.set()</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">public void set(T value) &#123;</span><br><span class="line">        Thread t = Thread.currentThread();</span><br><span class="line">        ThreadLocalMap map = getMap(t);</span><br><span class="line">        if (map != null)</span><br><span class="line">            map.set(this, value);</span><br><span class="line">        else</span><br><span class="line">            createMap(t, value);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">private void set(ThreadLocal&lt;?&gt; key, Object value) &#123;</span><br><span class="line"></span><br><span class="line">            // We don&#x27;t use a fast path as with get() because it is at</span><br><span class="line">            // least as common to use set() to create new entries as</span><br><span class="line">            // it is to replace existing ones, in which case, a fast</span><br><span class="line">            // path would fail more often than not.</span><br><span class="line"></span><br><span class="line">            Entry[] tab = table;</span><br><span class="line">            int len = tab.length;</span><br><span class="line">            int i = key.threadLocalHashCode &amp; (len-1);</span><br><span class="line"></span><br><span class="line">            for (Entry e = tab[i];</span><br><span class="line">                 e != null;</span><br><span class="line">                 e = tab[i = nextIndex(i, len)]) &#123;</span><br><span class="line">                ThreadLocal&lt;?&gt; k = e.get();</span><br><span class="line"></span><br><span class="line">                if (k == key) &#123;</span><br><span class="line">                    e.value = value;</span><br><span class="line">                    return;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                if (k == null) &#123;</span><br><span class="line">                    replaceStaleEntry(key, value, i);</span><br><span class="line">                    return;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            tab[i] = new Entry(key, value);</span><br><span class="line">            int sz = ++size;</span><br><span class="line">            if (!cleanSomeSlots(i, sz) &amp;&amp; sz &gt;= threshold)</span><br><span class="line">                rehash();</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>通过取模，得到index</li>
+<li>key相等，直接赋值value</li>
+<li>key不相等，那就线性探测存放</li>
+</ol>
+<h4 id="FastThreadLocal-set"><a href="#FastThreadLocal-set" class="headerlink" title="FastThreadLocal.set()"></a>FastThreadLocal.set()</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">public final void set(V value) &#123;</span><br><span class="line">        if (value != InternalThreadLocalMap.UNSET) &#123;</span><br><span class="line">            InternalThreadLocalMap threadLocalMap = InternalThreadLocalMap.get();</span><br><span class="line">            if (setKnownNotUnset(threadLocalMap, value)) &#123;</span><br><span class="line">                registerCleaner(threadLocalMap);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            remove();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">public boolean setIndexedVariable(int index, Object value) &#123;</span><br><span class="line">        Object[] lookup = indexedVariables;</span><br><span class="line">        if (index &lt; lookup.length) &#123;</span><br><span class="line">            Object oldValue = lookup[index];</span><br><span class="line">            lookup[index] = value;</span><br><span class="line">            return oldValue == UNSET;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            expandIndexedVariableTableAndSet(index, value);</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>这类似就是放入到数组中</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><strong>到此可以看出二者的区别</strong></p>
+<table>
+<thead>
+<tr>
+<th>区别</th>
+<th>ThreadLocal</th>
+<th>FastThreadLocal</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>map</td>
+<td>ThreadLocalMap</td>
+<td>InternalThreadLocalMap extends UnpaddedInternalThreadLocalMap</td>
+</tr>
+<tr>
+<td>线程</td>
+<td>Thread</td>
+<td>FastThreadLocalThread extends Thread</td>
+</tr>
+</tbody></table>
+<p>主要还是在内部map的处理逻辑上，两者都没有使用hashmap，但是自定义了map结构与行为，在<a href="https://mp.weixin.qq.com/s/PB5CYXogFO2wCFwRafJudg">《hashmap源码解析》</a>中指出map结构的两种处理方式：<strong>拉链法</strong>与<strong>线性探测法</strong>；在hasmap中使用的是<strong>拉链法</strong>，而threadlocal中使用的是<strong>线性探测法</strong></p>
+<blockquote>
+<p>线性探查（Linear Probing）方式虽然简单，但是有一些问题，它会导致同类哈希的聚集。在存入的时候存在冲突，在查找的时候冲突依然存在</p>
+</blockquote>
+<p>冲突也就造成了性能损耗，而FastTreadLocal就更简单，直接使用数组</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public FastThreadLocal() &#123;</span><br><span class="line">        index = InternalThreadLocalMap.nextVariableIndex();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>UnpaddedInternalThreadLocalMap</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">Object[] indexedVariables;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public static int nextVariableIndex() &#123;</span><br><span class="line">        int index = nextIndex.getAndIncrement();</span><br><span class="line">        if (index &lt; 0) &#123;</span><br><span class="line">            nextIndex.decrementAndGet();</span><br><span class="line">            throw new IllegalStateException(&quot;too many thread-local indexed variables&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">        return index;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>整个map就是一个数组结构，在每个thread中，每一个FastThreadLocal在创建时就指定了index,value就是数组元素</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ThreadLocal/" rel="tag"># ThreadLocal</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/recognize-rpc-thrift-again.html" rel="prev" title="再识RPC-thrift">
+      <i class="fa fa-chevron-left"></i> 再识RPC-thrift
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/class-loader.html" rel="next" title="类加载器">
+      类加载器 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#VS-ThreadLocal"><span class="nav-number">2.</span> <span class="nav-text">VS ThreadLocal</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E6%80%A7%E8%83%BD"><span class="nav-number">2.1.</span> <span class="nav-text">1、性能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">2.2.</span> <span class="nav-text">2、数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#get"><span class="nav-number">2.2.1.</span> <span class="nav-text">get()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ThreadLocal-get"><span class="nav-number">2.2.1.1.</span> <span class="nav-text">ThreadLocal.get()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FastThreadLocal-get"><span class="nav-number">2.2.1.2.</span> <span class="nav-text">FastThreadLocal.get()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#set"><span class="nav-number">2.2.2.</span> <span class="nav-text">set()</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ThreadLocal-set"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">ThreadLocal.set()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FastThreadLocal-set"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">FastThreadLocal.set()</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

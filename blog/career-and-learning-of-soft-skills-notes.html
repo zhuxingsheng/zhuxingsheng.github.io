@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="之前看的《原则》，有没有感觉作者的原则都对，但实际操作又感觉假大空呢？  《软技能-代码之外的生存技能》这本书可以算是《原则》的实践指南，作者对每一个建议都是事无巨细地指导方案，虽然此书对任何职业都有指导意义，但由于作者程序员的身份，让此书对程序员的实际指导更具体明确 呐喊这是此前github上很火的评论，我称之为程序员的呐喊  人人都推崇要活到老，学到老。但当真正身陷这个快速变更的行业里，有时难">
+<meta property="og:type" content="article">
+<meta property="og:title" content="《软技能》笔记之职业与学习">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/career-and-learning-of-soft-skills-notes.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="之前看的《原则》，有没有感觉作者的原则都对，但实际操作又感觉假大空呢？  《软技能-代码之外的生存技能》这本书可以算是《原则》的实践指南，作者对每一个建议都是事无巨细地指导方案，虽然此书对任何职业都有指导意义，但由于作者程序员的身份，让此书对程序员的实际指导更具体明确 呐喊这是此前github上很火的评论，我称之为程序员的呐喊  人人都推崇要活到老，学到老。但当真正身陷这个快速变更的行业里，有时难">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201808221030_648.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201808161053_26.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201808191118_538.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201808202236_578.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201808191021_321.png">
+<meta property="article:published_time" content="2018-08-24T03:23:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.014Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="读书">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201808221030_648.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/career-and-learning-of-soft-skills-notes.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>《软技能》笔记之职业与学习 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/career-and-learning-of-soft-skills-notes.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          《软技能》笔记之职业与学习
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-08-24 11:23:00" itemprop="dateCreated datePublished" datetime="2018-08-24T11:23:00+08:00">2018-08-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>之前看的《原则》，有没有感觉作者的原则都对，但实际操作又感觉假大空呢？</p>
+<p><img src="http://images.zhuxingsheng.com/201808221030_648.png" alt="软技能-代码之外的生存技能"></p>
+<p>《软技能-代码之外的生存技能》这本书可以算是《原则》的实践指南，作者对每一个建议都是事无巨细地指导方案，虽然此书对任何职业都有指导意义，但由于作者程序员的身份，让此书对程序员的实际指导更具体明确</p>
+<h1 id="呐喊"><a href="#呐喊" class="headerlink" title="呐喊"></a>呐喊</h1><p>这是此前github上很火的评论，我称之为程序员的呐喊</p>
+<p><img src="http://images.zhuxingsheng.com/201808161053_26.png" alt="程序员呐喊"></p>
+<p>人人都推崇要活到老，学到老。但当真正身陷这个快速变更的行业里，有时难免出现焦躁，疲惫感</p>
+<p>如何应对职业生涯，制定好职业规划，是此行业从业者们必须时时反省的话题</p>
+<h1 id="软技能"><a href="#软技能" class="headerlink" title="软技能"></a>软技能</h1><p><img src="http://images.zhuxingsheng.com/201808191118_538.png" alt="软技能"></p>
+<p>作者从七个方面阐述他的思想，这一篇记录下职业与学习两方面</p>
+<h2 id="职业"><a href="#职业" class="headerlink" title="职业"></a>职业</h2><p><img src="http://images.zhuxingsheng.com/201808202236_578.png" alt="职业"></p>
+<p>作者阐述了在职业中可能遇到的各种问题，面面俱到</p>
+<h3 id="心态"><a href="#心态" class="headerlink" title="心态"></a>心态</h3><p>不想当将军的士兵不是好士兵</p>
+<p>把自己看成老板，不要安逸于一名职员</p>
+<p>把自己当做一个软件企业，把雇主当做企业的一个客户，你应当能够提供某种产品或者服务</p>
+<h3 id="目标"><a href="#目标" class="headerlink" title="目标"></a>目标</h3><p>《原则》中人生五步中的第一步就是确定目标，大多数人没有目标，但更大的问题是不知道如何确定目标</p>
+<h3 id="人际交往"><a href="#人际交往" class="headerlink" title="人际交往"></a>人际交往</h3><p>talk is cheap ,show me the code</p>
+<p>程序员特殊崇尚这句话，喜欢静静的写代码！但实事上每个职业工作都是与人打交道</p>
+<p>code is cheap , show me the answer</p>
+<h3 id="面试"><a href="#面试" class="headerlink" title="面试"></a>面试</h3><p>最快捷的方式让面试官不见其人先闻其声</p>
+<p>让面试官对你怀有好感</p>
+<h2 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h2><blockquote>
+<p>教育就是当一个人把在学校所学全部忘光之后剩下的东西 –爱因斯坦</p>
+</blockquote>
+<blockquote>
+<p>教育的首要目标，并不在于“知”而在于“行”  –赫伯特 斯宾塞</p>
+</blockquote>
+<h3 id="三要素"><a href="#三要素" class="headerlink" title="三要素"></a>三要素</h3><p>为了能够掌握一门技术，我需要了解以下三个要点</p>
+<ol>
+<li>如何开始 ——要想开始使用自己所学的，我需要掌握哪些基本知识？ </li>
+<li>学科范围 ——我现在学的东西有多宏大？我应该怎么做？在开始阶段，我不需要了解每个细节，但是如果我能对该学<br>科的轮廓有大致的了解，那么将来我就能发现更多细节。 </li>
+<li>基础知识 ——不止在开始阶段，要想使用一项特定的技术，我需要了解基本的用户案例和最常见的问题，也需要知道<br>自己学的哪20%就能满足80%的日常应用</li>
+</ol>
+<h3 id="学习十步法"><a href="#学习十步法" class="headerlink" title="学习十步法"></a>学习十步法</h3><p><img src="http://images.zhuxingsheng.com/201808191021_321.png" alt="学习十步法"></p>
+<p><strong>从第一步到第六步：这些步骤只用作一次！</strong></p>
+<h4 id="第一步：了解全局"><a href="#第一步：了解全局" class="headerlink" title="第一步：了解全局"></a>第一步：了解全局</h4><p>通常完成这一步我们可以使用网络搜索来完成大量的研究。在这一阶段我们只需要对要学习的东西有一个大概的了解即可。</p>
+<h4 id="第二步-：确定范围"><a href="#第二步-：确定范围" class="headerlink" title="第二步 ：确定范围"></a>第二步 ：确定范围</h4><p>现在我们在对我们要学习的东西有一定的了解的情况下，接下来就要集中精力去明确自己到底想要学习什么？在任何项目中，明确项目范围是至关重要的，唯有这样才能了解项目的全局，做好相应的准备工作。</p>
+<p>而在这样的一个过程中，我们都很容易犯一个错误就是试图解决太大的问题而把自己搞得不堪重负，因此，我们要明确自己的学习范围。为此我们需要运用在第一步中所获得信息来让自己的关注点落脚在更小也可控制的范围内。</p>
+<p>但在此过程中，我们可能会受到诱惑，为了学习该主题下不同的主题，我们可能会扩张自己的学习范围导致自己不够聚焦，所以请务必的抵制这个有诱惑，尽可能的保持专注，一次只能学习一样东西。我们可以稍后再回头学习别的领域的分支。</p>
+<p>最后，请一定注意：明确学习范围的时候要考虑的时间因素，你的学习范围务必大小适当，既能够符合你的学习理由，又能符合你的时间限制。</p>
+<h4 id="第三步：定义目标"><a href="#第三步：定义目标" class="headerlink" title="第三步：定义目标"></a>第三步：定义目标</h4><p>在我们全力以赴之前，明确“成功”的含义极为重要。如果不知道成功是什么样子，很难找准目标，也很难知道自己什么时候已经真正达到目标。所以在当你知道自己的目标是什么的时候，你就可以更轻松的使用倒推方式，明确实现目标所需要的步骤。</p>
+<p>这一步的目标是形成一份简明清晰的陈述，勾勒出你勤奋学习后的成功图景。但是一定要确保其中包含的的具体成功标准，从而能让你用来充分评估自己是否已经达成学习目标。</p>
+<p><strong>好的目标应该是具体的，无二义性的，不要对自己想要完成的任务进行含糊不清的描述</strong>。</p>
+<p>你想从自己的学习经历中获取什么决定了你的成功标准是什么。请确保你能借此在学习结束后评估自己是否达成目标。好的成功标准也能让你向着既定目标不断前进。</p>
+<h4 id="第四步：寻找资源"><a href="#第四步：寻找资源" class="headerlink" title="第四步：寻找资源"></a>第四步：寻找资源</h4><p>要尝试收集到多种多样的资源来帮助你学习，而不是只读一本关于这一主题的书。资源是多种多样的，不局限于书籍。现在随着网络的广泛应用，你几乎可以针对自己感兴趣的人和主题找到大量的资源。</p>
+<p>在这一不中，你要尽可能多的寻找自己所选择的相关资料，而且此时你无需考虑这些资源的质量。在你寻找过后，你要对你找到的这些资源进行过滤，去伪存真。</p>
+<p>如果你不想因为单一来源的信息而产生偏见，那你就尽可能的去获取各种各样的信息吧。</p>
+<h4 id="第五步：创建学习计划"><a href="#第五步：创建学习计划" class="headerlink" title="第五步：创建学习计划"></a>第五步：创建学习计划</h4><p>好的技术书都遵循着这样的规律：打好基础，做好铺垫，然后逐个展开每一章的论述。对于大多数学科而言，学习是一个自然的过程。从A开始，前进到B，然后到达Z。这个顺序对你掌握随机的碎片化知识价值不大。你需要找出在最短时间内从A到Z的正确路径，并且到达沿途的重要地标。</p>
+<p>在这一步，你需要创建自己的学习路径。把它看作自己写作时候打大纲。</p>
+<p>打造自己的学习计划，一个好方法就是借鉴吸取他人的方法，我们这时候可以翻看自己在第四步找来的资料，看看他们是如何学习这个主题的，如果很多不同的作者都把内容分解为相同的模块和顺序，你不妨可以去试一试，效仿他们去做一个自己的学习计划。</p>
+<h4 id="第六步：筛选资源"><a href="#第六步：筛选资源" class="headerlink" title="第六步：筛选资源"></a>第六步：筛选资源</h4><p>现在，我们知道自己要学习什么，按照什么样的方式去学习，那么是时候决定要使用哪些资源来完成自己的学习任务。现在时候对这些资源进行筛选，挑选最有价值记的几项来帮至自己实现目标。</p>
+<p>在这一步中，把我们在第四步中收集的全部资料浏览一遍，找出哪些内容能够覆盖自己的学习计划。</p>
+<p>一旦完成了这一步，我们就可以准备进到学习计划中的第一个模块了！</p>
+<p>但在我们实现自己的目标之前，我们还需要为每个模块重复第7步到第10步。</p>
+<p><strong>第七步到第十步：循环往复（学习——实践——掌握——教授）</strong></p>
+<h4 id="第七步：-开始学习，浅尝辄止"><a href="#第七步：-开始学习，浅尝辄止" class="headerlink" title="第七步： 开始学习，浅尝辄止"></a>第七步： 开始学习，浅尝辄止</h4><p>在这一步中，我们的目标是获得足够多的与所学主题相关的信息，从让能让我们开始学习，并在下一步中动手操作。</p>
+<p>这一步的关键在于过犹不及。我们通常会很容易的就失去自控力，开始消化计划学习中列出的所有资源。但是你会发现，如果你能经受住这样的诱惑，你会取得更大的成就。你要专注于掌握自己所需的、能再下一步动手操作的的最小量的知识。</p>
+<h4 id="第八步：动手操作，边学边玩"><a href="#第八步：动手操作，边学边玩" class="headerlink" title="第八步：动手操作，边学边玩"></a>第八步：动手操作，边学边玩</h4><p>这一步既有趣又可怕。说它有趣是因为你真的是在玩耍，说它可怕是因为这一步完全没有边际。在一部没有任何规则，你可以做任何你想做的事情，如何更好地实施这一步，完全由你来决定。</p>
+<p>大多数人会尝试通过读书或者观看视频来掌握某个主题，他们会提前吸收很多信息，然后再付诸实践。这一方法的问题在于，在他们读书或者看视频的时候，他们并不知道哪些内容是重点。他们只是在因循他们设计好的学习路径。</p>
+<p>现在，我们无需提前了解全部内容，你要做的首要的一件事情就是亲自操作和亲身体验。采用这种方法，你通过探索和时间学习。在操作的过程中，你的大脑自然地产生各种各样的问题：它是如何工作的？如果我这么做，它会发生什么？我该如何解决这个问题？这些问题引导着你走向真正重要的方向。当你回过头来寻找问题答案的时候，不只是这些问题迎刃而解，而且你记得的东西比你学习的东西要多得多，因为你所学到的都是对你很重要的东西。</p>
+<p>在这一步中，不要担心结果，勇敢探索吧。</p>
+<h4 id="第九步：全面掌握，学以致用"><a href="#第九步：全面掌握，学以致用" class="headerlink" title="第九步：全面掌握，学以致用"></a>第九步：全面掌握，学以致用</h4><p>好奇心是学习特别是自学的重要组成部分。这一步的目标就是让你找会好奇寻驱动的学习。在第八步中，你通过动手操作发现了一些尚未找到的答案的问题。现在时候来回答这些问题了，在这一步中，你要利用先前收集到的所有资料，进行深入学习。</p>
+<p>为了有效利用自己选择的材料，为上一步产生的问题寻找答案，阅读文字、观看视频、与他们交流都是必要的手段。这能让你沉浸在学习材料中，尽可能地汲取知识。</p>
+<p>不要害怕回头再去操作，付出更多，因为这不仅能让你找到问题的答案，也能让你学到新的东西。给自己足够多的时间去深入理解自己的主题，你可以阅读，可以实验，可以观察，也可以操作。</p>
+<p>不过请记住，你依然没有必要把收集到的所有资料全部仔细看看一遍。你只需要阅读或者观看与当前所学有关的部分。</p>
+<p> 最后请不要忘了，你在第三步中定义的成功标准。试着把自己正在学习的内容与最终目标关联起来。你掌握的每个模块，都应该以某种方式推动你向着终极目标前行。</p>
+<h4 id="第十步：乐为人师，融会贯通"><a href="#第十步：乐为人师，融会贯通" class="headerlink" title="第十步：乐为人师，融会贯通"></a>第十步：乐为人师，融会贯通</h4><p>如果你真的想深入地掌握一门学问，想对这门学问做到融会贯通，那么你必须要做到”好为人师“。除此之外，别无他法。</p>
+<p>在现实中，你只需要超前别人一步，就可以成为他们的老师。有时候，比学生超前太多的专家反而不能得心应手的教，因为他们无法与学生产生共鸣。他们忘记了初学者是什么样子，很容易专注于他们认为简单的细节。</p>
+<p>在这一步中，我们要要求自己走出自己的舒适区，将自己学到的知识教给别人。要想确定你确实掌握了某些知识，这是唯一的办法；同时在我们将自己所学到的东西介绍给别人时，这也是查缺补漏的好办法。</p>
+<p>你可以通过很多方式将自己所学交给他们。你可以写博客，也可以制作视频。你也可以跟自己的舍友，基友，爱人以及朋友探讨，将自己所学解释给他们。</p>
+<p>重点在于，你要花时间将自己学到的东西从大脑提取出来，以别人能理解的方式组织起来。在经历这整个过程之后，你会发现，有很多你以为自己明白了的知识点，其实并没有摸透。于是你将会将那些以前自己没太明白的东西联系起来，并且简化自己大脑中已有的信息，将它们浓缩并经常复习。</p>
+<h1 id="后续"><a href="#后续" class="headerlink" title="后续"></a>后续</h1><p>这篇只记录了职业与学习两部分，后续还有程序员更需要关注的营销部分</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AF%BB%E4%B9%A6/" rel="tag"># 读书</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/cache-practice-of-million-qps-system.html" rel="prev" title="百万QPS系统的缓存实践">
+      <i class="fa fa-chevron-left"></i> 百万QPS系统的缓存实践
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/marketing-and-productivity-of-soft-skills-notes.html" rel="next" title="《软技能》笔记之营销与生产力">
+      《软技能》笔记之营销与生产力 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%91%90%E5%96%8A"><span class="nav-number">1.</span> <span class="nav-text">呐喊</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BD%AF%E6%8A%80%E8%83%BD"><span class="nav-number">2.</span> <span class="nav-text">软技能</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%81%8C%E4%B8%9A"><span class="nav-number">2.1.</span> <span class="nav-text">职业</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%83%E6%80%81"><span class="nav-number">2.1.1.</span> <span class="nav-text">心态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%AE%E6%A0%87"><span class="nav-number">2.1.2.</span> <span class="nav-text">目标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%BA%E9%99%85%E4%BA%A4%E5%BE%80"><span class="nav-number">2.1.3.</span> <span class="nav-text">人际交往</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%A2%E8%AF%95"><span class="nav-number">2.1.4.</span> <span class="nav-text">面试</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.2.</span> <span class="nav-text">学习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E8%A6%81%E7%B4%A0"><span class="nav-number">2.2.1.</span> <span class="nav-text">三要素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E5%8D%81%E6%AD%A5%E6%B3%95"><span class="nav-number">2.2.2.</span> <span class="nav-text">学习十步法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E4%BA%86%E8%A7%A3%E5%85%A8%E5%B1%80"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">第一步：了解全局</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5-%EF%BC%9A%E7%A1%AE%E5%AE%9A%E8%8C%83%E5%9B%B4"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">第二步 ：确定范围</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E5%AE%9A%E4%B9%89%E7%9B%AE%E6%A0%87"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">第三步：定义目标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E5%AF%BB%E6%89%BE%E8%B5%84%E6%BA%90"><span class="nav-number">2.2.2.4.</span> <span class="nav-text">第四步：寻找资源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9A%E5%88%9B%E5%BB%BA%E5%AD%A6%E4%B9%A0%E8%AE%A1%E5%88%92"><span class="nav-number">2.2.2.5.</span> <span class="nav-text">第五步：创建学习计划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%85%AD%E6%AD%A5%EF%BC%9A%E7%AD%9B%E9%80%89%E8%B5%84%E6%BA%90"><span class="nav-number">2.2.2.6.</span> <span class="nav-text">第六步：筛选资源</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B8%83%E6%AD%A5%EF%BC%9A-%E5%BC%80%E5%A7%8B%E5%AD%A6%E4%B9%A0%EF%BC%8C%E6%B5%85%E5%B0%9D%E8%BE%84%E6%AD%A2"><span class="nav-number">2.2.2.7.</span> <span class="nav-text">第七步： 开始学习，浅尝辄止</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%85%AB%E6%AD%A5%EF%BC%9A%E5%8A%A8%E6%89%8B%E6%93%8D%E4%BD%9C%EF%BC%8C%E8%BE%B9%E5%AD%A6%E8%BE%B9%E7%8E%A9"><span class="nav-number">2.2.2.8.</span> <span class="nav-text">第八步：动手操作，边学边玩</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E4%B9%9D%E6%AD%A5%EF%BC%9A%E5%85%A8%E9%9D%A2%E6%8E%8C%E6%8F%A1%EF%BC%8C%E5%AD%A6%E4%BB%A5%E8%87%B4%E7%94%A8"><span class="nav-number">2.2.2.9.</span> <span class="nav-text">第九步：全面掌握，学以致用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AC%AC%E5%8D%81%E6%AD%A5%EF%BC%9A%E4%B9%90%E4%B8%BA%E4%BA%BA%E5%B8%88%EF%BC%8C%E8%9E%8D%E4%BC%9A%E8%B4%AF%E9%80%9A"><span class="nav-number">2.2.2.10.</span> <span class="nav-text">第十步：乐为人师，融会贯通</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8E%E7%BB%AD"><span class="nav-number">3.</span> <span class="nav-text">后续</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

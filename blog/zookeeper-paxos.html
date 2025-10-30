@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="在《常识五配置中心》文章中，少了一节关于zookeeper内容，现在补全 此篇也作为《从Paxos到zookeeper分布式一致性原理与实践》的读书笔记  这本书很早就出版了，现在才知道，惭愧。好书总是发现的晚，Better late than never！ IT界日异月新，如果你还没有使用过ZK，那也可以跳过了，虽然现在大多数互联网架构都使用，但它也是个古老物件了。随着CoreOS和Kubern">
+<meta property="og:type" content="article">
+<meta property="og:title" content="zookeeper-paxos">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/zookeeper-paxos.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="在《常识五配置中心》文章中，少了一节关于zookeeper内容，现在补全 此篇也作为《从Paxos到zookeeper分布式一致性原理与实践》的读书笔记  这本书很早就出版了，现在才知道，惭愧。好书总是发现的晚，Better late than never！ IT界日异月新，如果你还没有使用过ZK，那也可以跳过了，虽然现在大多数互联网架构都使用，但它也是个古老物件了。随着CoreOS和Kubern">
+<meta property="og:locale">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/book/book-paxos-to-zookeeper.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/cap.jpg">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/cap-partition.gif">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/2pc.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/3pc.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/async-copy.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/sync-copy.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/setgeti.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/concurrency-i.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/paxos-valueset.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/paxos-updatelost.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/paxos-writelast.png">
+<meta property="article:published_time" content="2018-01-29T06:33:00.000Z">
+<meta property="article:modified_time" content="2024-01-21T12:42:14.187Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="zookeeper">
+<meta property="article:tag" content="读书">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qnimages.zhuxingsheng.com/book/book-paxos-to-zookeeper.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/zookeeper-paxos.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>zookeeper-paxos | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/zookeeper-paxos.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          zookeeper-paxos
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-01-29 14:33:00" itemprop="dateCreated datePublished" datetime="2018-01-29T14:33:00+08:00">2018-01-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-01-21 20:42:14" itemprop="dateModified" datetime="2024-01-21T20:42:14+08:00">2024-01-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/readbook/" itemprop="url" rel="index"><span itemprop="name">读书</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在《常识五配置中心》文章中，少了一节关于zookeeper内容，现在补全</p>
+<p>此篇也作为《从Paxos到zookeeper分布式一致性原理与实践》的读书笔记</p>
+<p><img src="http://qnimages.zhuxingsheng.com/book/book-paxos-to-zookeeper.png" alt="image"></p>
+<p>这本书很早就出版了，现在才知道，惭愧。好书总是发现的晚，Better late than never！</p>
+<p>IT界日异月新，如果你还没有使用过ZK，那也可以跳过了，虽然现在大多数互联网架构都使用，但它也是个古老物件了。随着CoreOS和Kubernetes等项目在开源社区日益火热，etcd已是跃然而上，我司新一代配置中心架构也开始使用etcd代替zk</p>
+<p>但功不唐捐，还是要努力抓住它的尾巴，回味一下错失的年华</p>
+<h1 id="问题提出"><a href="#问题提出" class="headerlink" title="问题提出"></a>问题提出</h1><p>分布式系统对于数据的复制需求一般都来自于以下两个原因</p>
+<ol>
+<li>为了增加系统的可用性，以防止单点故障引起的系统不可用。</li>
+<li>提高系统的整体性能，通过负载均衡技术，能够让分布在不同地方的数据副本都能够为用户提供服务。</li>
+</ol>
+<p>数据复制在可用性和性能方面给分布式系统带来的巨大好处是不言而喻的，然而数据复制所带来的一致性挑战，也是每一个系统研发人员不得不面对的。</p>
+<h2 id="一致性"><a href="#一致性" class="headerlink" title="一致性"></a>一致性</h2><ul>
+<li>强一致性</li>
+<li>弱一致性<ol>
+<li>会话一致性</li>
+<li>用户一致性</li>
+</ol>
+</li>
+<li>最终一致性</li>
+</ul>
+<h1 id="分布式架构"><a href="#分布式架构" class="headerlink" title="分布式架构"></a>分布式架构</h1><p>通过消息传递进行通信和协调的系统</p>
+<ul>
+<li>分布性</li>
+<li>对等性</li>
+<li>并发性</li>
+<li>缺乏全局时钟</li>
+<li>故障总是会发生</li>
+</ul>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><h3 id="通信异常"><a href="#通信异常" class="headerlink" title="通信异常"></a>通信异常</h3><p>网络是不可靠的</p>
+<h3 id="网络分区"><a href="#网络分区" class="headerlink" title="网络分区"></a>网络分区</h3><p>俗称“脑裂”</p>
+<h3 id="三态"><a href="#三态" class="headerlink" title="三态"></a>三态</h3><p>成功，失败，超时</p>
+<h3 id="节点故障"><a href="#节点故障" class="headerlink" title="节点故障"></a>节点故障</h3><p>每个节点随时都有可能发生故障</p>
+<h2 id="ACID-CAP-BASE"><a href="#ACID-CAP-BASE" class="headerlink" title="ACID &amp;&amp; CAP &amp;&amp; BASE"></a>ACID &amp;&amp; CAP &amp;&amp; BASE</h2><p><img src="http://qnimages.zhuxingsheng.com/cap.jpg" alt="image"></p>
+<h3 id="ACID"><a href="#ACID" class="headerlink" title="ACID"></a>ACID</h3><p>这个集中式架构中，数据库就能保证</p>
+<p>ACID是Atomic（原子性）、Consistency（一致性）、Isolation（隔离性）和Durability（持久性）的英文缩写。</p>
+<p>原子性：指整个数据库事务是不可分割的工作单位。只有使据库中所有的操作执行成功，才算整个事务成功；事务中任何一个SQL语句执行失败，那么已经执行成功的SQL语句也必须撤销，数据库状态应该退回到执行事务前的状态。</p>
+<p>一致性：指数据库事务不能破坏关系数据的完整性以及业务逻辑上的一致性。例如对银行转帐事务，不管事务成功还是失败，应该保证事务结束后ACCOUNTS表中Tom和Jack的存款总额为2000元。</p>
+<p>隔离性：指的是在并发环境中，当不同的事务同时操纵相同的数据时，每个事务都有各自的完整数据空间。由并发事务所做的修改必须与任何其他并发事务所做的修改隔离。事务查看数据更新时，数据所处的状态要么是另一事务修改它之前的状态，要么是另一事务修改它之后的状态，事务不会查看到中间状态的数据。</p>
+<p>持久性：指的是只要事务成功结束，它对数据库所做的更新就必须永久保存下来。即使发生系统崩溃，重新启动数据库系统后，数据库还能恢复到事务成功结束时的状态。</p>
+<h3 id="CAP"><a href="#CAP" class="headerlink" title="CAP"></a>CAP</h3><p>CAP原则又称CAP定理，指的是在一个分布式系统中，Consistency（一致性）、 Availability（可用性）、Partition tolerance（分区容错性），三者不可得兼</p>
+<ul>
+<li>一致性（C）：在分布式系统中的所有数据备份，在同一时刻是否同样的值。（等同于所有节点访问同一份最新的数据副本）</li>
+<li>可用性（A）：在集群中一部分节点故障后，集群整体是否还能响应客户端的读写请求。（对数据更新具备高可用性）</li>
+<li>分区容错性（P）：以实际效果而言，分区相当于对通信的时限要求。系统如果不能在时限内达成数据一致性，就意味着发生了分区的情况，必须就当前操作在C和A之间做出选择。</li>
+</ul>
+<p>设想一下，当一个分布式系统发生了部分隔离：</p>
+<p><img src="http://qnimages.zhuxingsheng.com/cap-partition.gif" alt="image"></p>
+<p>节点被分隔到了两个区域：写入区域（1）的数据无法复制到区域（2），而访问区域（2）的请求也不能被转发到区域（1）。</p>
+<p>这时候，如果让左边的写入成功——优先保证可用性，则访问区域（2）的请求读不到最新一致的数据，违反了一致性。</p>
+<p>反之，如果让写入失败（阻塞），或者彻底阻止外部请求访问区域（2）——则保证了数据一致性，但是损失了可用性。</p>
+<p>因此，要同时保证一致性和可用性，区域（1）和区域（2）必须能够互相通讯。</p>
+<h3 id="BASE-最终一致性"><a href="#BASE-最终一致性" class="headerlink" title="BASE, 最终一致性"></a>BASE, 最终一致性</h3><p>这个理论由 Basically Available, Soft state, Eventual consistency 组成。核心的概念是 Eventual consistency ——最终一致性。它局部的放弃了 CAP 理论中的“完全”一致性，提供了更好的可用性和分区容忍度。</p>
+<h4 id="Basically-Available"><a href="#Basically-Available" class="headerlink" title="Basically Available"></a>Basically Available</h4><p>基本可用, 或者说部分可用。由于分布式系统的节点故障是常见的，业务必须接受这种不可用，并且做出选择：是访问另一个节点忍受数据的临时不一致，还是等待节点恢复并忍受业务上的部分不可用。</p>
+<h4 id="Soft-state"><a href="#Soft-state" class="headerlink" title="Soft state"></a>Soft state</h4><p>把所有节点的数据 (数据 &#x3D; 状态) 都看作是缓存（Cache）。适当的调整业务，使业务可以忍受数据的临时不一致，并保证这种不一致是无害的，可以被最终用户理解。</p>
+<h4 id="Eventual-consistency"><a href="#Eventual-consistency" class="headerlink" title="Eventual consistency"></a>Eventual consistency</h4><p>放弃在任何时刻、从任何节点都能读到完全一致的数据。允许数据的临时不一致，并通过异步复制、重试和合并消除数据的临时不一致。</p>
+<p>注意 在分布式系统中，写入和读取可能发生在不同的节点上。最终一致带来的问题是，业务在写入后立即读取，很可能读不到刚刚写入的数据</p>
+<p>在实际工程实践中，最终一致性存在以下五类主要变种。</p>
+<ol>
+<li>因果一致性（Causal consistency）<br>因果一致性是指，如果进程A在更新完某个数据项后通知了进程B，那么进程B之后对该数据项的访问都应该能够获取到进程A更新后的最新值，并且如果进程B要对该数据项进行更新操作的话，务必基于进程A更新后的最新值，即不能发生丢失更新情况。与此同时，与进程A无因果关系的进程C的数据访问则没有这样的限制。</li>
+<li>读己之所写（Read your writes）<br>读己之所写是指，进程A更新一个数据项之后，它自己总是能够访问到更新过的最新值，而不会看到旧值。也就是说，对于单个数据获取者来说，其读取到的数据，一定不会比自己上次写入的值旧。因此，读己之所写也可以看作是一种特殊的因果一致性。</li>
+<li>会话一致性（Session consistency）<br>会话一致性将对系统数据的访问过程框定在了一个会话当中：系统能保证在同一个有效的会话中实现“读己之所写”的一致性，也就是说，执行更能操作之后，客户端能够在同一个会话中始终读取到该数据项的最新值。</li>
+<li>单调读一致性（Monotonic read consistency）<br>单调读一致性是指如果一个进程从系统中读取出一个数据项的某个值后，那么系统对于该进程后续的任何数据访问都不应该返回更旧的值。</li>
+<li>单调写一致性（Monotonic write consistency）<br>单调写一致性是指，一个系统需要能够保证来自同一个进程的写操作被顺序地执行。</li>
+</ol>
+<h1 id="一致性协议"><a href="#一致性协议" class="headerlink" title="一致性协议"></a>一致性协议</h1><h2 id="2PC-3PC"><a href="#2PC-3PC" class="headerlink" title="2PC&amp;&amp;3PC"></a>2PC&amp;&amp;3PC</h2><p>2PC&#x2F;3PC全称:Two&#x2F;Three Phase Commit,中文名叫叫两阶段&#x2F;三阶段提交；为了使基于分布式系统架构下的所有节点在进行事务处理的过程中能够ACID特性而设计的一种算法，需要引入一个作为协调者的组件来统一掌控所有节点(称作参与者)的操作结果并最终指示这些节点是否要把操作结果进行真正的提交</p>
+<h3 id="2PC"><a href="#2PC" class="headerlink" title="2PC"></a>2PC</h3><p><img src="http://qnimages.zhuxingsheng.com/2pc.png" alt="2pc"><br><em>第一阶段：提交事务阶段(投票阶段)</em></p>
+<ol>
+<li>事务询问：协调者会问所有的参与者结点，是否可以执行提交操作</li>
+<li>执行事务：各个参与者执行事务操作 如：资源上锁，将Undo和Redo信息记入事务日志中</li>
+<li>参与者向协调者反馈事务询问的响应：如果参与者成功执行了事务操作，反馈给协调者Yes响应，否则No响应</li>
+</ol>
+<p><em>第二阶段：执行事务提交(执行阶段)</em></p>
+<p>假如协调者从所有的参与者获得的反馈都是Yes响应，那么就会执行事务提交</p>
+<ol>
+<li>发送提交请求：协调者向参与者发送Commit请求</li>
+<li>事务提交：参与者接受到Commit请求后，会正式执行事务提交操作，并在完成提交之后释放事务资源</li>
+<li>反馈事务提交结果：参与者在完成事务提交之后，向协调者发送Ack消息</li>
+<li>完成事务：协调者接受到所有参与者反馈的Ack消息后，完成事务</li>
+</ol>
+<p>假如任何一个参与者向协调者反馈了No响应，或者在等待超时之后，协调者尚无接收到所有参与者的反馈信息，那么就会中断事务</p>
+<ol>
+<li>发送回滚请求：协调者向参与者发送Rollback请求</li>
+<li>事务回滚：参与者利用Undo信息来执行事务回滚，并释放事务资源</li>
+<li>反馈事务回滚结果：参与者在完成事务回滚之后，向协调者发送Ack消息</li>
+<li>中断事务：协调者接收到所有参与者反馈的Ack消息之后，中断事务</li>
+</ol>
+<p>网上看来的西方教堂结婚一个桥段很好的描述了2PC协议：<br>1.牧师分别问新郎和新娘：你是否愿意……不管生老病死……（投票阶段）<br>2.当新郎和新娘都回答愿意后（锁定一生的资源），牧师就会说：我宣布你们……（执行阶段）</p>
+<h4 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h4><ul>
+<li>二阶段提交协议的优点：原理简单，实现方便。</li>
+<li>二阶段提交协议的缺点：同步阻塞、单点问题、脑裂、太过保守</li>
+</ul>
+<h5 id="同步阻塞"><a href="#同步阻塞" class="headerlink" title="同步阻塞"></a>同步阻塞</h5><p>二阶段提交协议存在的最明显也是最大的一个问题就是同步阻塞，这会极大地限制分布式系统的性能。在二阶段提交的执行过程中，所有参与该事务操作的逻辑都处于阻塞状态，也就是说，各个参与者在等待其他参与者响应的过程中，将无法进行其他任何操作。</p>
+<h5 id="单点问题"><a href="#单点问题" class="headerlink" title="单点问题"></a>单点问题</h5><p>协调者的角色在整个二阶段提交协议中起到了非常重要的作用。一旦协调者出现问题，那么整个二阶段提交流程将无法运转，更为严重的是，如果协调者是在阶段二中出现问题的话，那么其他参与者将会一直处于锁定事务资源的状态中，而无法继续完成事务操作。</p>
+<h5 id="数据不一致"><a href="#数据不一致" class="headerlink" title="数据不一致"></a>数据不一致</h5><p>在二阶段提交协议的阶段二，即执行事务提交的时候，当协调者向所有的参与者发送Commit请求之后，发生了局部网络异常或者是协调者在尚未发送完Commit请求之前自身发生了崩溃，导致最终只有部分参与者收到了Commit请求。于是，这部分收到了Commit请求的参与者就会进行事务的提交，而其他没有收到Commit请求的参与者则无法进行事务提交，于是整个分布式系统便出现了数据不一致性现象。</p>
+<h5 id="太过保守"><a href="#太过保守" class="headerlink" title="太过保守"></a>太过保守</h5><p>如果在协调者指示参与者进行事务提交询问的过程中，参与者出现故障而导致协调者始终无法获取到所有参与者的响应信息的话，这时协调者只能依靠其自身的超时机制来判断是否需要中断事务，这样的策略显得比较保守。换句话说，二阶段提交协议没有设计较为完善的容错机制，任意一个节点的失败都会导致整个事务的失败。</p>
+<p>在异步环境(asynchronous)并且没有节点宕机(fail-stop)的模型下，2PC可以满足全认同、值合法、可结束，是解决一致性问题的一种协议。但如果再加上节点宕机(fail-recover)的考虑，2PC是否还能解决一致性问题呢？</p>
+<p>coordinator如果在发起提议后宕机，那么participant将进入阻塞(block)状态、一直等待coordinator回应以完成该次决议。这时需要另一角色把系统从不可结束的状态中带出来，我们把新增的这一角色叫协调者备份(coordinator watchdog)。coordinator宕机一定时间后，watchdog接替原coordinator工作，通过问询(query) 各participant的状态，决定阶段2是提交还是中止。这也要求 coordinator&#x2F;participant 记录(logging)历史状态，以备coordinator宕机后watchdog对participant查询、coordinator宕机恢复后重新找回状态。</p>
+<p>从coordinator接收到一次事务请求、发起提议到事务完成，经过2PC协议后增加了2次RTT(propose+commit)，带来的时延(latency)增加相对较少。</p>
+<h3 id="3PC"><a href="#3PC" class="headerlink" title="3PC"></a>3PC</h3><p>3PC是2PC的改进版本，将2PC的第一阶段：提交事务阶段一分为二，形成了CanCommit、PreCommit和doCommit三个阶段组成的事务处理协议</p>
+<p>在2PC中一个participant的状态只有它自己和coordinator知晓，假如coordinator提议后自身宕机，在watchdog启用前一个participant又宕机，其他participant就会进入既不能回滚、又不能强制commit的阻塞状态，直到participant宕机恢复。这引出两个疑问：</p>
+<ol>
+<li>能不能去掉阻塞，使系统可以在commit&#x2F;abort前回滚(rollback)到决议发起前的初始状态</li>
+<li>当次决议中，participant间能不能相互知道对方的状态，又或者participant间根本不依赖对方的状态</li>
+</ol>
+<p>具体看一张流程图</p>
+<p><img src="http://qnimages.zhuxingsheng.com/3pc.png" alt="3pc"></p>
+<p><strong>阶段一：CanCommit</strong></p>
+<ol>
+<li>事务询问。<br>协调者向所有的参与者发送一个包含事务内容的canCommit请求，询问是否可以执行事务提交操作，并开始等待各参与者的响应。</li>
+<li>各参与者向协调者反馈事务询问的响应。<br>参与者在接收到来自协调者的canCommit请求后，正常情况下，如果其自身认为可以顺利执行事务，那么会反馈Yes响应，并进入预备状态，否则反馈No响应。</li>
+</ol>
+<p><strong>阶段二：PreCommit</strong></p>
+<p>在阶段二中，协调者会根据各参与者的反馈情况来决定是否可以进行事务的PreCommit操作，正常情况下，包含两种可能。</p>
+<ul>
+<li>执行事务预提交</li>
+</ul>
+<p>假如协调者从所有的参与者获得的反馈都是Yes响应，那么就会执行事务预提交。</p>
+<ol>
+<li>发送预提交请求。<br>协调者向所有参与者节点发出preCommit的请求，并进入Prepared阶段。</li>
+<li>事务预提交。<br>参与者接收到preCommit请求后，会执行事务操作，并将Undo和Redo信息记录到事务日志中。</li>
+<li>各参与者向协调者反馈事务执行的响应。<br>如果参与者成功执行了事务操作，那么就会反馈给协调者Ack响应，同时等待最终的指令：提交（commit）或中止（abort）。</li>
+</ol>
+<ul>
+<li>中断事务<br>假如任何一个参与者向协调者反馈了No响应，或者在等待超时之后，协调者尚无法接收到所有参与者的反馈响应，那么就会中断事务。</li>
+</ul>
+<ol>
+<li>发送中断请求。<br>协调者向所有参与者节点发出abort请求。</li>
+<li>中断事务。<br>无论是收到来自协调者的abort请求，或者是在等待协调者请求过程中出现超时，参与者都会中断事务。</li>
+</ol>
+<p><strong>阶段三：doCommit</strong></p>
+<p>该阶段将进行真正的事务提交，会存在以下两种可能的情况。</p>
+<ul>
+<li>执行提交</li>
+</ul>
+<ol>
+<li>发送提交请求。<br>进入这一阶段，假设协调者处于正常工作状态，并且它接收到了来自所有参与者的Ack响应，那么它将从“预提交”状态转换到“提交”状态，并向所有的参与者发送doCommit请求。</li>
+<li>事务提交。<br>参与者接收到doCommit请求后，会正式执行事务提交操作，并在完成提交之后释放在整个事务执行期间占用的事务资源。</li>
+<li>反馈事务提交结果。<br>参与者在完成事务提交之后，向协调者发送Ack消息。</li>
+<li>完成事务。<br>协调者接收到所有参与者反馈的Ack消息后，完成事务。</li>
+</ol>
+<ul>
+<li>中断事务<br>进入这一阶段，假设协调者处于正常工作状态，并且有任意一个参与者向协调者反馈了No响应，或者在等待超时之后，协调者尚无法接收到所有参与者的反馈响应，那么就会中断事务。</li>
+</ul>
+<ol>
+<li>发送中断请求。<br>协调者向所有的参与者节点发送abort请求。</li>
+<li>事务回滚。<br>参与者接收到abort请求后，会利用其在阶段二中记录的Undo信息来执行事务回滚操作，并在完成回滚之后释放在整个事务执行期间占用的资源。</li>
+<li>反馈事务回滚结果。<br>参与者在完成事务回滚之后，向协调者发送Ack消息。</li>
+<li>中断事务。<br>协调者接收到所有参与者反馈的Ack消息后，中断事务。</li>
+</ol>
+<p>需要注意的是，一旦进入阶段三，可能会存在以下两种故障。</p>
+<ol>
+<li>协调者出现问题</li>
+<li>协调者和参与者之间的网络出现故障。</li>
+</ol>
+<p>无论出现哪种情况，最终都会导致参与者无法及时接收到来自协调者的doCommit或是abort请求，针对这样的异常情况，参与者都会在等待超时之后，继续进行事务提交。</p>
+<h4 id="优缺点-1"><a href="#优缺点-1" class="headerlink" title="优缺点"></a>优缺点</h4><p>三阶段提交协议的优点：</p>
+<p>相较于二阶段提交协议，三阶段提交协议最大的优点就是降低了参与者的阻塞范围，并且能够在出现单点故障后继续达成一致。</p>
+<p>三阶段提交协议的缺点：</p>
+<p>三阶段提交协议在去除阻塞的同时也引入了新的问题，那就是在参与者接收到preCommit消息后，如果网络出现分区，此时协调者所在的节点和参与者无法进行正常的网络通信，在这种情况下，该参与者依然会进行事务的提交，这必然出现数据的不一致性。</p>
+<p>coordinator接收完participant的反馈(vote)之后，进入阶段2，给各个participant发送准备提交(prepare to commit)指令。participant接到准备提交指令后可以锁资源，但要求相关操作必须可回滚。coordinator接收完确认(ACK)后进入阶段3、进行commit&#x2F;abort，3PC的阶段3与2PC的阶段2无异。协调者备份(coordinator watchdog)、状态记录(logging)同样应用在3PC。</p>
+<p>participant如果在不同阶段宕机，我们来看看3PC如何应对：</p>
+<ul>
+<li>阶段1: coordinator或watchdog未收到宕机participant的vote，直接中止事务；宕机的participant恢复后，读取logging发现未发出赞成vote，自行中止该次事务</li>
+<li>阶段2: coordinator未收到宕机participant的precommit ACK，但因为之前已经收到了宕机participant的赞成反馈(不然也不会进入到阶段2)，coordinator进行commit；watchdog可以通过问询其他participant获得这些信息，过程同理；宕机的participant恢复后发现收到precommit或已经发出赞成vote，则自行commit该次事务</li>
+<li>阶段3: 即便coordinator或watchdog未收到宕机participant的commit ACK，也结束该次事务；宕机的participant恢复后发现收到commit或者precommit，也将自行commit该次事务</li>
+</ul>
+<p>因为有了准备提交(prepare to commit)阶段，3PC的事务处理延时也增加了1个RTT，变为3个RTT(propose+precommit+commit)，但是它防止participant宕机后整个系统进入阻塞态，增强了系统的可用性，对一些现实业务场景是非常值得的。</p>
+<h2 id="paxos"><a href="#paxos" class="headerlink" title="paxos"></a>paxos</h2><p><strong>2PC:同步阻塞、单点问题、脑裂、太过保守</strong></p>
+<p><strong>3PC:主要解决的单点故障问题，并减少阻塞,但依然存在数据不一致以及太过保守问题</strong></p>
+<p>2PC协议用于保证属于多个数据分片上的操作的原子性。这些数据分片可能分布在不同的服务器上，2PC协议保证多台服务器上的操作要么全部成功，要么全部失败。</p>
+<p>Paxos协议用于保证同一个数据分片的多个副本之间的数据一致性。</p>
+<p>Paxos算法要解决的问题就是如何在可能发生几起宕机或网络异常的分布式系统中，快速且正确地在集群内部对某个数据的值达成一致，并且保证不论发生以上任何异常，都不会破坏整个系统的一致性</p>
+<h3 id="复制策略"><a href="#复制策略" class="headerlink" title="复制策略"></a>复制策略</h3><p>很多资料介绍paxos时，很学术，上来就是提案者，接受者~ 我也是云里雾里，只能不明觉历。</p>
+<p>罗列一些问题：</p>
+<p>一致性是什么？以前怎么处理一致性问题？</p>
+<p>没有paxos时，以前的解决方案有哪些问题？</p>
+<p>paxos怎么演变而来？</p>
+<p>paxos怎么解决问题的？</p>
+<p>理论背景的缺失，让人难以理解！</p>
+<p>看到了<a href="http://drmingdrmer.github.io/tech/distributed/2015/11/11/paxos-slide.html">可靠分布式系统基础 Paxos 的直观解释</a>，感觉有点明白了。引用一下！</p>
+<p>对于一致性，现在一些方案大都是走复制模式，如主从及进化的主从</p>
+<h4 id="主从异步复制"><a href="#主从异步复制" class="headerlink" title="主从异步复制"></a>主从异步复制</h4><p>如Mysql的binlog复制</p>
+<ol>
+<li>主接到写请求</li>
+<li>主写入本磁盘</li>
+<li>主应答‘OK’</li>
+<li>主复制数据到从库</li>
+</ol>
+<p>如果磁盘在复制前损坏： 数据丢失</p>
+<p><img src="http://qnimages.zhuxingsheng.com/async-copy.png" alt="image"></p>
+<h4 id="主从同步复制"><a href="#主从同步复制" class="headerlink" title="主从同步复制"></a>主从同步复制</h4><ol>
+<li>主接到写请求</li>
+<li>主复制日志到从库</li>
+<li>从库这时可能阻塞</li>
+<li>客户端一直等待应答OK，直到所有从库返回</li>
+</ol>
+<p>一个失联节点造成整个系统不可用<br><img src="http://qnimages.zhuxingsheng.com/sync-copy.png" alt="image"></p>
+<h4 id="主从半同步复制"><a href="#主从半同步复制" class="headerlink" title="主从半同步复制"></a>主从半同步复制</h4><ol>
+<li>主接到写请求</li>
+<li>主复制日志到从库</li>
+<li>从库可能阻塞</li>
+<li>如果1&lt;&#x3D;x&lt;&#x3D;n个从库返回OK,刚返回客户端OK</li>
+</ol>
+<p>高可靠、高可用、可能任何从库都不完整</p>
+<h4 id="多数派写"><a href="#多数派写" class="headerlink" title="多数派写"></a>多数派写</h4><ol>
+<li>客户端写入W &gt;&#x3D;N&#x2F;2+1个节点，不需要主</li>
+<li>多数派读：W+R&gt;N;R&gt;&#x3D;N&#x2F;2+1</li>
+<li>容忍最多(N-1)&#x2F;2个节点损坏</li>
+<li>最后1次覆盖先前写入</li>
+<li>所有写入操作需要有1个全局顺序:时间戳</li>
+</ol>
+<p>一致性:最终一致性<br>事务性:非原子更新、脏读、更新丢失问题</p>
+<h3 id="多数派读写的不足"><a href="#多数派读写的不足" class="headerlink" title="多数派读写的不足"></a>多数派读写的不足</h3><p>一个假想存储服务</p>
+<ol>
+<li>一个有3个存储节点的存储服务集群</li>
+<li>使用多数派读写策略</li>
+<li>“i”的每次更新对应有多个版本i1,i2,i3…</li>
+<li>这个存储系统支持3个命令 get读最新的i,set<n> 设置下个版本i的值为n,inc<n> 对i加n</li>
+</ol>
+<p>命令实现：</p>
+<p>“set” → 直接对应多数派写.</p>
+<p>“inc” → (最简单的事务型操作):</p>
+<ol>
+<li>通过多数派读，读取最新的 “i”: i1</li>
+<li>Let i2 &#x3D; i1 + n</li>
+<li>set i2</li>
+</ol>
+<p><img src="http://qnimages.zhuxingsheng.com/setgeti.png" alt="image"></p>
+<h4 id="并发问题"><a href="#并发问题" class="headerlink" title="并发问题"></a>并发问题</h4><p><img src="http://qnimages.zhuxingsheng.com/concurrency-i.png" alt="image"></p>
+<p>我们期待最终X可以读到i3&#x3D;5, 这需要Y能知道X已经写入了i2。如何实现这个机制？</p>
+<p>在X和Y的2次“inc”操作后，为了得到正确的i3：整个系统里对i的某个版本(i2)，只能有1次成功写入.</p>
+<p>推广为:在存储系统中，一个值(1个变量的1个版本)在被认为确定(客户端接到OK)之后，就不允许被修改().</p>
+<p><strong>如何定义“被确定的”?</strong></p>
+<p><strong>如何避免修改“被确定的”值</strong></p>
+<h5 id="如何确定一个值"><a href="#如何确定一个值" class="headerlink" title="如何确定一个值"></a>如何确定一个值</h5><p>方案：每次写入一个值前，先运行一次多数派读，来确认是否这个值（可能）已经被写过了</p>
+<p><img src="http://qnimages.zhuxingsheng.com/paxos-valueset.png" alt="image"></p>
+<p>但是，X和Y可能同时以为还没有值被写入过，然后同时开始写</p>
+<p><img src="http://qnimages.zhuxingsheng.com/paxos-updatelost.png" alt="image"></p>
+<p><strong>方案改进</strong>:让存储节点记住谁最后1次做过“写前读取”，并拒绝之前其他的“写前读取”的写入操作</p>
+<p><img src="http://qnimages.zhuxingsheng.com/paxos-writelast.png" alt="image"></p>
+<h3 id="paxos-1"><a href="#paxos-1" class="headerlink" title="paxos"></a>paxos</h3><p>paxos就是以上的解决方案</p>
+<blockquote>
+<p>将所有节点都写入同一个值，且被写入后不再更改。</p>
+</blockquote>
+<p>两个操作</p>
+<ol>
+<li>Proposal Value：提议的值；</li>
+<li>Proposal Number：提议编号，可理解为提议版本号，要求不能冲突；</li>
+</ol>
+<p>三个角色</p>
+<ol>
+<li>Proposer：提议发起者。Proposer 可以有多个，Proposer 提出议案（value）。所谓 value，可以是任何操作，比如“设置某个变量的值为value”。不同的 Proposer 可以提出不同的 value，例如某个Proposer 提议“将变量 X 设置为 1”，另一个 Proposer 提议“将变量 X 设置为 2”，但对同一轮 Paxos过程，最多只有一个 value 被批准。</li>
+<li>Acceptor：提议接受者；Acceptor 有 N 个，Proposer 提出的 value 必须获得超过半数(N&#x2F;2+1)的 Acceptor批准后才能通过。Acceptor 之间完全对等独立。</li>
+<li>Learner：提议学习者。上面提到只要超过半数accpetor通过即可获得通过，那么learner角色的目的就是把通过的确定性取值同步给其他未确定的Acceptor。</li>
+</ol>
+<p>协议过程</p>
+<blockquote>
+<p>proposer将发起提案（value）给所有accpetor，超过半数accpetor获得批准后，proposer将提案写入accpetor内，最终所有accpetor获得一致性的确定性取值，且后续不允许再修改。</p>
+</blockquote>
+<p><strong>协议分为两大阶段，每个阶段又分为A&#x2F;B两小步骤：</strong></p>
+<ol>
+<li>准备阶段（占坑阶段）<ul>
+<li>第一阶段A：Proposer选择一个提议编号n，向所有的Acceptor广播Prepare（n）请求。</li>
+<li>第一阶段B：Acceptor接收到Prepare（n）请求，若提议编号n比之前接收的Prepare请求都要大，则承诺将不会接收提议编号比n小(&lt;&#x3D;)的提议，并且带上之前Accept的提议中编号小于n(&lt;)的最大的提议，否则不予理会。</li>
+</ul>
+</li>
+<li>接受阶段（提交阶段）<ul>
+<li>第二阶段A：整个协议最为关键的点：Proposer得到了Acceptor响应</li>
+<li>如果未超过半数accpetor响应，直接转为提议失败；</li>
+<li>如果超过多数Acceptor的承诺，又分为不同情况：</li>
+</ul>
+<ol>
+<li>如果所有Acceptor都未接收过值（都为null），那么向所有的Acceptor发起自己的值和提议编号n，记住，一定是所有Acceptor都没接受过值；</li>
+<li>如果有部分Acceptor接收过值，那么从所有接受过的值中选择对应的提议编号最大的作为提议的值，提议编号仍然为n。但此时Proposer就不能提议自己的值，只能信任Acceptor通过的值，维护一但获得确定性取值就不能更改原则；</li>
+</ol>
+<ul>
+<li>第二阶段B：Acceptor接收到提议后，如果该提议版本号不等于自身保存记录的版本号（第一阶段记录的），不接受该请求，相等则写入本地。</li>
+</ul>
+</li>
+</ol>
+<p>整个paxos协议过程看似复杂难懂，但<em>只要把握和理解这两点就基本理解了paxos的精髓：</em></p>
+<ol>
+<li>理解第一阶段accpetor的处理流程：如果本地已经写入了，不再接受和同意后面的所有请求，并返回本地写入的值；如果本地未写入，则本地记录该请求的版本号，并不再接受其他版本号的请求，简单来说<strong>只信任最后一次提交的版本号的请求</strong>，使其他版本号写入失效；</li>
+<li>理解第二阶段proposer的处理流程：未超过半数accpetor响应，提议失败；超过半数的accpetor值都为空才提交自身要写入的值，否则<strong>选择非空值里版本号最大的值提交，最大的区别在于是提交的值是自身的还是使用以前提交的</strong>。</li>
+</ol>
+<blockquote>
+<p>简单讲，在prepare阶段，以编号大的为准；在accept阶段以值为准</p>
+</blockquote>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="http://in355hz.iteye.com/blog/2034681">漫谈事务与分布式事务（3）- 分布式困境</a></p>
+<p><a href="https://www.cnblogs.com/bangerlee/p/5268485.html">分布式系统理论基础 - 一致性、2PC和3PC</a></p>
+<p><a href="http://drmingdrmer.github.io/tech/distributed/2015/11/11/paxos-slide.html">可靠分布式系统基础 Paxos 的直观解释</a></p>
+<p><a href="https://www.zhihu.com/question/19787937/answer/234636052">如何浅显易懂地解说 Paxos 的算法</a></p>
+<p><a href="https://zhuanlan.zhihu.com/p/24788205">Paxos算法的理解</a></p>
+<p><a href="http://iunknown.iteye.com/blog/2246484">以两军问题为背景来演绎Basic Paxos</a></p>
+<p><a href="http://blog.csdn.net/chdhust/article/details/52655006">Basic Paxos算法</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AF%BB%E4%B9%A6/" rel="tag"># 读书</a>
+              <a href="/tags/zookeeper/" rel="tag"># zookeeper</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/game-gray-release.html" rel="prev" title="游戏灰度发布">
+      <i class="fa fa-chevron-left"></i> 游戏灰度发布
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/microservice---circuit-breaker-mechanism.html" rel="next" title="微服务-熔断机制">
+      微服务-熔断机制 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%90%E5%87%BA"><span class="nav-number">1.</span> <span class="nav-text">问题提出</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">1.1.</span> <span class="nav-text">一致性</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%9E%B6%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">分布式架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">2.1.</span> <span class="nav-text">问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E4%BF%A1%E5%BC%82%E5%B8%B8"><span class="nav-number">2.1.1.</span> <span class="nav-text">通信异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E5%88%86%E5%8C%BA"><span class="nav-number">2.1.2.</span> <span class="nav-text">网络分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E6%80%81"><span class="nav-number">2.1.3.</span> <span class="nav-text">三态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E6%95%85%E9%9A%9C"><span class="nav-number">2.1.4.</span> <span class="nav-text">节点故障</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ACID-CAP-BASE"><span class="nav-number">2.2.</span> <span class="nav-text">ACID &amp;&amp; CAP &amp;&amp; BASE</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ACID"><span class="nav-number">2.2.1.</span> <span class="nav-text">ACID</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CAP"><span class="nav-number">2.2.2.</span> <span class="nav-text">CAP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BASE-%E6%9C%80%E7%BB%88%E4%B8%80%E8%87%B4%E6%80%A7"><span class="nav-number">2.2.3.</span> <span class="nav-text">BASE, 最终一致性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Basically-Available"><span class="nav-number">2.2.3.1.</span> <span class="nav-text">Basically Available</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Soft-state"><span class="nav-number">2.2.3.2.</span> <span class="nav-text">Soft state</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Eventual-consistency"><span class="nav-number">2.2.3.3.</span> <span class="nav-text">Eventual consistency</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E8%87%B4%E6%80%A7%E5%8D%8F%E8%AE%AE"><span class="nav-number">3.</span> <span class="nav-text">一致性协议</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2PC-3PC"><span class="nav-number">3.1.</span> <span class="nav-text">2PC&amp;&amp;3PC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2PC"><span class="nav-number">3.1.1.</span> <span class="nav-text">2PC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">3.1.1.1.</span> <span class="nav-text">优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%90%8C%E6%AD%A5%E9%98%BB%E5%A1%9E"><span class="nav-number">3.1.1.1.1.</span> <span class="nav-text">同步阻塞</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8D%95%E7%82%B9%E9%97%AE%E9%A2%98"><span class="nav-number">3.1.1.1.2.</span> <span class="nav-text">单点问题</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%8D%E4%B8%80%E8%87%B4"><span class="nav-number">3.1.1.1.3.</span> <span class="nav-text">数据不一致</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A4%AA%E8%BF%87%E4%BF%9D%E5%AE%88"><span class="nav-number">3.1.1.1.4.</span> <span class="nav-text">太过保守</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3PC"><span class="nav-number">3.1.2.</span> <span class="nav-text">3PC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9-1"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">优缺点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#paxos"><span class="nav-number">3.2.</span> <span class="nav-text">paxos</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E7%AD%96%E7%95%A5"><span class="nav-number">3.2.1.</span> <span class="nav-text">复制策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%BC%82%E6%AD%A5%E5%A4%8D%E5%88%B6"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">主从异步复制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">主从同步复制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6"><span class="nav-number">3.2.1.3.</span> <span class="nav-text">主从半同步复制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E6%95%B0%E6%B4%BE%E5%86%99"><span class="nav-number">3.2.1.4.</span> <span class="nav-text">多数派写</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E6%95%B0%E6%B4%BE%E8%AF%BB%E5%86%99%E7%9A%84%E4%B8%8D%E8%B6%B3"><span class="nav-number">3.2.2.</span> <span class="nav-text">多数派读写的不足</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E9%97%AE%E9%A2%98"><span class="nav-number">3.2.2.1.</span> <span class="nav-text">并发问题</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%A1%AE%E5%AE%9A%E4%B8%80%E4%B8%AA%E5%80%BC"><span class="nav-number">3.2.2.1.1.</span> <span class="nav-text">如何确定一个值</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#paxos-1"><span class="nav-number">3.2.3.</span> <span class="nav-text">paxos</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

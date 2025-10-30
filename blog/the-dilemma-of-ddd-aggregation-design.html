@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="为什么学了一堆DDD理论，但就是无法落地呢？很多人认为它只是个理论。 最近又看了一遍《IDDD》第十章聚合，结合已有的理论知识，来反思下这个问题。 DDD聚合是什么？最容易与DDD聚合混淆的就是OO聚合关系。  由上图可以看出，OO聚合表示了一种关联关系；而DDD聚合表示了一种边界。 OO聚合关系(Aggregation) 表示一个整体与部分的关系。通常在定义一个整体类后，再去分析这个整体类的组成">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDD聚合设计的困境">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/the-dilemma-of-ddd-aggregation-design.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="为什么学了一堆DDD理论，但就是无法落地呢？很多人认为它只是个理论。 最近又看了一遍《IDDD》第十章聚合，结合已有的理论知识，来反思下这个问题。 DDD聚合是什么？最容易与DDD聚合混淆的就是OO聚合关系。  由上图可以看出，OO聚合表示了一种关联关系；而DDD聚合表示了一种边界。 OO聚合关系(Aggregation) 表示一个整体与部分的关系。通常在定义一个整体类后，再去分析这个整体类的组成">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220825003339_1661358819.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220822230742_1661180862.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220822230808_1661180888.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220822231759_1661181479.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220822231841_1661181521.jpg">
+<meta property="article:published_time" content="2022-08-28T13:17:00.000Z">
+<meta property="article:modified_time" content="2022-11-08T07:15:29.763Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20220825003339_1661358819.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/the-dilemma-of-ddd-aggregation-design.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>DDD聚合设计的困境 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/the-dilemma-of-ddd-aggregation-design.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DDD聚合设计的困境
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-08-28 21:17:00" itemprop="dateCreated datePublished" datetime="2022-08-28T21:17:00+08:00">2022-08-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>为什么学了一堆DDD理论，但就是无法落地呢？很多人认为它只是个理论。</p>
+<p>最近又看了一遍《IDDD》第十章聚合，结合已有的理论知识，来反思下这个问题。</p>
+<h1 id="DDD聚合是什么？"><a href="#DDD聚合是什么？" class="headerlink" title="DDD聚合是什么？"></a>DDD聚合是什么？</h1><p>最容易与DDD聚合混淆的就是OO聚合关系。</p>
+<p><img src="http://images.zhuxingsheng.com/20220825003339_1661358819.jpg"></p>
+<p>由上图可以看出，OO聚合表示了一种关联关系；而DDD聚合表示了一种边界。</p>
+<p>OO聚合关系(Aggregation) 表示一个整体与部分的关系。通常在定义一个整体类后，再去分析这个整体类的组成结构，从而找出一些成员类，该整体类和成员类之间就形成了聚合关系。</p>
+<p>如上图中Question与Answer的关系。一个问题与很多的回答构成一个完整的问答关系。</p>
+<p>在OO中还有一种比聚合关系更强的关联关系：</p>
+<p>组合关系(Composition)也表示类之间整体和部分的关系，但是组合关系中部分和整体具有统一的生存周期。一旦整体对象不存在，部分对象也将不存在，部分对象与整体对象之间<strong>具有相同的生命周期</strong>。</p>
+<p>继续以上图为例，Answer都是因Question存在而存在，当Question消亡时，Answer也自然消亡。</p>
+<p>但像知乎，就算Question没了，Answer也会留存。</p>
+<p>OO聚合与DDD聚合是什么样的关系呢？</p>
+<p>因为聚合有隐含的构建关系和级联生命周期，通常会把OO组合关系构建成DDD聚合，<strong>其实组合关系只是聚合的必要条件，而非充分条件</strong>。</p>
+<p>如果是聚合，那么聚合根与实体自然是组合，存在级联生命周期，但不代表存在级连生命周期都是聚合。</p>
+<p>特别是，混淆了数据生命周期和对象生命周期，</p>
+<p>例如在“获取客户订单”这一业务场景下，Customer 与 Order 之间也存在整体&#x2F;部分的组合关系，但它们却不应该放在同一个 DDD 聚合内。</p>
+<p>从数据生命周期看，一般如果数据库中顾客数据删除了，那么他对应的订单也会删除。</p>
+<p>但不适合建模成聚合。</p>
+<p>因为这两个类并没有共同体现一个完整的领域概念；同时，这两个类也不存在不变量的约束关系。</p>
+<p>而且聚合后，订单就不再具有独立身份，每次查询订单时候，必须提供客户身份和订单身份，构成级连身份才可以。类似于当仅仅使用订单号查询订单时，是不行的，必须带上身份证和订单号一起，才能查询到订单。</p>
+<h1 id="聚合困境"><a href="#聚合困境" class="headerlink" title="聚合困境"></a>聚合困境</h1><p>看似把一堆实体和值对象放一起就组成聚合，在《IDDD》中提供了一个示例。使用过JIRA的人应该很容易理解。我简单按书中的思路叙述下。</p>
+<h2 id="第一次尝试"><a href="#第一次尝试" class="headerlink" title="第一次尝试"></a>第一次尝试</h2><p><img src="http://images.zhuxingsheng.com/20220822230742_1661180862.jpg"></p>
+<p>这次尝试，应该是完全按产品需求直接建模。</p>
+<p>Product,BacklogItem,Release,Sprint的确是一组组合关系。</p>
+<p>而且Product是聚合根。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public class Product &#123;</span><br><span class="line">    private Set&lt;BacklogItem&gt; backlogItems;</span><br><span class="line">    </span><br><span class="line">    private Set&lt;Release&gt; releases;</span><br><span class="line">    </span><br><span class="line">    private Set&lt;Sprint&gt; sprints;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>虽然这完整表达了模型，但实现很残酷。不得不考虑的问题：</p>
+<p>1、持久化时，乐观并发，增加了操作失败概率</p>
+<p>2、影响系统性能和可伸缩性</p>
+<h2 id="第二次尝试"><a href="#第二次尝试" class="headerlink" title="第二次尝试"></a>第二次尝试</h2><p><img src="http://images.zhuxingsheng.com/20220822230808_1661180888.jpg"></p>
+<p>将一个大的Product聚合拆分成了4个相对较小聚合。</p>
+<p>虽然解决了事务问题，多个用户请求可以同时创建任何数量的BacklogItem、Release和Sprint实例。</p>
+<p>但对客户端来说，这4个较小的聚合却多少会带来一些不便。</p>
+<h2 id="设计小聚合"><a href="#设计小聚合" class="headerlink" title="设计小聚合"></a>设计小聚合</h2><p>一个完整的聚合</p>
+<p><img src="http://images.zhuxingsheng.com/20220822231759_1661181479.jpg"></p>
+<p>如果要加载一个完整的聚合，需要把所有这些实体与值对象都加载出来。那系统性能和可伸缩性大受影响。</p>
+<p>为了解决这些问题，所有提出要设计小聚合。</p>
+<p>小聚合不仅有性能和可伸缩性上的好处，它还有助于事务的成功执行，即它可以减少事务提交冲突。这样一来，系统的可用性也得到增强。在你的领域中，迫使你设计大聚合的不变条件约束并不多。当你遇到这样的情况时，可以考虑添加实体或者是集合，但无论如何，我们都应该将聚合设计得尽量小。</p>
+<p>聚合之间不能直接加载到同一个边界之内，得通过唯一标识引用其他聚合。</p>
+<p><img src="http://images.zhuxingsheng.com/20220822231841_1661181521.jpg"></p>
+<p>通过标识引用并不意味着完全丧失了对象导航性。有时在聚合中使用Repository来定位其他聚合。这种作法也被称为失联领域模型(Disconnected Domain Model)。</p>
+<p>这就是矛盾体，一方面希望保障模型的完整性，我们需要完整的聚合；另一方面又有各种实现限制条件。</p>
+<p>这些原因正是<a href="http://www.zhuxingsheng.com/blog/three-ways-to-implement-business-logic-transaction-script-anemia-model-and-ddd.html">《实现业务逻辑的本种方式》</a>中提到的单体架构演变为分层架构的局限性。</p>
+<p>总结越来，聚合有三点特性：</p>
+<p>1、Global entities(aggregation root and entity) is the boundary of consistency</p>
+<p>2、Global entities(aggregation root and entity) is the boundary of lifecycle</p>
+<p>3、Object model assumes same lifecycle boundary within the global entity</p>
+<h1 id="DDD困境"><a href="#DDD困境" class="headerlink" title="DDD困境"></a>DDD困境</h1><p>由聚合的困境，管窥一斑，DDD落地的困境何尝不是类似原因：</p>
+<p>1、Domain Driven Design,but technology may have a say</p>
+<p>2、Using fundamentalism DDD,it only works for simple cases,so does transaction script,procedure of oriented programming</p>
+<p>3、Smaller aggregation works as fine as a EJB2-refurbished architecture</p>
+<p>由上面的聚合示例观察，第一点的确是现实。</p>
+<p>我们使用DDD，就是想Domain Driven，可考虑了很多技术落地因素，打破了完整的模型。选择模型还是选择性能，是放在我们面前的第一道选择题。</p>
+<p>而第二点在现如今多运行时分布式架构中，肯定不可能像在一个单休中加载完整的聚合对象。因此当要使用原味的DDD时，只能在简单的项目中，而DDD却说要在复杂场景下再去使用。不要简单问题复杂化。这又是个矛盾体。</p>
+<p>这些问题怎么解决？</p>
+<p>当前能想到的解决方案似乎只有在<a href="http://www.zhuxingsheng.com/blog/ddds-repository-object-lifecycle-management.html">《DDD对象生命周期管理》</a>提到的关联对象模式。既能保证模型的完整，又能兼顾性能。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>聚合设计时，尽量使用小聚合。这对吗？解决设计困境了吗？</p>
+<p>如果使用小聚合，会造成一种现象。会出现很多的service。</p>
+<p>只有使用service，才能在聚合间跨越对象生命周期，维持一致性。</p>
+<p>这会慢慢演化成贫血模型，因为一部分逻辑在对象中，另一部分会放到service中。</p>
+<p>所以我们得重新审视一些指导原则。或者时时提醒是不是过多的考虑了实现细节，破坏了模型。</p>
+<p>怎么才能更好地保证模型完整性，而兼顾当前的技术限制。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/three-stages-of-technician.html" rel="prev" title="技术人的三个阶段">
+      <i class="fa fa-chevron-left"></i> 技术人的三个阶段
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/technology-or-management.html" rel="next" title="做技术还是做管理">
+      做技术还是做管理 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#DDD%E8%81%9A%E5%90%88%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">DDD聚合是什么？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%81%9A%E5%90%88%E5%9B%B0%E5%A2%83"><span class="nav-number">2.</span> <span class="nav-text">聚合困境</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AC%A1%E5%B0%9D%E8%AF%95"><span class="nav-number">2.1.</span> <span class="nav-text">第一次尝试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AC%A1%E5%B0%9D%E8%AF%95"><span class="nav-number">2.2.</span> <span class="nav-text">第二次尝试</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E5%B0%8F%E8%81%9A%E5%90%88"><span class="nav-number">2.3.</span> <span class="nav-text">设计小聚合</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DDD%E5%9B%B0%E5%A2%83"><span class="nav-number">3.</span> <span class="nav-text">DDD困境</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

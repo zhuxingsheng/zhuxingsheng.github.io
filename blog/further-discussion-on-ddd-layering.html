@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="之前整理过《DDD分层》 以及《分层架构》 最近看网友讨论，整理一些有亮点的地方 现在分层架构+整洁架构似乎是个万金油组合了 之前DDD的标准分层结构：  右边传统分层，左边经过DIP改进型，两者有什么区别呢？  眼尖的人可以看出来，两者确实差了不少 线条1：application到infrastructure被反转了 线条2：这条线没有了，在MVC里面这线是常见的，applicaton与doma">
+<meta property="og:type" content="article">
+<meta property="og:title" content="再议DDD分层">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/further-discussion-on-ddd-layering.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="之前整理过《DDD分层》 以及《分层架构》 最近看网友讨论，整理一些有亮点的地方 现在分层架构+整洁架构似乎是个万金油组合了 之前DDD的标准分层结构：  右边传统分层，左边经过DIP改进型，两者有什么区别呢？  眼尖的人可以看出来，两者确实差了不少 线条1：application到infrastructure被反转了 线条2：这条线没有了，在MVC里面这线是常见的，applicaton与doma">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200315195302_1584273182.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20201216114010_1608090010.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210106225405_1609944845.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210106225149_1609944709.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210122232037_1611328837.jpg">
+<meta property="article:published_time" content="2021-01-22T15:29:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.471Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta property="article:tag" content="分层">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20200315195302_1584273182.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/further-discussion-on-ddd-layering.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>再议DDD分层 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/further-discussion-on-ddd-layering.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          再议DDD分层
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-22 23:29:00" itemprop="dateCreated datePublished" datetime="2021-01-22T23:29:00+08:00">2021-01-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>之前整理过<a href="http://www.zhuxingsheng.com/blog/ddd-layering.html">《DDD分层》</a> 以及<a href="http://www.zhuxingsheng.com/blog/layered-architecture.html">《分层架构》</a></p>
+<p>最近看网友讨论，整理一些有亮点的地方</p>
+<p>现在分层架构+整洁架构似乎是个万金油组合了</p>
+<p>之前DDD的标准分层结构：</p>
+<p><img src="http://images.zhuxingsheng.com/20200315195302_1584273182.jpg"></p>
+<p>右边传统分层，左边经过DIP改进型，两者有什么区别呢？</p>
+<p><img src="http://images.zhuxingsheng.com/20201216114010_1608090010.jpg"></p>
+<p>眼尖的人可以看出来，两者确实差了不少</p>
+<p>线条1：application到infrastructure被反转了</p>
+<p>线条2：这条线没有了，在MVC里面这线是常见的，applicaton与domain没分开，但DDD中这条线是不推荐的，就算在松散分层架构中也一般不使用,除非简单的CRUD项目</p>
+<p>线条3：也被反转了，这其实类似CQRS中的Q部分</p>
+<hr>
+<p>以上来源于群友的讨论，真的是世上无难事，只怕有心人；这点区别真没留意过</p>
+<p><img src="http://images.zhuxingsheng.com/20210106225405_1609944845.jpg"></p>
+<p>这图来源于阿里大牛殷浩之手，<a href="http://www.zhuxingsheng.com/blog/ali-ddd-four-bombs-to-read.html">《阿里DDD四弹》</a>中进行过总结，DTOAssembler放在了application层,有些不太合理</p>
+<p>在《分层架构》中thrift的TService，为了不与controller重复，所以需要一个application service,此时thrift与controller可以有相同的业务请求</p>
+<p>也就是说controller对外有多种输入，但对应用层来说都是同一个user case，如果放在应用层内转化，是不是应该层为了同一个use case要爆露多过方法</p>
+<p><img src="http://images.zhuxingsheng.com/20210106225149_1609944709.jpg"></p>
+<p>适配层做三件事：</p>
+<ol>
+<li>协议适配（如采用controller，通过 @RequestMapping 注解和 JSON 序列化)</li>
+<li>参数规则验证（如，不能为空、手机是数字并且11位、邮箱要有@之类简单验证）</li>
+<li>为调用下层（应用层）转化输入（assembler）</li>
+</ol>
+<p>如果说分4层的话：</p>
+<ol>
+<li>controller （assembler、转化）</li>
+<li>appliction</li>
+<li>domain</li>
+<li>repository（convertor、转化）</li>
+</ol>
+<p>应用层是真正的业务入口，是很披的一层：</p>
+<ol>
+<li>用来协调领域操作 这里一般看系统架构不一样会有所不同，主要再分为同步调用的方式，和步骤事件的方式。</li>
+<li>关注点分离的操作（如日志、通知等）</li>
+</ol>
+<p>application service编排业务，domain service编排领域</p>
+<p><img src="http://images.zhuxingsheng.com/20210122232037_1611328837.jpg"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+              <a href="/tags/%E5%88%86%E5%B1%82/" rel="tag"># 分层</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/ali-ddd-four-bombs-reading.html" rel="prev" title="阿里DDD四弹拜读">
+      <i class="fa fa-chevron-left"></i> 阿里DDD四弹拜读
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/what-is-object-orientation.html" rel="next" title="面向对象是什么">
+      面向对象是什么 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

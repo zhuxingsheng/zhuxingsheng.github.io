@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="继承的本质是提高代码的复用。 然而自从继承出世后，被人们过多滥用，以至于像耦合恐惧一样恐惧继承，得了“继承创伤应激障碍”。 是不是有像耦合必然性一样，解决继承的创伤呢？ 里氏替换原则这个原则最早是在1986年由 Barbara Liskov 提出：  若对每个类型T1的对象o1，都存在一个类型T2的对象o2，使得在所有针对T2编写的程序P中，用o1替换o2后，程序P的行为功能不变，则T1是T2的子">
+<meta property="og:type" content="article">
+<meta property="og:title" content="什么样的继承才是好的继承">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/what-kind-of-inheritance-is-good-inheritance.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="继承的本质是提高代码的复用。 然而自从继承出世后，被人们过多滥用，以至于像耦合恐惧一样恐惧继承，得了“继承创伤应激障碍”。 是不是有像耦合必然性一样，解决继承的创伤呢？ 里氏替换原则这个原则最早是在1986年由 Barbara Liskov 提出：  若对每个类型T1的对象o1，都存在一个类型T2的对象o2，使得在所有针对T2编写的程序P中，用o1替换o2后，程序P的行为功能不变，则T1是T2的子">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20230308222247_1678285367.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20230307182809_1678184889.jpg">
+<meta property="article:published_time" content="2023-03-25T11:28:00.000Z">
+<meta property="article:modified_time" content="2023-03-25T11:29:07.582Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="SOLID">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20230308222247_1678285367.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/what-kind-of-inheritance-is-good-inheritance.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>什么样的继承才是好的继承 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/what-kind-of-inheritance-is-good-inheritance.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          什么样的继承才是好的继承
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-03-25 19:28:00 / Modified: 19:29:07" itemprop="dateCreated datePublished" datetime="2023-03-25T19:28:00+08:00">2023-03-25</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>继承的本质是提高代码的复用。</p>
+<p>然而自从继承出世后，被人们过多滥用，以至于像耦合恐惧一样恐惧继承，得了“继承创伤应激障碍”。</p>
+<p>是不是有像<a href="http://www.zhuxingsheng.com/blog/coupling-inevitability.html">耦合必然性</a>一样，解决继承的创伤呢？</p>
+<h1 id="里氏替换原则"><a href="#里氏替换原则" class="headerlink" title="里氏替换原则"></a>里氏替换原则</h1><p>这个原则最早是在1986年由 Barbara Liskov 提出：</p>
+<blockquote>
+<p>若对每个类型T1的对象o1，都存在一个类型T2的对象o2，使得在所有针对T2编写的程序P中，用o1替换o2后，程序P的行为功能不变，则T1是T2的子类型</p>
+</blockquote>
+<p>在1996年，Robert Martin 重新描述了这个原则：</p>
+<blockquote>
+<p>Functions that use pointers of references to base classes must be able tu use objects of derived classes without knowing it</p>
+</blockquote>
+<p>通俗地讲，就是子类型必须能够替换掉它们的基类型,并且保证原来的逻辑行为不变及正确性不被破坏。</p>
+<p>比如那个著名的长方形的例子。Rectangle 表示长方形，Square 继承 Rectangle，表示正方形。现在问题就来了，这个关系在数学中是正确的，但表示为代码却不太正确。长方形可以用成员函数单独变更长宽，但正方形却不行，长和宽必须同时变更。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Rectangle rect = new Square();</span><br><span class="line">rect.setHeight(4); // 设置长度</span><br><span class="line">rect.setWidth(5);  // 设置宽度</span><br><span class="line">assertThat(rect.area(), is(20)); // 对结果进行断言</span><br></pre></td></tr></table></figure>
+
+<p>当正方形 Square 替换长方形 Rectangle 时，发现程序不能正确运行，这样就不满足LSP，也就不适合使用继承。</p>
+<p>还有那个同样著名的鸟类的例子。基类 Bird 有个 Fly 方法，所有的鸟类都应该继承它。但企鹅、鸵鸟这样的鸟类却不会飞，实现它们就必须改写 Fly 方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">public class AbstractBird &#123;</span><br><span class="line">  //...省略其他属性和方法...</span><br><span class="line">  public void fly() &#123; //... &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Ostrich extends AbstractBird &#123; //鸵鸟</span><br><span class="line">  //...省略其他属性和方法...</span><br><span class="line">  public void fly() &#123;</span><br><span class="line">    throw new UnSupportedMethodException(&quot;I can&#x27;t fly.&#x27;&quot;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样的设计</p>
+<p><strong>一方面，徒增了编码的工作量</strong></p>
+<p><strong>另一方面，也违背了我们之后要讲的最小知识原则（Least Knowledge Principle，也叫最少知识原则或者迪米特法则）</strong>，暴露不该暴露的接口给外部，增加了类使用过程中被误用的概率。</p>
+<p>想验证有没有违背里氏替换原则，主要是两方面：</p>
+<p>1、IS-A的判定是基于行为，只有行为相同，才能说是满足IS-A关系。</p>
+<p>2、通常说来，子类比父类的契约更严格，都是违反里氏替换原则的。</p>
+<p>在类的继承中，如果父类方法的访问控制是 protected，那么子类 override 这个方法的时候，可以改成是 public，但是不能改成 private。因为 private 的访问控制比 protected 更严格，能使用父类 protected 方法的地方，不能用子类的 private 方法替换，否则就是违反里氏替换原则的。相反，如果子类方法的访问控制改成 public 就没问题，即子类可以有比父类更宽松的契约。同样，子类 override 父类方法的时候，不能将父类的 public 方法改成 protected，否则会出现编译错误。</p>
+<p>而像长方形例子中，正方形继承了长方形，但是正方形有比长方形更严格的契约，即正方形要求长和宽是一样的。因为正方形有比长方形更严格的契约，那么在使用长方形的地方，正方形因为更严格的契约而无法替换长方形。</p>
+<p>多态和里氏替换有点类似，但它们的关注的角度是不一样的。多态是面向对象编程的一大特性，也是面向对象编程语言的一种语法。它是一种代码实现的思路。而里氏替换是一种设计原则，是用来指导继承关系中子类该如何设计的，子类的设计要保证在替换父类的时候，不改变原有程序的逻辑以及不破坏原程序的正确性。</p>
+<p><em>其实还是回归继承本质，就是为了代码复用，子类最好不要覆盖父类的任何方法，只做额外增强</em></p>
+<h1 id="组合优于继承"><a href="#组合优于继承" class="headerlink" title="组合优于继承"></a>组合优于继承</h1><p>组合优于继承：如果一个方案既能用组合实现，也能用继承实现，那就选择组合实现。</p>
+<p>上面提到的鸟类例子，通过 AbstractBird 类派生出两个更加细分的抽象类：会飞的鸟类 AbstractFlyableBird 和不会飞的鸟类 AbstractUnFlyableBird。当还要关注“鸟会不会叫”的时候，<br>那就需要再定义四个抽象类（AbstractFlyableTweetableBird、AbstractFlyableUnTweetableBird、AbstractUnFlyableTweetableBird、AbstractUnFlyableUnTweetableBird）</p>
+<p><img src="http://images.zhuxingsheng.com/20230308222247_1678285367.jpg"></p>
+<p>类的继承层次会越来越深、继承关系会越来越复杂。而这种层次很深、很复杂的继承关系</p>
+<p>一方面，会导致代码的可读性变差。因为我们要搞清楚某个类具有哪些方法、属性，必须阅读父类代码、父类的父类的代码，一直追溯到最顶层父类的代码。</p>
+<p>另一方面，这也破坏了类的封装特性，将父类的实现细节暴露给了子类。子类的实现依赖父类的实现，两者高度耦合，一旦父类代码修改，就会影响所有子类的逻辑。</p>
+<p><img src="http://images.zhuxingsheng.com/20230307182809_1678184889.jpg"></p>
+<p>简而言之，继承最大的问题就在于：继承层次过深、继承关系过于复杂会影响到代码的可读性和可维护性。</p>
+<p>而利用组合、接口、委托三个技术手段，重构一下上面的继承问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">public interface Flyable &#123;</span><br><span class="line">  void fly()；</span><br><span class="line">&#125;</span><br><span class="line">public class FlyAbility implements Flyable &#123;</span><br><span class="line">  @Override</span><br><span class="line">  public void fly() &#123; //... &#125;</span><br><span class="line">&#125;</span><br><span class="line">//省略Tweetable/TweetAbility/EggLayable/EggLayAbility</span><br><span class="line"></span><br><span class="line">public class Ostrich implements Tweetable, EggLayable &#123;//鸵鸟</span><br><span class="line">  private TweetAbility tweetAbility = new TweetAbility(); //组合</span><br><span class="line">  private EggLayAbility eggLayAbility = new EggLayAbility(); //组合</span><br><span class="line">  //... 省略其他属性和方法...</span><br><span class="line">  @Override</span><br><span class="line">  public void tweet() &#123;</span><br><span class="line">    tweetAbility.tweet(); // 委托</span><br><span class="line">  &#125;</span><br><span class="line">  @Override</span><br><span class="line">  public void layEgg() &#123;</span><br><span class="line">    eggLayAbility.layEgg(); // 委托</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>尽管我们鼓励多用组合少用继承，但组合也并不是完美的，继承也并非一无是处。继承改写成组合意味着要做更细粒度的类的拆分。这意味着，我们要定义更多的类和接口。类和接口的增多也就或多或少地增加代码的复杂程度和维护成本。</p>
+<p>如果类之间的继承结构稳定，继承层次比较浅（比如，最多有两层继承关系），继承关系不复杂，我们就可以大胆使用继承。反之，系统越不稳定，继承层次很深，继承关系复杂，就尽量使用组合替代继承。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SOLID/" rel="tag"># SOLID</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/precautions-for-repeatedly-reading-inputstream-in-httprequest.html" rel="prev" title="httpRequest中重复读取inputstream注意事项">
+      <i class="fa fa-chevron-left"></i> httpRequest中重复读取inputstream注意事项
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/insufficient-team-execution-is-a-problem-for-subordinates.html" rel="next" title="团队执行力不够都是下属问题">
+      团队执行力不够都是下属问题 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%87%8C%E6%B0%8F%E6%9B%BF%E6%8D%A2%E5%8E%9F%E5%88%99"><span class="nav-number">1.</span> <span class="nav-text">里氏替换原则</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%84%E5%90%88%E4%BC%98%E4%BA%8E%E7%BB%A7%E6%89%BF"><span class="nav-number">2.</span> <span class="nav-text">组合优于继承</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

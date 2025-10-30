@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="在DDD中Repository是一个相当重要的概念。聚合是战略与战术之间的交汇点。而管理聚合的正是Repository。 因为从战略层次，分而治之，我们会按领域、子域、界限上下文、聚合逐步划分降低系统复杂度；从战术层次，我们会从实体、值对象、聚合逐步归并，汇合。 也因此有人解析DDD关键就是两个字：分与合，分是手段，合是目的。 之前写的《DDD之Repository》，大致介绍了Repositor">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDD之Repository对象生命周期管理">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/ddds-repository-object-lifecycle-management.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="在DDD中Repository是一个相当重要的概念。聚合是战略与战术之间的交汇点。而管理聚合的正是Repository。 因为从战略层次，分而治之，我们会按领域、子域、界限上下文、聚合逐步划分降低系统复杂度；从战术层次，我们会从实体、值对象、聚合逐步归并，汇合。 也因此有人解析DDD关键就是两个字：分与合，分是手段，合是目的。 之前写的《DDD之Repository》，大致介绍了Repositor">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210308133647_1615181807.jpg">
+<meta property="article:published_time" content="2022-06-18T12:38:00.000Z">
+<meta property="article:modified_time" content="2022-11-08T07:15:29.606Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20210308133647_1615181807.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/ddds-repository-object-lifecycle-management.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>DDD之Repository对象生命周期管理 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ddds-repository-object-lifecycle-management.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DDD之Repository对象生命周期管理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-06-18 20:38:00" itemprop="dateCreated datePublished" datetime="2022-06-18T20:38:00+08:00">2022-06-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在DDD中Repository是一个相当重要的概念。聚合是战略与战术之间的交汇点。而管理聚合的正是Repository。</p>
+<p>因为从战略层次，分而治之，我们会按领域、子域、界限上下文、聚合逐步划分降低系统复杂度；从战术层次，我们会从实体、值对象、聚合逐步归并，汇合。</p>
+<p>也因此有人解析DDD关键就是两个字：<strong>分与合，分是手段，合是目的</strong>。</p>
+<p>之前写的<a href="http://www.zhuxingsheng.com/blog/ddd-repository.html">《DDD之Repository》</a>，大致介绍了Repository作用。</p>
+<p><img src="http://images.zhuxingsheng.com/20210308133647_1615181807.jpg" alt="image"></p>
+<p>一是从“硬件”、“软件”、“固件”阐述了Repository的必要性，相对DAO，具有更高抽象，不再关心数据是从db,cache甚至第三方系统，Repository管理着数据在存档态与活跃态之间的转换</p>
+<p>二是Respository与Domain Service之间的调用关系</p>
+<span id="more"></span>
+
+<p>虽然解释了不少，但也有些问题没有阐述清楚，借这篇再进一步详情补充说明下</p>
+<p>常见的两个错误：</p>
+<p>1、领域模型中不能出现技术词，所以在设计模型时，不要出现DAO之类的技术词。而在DDD中提出了Repository，一是从DDD统一语言角度，数据具体技术存储抽象为Repository；二是Repsotiory也表达模型概念。</p>
+<p>2、Repository是DDD中作为DAO的替身，换汤不换药，所以从以前的XXXDao,变成了XXXRepository，然而Repository在DDD中并不是这么简单，它管理着聚合的生命周期，而其他实体对象由对应的聚合对象管理。</p>
+<p>对于第一点，再详述下。在面向对象中有两种对象逻辑：单对象逻辑和集合对象逻辑。</p>
+<p>如单纯的User对象，还有表示Collection<User> users逻辑，如年龄最大最小的用户，是集合逻辑</p>
+<p>如果把Collection变成PersistentCollection，就是DB。</p>
+<p>再进一步，看个小示例,一个办事处有很多的员工，以往模型表达为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">class Office &#123;</span><br><span class="line">    List&lt;User&gt; users;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>换一种方式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">class Office &#123;</span><br><span class="line">    Users users;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用Users来表达集合对象，这样原先使用List<User>不能表达的模型，在抽象集合对象Users上可以很好的表达出来。</p>
+<p>而Repository就是代表了一种集合领域逻辑，如我们直接把UserRespository想像为Users处理。</p>
+<p>使用这种方式一是能更好地表达模型，二也能解决在<a href="http://www.zhuxingsheng.com/blog/three-ways-to-implement-business-logic-transaction-script-anemia-model-and-ddd.html">《处理业务逻辑的三种方式》</a> 中提到的性能问题。</p>
+<p>性能与模型的选择其实是在实践DDD过程中很多人的拦路虎。</p>
+<p>如上面的Office对象，如果使用List来表达users集合数据，那当加载Office对象，users是不是必须加载出来，从模型完整性角度必须得加载出来，但加载出来必须带来性能损耗，如果users数量很大，不借助类似hibernate提供的懒加载机制来规避N+1带来的性能损耗，这个模型根本不可行。</p>
+<p>这也是Repository不能按DDD原意来落地的原因。</p>
+<p>进一步思考，其实上面的原因只是表象，背后是生命周期的管理。</p>
+<h1 id="生命周期管理"><a href="#生命周期管理" class="headerlink" title="生命周期管理"></a>生命周期管理</h1><p>不论是设计，还是性能，对于聚合，除了显现的要求是聚合内的数据一致性。在数据库体系中，我们都是使用事务一致性来管理一致性和完整性。也是变相得把实体一致性与事务一致性两者的边界在同一边界上。</p>
+<p>还有<strong>隐含的构建关系和级联生命周期</strong>。</p>
+<p>比如：Order 与 OrderItem</p>
+<p>创建：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">Order &#123;</span><br><span class="line"></span><br><span class="line">    List&lt;OrderItem&gt; items;</span><br><span class="line">    </span><br><span class="line">    public OrderItem newItem(String itemName,String price)&#123;</span><br><span class="line">    </span><br><span class="line">        OrderItem item = new OrderItem(this);</span><br><span class="line">        items.add(item);</span><br><span class="line">        return item;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>那么当domain service去处理Order业务时</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">OrderService &#123;</span><br><span class="line">    </span><br><span class="line">    void doOrder() &#123;</span><br><span class="line">        Order order = new Order(orderId);</span><br><span class="line">        // order do something</span><br><span class="line">        order.newItem(name,price);</span><br><span class="line">        </span><br><span class="line">        orderRepository.save(order);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>当orderRepository.save()时，<strong>不仅让order从活跃态变成持久态，还会把orderItem也由活跃态变成持久态</strong>。</p>
+<p>当orderRepository.delete()时，也不仅删除了order，也得删除orderItem。才能保持一致性。</p>
+<p>自然读取Order时，orderItems也得加载完整，保持模型的完整性。</p>
+<p>这就是构建关系与级联生命周期。</p>
+<p>怎么处理呢？</p>
+<p>大致有三种方法</p>
+<h2 id="技术手段"><a href="#技术手段" class="headerlink" title="技术手段"></a>技术手段</h2><p>在<a href="http://www.zhuxingsheng.com/blog/ddd-repository.html">《DDD之Repository》</a>提到的对象追踪，其实有很多的名字，也有叫Dirty Tracking</p>
+<p>再配合延迟加载技术，达到了我们的目标：模型完整，落地可控。</p>
+<h2 id="失联领域-disconnected-aggregate"><a href="#失联领域-disconnected-aggregate" class="headerlink" title="失联领域 disconnected aggregate"></a>失联领域 disconnected aggregate</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Order &#123;</span><br><span class="line">    List&lt;Item&gt; items;</span><br><span class="line">    addItem(amount) &#123;</span><br><span class="line">      Item item = new Item(orderId,amount)</span><br><span class="line">      items.add(item)</span><br><span class="line">      this.jpa.insert(item);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>在《IDDD》也提到，在聚合中使用 repository 来操作聚合。但不推荐，这<strong>只是延迟加载的一种形式</strong>。</p>
+<p>把聚合看作一个整体，不用关心聚合内实体的改变，将所有改变，看作是聚合本身的改变。</p>
+<p>在《IDDD》中也不推荐这样，给出的做法是在调用聚合方法前，先取出所需要的实体，也就是像在上述文章中所讲：Domain service不要依赖Repository。可以在application service里通过repository查出需要数据，再传给domain service，让domain service变得无状态。</p>
+<p>但这种方式，看着是个方法，但实践时，有违直觉。什么意思呢？就是Aggregate依赖了Repository。相当于实体依赖了DAO，是不是很不应该？</p>
+<p>其实domain service, entity, repository都属于domain层，那为什么同一层的类不能相互调用呢？</p>
+<p><strong>制定规则是来协调处理复杂性，都是基于认知或经验制定的，而不是为了规则而规则</strong>。</p>
+<p>既然我们的认知是他们都在一层，应该可以调用，凭什么不能调用，不违背降低复杂性的前提下不要特意限制。</p>
+<p>上文讲过Repository其实包含了一种集合逻辑，那我们把OrderRepository变名为Orders，也是一样的。</p>
+<p>那么下面的代码是没有毛病的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">User &#123;</span><br><span class="line">   List&lt;User&gt; users; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>把List<User>抽象成Users集合对象</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Users implements List&lt;User&gt; &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到这儿，自然第一段代码，就变成了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">User &#123;</span><br><span class="line">    Users users;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样写，是不是也没毛病？ 把Users再替换成Repository</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">User &#123;</span><br><span class="line">    UserRepository repository;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>是不是也没问题了，也就是User依赖了UserRepository。</p>
+<p>由上面四段小代码，推导出了User依赖UserRepository的合理性与可行性，只是平常被DAO方式习惯了，以致于心理上有点别扭而已。这也变相说明了Repository不是DAO。</p>
+<p>再进一步：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Orders &#123;</span><br><span class="line">    </span><br><span class="line">    void addOrder(order) &#123;</span><br><span class="line">      </span><br><span class="line">      this.dao.insert(order);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>这段代码，如果没有使用jpa,orm框架，也是有问题的。</p>
+<p>为何？<strong>破坏了封装性</strong>。</p>
+<p>因为在dao.insert里面必然会暴露order的内部数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">OrderDao &#123;</span><br><span class="line">    void insert(order) &#123;</span><br><span class="line">        db.execute(order.getId(),order.getTime(),...);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们使用对象建模，就是把业务逻辑 建模为数据变化，然后把数据的改变和改变数据的行为放一起</p>
+<p>不同于面向过程是建模业务流程。</p>
+<p>数据变化，以及生命周期变化是业务的核心逻辑。</p>
+<p>对象状态变化来自队列和缓存，那么也要被domain封装对象生命周期。</p>
+<p>因此代码得这样写，才不被破坏封装性：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Order &#123;</span><br><span class="line">   void save(OrderRepo) &#123;</span><br><span class="line">        orderRepo.save(thid.id,thid.time,...);</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>repo.save(order) 与 order.save(repo) 两种写法看似简单，背后的思想却让人的思考变得如此肤浅。</p>
+<p>前一种写法，如果不与orm绑定，会造成封装性破坏，而且会从充血模型变成了贫血模型，<a href="http://www.zhuxingsheng.com/blog/three-ways-to-implement-business-logic-transaction-script-anemia-model-and-ddd.html">table module</a>。</p>
+<p>后一种写法，在不与orm绑定前提下保护了封装性，但save行为赋给了当前对象，这是在面向对象早期流行的真实世界建模。</p>
+<p>不管怎么写，从活跃态到归档态是很重要的行为，因为数据一致性是业务逻辑的核心。也说明了不管如何建模，都要考虑到技术实现，domain不是一片静土，<strong>没有约束的理想化实现，而是受特定技术栈与技术生态环境约束的实现</strong>。所以在分层时，有人认为基础设施层不是层的原因。</p>
+<h2 id="关联对象-association-object"><a href="#关联对象-association-object" class="headerlink" title="关联对象 association object"></a>关联对象 association object</h2><p>除了上面两种方式，还有在《分析模式》中提到的关联对象模式。</p>
+<p>关联对象，顾名思义，就是将对象间的关联关系直接建模出来，然后再通过接口与抽象的隔离，把具体技术实现细节封装到接口的实现中。这样既可以保证概念上的统一，又能够避免技术实现上的限制。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>DDD中实体大致分成了两种：一是聚合根，二是聚合内实体。两者的生命周期管理也不一样，聚合根由repository管理，而其他实体由聚合根管理。</p>
+<p>因此当在创建聚合根的时候，聚合根与其内部实体的生命周期有级联关系。通过三种方式可以实现这种级联关系。不管是何方式，要达到的目标：一是数据一致性，二是模型显现表达出来。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/the-way-to-become-the-chief-architect.html" rel="prev" title="成为首席架构师的打怪升级之路">
+      <i class="fa fa-chevron-left"></i> 成为首席架构师的打怪升级之路
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/ways-and-differences-for-jvm-to-obtain-resources.html" rel="next" title="JVM获取资源的途径和差别">
+      JVM获取资源的途径和差别 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%AE%A1%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">生命周期管理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E6%89%8B%E6%AE%B5"><span class="nav-number">1.1.</span> <span class="nav-text">技术手段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%B1%E8%81%94%E9%A2%86%E5%9F%9F-disconnected-aggregate"><span class="nav-number">1.2.</span> <span class="nav-text">失联领域 disconnected aggregate</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E8%81%94%E5%AF%B9%E8%B1%A1-association-object"><span class="nav-number">1.3.</span> <span class="nav-text">关联对象 association object</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

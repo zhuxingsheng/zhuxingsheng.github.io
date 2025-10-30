@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="算法虐我千万遍，我待算法如初恋；IT人永远逃脱不了的算法  概念算法是特定问题求解步骤的描述，在计算机中表现为指令的有限序列 算法是独立存在的一种解决问题的方法和思想 对于算法而言，实现的语言并不重要，重要的是思想 特性 输入: 算法具有0个或多个输入 输出: 算法至少有1个或多个输出 有穷性: 算法在有限的步骤之后会自动结束而不会无限循环，并且每一个步骤可以在可接受的时间内完成 确定性：算法中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法概要">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/algorithm-overview.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="算法虐我千万遍，我待算法如初恋；IT人永远逃脱不了的算法  概念算法是特定问题求解步骤的描述，在计算机中表现为指令的有限序列 算法是独立存在的一种解决问题的方法和思想 对于算法而言，实现的语言并不重要，重要的是思想 特性 输入: 算法具有0个或多个输入 输出: 算法至少有1个或多个输出 有穷性: 算法在有限的步骤之后会自动结束而不会无限循环，并且每一个步骤可以在可接受的时间内完成 确定性：算法中">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201810291628_723.png">
+<meta property="article:published_time" content="2018-10-30T12:34:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.013Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201810291628_723.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/algorithm-overview.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>算法概要 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm-overview.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          算法概要
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-10-30 20:34:00" itemprop="dateCreated datePublished" datetime="2018-10-30T20:34:00+08:00">2018-10-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>算法虐我千万遍，我待算法如初恋；IT人永远逃脱不了的算法</p>
+</blockquote>
+<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><p>算法是特定问题求解步骤的描述，在计算机中表现为指令的有限序列</p>
+<p><strong>算法是独立存在的一种解决问题的方法和思想</strong></p>
+<p>对于算法而言，实现的语言并不重要，重要的是思想</p>
+<h1 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h1><ol>
+<li>输入: 算法具有0个或多个输入</li>
+<li>输出: 算法至少有1个或多个输出</li>
+<li>有穷性: 算法在有限的步骤之后会自动结束而不会无限循环，并且每一个步骤可以在可接受的时间内完成</li>
+<li>确定性：算法中的每一步都有确定的含义，不会出现二义性</li>
+<li>可行性：算法的每一步都是可行的，也就是说每一步都能够执行有限的次数完成</li>
+</ol>
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><p>一个算法的优劣主要从算法的执行时间和所需要占用的存储空间两个方面衡量</p>
+<h2 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h2><p><strong>定义</strong>：如果一个问题的规模是n，解这一问题的某一算法所需要的时间为T(n)，它是n的某一函数T(n)称为这一算法的“时间复杂性”</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">T(n) = O(f(n))</span><br></pre></td></tr></table></figure>
+
+<p>当输入量n逐渐加大时，时间复杂性的极限情形称为算法的“渐近时间复杂性”。</p>
+<p>比如排序算法：可用算法执行中的数据比较次数与数据移动次数来衡量</p>
+<h2 id="空间复杂度"><a href="#空间复杂度" class="headerlink" title="空间复杂度"></a>空间复杂度</h2><p>对一个算法在运行过程中临时占用存储空间大小的量度，记做S(n)&#x3D;O(f(n))。</p>
+<p>比如直接插入排序，需一个监视哨兵，空间复杂度是O(1) ，而一般的递归算法就要有O(n)的空间复杂度了，因为每次递归都要存储返回信息。</p>
+<h1 id="大O表示法"><a href="#大O表示法" class="headerlink" title="大O表示法"></a>大O表示法</h1><p>大O表示法被用来描述一个算法的性能或复杂度。大O表示法可以用来描述一个算法的最差情况，或者一个算法执行的耗时或占用空间（例如内存或磁盘占用）</p>
+<p>假设一个算法的时间复杂度是 O(n)，n在这里代表的意思就是数据的个数。</p>
+<p>举个例子，如果你的代码用一个循环遍历 100 个元素，那么这个算法就是 O(n)，n 为 100，所以这里的算法在执行时就要做 100 次工作</p>
+<p>大O表示法就是将算法的所有步骤转换为代数项，然后排除不会对问题的整体复杂度产生较大影响的较低阶常数和系数,<strong>只关心复杂度最重要的部分</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">规律       Big-O</span><br><span class="line"></span><br><span class="line">2             O(1)   --&gt; 就是一个常数</span><br><span class="line"></span><br><span class="line">2n + 10       O(n)   --&gt; n 对整体结果会产生最大影响</span><br><span class="line"></span><br><span class="line">5n^2         O(n^2) --&gt; n^2 具有最大影响</span><br></pre></td></tr></table></figure>
+
+<p><strong>O(log n)</strong>，即对数复杂度（logarithmic complexity）。对数可以是ln(底数为e)，log10，log2 或者以其它为底数，这无关紧要，它仍然是O(log n)，正如O(2n^2) 和 O(100n^2) 都记为 O(n^2)。</p>
+<h2 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h2><h3 id="O-1"><a href="#O-1" class="headerlink" title="O(1)"></a>O(1)</h3><p>O(1)表示该算法的执行时间（或执行时占用空间）总是为一个常量，不论输入的数据集是大是小</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bool IsFirstElementNull(IList&lt;string&gt; elements)</span><br><span class="line">&#123;</span><br><span class="line">    return elements[0] == null;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="O-N"><a href="#O-N" class="headerlink" title="O(N)"></a>O(N)</h3><p>O(N)表示一个算法的性能会随着输入数据的大小变化而线性变化。下面的例子同时也表明了大O表示法其实是用来描述一个算法的最差情况的：在for循环中，一旦程序找到了输入数据中与第二个传入的string匹配时，程序就会提前退出，然而大O表示法却总是假定程序会运行到最差情况（在这个例子中，意味着大O会表示程序全部循环完成时的性能）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">bool ContainsValue(IList&lt;string&gt; elements, string value)</span><br><span class="line">&#123;</span><br><span class="line">    foreach (var element in elements)</span><br><span class="line">    &#123;</span><br><span class="line">        if (element == value) return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="O-n²"><a href="#O-n²" class="headerlink" title="O(n²)"></a>O(n²)</h3><p>for循环嵌套的复杂度就是二次方的，因为你在一个线性操作里执行另外一个线性操作（或者说： n*n &#x3D;n² ）</p>
+<p>如果嵌套层级不断深入的话，算法的性能将会变为O(N^3)，O(N^4)，以此类推</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">for (var outer = 0; outer &lt; elements.Count; outer++)</span><br><span class="line">    &#123;</span><br><span class="line">        for (var inner = 0; inner &lt; elements.Count; inner++)</span><br><span class="line">        &#123;</span><br><span class="line">            // Don&#x27;t compare with self</span><br><span class="line">            if (outer == inner) continue;</span><br><span class="line"></span><br><span class="line">            if (elements[outer] == elements[inner]) return true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="O-2-N"><a href="#O-2-N" class="headerlink" title="O(2^N)"></a>O(2^N)</h3><p>O(2^N)表示一个算法的性能将会随着输入数据的每次增加而增大两倍。O(2^N)的增长曲线是一条爆炸式增长曲线——开始时较为平滑，但数据增长后曲线增长非常陡峭。一个典型的O(2^N)方法就是裴波那契数列的递归计算实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">int Fibonacci(int number)</span><br><span class="line">&#123;</span><br><span class="line">    if (number &lt;= 1) return number;</span><br><span class="line"></span><br><span class="line">    return Fibonacci(number - 2) + Fibonacci(number - 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="logn"><a href="#logn" class="headerlink" title="(logn)"></a>(logn)</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">i=1;       </span><br><span class="line">while (i&lt;=n)</span><br><span class="line">    i=i*2;</span><br></pre></td></tr></table></figure>
+
+<h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">O(1)&lt;O(logn)&lt;O(n)&lt;O(nlogn)&lt;O(n^2)&lt;O(n^3)&lt;O(2^n)&lt;O(n!)&lt;O(n^n)</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://images.zhuxingsheng.com/201810291628_723.png" alt="Big-O Complexity"></p>
+<h1 id="引申阅读"><a href="#引申阅读" class="headerlink" title="引申阅读"></a>引申阅读</h1><p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sort-bubble.html">算法渣-排序-冒泡</a></p>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-fast.html">算法渣-排序-快速排序</a></p>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-insertion.html">算法渣-排序-插入</a></p>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-hill.html">算法渣-排序-希尔</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/algorithm/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/custom-class-loader.html" rel="prev" title="自定义类加载器">
+      <i class="fa fa-chevron-left"></i> 自定义类加载器
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/code-analysis---asynchronous-callback.html" rel="next" title="代码小析 - 异步回调">
+      代码小析 - 异步回调 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%89%B9%E6%80%A7"><span class="nav-number">2.</span> <span class="nav-text">特性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">3.</span> <span class="nav-text">复杂度</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">3.1.</span> <span class="nav-text">时间复杂度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A9%BA%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">3.2.</span> <span class="nav-text">空间复杂度</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%A7O%E8%A1%A8%E7%A4%BA%E6%B3%95"><span class="nav-number">4.</span> <span class="nav-text">大O表示法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B"><span class="nav-number">4.1.</span> <span class="nav-text">示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#O-1"><span class="nav-number">4.1.1.</span> <span class="nav-text">O(1)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#O-N"><span class="nav-number">4.1.2.</span> <span class="nav-text">O(N)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#O-n%C2%B2"><span class="nav-number">4.1.3.</span> <span class="nav-text">O(n²)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#O-2-N"><span class="nav-number">4.1.4.</span> <span class="nav-text">O(2^N)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#logn"><span class="nav-number">4.1.5.</span> <span class="nav-text">(logn)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E8%BE%83"><span class="nav-number">4.2.</span> <span class="nav-text">比较</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%95%E7%94%B3%E9%98%85%E8%AF%BB"><span class="nav-number">5.</span> <span class="nav-text">引申阅读</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

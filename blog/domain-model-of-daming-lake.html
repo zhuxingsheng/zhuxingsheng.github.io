@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="不管在做系统分析，还是系统设计时，我们大概率都会提到领域模型这个词，奇妙的是虽然大家都在谈论领域模型，但每个人心中都有一份对领域模型的认知。 套用DDD，我们需要统一语言，首先需要对“领域模型”有一个统一认知。达成共识。 你可以暂时挂起大脑进程，想想：“领域模型是什么？怎么描述？” 世事万物都在变化中发展，就如同“手机”，十年前和现在，人们对它的认知也是不一样的。所以我们一起回顾一下最原始的“领域">
+<meta property="og:type" content="article">
+<meta property="og:title" content="大明湖畔的领域模型">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/domain-model-of-daming-lake.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="不管在做系统分析，还是系统设计时，我们大概率都会提到领域模型这个词，奇妙的是虽然大家都在谈论领域模型，但每个人心中都有一份对领域模型的认知。 套用DDD，我们需要统一语言，首先需要对“领域模型”有一个统一认知。达成共识。 你可以暂时挂起大脑进程，想想：“领域模型是什么？怎么描述？” 世事万物都在变化中发展，就如同“手机”，十年前和现在，人们对它的认知也是不一样的。所以我们一起回顾一下最原始的“领域">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211204162629_1638606389.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211204214242_1638625362.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211204220428_1638626668.jpg">
+<meta property="article:published_time" content="2021-12-05T12:52:00.000Z">
+<meta property="article:modified_time" content="2021-12-05T12:53:16.564Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta property="article:tag" content="OO">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20211204162629_1638606389.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/domain-model-of-daming-lake.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>大明湖畔的领域模型 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/domain-model-of-daming-lake.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          大明湖畔的领域模型
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-12-05 20:52:00 / Modified: 20:53:16" itemprop="dateCreated datePublished" datetime="2021-12-05T20:52:00+08:00">2021-12-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>不管在做系统分析，还是系统设计时，我们大概率都会提到领域模型这个词，奇妙的是虽然大家都在谈论领域模型，但每个人心中都有一份对领域模型的认知。</p>
+<p>套用DDD，我们需要统一语言，首先需要对“领域模型”有一个统一认知。达成共识。</p>
+<p>你可以暂时挂起大脑进程，想想：“领域模型是什么？怎么描述？”</p>
+<p>世事万物都在变化中发展，就如同“手机”，十年前和现在，人们对它的认知也是不一样的。所以我们一起回顾一下最原始的“领域模型”是什么，你是否记起大明湖畔的领域模型。</p>
+<p>“领域模型”最早流行于OOA中，简单回顾一下OOA&#x2F;D</p>
+<h1 id="OOA-D"><a href="#OOA-D" class="headerlink" title="OOA&#x2F;D"></a>OOA&#x2F;D</h1><p><strong>分析</strong>：强调的是对问题和需求的调查研究，而不是解决方案。例如，如果需要一个新的在线交易系统，那么，应该如何使用它？它应该具有哪些功能？</p>
+<p><strong>设计</strong>：强调的是满足需求的概念上的解决方案，而不是实现。例如，对数据库方案和软件对象的描述。设计思想通常排斥底层或“显而易见”的细节。最终设计可以实现，而实现则表达了真实和完整的设计。</p>
+<p>++分析和设计可以概括为：做正确的事和正确地做事++</p>
+<p><strong>OOA</strong>：强调在问题领域内发现和描述对象（或概念）。例如，在航班信息系统里包含飞机、航班和飞行员等概念。</p>
+<p><strong>OOD</strong>：强调的是定义软件对象以及它们如何协作以实现需求。例如，软件对象Plane可以有tailNumber(飞机唯一标识)和getFightHistory方法(飞行过的航班)</p>
+<h1 id="领域模型"><a href="#领域模型" class="headerlink" title="领域模型"></a>领域模型</h1><p>领域模型是OOA中最重要的和经典的模型。</p>
+<h2 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h2><p>领域模型是对领域内的概念类或现实世界中对象的可视化表。也称为概念模型、领域对象模型和分析对象模型。</p>
+<p>不是描述软件类、软件架构领域层或有职责软件对象的组图。</p>
+<h2 id="Why"><a href="#Why" class="headerlink" title="Why"></a>Why</h2><p>为什么需要领域模型？去掉修饰语，为什么需要模型，这在DDD系列文章中已经解释：模型是对业务复杂度的简化和提炼。帮助我们更好地理解业务。</p>
+<p>同理领域模型能够使我们理解关键概念和业务知识。</p>
+<p>我们在设计和实现时，软件类名称也大多源于领域模型的名称，以使对象具有源于领域的信息和职责。</p>
+<p><img src="http://images.zhuxingsheng.com/20211204162629_1638606389.jpg"></p>
+<p>这样可以降低我们思维与OO建模之间的表示差异</p>
+<h2 id="How"><a href="#How" class="headerlink" title="How"></a>How</h2><p>如何创建领域模型？</p>
+<ol>
+<li>寻找概念类</li>
+<li>将其绘制为UML类图中的类</li>
+<li>添加关联和属性</li>
+</ol>
+<h3 id="寻找概念类"><a href="#寻找概念类" class="headerlink" title="寻找概念类"></a>寻找概念类</h3><p>根据领域模型定义，需要先找到概念类。</p>
+<p>概念类是思想、事物或对象。可以从其符号、内涵和外延考虑。</p>
+<p>符号：表示概念类的词语或图形</p>
+<p>内涵：概念类的定义</p>
+<p>外延：概念类所适用的一组示例</p>
+<p><img src="http://images.zhuxingsheng.com/20211204214242_1638625362.jpg"></p>
+<p>考虑购买交易事件的概念类。</p>
+<p>可以使用符号Sale对其命名。</p>
+<p>Sale的内涵陈述为“表示购买交易的事件，并且具有日期和时间”</p>
+<p>Sale的外延是所有销售的例子，或者说是世界上所有销售实例的集合</p>
+<h3 id="描述类图"><a href="#描述类图" class="headerlink" title="描述类图"></a>描述类图</h3><p>领域模型描述的信息可以采用纯文本方式表示。</p>
+<p>但是在可视化语言中更容易理解这些术语，特别是它们之间的关系，因为我们的思维更擅长理解形象的元素和线条连接。</p>
+<p>在应用UML时，领域模型被描述为一组没有定义操作的类图。</p>
+<h3 id="关联"><a href="#关联" class="headerlink" title="关联"></a>关联</h3><p>关联是类之间的关系，表示有意义和值得关注的连接。</p>
+<p>关联能够满足当前所开发场景的信息需求，并且有助于理解领域。</p>
+<p><img src="http://images.zhuxingsheng.com/20211204220428_1638626668.jpg"></p>
+<p>关联被表示为类之间的连线，并冠以首字母大写的关联名称。</p>
+<p>关联末端可以包含多重性表达式，用于指明类的实例之间的数量关系。</p>
+<p>关联本质上是双向的，方向箭头只是为了方便阅读，默认是从左往右。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>没有所谓唯一正确的领域模型。所有模型都是对我们试图要理解的领域的近似。</p>
+<p>领域模型主要是特定群体中用于理解和沟通的工具。</p>
+<p>有效的领域模型捕获了当前需求语境下本质抽象和理解 领域所需要的信息，并且可以帮助理解领域的概念、术语和关系。</p>
+<hr>
+<p>到此，已经完成追忆大明湖畔的领域模型，也是OO风云初起时代领域模型的含义。</p>
+<p>如果你想更多的回忆，可以去看看以往OO方便书籍，本文内容大多来自《UML和模式应用》。</p>
+<p>现今，领域模型演义出更多新的含义，如Martin Fowler提出的充血模型，以及DDD中的领域模型。</p>
+<p>在与别人交流时，我们得听声听音，是否在同一频道。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+              <a href="/tags/OO/" rel="tag"># OO</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/do-not-study-inefficiently-all-your-life.html" rel="prev" title="不要终身低效学习">
+      <i class="fa fa-chevron-left"></i> 不要终身低效学习
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/io-multiplexing-past-and-present-life.html" rel="next" title="IO多路复用前世今生">
+      IO多路复用前世今生 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OOA-D"><span class="nav-number">1.</span> <span class="nav-text">OOA&#x2F;D</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">领域模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Why"><span class="nav-number">2.2.</span> <span class="nav-text">Why</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How"><span class="nav-number">2.3.</span> <span class="nav-text">How</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BB%E6%89%BE%E6%A6%82%E5%BF%B5%E7%B1%BB"><span class="nav-number">2.3.1.</span> <span class="nav-text">寻找概念类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%8F%E8%BF%B0%E7%B1%BB%E5%9B%BE"><span class="nav-number">2.3.2.</span> <span class="nav-text">描述类图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E8%81%94"><span class="nav-number">2.3.3.</span> <span class="nav-text">关联</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

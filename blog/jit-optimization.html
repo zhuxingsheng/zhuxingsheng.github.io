@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="碎碎念《JIT优化之道》是去年在公司的一次分享，对于公司组织分享我是赞同又不赞同，怎么讲呢？ 技术分享当然是好的，这是一个双赢，分享者教学相长，而收听者也能更快的了解进步。 但以前在原先的公司也做过些类事情，但没有想象的好，大家对分享主题的探索也只限于在分享时间段内，过后很少有人，几乎没人去做进一步的探索。填鸭式的学习效果甚微。后来只涉及一些项目中使用到的知识点，让项目中人去发现项目中的一些亮点，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JIT优化之道">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/jit-optimization.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="碎碎念《JIT优化之道》是去年在公司的一次分享，对于公司组织分享我是赞同又不赞同，怎么讲呢？ 技术分享当然是好的，这是一个双赢，分享者教学相长，而收听者也能更快的了解进步。 但以前在原先的公司也做过些类事情，但没有想象的好，大家对分享主题的探索也只限于在分享时间段内，过后很少有人，几乎没人去做进一步的探索。填鸭式的学习效果甚微。后来只涉及一些项目中使用到的知识点，让项目中人去发现项目中的一些亮点，">
+<meta property="og:locale">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/jit/jit.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/jit/compile.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/jit/jieshibianyi.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/jit/tieredxingneng.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/jit/jit-switch.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/jit/jit-guocheng.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/jit/jit-count1.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/jit/jit-count2.png">
+<meta property="article:published_time" content="2017-03-02T05:10:00.000Z">
+<meta property="article:modified_time" content="2021-09-29T07:24:30.449Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="jit">
+<meta property="article:tag" content="jvm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qnimages.zhuxingsheng.com/jit/jit.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/jit-optimization.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>JIT优化之道 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/jit-optimization.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JIT优化之道
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-03-02 13:10:00" itemprop="dateCreated datePublished" datetime="2017-03-02T13:10:00+08:00">2017-03-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h1><p>《JIT优化之道》是去年在公司的一次分享，对于公司组织分享我是赞同又不赞同，怎么讲呢？</p>
+<p>技术分享当然是好的，这是一个双赢，分享者教学相长，而收听者也能更快的了解进步。</p>
+<p>但以前在原先的公司也做过些类事情，但没有想象的好，大家对分享主题的探索也只限于在分享时间段内，过后很少有人，几乎没人去做进一步的探索。填鸭式的学习效果甚微。后来只涉及一些项目中使用到的知识点，让项目中人去发现项目中的一些亮点，盲区</p>
+<p>聪明人从旁人的错误中吸取教训,愚笨人则从自身的错误中吸取教训，有多少聪明人呢？<br>不经历风雨又怎么见彩虹？</p>
+<h1 id="JIT主要关注三个点"><a href="#JIT主要关注三个点" class="headerlink" title="JIT主要关注三个点"></a>JIT主要关注三个点</h1><ol>
+<li>JIT是什么</li>
+<li>JIT的原理</li>
+<li>JIT的意义</li>
+</ol>
+<h2 id="JIT是什么"><a href="#JIT是什么" class="headerlink" title="JIT是什么"></a>JIT是什么</h2><p>JIT是just in time,即时编译器；使用该技术，能够加速java程序的执行速度</p>
+<p><img src="http://qnimages.zhuxingsheng.com/jit/jit.png" alt="image"></p>
+<h3 id="编译器"><a href="#编译器" class="headerlink" title="编译器"></a>编译器</h3><p><img src="http://qnimages.zhuxingsheng.com/jit/compile.png" alt="image"></p>
+<p>Java编译器总的来说分为</p>
+<ol>
+<li>前端编译器</li>
+<li>JIT（just in time compiler）编译器</li>
+<li>AOT（Ahead Of Time Compiler）编译器</li>
+</ol>
+<p>前端编译器： 将Java文件编译为class文件的编译器，目前主要有以下两个，<br>                        Sun提供的Javac 和Eclipse JDT中的增量式编译器（ECJ）</p>
+<p>JIT编译器： 虚拟机后端运行期编译器，把字节码转换为机器码的过程。<br>                         HotSpot Vm中提供的C1, C2编译器</p>
+<p>AOT编译器：直接把Java文件转换为本地机器码的过程</p>
+<h3 id="解释器与编译器"><a href="#解释器与编译器" class="headerlink" title="解释器与编译器"></a>解释器与编译器</h3><p><img src="http://qnimages.zhuxingsheng.com/jit/jieshibianyi.png" alt="image"></p>
+<p>当程序需要迅速启动和执行的时候，解释器可以首先发挥作用，省去编译的时间，立即执行。</p>
+<p>在程序运行后，随着时间的推移，编译器逐渐发挥作用，把越来越多的代码编译成本地代码之后，可以获取更高的执行效率</p>
+<h3 id="分层编译的策略TieredCompilation"><a href="#分层编译的策略TieredCompilation" class="headerlink" title="分层编译的策略TieredCompilation"></a>分层编译的策略TieredCompilation</h3><p>为了在程序启动响应速度与运行效率之间达到最佳平衡，HotSpot虚拟机还会逐渐启动分层编译的策略。分层编译根据编译器编译、优化的规模与耗时，划分出不同的编译层次，包括：</p>
+<ol>
+<li>第0层，程序解释执行，解释器不开启性能监控功能，可触发第1层编译。</li>
+<li>第1层，也称为C1编译，将字节码编译成本地代码，进行简单、可靠的优化，如有必要将加入性能监控的逻辑。</li>
+<li>第2层，也称为C2编译，也是将字节码编译为本地代码，但是会启动一下编译耗时较长的优化，甚至会根据性能监控信息进行一些不可靠的激进优化。</li>
+</ol>
+<p>实施分层编译后，Client Compiler和Server Compiler 将会同时工作，许多代码都可能会多次编译，C1获取更高的编译速度，用C2获取更好的编译质量，在解释时候的时候也无须再承担收集性能监控信息的任务。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Oracle JDK从JDK 6u25以后的版本支持了多层编译（-XX:+TieredCompilation）</span><br><span class="line">可以用jinfo -flag或-XX:+PrintFlagsFinal来确认是否打开</span><br><span class="line"></span><br><span class="line">JDK8是默认打开的</span><br></pre></td></tr></table></figure>
+<p><img src="http://qnimages.zhuxingsheng.com/jit/tieredxingneng.png" alt="image"></p>
+<p>图表描绘了纯解析、客户端、服务器端和混合编译的性能区别。X轴代码执行时间，Y轴代表性能</p>
+<p>和单纯的代码解析相比，使用客户端编译器可以提高大约5-10倍的执行性能，实际上提高了应用的性能。当然，收益的变化还是依赖于编译器性能如何，哪些优化生效了或者被实现了，还有就是对于目标执行平台来说应用程序设计的有多好。后者是Java开发人员从来不需要担心的。</p>
+<p>和客户端编译器相比，服务器端编译器通常能够提升可度量的30％－50％的代码效率。在大部分情况下，这性能的提高将平衡掉多余的资源开销。</p>
+<p>分层编译结合了两种编译器的优点。客户端编译产生了快速的启动时间和及时的优化，服务器端编译在执行周期的后期，可以提供更多的高级优化</p>
+<h3 id="JIT开关"><a href="#JIT开关" class="headerlink" title="JIT开关"></a>JIT开关</h3><p><img src="http://qnimages.zhuxingsheng.com/jit/jit-switch.png" alt="image"></p>
+<p>3种执行方式，分别是解释执行、混合模式和编译执行，默认情况下处于混合模式中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">通过-Xint  -Xcomp改变执行方式</span><br></pre></td></tr></table></figure>
+
+<p>通过代码也可以</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">java.lang.Compiler.disable();</span><br><span class="line"></span><br><span class="line">java.lang.Compiler.enable();</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class Pi &#123;</span><br><span class="line">	public static double calcPi() &#123;</span><br><span class="line">		double re = 0;</span><br><span class="line">		for (int i = 1; i &lt; 100000; i++) &#123;</span><br><span class="line">			re += ((i &amp; 1) == 0 ? -1 : 1) * 1.0 / (2 * i - 1);</span><br><span class="line">		&#125;</span><br><span class="line">		return re * 4;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void main(String[] args) &#123;</span><br><span class="line">		long b = System.currentTimeMillis();</span><br><span class="line">		for (int i = 0; i &lt; 100000; i++)</span><br><span class="line">			calcPi();</span><br><span class="line">		long e = System.currentTimeMillis();</span><br><span class="line">		System.err.println(&quot;spend:&quot; + (e - b) + &quot;ms&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">mixed:spend:418ms</span><br><span class="line">int:spend:2547ms</span><br><span class="line">comp:spend:416ms</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>jstat -compiler <pid>显示VM实时编译的数量等信息。<br>显示列名<br>具体描述<br>Compiled<br>编译任务执行数量<br>Failed<br>编译任务执行失败数量<br>Invalid<br>编译任务执行失效数量<br>Time<br>编译任务消耗时间<br>FailedType<br>最后一个编译失败任务的类型<br>FailedMethod<br>最后一个编译失败任务所在的类及方法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jstat -compiler 55417</span><br><span class="line">Compiled Failed Invalid   Time   FailedType FailedMethod</span><br><span class="line">    6296      6       0    50.37          1  org/eclipse/jdt/internal/core/CompilationUnitStructureRequestor createTypeInfo</span><br></pre></td></tr></table></figure>
+
+<h2 id="JIT原理"><a href="#JIT原理" class="headerlink" title="JIT原理"></a>JIT原理</h2><p><img src="http://qnimages.zhuxingsheng.com/jit/jit-guocheng.png" alt="image"></p>
+<h3 id="寻找热点代码"><a href="#寻找热点代码" class="headerlink" title="寻找热点代码"></a>寻找热点代码</h3><p>在运行过程中，会被即时编译器编译的“热点代码”有两类，即：</p>
+<ol>
+<li>被多次调用的方法</li>
+<li>被多次执行的循环体（OSR On StackReplacement）</li>
+</ol>
+<p>判断是否是热点代码的行为成为热点探测：hot spotdetection,主要的热点探测方式主要有两种：</p>
+<ol>
+<li><p>基于采样的热点探测，JVM会周期性检查各个线程的栈顶，如果某个方法经常出现在栈顶，那就认定为热点方法。简单高效，精度不够。</p>
+</li>
+<li><p>基于计数器的热点探测，统计方法执行次数。（HOTSPOT使用这种方式）</p>
+</li>
+</ol>
+<h3 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h3><p>HOTSPOT有两个计数器：</p>
+<p>1、方法调用计数器</p>
+<p>2、回边计数器</p>
+<h4 id="方法调用计数器"><a href="#方法调用计数器" class="headerlink" title="方法调用计数器"></a>方法调用计数器</h4><p><img src="http://qnimages.zhuxingsheng.com/jit/jit-count1.png" alt="image"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">方法调用计数器</span><br><span class="line">client默认1500次，</span><br><span class="line">server默认10000次，</span><br><span class="line"></span><br><span class="line">-XX:CompileThreshold</span><br></pre></td></tr></table></figure>
+<p>方法调用计数器并不是统计方法调用绝对次数，而是一个相对执行频率，<br>超过一定时间，如果方法调用次数不足以让它提交给编译器，则计数器就会被减少一半，这种现象称为热度衰减(Counter Decay)，<br>进行热度衰减的动作是在垃圾回收时顺便进行的，而这段时间就被称为半衰周期（Counter Half Life Time）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">可用-XX:-UseCounterDecay来关闭热度衰减，</span><br><span class="line">用-XX:CounterHalfLifeTime来设置半衰时间。</span><br></pre></td></tr></table></figure>
+
+<p><strong>要不要关闭这个衰减？</strong></p>
+<p>HotSpot VM的触发JIT的计数器的半衰（counter decaying）是一种很好的机制，保证只有真正热的代码才会被编译，而那种偶尔才被调用一次的方法则不会因为运行时间长而积累起虚假的热度。</p>
+<p>不建议关闭这个选项，除非它在具体案例中造成了问题。</p>
+<p>Counter decaying是伴随GC运行而执行的。过多的手动调用System.gc()倒是有可能会干扰了这个衰减，导致方法达不到触发JIT编译的热度。</p>
+<h4 id="回边计数器"><a href="#回边计数器" class="headerlink" title="回边计数器"></a>回边计数器</h4><p><img src="http://qnimages.zhuxingsheng.com/jit/jit-count2.png" alt="image"></p>
+<p>回边计数器阈值计算公式</p>
+<p>（1）Client模式下<br>方法调用计数器阈值（CompileThreshold）* OSR比率（OnStackReplacePercentage）&#x2F;100.<br>其中OnStackReplacePercentage默认值为933，如果都取默认值，那Client模式虚拟机回边数的阈值为13995。</p>
+<p>（2）Server模式下<br>方法调用计数器阈值（CompileThreshold）*（OSR比率（OnStackReplacePercentage）减去解释器监控比率（InterpreterProfilePercentage）的差值）&#x2F;100。</p>
+<p>其中OnStackReplacePercentage默认值为140，InterpreterProfilePercentage默认值为33，<br>如果都取默认值，那Server模式虚拟机回边计数器的阈值为10700</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">-XX:BackEdgeThreshold</span><br><span class="line">-XX:OnStackReplacePercentage</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>与方法计数器不同，回边计数器没有计数热度衰减的过程，因此这个计数器统计的就是该方法循环执行的绝对次数</p>
+<h2 id="学习JIT意义"><a href="#学习JIT意义" class="headerlink" title="学习JIT意义"></a>学习JIT意义</h2><h3 id="大方法-与-小方法？"><a href="#大方法-与-小方法？" class="headerlink" title="大方法 与 小方法？"></a>大方法 与 小方法？</h3><p> java中一般建议一个方法不要写的过长，不方便维护和阅读是其中的一个原因，但是其真正性能的原因大家知道吗？</p>
+<p>我们知道，JVM一开始是以解释方式执行字节码的。当这段代码被执行的次数足够多以后，它会被动态优化并编译成机器码执行，执行速度会大大加快，这就是所谓的JIT编译。<br>hotsopt源码中有一句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">if (DontCompileHugeMethods &amp;&amp; m-&gt;code_size() &gt; HugeMethodLimit) return false;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>当DontCompileHugeMethods&#x3D;true且代码长度大于HugeMethodLimit时，方法不会被编译</p>
+<p>DontCompileHugeMethods与HugeMethodLimit的值在globals.hpp中定义：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">product(bool, DontCompileHugeMethods, true,</span><br><span class="line">        &quot;don&#x27;t compile methods &gt; HugeMethodLimit&quot;)</span><br><span class="line">develop(intx, HugeMethodLimit,  8000,</span><br><span class="line">        &quot;don&#x27;t compile methods larger than this if +DontCompileHugeMethods&quot;)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>上面两个参数说明了Hotspot对字节码超过8000字节的大方法有JIT编译限制，这就是大方法不会被JIT编译的原因。由于使用的是product mode的JRE，</p>
+<p>我们只能尝试关闭DontCompileHugeMethods，即增加VM参数”-XX:-DontCompileHugeMethods”来强迫JVM编译大方法。</p>
+<p>但是不建议这么做，因为一旦CodeCache满了，HotSpot会停止所有后续的编译任务，虽然已编译的代码不受影响，但是后面的所有方法都会强制停留在纯解释模式。</p>
+<h3 id="查看jit工作的参数"><a href="#查看jit工作的参数" class="headerlink" title="查看jit工作的参数"></a>查看jit工作的参数</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">-XX:-CITime 打印发费在JIT编译上的时间</span><br><span class="line"></span><br><span class="line">$ java -server -XX:+CITime Benchmark</span><br><span class="line">[...]</span><br><span class="line">Accumulated compiler times (for compiled methods only)</span><br><span class="line">------------------------------------------------</span><br><span class="line">  Total compilation time   :  0.178 s</span><br><span class="line">    Standard compilation   :  0.129 s, Average : 0.004</span><br><span class="line">    On stack replacement   :  0.049 s, Average : 0.024</span><br><span class="line">[...]</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">-XX:+PrintCompilation 我们可以简单的输出一些关于从字节码转化成本地代码的编译过程</span><br><span class="line"></span><br><span class="line">$ java -server -XX:+PrintCompilation Benchmark</span><br><span class="line">  1       java.lang.String::hashCode (64 bytes)</span><br><span class="line">  2       java.lang.AbstractStringBuilder::stringSizeOfInt (21 bytes)</span><br><span class="line">  3       java.lang.Integer::getChars (131 bytes)</span><br><span class="line">  4       java.lang.Object::&lt;init&gt; (1 bytes)</span><br><span class="line">---   n   java.lang.System::arraycopy (static)</span><br><span class="line">  5       java.util.HashMap::indexFor (6 bytes)</span><br><span class="line">  6       java.lang.Math::min (11 bytes)</span><br><span class="line">  7       java.lang.String::getChars (66 bytes)</span><br><span class="line">  8       java.lang.AbstractStringBuilder::append (60 bytes)</span><br><span class="line">  9       java.lang.String::&lt;init&gt; (72 bytes)</span><br><span class="line"> 10       java.util.Arrays::copyOfRange (63 bytes)</span><br><span class="line"> 11       java.lang.StringBuilder::append (8 bytes)</span><br><span class="line"> 12       java.lang.AbstractStringBuilder::&lt;init&gt; (12 bytes)</span><br><span class="line"> 13       java.lang.StringBuilder::toString (17 bytes)</span><br><span class="line"> 14       java.lang.StringBuilder::&lt;init&gt; (18 bytes)</span><br><span class="line"> 15       java.lang.StringBuilder::append (8 bytes)</span><br><span class="line">[...]</span><br><span class="line"> 29       java.util.regex.Matcher::reset (83 bytes)</span><br><span class="line"> </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>每当一个方法被编译，就输出一行-XX:+PrintCompilation。每行都包含顺序号（唯一的编译任务ID）和已编译方法的名称和大小。</p>
+<p>因此，顺序号1，代表编译String类中的hashCode方法到原生代码的信息。根据方法的类型和编译任务打印额外的信息。例如，本地的包装方法前方会有”n”参数，像上面的System::arraycopy一样。注意这样的方法不会包含顺序号和方法占用的大小，因为它不需要编译为本地代码。</p>
+<p>同样可以看到被重复编译的方法，例如StringBuilder::append顺序号为11和15。输出在顺序号29时停止 ，这表明在这个Java应用运行时总共需要编译29个方法。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jit/" rel="tag"># jit</a>
+              <a href="/tags/jvm/" rel="tag"># jvm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/gc-and-jvm-parameters.html" rel="prev" title="GC及JVM参数">
+      <i class="fa fa-chevron-left"></i> GC及JVM参数
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/threadlocal-parsing.html" rel="next" title="ThreadLocal解析">
+      ThreadLocal解析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A2%8E%E7%A2%8E%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">碎碎念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#JIT%E4%B8%BB%E8%A6%81%E5%85%B3%E6%B3%A8%E4%B8%89%E4%B8%AA%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">JIT主要关注三个点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#JIT%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">2.1.</span> <span class="nav-text">JIT是什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8"><span class="nav-number">2.1.1.</span> <span class="nav-text">编译器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%87%8A%E5%99%A8%E4%B8%8E%E7%BC%96%E8%AF%91%E5%99%A8"><span class="nav-number">2.1.2.</span> <span class="nav-text">解释器与编译器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B1%82%E7%BC%96%E8%AF%91%E7%9A%84%E7%AD%96%E7%95%A5TieredCompilation"><span class="nav-number">2.1.3.</span> <span class="nav-text">分层编译的策略TieredCompilation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JIT%E5%BC%80%E5%85%B3"><span class="nav-number">2.1.4.</span> <span class="nav-text">JIT开关</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JIT%E5%8E%9F%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">JIT原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BB%E6%89%BE%E7%83%AD%E7%82%B9%E4%BB%A3%E7%A0%81"><span class="nav-number">2.2.1.</span> <span class="nav-text">寻找热点代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">2.2.2.</span> <span class="nav-text">计数器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E8%B0%83%E7%94%A8%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">方法调用计数器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9E%E8%BE%B9%E8%AE%A1%E6%95%B0%E5%99%A8"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">回边计数器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0JIT%E6%84%8F%E4%B9%89"><span class="nav-number">2.3.</span> <span class="nav-text">学习JIT意义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%A7%E6%96%B9%E6%B3%95-%E4%B8%8E-%E5%B0%8F%E6%96%B9%E6%B3%95%EF%BC%9F"><span class="nav-number">2.3.1.</span> <span class="nav-text">大方法 与 小方法？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8Bjit%E5%B7%A5%E4%BD%9C%E7%9A%84%E5%8F%82%E6%95%B0"><span class="nav-number">2.3.2.</span> <span class="nav-text">查看jit工作的参数</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

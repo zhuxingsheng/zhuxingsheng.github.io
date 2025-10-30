@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="前言索引，一种强大的存在；不管是什么行业，数据都是根基，终将落盘固化，提供各方检索查询，之前整理了一篇《深入浅出spring事务》，你可以推脱不使用事务，但索引是不可或缺的必备知识点 知识点比较多，有些会分篇细化，整体会从以下几方面整理  索引是什么,人人都在讲，但他的定义到底是什么？ 索引作用，创建表时，都要考虑索引，能带什么好处？ 索引负作用，索引那么好，为什么不在每个字段上都加上索引？ 索引">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入浅出索引">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/easy-to-understand-index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="前言索引，一种强大的存在；不管是什么行业，数据都是根基，终将落盘固化，提供各方检索查询，之前整理了一篇《深入浅出spring事务》，你可以推脱不使用事务，但索引是不可或缺的必备知识点 知识点比较多，有些会分篇细化，整体会从以下几方面整理  索引是什么,人人都在讲，但他的定义到底是什么？ 索引作用，创建表时，都要考虑索引，能带什么好处？ 索引负作用，索引那么好，为什么不在每个字段上都加上索引？ 索引">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812112142_200.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812112201_603.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812241839_290.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812241720_116.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812241736_490.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812241722_688.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812241728_883.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812241735_44.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812241753_517.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812241753_935.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812241755_844.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812241759_166.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812241801_130.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812241827_500.png">
+<meta property="article:published_time" content="2018-12-09T07:50:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.017Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="db">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201812112142_200.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/easy-to-understand-">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>深入浅出索引 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/easy-to-understand-index.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          深入浅出索引
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-09 15:50:00" itemprop="dateCreated datePublished" datetime="2018-12-09T15:50:00+08:00">2018-12-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>索引，一种强大的存在；不管是什么行业，数据都是根基，终将落盘固化，提供各方检索查询，之前整理了一篇<a href="http://www.zhuxingsheng.com/blog/understanding-spring-transactions-in-depth.html">《深入浅出spring事务》</a>，你可以推脱不使用事务，但索引是不可或缺的必备知识点</p>
+<p>知识点比较多，有些会分篇细化，整体会从以下几方面整理</p>
+<ol>
+<li>索引是什么,人人都在讲，但他的定义到底是什么？</li>
+<li>索引作用，创建表时，都要考虑索引，能带什么好处？</li>
+<li>索引负作用，索引那么好，为什么不在每个字段上都加上索引？</li>
+<li>索引实现原理，那么多数据结构，索引为什么非要使用B+Tree？</li>
+<li>索引应用，加了索引也不一定能发挥作用，使用时注意哪些？</li>
+</ol>
+<h1 id="索引是什么"><a href="#索引是什么" class="headerlink" title="索引是什么"></a>索引是什么</h1><p>MySQL官方对索引的定义为：<strong>索引（Index）是帮助MySQL高效获取数据的数据结构</strong>。</p>
+<p>数据库查询是数据库的最主要功能之一。我们都希望查询数据的速度能尽可能的快，因此数据库系统的设计者会从查询算法的角度进行优化。</p>
+<p>最基本的查询算法当然是顺序查找（linear search），这种复杂度为O(n)的算法在数据量很大时显然是糟糕的，好在计算机科学的发展提供了很多更优秀的查找算法</p>
+<p>例如二分查找（binary search）、二叉树查找（binary tree search）等。</p>
+<p>如果稍微分析一下会发现，每种查找算法都只能应用于特定的数据结构之上</p>
+<p>例如二分查找要求被检索数据有序，而二叉树查找只能应用于二叉查找树上，但是数据本身的组织结构不可能完全满足各种数据结构（例如，理论上不可能同时将两列都按顺序进行组织）</p>
+<p>所以，在数据之外，<strong>数据库系统还维护着满足特定查找算法的数据结构</strong>，这些数据结构以某种方式引用（指向）数据，这样就可以在这些数据结构上实现高级查找算法。<strong>这种数据结构，就是索引</strong></p>
+<h1 id="索引意义"><a href="#索引意义" class="headerlink" title="索引意义"></a>索引意义</h1><p>通过索引定义，作用基本已经明确，再细化一下</p>
+<h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><ol>
+<li>大大加快数据的检索速度;   </li>
+<li>创建唯一性索引，保证数据库表中每一行数据的唯一性;   </li>
+<li>加速表和表之间的连接;   </li>
+<li>在使用分组和排序子句进行数据检索时，可以显著减少查询中分组和排序的时间</li>
+</ol>
+<h2 id="反作用"><a href="#反作用" class="headerlink" title="反作用"></a>反作用</h2><p>索引有这么多的好处，哪是不是每一列都给建上索引相当好呢？</p>
+<p>过犹不及</p>
+<ol>
+<li>索引需要占用数据表以外的物理存储空间</li>
+<li>创建索引和维护索引要花费一定的时间</li>
+<li>当对表进行更新操作时，索引需要被重建，这样降低了数据的维护速度</li>
+</ol>
+<h1 id="索引分类"><a href="#索引分类" class="headerlink" title="索引分类"></a>索引分类</h1><p>分类有两种角度：</p>
+<ul>
+<li><p>1.<strong>物理存储</strong></p>
+<ul>
+<li>1.1 聚簇索引(Clustered Index)：将数据存储与索引放到了一块，找到索引也就找到了数据，一个表只能有一个聚集索引</li>
+<li>1.2 非聚簇索引(Non- Clustered Index)：将数据存储于索引分开结构，搜索索引，然后通过索引找到磁盘相应数据</li>
+</ul>
+</li>
+<li><p>2.<strong>逻辑功能</strong></p>
+<ul>
+<li>2.1.主键索引：它是一种特殊的唯一索引，不允许有空值  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">primary key (id)</span><br></pre></td></tr></table></figure></li>
+<li>2.2. 普通索引：这是最基本的索引，它没有任何限制</li>
+</ul>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create index idx_name on user(name(20)); </span><br></pre></td></tr></table></figure>
+<ul>
+<li>2.3. 唯一索引：它与前面的普通索引类似，不同的就是：索引列的值必须唯一，但允许有空值</li>
+</ul>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE UNIQUE INDEX idx_email ON user(email);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>2.4. 组合索引</li>
+</ul>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INDEX name (last_name,first_name)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>Innodb使用的是聚簇索引，MyISam使用的是非聚簇索引</p>
+<p>Innodb中的主键索引是一种聚簇索引，非聚簇索引都是辅助索引，像复合索引、前缀索引、唯一索引</p>
+<p>在Innodb中，Mysql中的数据是按照主键的顺序来存放的。那么聚簇索引就是按照每张表的主键来构造一颗B+树，叶子节点存放的就是整张表的行数据。由于表里的数据只能按照一颗B+树排序，因此一张表只能有一个聚簇索引</p>
+<p>在Innodb中，聚簇索引默认就是主键索引</p>
+<h1 id="索引实现"><a href="#索引实现" class="headerlink" title="索引实现"></a>索引实现</h1><p>一般来说，索引本身也很大，不可能全部存储在内存中，因此索引往往以索引文件的形式存储的磁盘上。这样的话，索引查找过程中就要产生磁盘I&#x2F;O消耗，相对于内存存取，I&#x2F;O存取的消耗要高几个数量级，所以评价一个数据结构作为索引的优劣最重要的指标就是在查找过程中磁盘I&#x2F;O操作次数的渐进复杂度。换句话说，<strong>索引的结构组织要尽量减少查找过程中磁盘I&#x2F;O的存取次数</strong></p>
+<h2 id="存储原理"><a href="#存储原理" class="headerlink" title="存储原理"></a>存储原理</h2><p>在了解索引的数据结构之前了解一下硬件存储原理，毕竟一切都是基于硬件</p>
+<p>计算机存储设备一般分为两种：内存储器(main memory)和外存储器(external memory) </p>
+<ul>
+<li>内存存取速度快，但容量小，价格昂贵，而且不能长期保存数据(在不通电情况下数据会消失)。</li>
+<li>外存储器—磁盘是一种直接存取的存储设备(DASD)。它是以存取时间变化不大为特征的。可以直接存取任何字符组，且容量大、速度较其它外存设备更快。</li>
+</ul>
+<h3 id="磁盘结构"><a href="#磁盘结构" class="headerlink" title="磁盘结构"></a>磁盘结构</h3><p><img src="http://images.zhuxingsheng.com/201812112142_200.png" alt="磁盘结构"></p>
+<p>如上图，磁盘由盘片构成,每个盘片有两面，又称为盘面(Surface)，这些盘面覆盖有磁性材料。</p>
+<p>盘片中央有一个可以旋转的主轴(spindle)，他使得盘片以固定的旋转速率旋转，通常是5400转每分钟(Revolution Per Minute,RPM)或者是7200RPM</p>
+<p>磁盘包含一个多个这样的盘片并封装在一个密封的容器内。</p>
+<p>上图左，展示了一个典型的磁盘表面结构。每个表面是由一组成为磁道(track)的同心圆组成的，每个磁道被划分为了一组扇区(sector).每个扇区包含相等数量的数据位，通常是（512）子节。</p>
+<p>扇区之间由一些间隔(gap)隔开,不存储数据。</p>
+<h3 id="磁盘读写"><a href="#磁盘读写" class="headerlink" title="磁盘读写"></a>磁盘读写</h3><p><img src="http://images.zhuxingsheng.com/201812112201_603.png"></p>
+<p>如上图，磁盘用读&#x2F;写头来读写存储在磁性表面的位，而读写头连接到一个传动臂的一端</p>
+<p>磁盘上数据必须用一个三维地址唯一标示：<strong>柱面号、盘面号、块号(磁道上的盘块)</strong></p>
+<p>读&#x2F;写磁盘上某一指定数据需要下面3个步骤：</p>
+<ol>
+<li>首先移动臂根据柱面号使磁头移动到所需要的柱面上，这一过程被称为定位或查找 。</li>
+<li>所有磁头都定位到第10盘面的10条磁道上(磁头都是双向的)。这时根据盘面号来确定指定盘面上的磁道。</li>
+<li>盘面确定以后，盘片开始旋转，将指定块号的磁道段移动至磁头下</li>
+</ol>
+<p>经过上面三个步骤，指定数据的存储位置就被找到。这时就可以开始读&#x2F;写操作了。<br>访问某一具体信息，由3部分时间组成：</p>
+<ul>
+<li><strong>查找时间(seek time) Ts</strong>: 完成上述步骤(1)所需要的时间。这部分时间代价最高，最大可达到0.1s左右。</li>
+<li><strong>等待时间(latency time) Tl</strong>: 完成上述步骤(3)所需要的时间。由于盘片绕主轴旋转速度很快，一般为7200转&#x2F;分(电脑硬盘的性能指标之一, 家用的普通硬盘的转速一般有5400rpm(笔记本)、7200rpm几种)。因此一般旋转一圈大约0.0083s。</li>
+<li><strong>传输时间(transmission time) Tt</strong>: 数据通过系统总线传送到内存的时间，一般传输一个字节(byte)大概0.02us&#x3D;2*10^(-8)s</li>
+</ul>
+<p>磁盘读取数据是以盘块(block)为基本单位的。位于同一盘块中的所有数据都能被一次性全部读取出来。而磁盘IO代价主要花费在查找时间Ts上</p>
+<p><strong>因此我们应该尽量将相关信息存放在同一盘块，同一磁道中。或者至少放在同一柱面或相邻柱面上，以求在读&#x2F;写信息时尽量减少磁头来回移动的次数，避免过多的查找时间Ts</strong></p>
+<p>在大规模数据存储方面，大量数据存储在外存磁盘中，而在外存磁盘中读取&#x2F;写入块(block)中某数据时，首先需要定位到磁盘中的某块，如何有效地查找磁盘中的数据，需要一种合理高效的外存数据结构</p>
+<h3 id="局部性原理与磁盘预读"><a href="#局部性原理与磁盘预读" class="headerlink" title="局部性原理与磁盘预读"></a>局部性原理与磁盘预读</h3><p>由于存储介质的特性，磁盘本身存取就比主存慢很多，再加上机械运动耗费，磁盘的存取速度往往是主存的几百分分之一，因此为了提高效率，要尽量减少磁盘I&#x2F;O。为了达到这个目的，磁盘往往不是严格按需读取，而是每次都会预读，即使只需要一个字节，磁盘也会从这个位置开始，顺序向后读取一定长度的数据放入内存。</p>
+<p>这样做的理论依据是计算机科学中著名的局部性原理：</p>
+<p><strong>当一个数据被用到时，其附近的数据也通常会马上被使用</strong>。</p>
+<p>程序运行期间所需要的数据通常比较集中。</p>
+<p>由于磁盘顺序读取的效率很高（不需要寻道时间，只需很少的旋转时间），因此对于具有局部性的程序来说，预读可以提高I&#x2F;O效率。</p>
+<p>预读的长度一般为页（page）的整倍数</p>
+<p>页是计算机管理存储器的逻辑块，硬件及操作系统往往将主存和磁盘存储区分割为连续的大小相等的块，每个存储块称为一页（在许多操作系统中，页得大小通常为4k），主存和磁盘以页为单位交换数据。</p>
+<p>当程序要读取的数据不在主存中时，会触发一个缺页异常，此时系统会向磁盘发出读盘信号，磁盘会找到数据的起始位置并向后连续读取一页或几页载入内存中，然后异常返回，程序继续运行</p>
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>根据索引定义，索引就是一种数据结构，来看下此数据结构是什么样的，能在当前硬件条件下，高效地查找磁盘数据,这种数据结构需要满足两个条件：</p>
+<ol>
+<li><strong>快速</strong>，快速查找到数据</li>
+<li><strong>局部性原理</strong>，满足局部性原理，减小IO次数，减小硬件磁头移动</li>
+</ol>
+<p>根据之前<a href="http://www.zhuxingsheng.com/tags/algorithm/">温习的各种算法</a>，可以找一种适合的查找算法与数据结构吗？</p>
+<ul>
+<li><p>1.<strong>顺序查找</strong>：这种复杂度为O(n)的算法在数据量很大时显然是糟糕的</p>
+</li>
+<li><p>2.<strong>数组+二分查找</strong>：效率是O(logn),但是数组的插入元素以及删除元素的效率很低</p>
+</li>
+<li><p>3.<strong>hash</strong>:检索效率非常高，索引的检索可以一次定位,在<a href="http://www.zhuxingsheng.com/blog/hashmap-source-code-analysis.html">Hashmap源码解析</a>中有过详细分析</p>
+<ul>
+<li>3.1<strong>Hash 索引仅仅能满足”&#x3D;”,”IN”和”&lt;&#x3D;&gt;”查询，不能使用范围查询</strong></li>
+</ul>
+<p>  由于 Hash 索引比较的是进行 Hash 运算之后的 Hash值，<br>  所以它只能用于等值的过滤，不能用于基于范围的过滤，因为经过相应的 Hash 算法处理之后的 Hash 值的大小关系，并不能保证和Hash运算前完全一样</p>
+<ul>
+<li>3.2<strong>Hash 索引无法被用来避免数据的排序操作</strong></li>
+</ul>
+<p>  由于 Hash 索引中存放的是经过 Hash 计算之后的 Hash 值，而且Hash值的大小关系并不一定和 Hash 运算前的键值完全一样，所以数据库无法利用索引的数据来避免任何排序运算</p>
+<ul>
+<li>3.3<strong>Hash索引不能利用部分索引键查询</strong></li>
+</ul>
+<p>  对于组合索引，Hash 索引在计算 Hash 值的时候是组合索引键合并后再一起计算 Hash 值，而不是单独计算 Hash 值，所以通过组合索引的前面一个或几个索引键进行查询的时候，Hash 索引也无法被利用</p>
+<ul>
+<li>3.4<strong>Hash索引在任何时候都不能避免表扫描</strong></li>
+</ul>
+<p>  Hash 索引是将索引键通过 Hash 运算之后，将 Hash运算结果的 Hash 值和所对应的行指针信息存放于一个 Hash 表中，由于不同索引键存在相同 Hash 值，所以即使取满足某个 Hash 键值的数据的记录条数，也无法从 Hash 索引中直接完成查询，还是要通过访问表中的实际数据进行相应的比较，并得到相应的结果</p>
+<ul>
+<li>3.5<strong>Hash索引遇到大量Hash值相等的情况后性能并不一定就会比B-Tree索引高</strong></li>
+</ul>
+<p>  对于选择性比较低的索引键，如果创建 Hash 索引，那么将会存在大量记录指针信息存于同一个 Hash 值相关联。这样要定位某一条记录时就会非常麻烦，会浪费多次表数据的访问，而造成整体性能低下</p>
+</li>
+</ul>
+<p>在mysql中，只有memory引擎显式支持哈希索引，这也是memory引擎表的默认索引类型，memory也支持btree，值得一提的是，memory引擎是支持非唯一哈希索引的。在数据库世界里是比较与众不同，如果多个列的哈希值相同，索引会以链表的方式存放多个记录指针到同一个哈希条目中</p>
+<h3 id="B树"><a href="#B树" class="headerlink" title="B树"></a>B树</h3><p>为磁盘存储而专门设计的一类平衡搜索树，细节可以阅读<a href="http://www.zhuxingsheng.com/blog/tree-overview.html">《树概述》</a></p>
+<p>先从B-Tree分析，根据B-Tree的定义，可知检索一次最多需要访问h个节点。数据库系统的设计者巧妙利用了磁盘预读原理，将一个节点的大小设为等于一个页，这样每个节点只需要一次I&#x2F;O就可以完全载入。为了达到这个目的，在实际实现B-Tree还需要使用如下技巧：</p>
+<p><strong>每次新建节点时，直接申请一个页的空间，这样就保证一个节点物理上也存储在一个页里，加之计算机存储分配都是按页对齐的，就实现了一个node只需一次I&#x2F;O</strong></p>
+<p>B-Tree中一次检索最多需要h-1次I&#x2F;O（根节点常驻内存），渐进复杂度为<br><img src="http://images.zhuxingsheng.com/201812241839_290.png"></p>
+<p>一般实际应用中，出度d是非常大的数字，通常超过100，因此h非常小（通常不超过3）。</p>
+<p>综上所述，用B-Tree作为索引结构效率是非常高的</p>
+<h2 id="mysql实现"><a href="#mysql实现" class="headerlink" title="mysql实现"></a>mysql实现</h2><p>在MySQL中，索引属于存储引擎级别的概念，不同存储引擎对索引的实现方式是不同的，主要讨论MyISAM和InnoDB两个存储引擎的索引实现方式。</p>
+<h3 id="MyISAM索引实现"><a href="#MyISAM索引实现" class="headerlink" title="MyISAM索引实现"></a>MyISAM索引实现</h3><p>MyISAM引擎使用B+Tree作为索引结构，叶节点的data域存放的是数据记录的地址。下图是MyISAM索引的原理图：</p>
+<p><img src="http://images.zhuxingsheng.com/201812241720_116.png"></p>
+<p>这里设表一共有三列，假设我们以Col1为主键，上图是一个MyISAM表的主索引（Primary key）示意。可以看出MyISAM的索引文件仅仅保存数据记录的地址。在MyISAM中，主索引和辅助索引（Secondary key）在结构上没有任何区别，只是主索引要求key是唯一的，而辅助索引的key可以重复。如果我们在Col2上建立一个辅助索引，则此索引的结构如下图所示：</p>
+<p><img src="http://images.zhuxingsheng.com/201812241736_490.png"></p>
+<p>同样也是一颗B+Tree，data域保存数据记录的地址。因此，MyISAM中索引检索的算法为首先按照B+Tree搜索算法搜索索引，如果指定的Key存在，则取出其data域的值，然后以data域的值为地址，读取相应数据记录。</p>
+<p>MyISAM的索引方式也叫做“非聚集”的，之所以这么称呼是为了与InnoDB的聚集索引区分</p>
+<h3 id="InnoDB索引实现"><a href="#InnoDB索引实现" class="headerlink" title="InnoDB索引实现"></a>InnoDB索引实现</h3><p>虽然InnoDB也使用B+Tree作为索引结构，但具体实现方式却与MyISAM截然不同</p>
+<p><strong>第一个重大区别是InnoDB的数据文件本身就是索引文件</strong>,MyISAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。</p>
+<p>而在InnoDB中，表数据文件本身就是按B+Tree组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此InnoDB表数据文件本身就是主索引</p>
+<p><img src="http://images.zhuxingsheng.com/201812241722_688.png"></p>
+<p>这里以英文字符的ASCII码作为比较准则。聚集索引这种实现方式使得按主键的搜索十分高效，但是辅助索引搜索需要检索两遍索引：首先检索辅助索引获得主键，然后用主键到主索引中检索获得记录</p>
+<p><strong>主键索引是聚集索引还是非聚集索引？</strong></p>
+<p>在Innodb下主键索引是聚集索引，在Myisam下主键索引是非聚集索引</p>
+<p><img src="http://images.zhuxingsheng.com/201812241728_883.png"></p>
+<h3 id="MyisAM索引-VS-InnoDB索引"><a href="#MyisAM索引-VS-InnoDB索引" class="headerlink" title="MyisAM索引 VS InnoDB索引"></a>MyisAM索引 VS InnoDB索引</h3><ol>
+<li>MyisAM支持全文索引（FULLTEXT）、压缩索引，InnoDB不支持；</li>
+<li>InnoDB支持事务，MyisAM不支持；</li>
+<li>MyisAM顺序储存数据，索引叶子节点保存对应数据行地址，辅助索引很主键索引相差无几；InnoDB主键节点同时保存数据行，其他辅助索引保存的是主键索引的值；</li>
+<li>MyisAM键值分离，索引载入内存（key_buffer_size），数据缓存依赖操作系统；InnoDB键值一起保存，索引与数据一起载入InnoDB缓冲池；MyisAM主键（唯一）索引按升序来存储存储，InnoDB则不一定</li>
+<li>MyisAM索引的基数值（Cardinality，show index 命令可以看见）是精确的，InnoDB则是估计值。这里涉及到信息统计的知识，MyisAM统计信息是保存磁盘中，在alter表或Analyze table操作更新此信息，而InnoDB则是在表第一次打开的时候估计值保存在缓存区内；</li>
+<li>MyisAM处理字符串索引时用增量保存的方式，如第一个索引是‘preform’，第二个是‘preformence’，则第二个保存是‘7，ance’，这个明显的好处是缩短索引，但是缺陷就是不支持倒序提取索引，必须顺序遍历获取索引</li>
+</ol>
+<h1 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h1><h2 id="查询过程"><a href="#查询过程" class="headerlink" title="查询过程"></a>查询过程</h2><p>在收到一个查询的时候，Mysql的架构中的各个组件是如此工作的：</p>
+<p><img src="http://images.zhuxingsheng.com/201812241735_44.png"></p>
+<p>客户端同数据库服务层建立TCP连接，连接管理模块会建立连接，并请求一个连接线程。如果连接池中有空闲的连接线程，则分配给这个连接，如果没有，在没有超过最大连接数的情况下，创建新的连接线程负责这个客户端。</p>
+<p>在真正的操作之前，还需要调用用户模块进行授权检查，来验证用户是否有权限。通过后，方才提供服务，连接线程开始接收并处理来自客户端的SQL语句。</p>
+<p>连接线程接收到SQL语句之后，将语句交给SQL语句解析模块进行语法分析和语义分析。</p>
+<p>如果是一个查询语句，则可以先看查询缓存中是否有结果，如果有结果可以直接返回给客户端。</p>
+<p>如果查询缓存中没有结果，就需要真的查询数据库引擎层了，于是发给SQL优化器，进行查询的优化。如果是表变更，则分别交给insert, update, delete, create，alter处理模块进行处理。</p>
+<p>接下来就是请求数据库引擎层，打开表，如果需要的话获取相应的锁。</p>
+<p>接下来的处理过程就到了数据库引擎层，例如InnoDB。</p>
+<p>在数据库引擎层，要先查询缓存页中有没有相应的数据，如果有则可以直接返回，如果没有就要从磁盘上去读取。</p>
+<p>当在磁盘中找到相应的数据之后，则会加载到缓存中来，从而使得后面的查询更加高效，由于内存有限，多采用变通的LRU表来管理缓存页，保证缓存的都是经常访问的数据。</p>
+<p>获取数据后返回给客户端，关闭连接，释放连接线程，过程结束。</p>
+<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>先来一张带主键的表，如下所示，pId是主键</p>
+<table>
+<thead>
+<tr>
+<th>pId</th>
+<th>name</th>
+<th>birthday</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5</td>
+<td>zhangsan</td>
+<td>2016-10-02</td>
+</tr>
+<tr>
+<td>8</td>
+<td>lisi</td>
+<td>2015-10-04</td>
+</tr>
+<tr>
+<td>11</td>
+<td>wangwu</td>
+<td>2016-09-02</td>
+</tr>
+<tr>
+<td>13</td>
+<td>zhaoliu</td>
+<td>2015-10-07</td>
+</tr>
+</tbody></table>
+<p><img src="http://images.zhuxingsheng.com/201812241753_517.png"></p>
+<p>如上图所示，分为上下两个部分，上半部分是由主键形成的B+树，下半部分就是磁盘上真实的数据！那么，当我们， 执行下面的语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from table where pId=&#x27;11&#x27;</span><br></pre></td></tr></table></figure>
+<p>查询过程：</p>
+<p><img src="http://images.zhuxingsheng.com/201812241753_935.png"></p>
+<p>如上图所示，从根开始，经过3次查找，就可以找到真实数据。如果不使用索引，那就要在磁盘上，进行逐行扫描，直到找到数据位置。显然，使用索引速度会快。但是在写入数据的时候，需要维护这颗B+树的结构，因此写入性能会下降！</p>
+<p><strong>再创建一个非聚簇索引</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create index index_name on table(name);</span><br></pre></td></tr></table></figure>
+
+<p>结构图如下所示</p>
+<p><img src="http://images.zhuxingsheng.com/201812241755_844.png"></p>
+<p>会根据你的索引字段生成一颗新的B+树。因此， 我们每加一个索引，就会增加表的体积， 占用磁盘存储空间。然而，注意看叶子节点，非聚簇索引的叶子节点并不是真实数据，它的叶子节点依然是索引节点，存放的是该索引字段的值以及对应的主键索引(聚簇索引)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from table where name=&#x27;lisi&#x27;</span><br></pre></td></tr></table></figure>
+<p>查询过程：</p>
+<p><img src="http://images.zhuxingsheng.com/201812241759_166.png"></p>
+<p>通过上图红线可以看出，先从非聚簇索引树开始查找，然后找到聚簇索引后。根据聚簇索引，在聚簇索引的B+树上，找到完整的数据！</p>
+<p><strong>什么情况不去聚簇索引树上查询呢？</strong></p>
+<p>还记得我们的非聚簇索引树上存着该索引字段的值么。如果，此时我们执行下面的语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name from table where name=&#x27;lisi&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>查询过程</p>
+<p><img src="http://images.zhuxingsheng.com/201812241801_130.png"></p>
+<p>如上图红线所示，如果在非聚簇索引树上找到了想要的值，就不会去聚簇索引树上查询</p>
+<p><strong>再创建一个非聚簇索引</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create index index_birthday on table(birthday);</span><br></pre></td></tr></table></figure>
+<p><img src="http://images.zhuxingsheng.com/201812241827_500.png"></p>
+<p>多加一个索引，就会多生成一颗非聚簇索引树。因此，很多文章才说，索引不能乱加。因为，有几个索引，就有几颗非聚簇索引树！你在做插入操作的时候，需要同时维护这几颗树的变化！因此，如果索引太多，插入性能就会下降</p>
+<h1 id="最左原则"><a href="#最左原则" class="headerlink" title="最左原则"></a>最左原则</h1><p><strong>最左原则，并不是指 SQL 语句的 where 顺序要和联合索引一致</strong></p>
+<p>当b+树的数据项是复合的数据结构，比如(name,age,sex)的时候，b+数是按照从左到右的顺序来建立搜索树的，</p>
+<p>比如当(张三,20,F)这样的数据来检索的时候，b+树会优先比较name来确定下一步的所搜方向</p>
+<p>如果name相同再依次比较age和sex，最后得到检索的数据；</p>
+<p>但当(20,F)这样的没有name的数据来的时候，b+树就不知道下一步该查哪个节点，因为建立搜索树的时候name就是第一个比较因子，必须要先根据name来搜索才能知道下一步去哪里查询</p>
+<p>比如当(张三,F)这样的数据来检索时，b+树可以用name来指定搜索方向，但下一个字段age的缺失，所以只能把名字等于张三的数据都找到，然后再匹配性别是F的数据了</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://www.zhihu.com/question/36996520">mysql索引最左匹配原则的理解?</a></p>
+<p><a href="http://blog.codinglabs.org/articles/theory-of-mysql-index.html">MySQL索引背后的数据结构及算法原理</a></p>
+<p><a href="https://www.cnblogs.com/kxdblog/p/4893735.html">B树、B-树、B+树、B*树【转】,mysql索引</a></p>
+<p><a href="http://www.cnblogs.com/linhaifeng/articles/7274563.html">索引原理与慢查询优化</a></p>
+<p><a href="http://www.cnblogs.com/rjzheng/p/9915754.html">MySQL(Innodb)索引的原理</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/db/" rel="tag"># db</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/algorithm---recursive-algorithm.html" rel="prev" title="算法渣-递归算法">
+      <i class="fa fa-chevron-left"></i> 算法渣-递归算法
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/tree-overview.html" rel="next" title="树概述">
+      树概述 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">2.</span> <span class="nav-text">索引是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E6%84%8F%E4%B9%89"><span class="nav-number">3.</span> <span class="nav-text">索引意义</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%9C%E7%94%A8"><span class="nav-number">3.1.</span> <span class="nav-text">作用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E4%BD%9C%E7%94%A8"><span class="nav-number">3.2.</span> <span class="nav-text">反作用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E5%88%86%E7%B1%BB"><span class="nav-number">4.</span> <span class="nav-text">索引分类</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.</span> <span class="nav-text">索引实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E5%8E%9F%E7%90%86"><span class="nav-number">5.1.</span> <span class="nav-text">存储原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E7%BB%93%E6%9E%84"><span class="nav-number">5.1.1.</span> <span class="nav-text">磁盘结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A3%81%E7%9B%98%E8%AF%BB%E5%86%99"><span class="nav-number">5.1.2.</span> <span class="nav-text">磁盘读写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%80%E9%83%A8%E6%80%A7%E5%8E%9F%E7%90%86%E4%B8%8E%E7%A3%81%E7%9B%98%E9%A2%84%E8%AF%BB"><span class="nav-number">5.1.3.</span> <span class="nav-text">局部性原理与磁盘预读</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">5.2.</span> <span class="nav-text">数据结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#B%E6%A0%91"><span class="nav-number">5.2.1.</span> <span class="nav-text">B树</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mysql%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.3.</span> <span class="nav-text">mysql实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MyISAM%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.3.1.</span> <span class="nav-text">MyISAM索引实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#InnoDB%E7%B4%A2%E5%BC%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">5.3.2.</span> <span class="nav-text">InnoDB索引实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MyisAM%E7%B4%A2%E5%BC%95-VS-InnoDB%E7%B4%A2%E5%BC%95"><span class="nav-number">5.3.3.</span> <span class="nav-text">MyisAM索引 VS InnoDB索引</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2"><span class="nav-number">6.</span> <span class="nav-text">查询</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E8%BF%87%E7%A8%8B"><span class="nav-number">6.1.</span> <span class="nav-text">查询过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E6%9E%84"><span class="nav-number">6.2.</span> <span class="nav-text">结构</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%80%E5%B7%A6%E5%8E%9F%E5%88%99"><span class="nav-number">7.</span> <span class="nav-text">最左原则</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">8.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

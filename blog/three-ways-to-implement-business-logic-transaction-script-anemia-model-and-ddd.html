@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="在《领域驱动设计》这本书里面，列举了三种可将业务逻辑建模为软件模型的模式，也就是大家常听说的事务脚本、贫血模型、DDD。 之前我还把这三种模式搞混淆了，too young too simple了。 举个简单的示例：  用户转帐，从一个帐户转到另一个帐户">
+<meta property="og:type" content="article">
+<meta property="og:title" content="实现业务逻辑三种方式：事务脚本、贫血模型、DDD">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/three-ways-to-implement-business-logic-transaction-script-anemia-model-and-ddd.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="在《领域驱动设计》这本书里面，列举了三种可将业务逻辑建模为软件模型的模式，也就是大家常听说的事务脚本、贫血模型、DDD。 之前我还把这三种模式搞混淆了，too young too simple了。 举个简单的示例：  用户转帐，从一个帐户转到另一个帐户">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220430151309_1651302789.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220430151457_1651302897.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220502184551_1651488351.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220502204208_1651495328.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220430151559_1651302959.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220429153621_1651217781.jpg">
+<meta property="article:published_time" content="2022-04-30T08:44:00.000Z">
+<meta property="article:modified_time" content="2022-11-08T07:15:29.629Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20220430151309_1651302789.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/three-ways-to-implement-business-logic-transaction-script-anemia-model-and-ddd.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>实现业务逻辑三种方式：事务脚本、贫血模型、DDD | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/three-ways-to-implement-business-logic-transaction-script-anemia-model-and-ddd.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          实现业务逻辑三种方式：事务脚本、贫血模型、DDD
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-04-30 16:44:00" itemprop="dateCreated datePublished" datetime="2022-04-30T16:44:00+08:00">2022-04-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在《领域驱动设计》这本书里面，列举了三种可将业务逻辑建模为软件模型的模式，也就是大家常听说的事务脚本、贫血模型、DDD。</p>
+<p>之前我还把这三种模式搞混淆了，too young too simple了。</p>
+<p>举个简单的示例：</p>
+<blockquote>
+<p>用户转帐，从一个帐户转到另一个帐户</p>
+</blockquote>
+<span id="more"></span>
+
+<h1 id="事务脚本"><a href="#事务脚本" class="headerlink" title="事务脚本"></a>事务脚本</h1><p>Transaction Script</p>
+<p><img src="http://images.zhuxingsheng.com/20220430151309_1651302789.jpg"></p>
+<p>看代码，就是所有业务逻辑都放在了dao里面，有点类似于旧时代的存储过程。</p>
+<p><strong>事务脚本的思路有点类似于面向过程编程，要达到目标，需要哪些步骤，然后一步一步操作</strong>。业务逻辑被包含在一系列的操作行为中。</p>
+<h1 id="贫血模型"><a href="#贫血模型" class="headerlink" title="贫血模型"></a>贫血模型</h1><p>Anemic Model</p>
+<p><img src="http://images.zhuxingsheng.com/20220430151457_1651302897.jpg"></p>
+<p>贫血模型似乎从摒弃存储过程之后，把存储过程的搬迁到service中，实体对象与表一一对应。也被称为Table Module,表模块。</p>
+<p>尤其有了ORM框架后，这种方式推上了高潮。</p>
+<p>甚至在互联网场景的引领下，数据库的很多特性也放弃了，如外键。数据库不过就是存放数据的袋子，只要把数据能正确存放到里面就行了。</p>
+<p>这种模型已经有很久的历史，如ER数据建模法。但在OO时代，被Martin Fowler列为反模式。</p>
+<p>让人不得不思考一下，为什么OO时代，这种模型依然如此流行？</p>
+<p>我们使用对象建模，<strong>就是把业务逻辑建模为 数据变化，然后把数据的改变和改变数据的行为放一起</strong>，<strong>数据变化，以及生命周期变化是业务的核心逻辑</strong>。</p>
+<p>这个原因不得不回顾下面向对象的发展历史。在当前流行的面向对象语言诞生之前，第一代面向对象语言其实是Smalltalk。而且当时架构风格都是单体架构，这样就有一个相对现在隐藏的背景条件：<strong>在同一个节点中，能得到所有的上下文信息，都在内存中</strong>。</p>
+<p><img src="http://images.zhuxingsheng.com/20220502184551_1651488351.jpg"></p>
+<p>如上图，可以看出整个smalltalk的整体体系，除了虚拟机之外，还有虚拟镜像。虚拟镜像相当于虚拟机内存中数据持久化。每次虚拟机启动时，都会把虚拟镜像中的数据恢复到虚拟机内存中。</p>
+<p>在这种背景下，在逻辑处理时，Collection相当于数据库，所有的数据都在里面，存取都很自然。</p>
+<p>像现在的Java,C++并没有像smalltalk一样处理，时代来到了分层架构时代，经过了一系列的演变从最初的CS架构到三层，多层架构。</p>
+<p><img src="http://images.zhuxingsheng.com/20220502204208_1651495328.jpg"></p>
+<p><strong>历史的发展都有延续性和局限性</strong>。虽然现代OO语言保留了集合类型，却去掉了虚拟镜像，集合数据不再完整地在内存中，而且由于分层架构的特性，逻辑与数据被切分开来，自然而然地当逻辑需要数据时，就会去DB获取数据。</p>
+<p>到此，我们就明白了为什么贫血模型的火热原因。</p>
+<p>而且，正因为有这种局限性，当我们想去构建OO充血模型时，这种分裂阻碍了我们。比如N+1性能问题，还需要<a href="http://www.zhuxingsheng.com/blog/ddd-repository.html">对象追踪技术</a>，如dirty tracking</p>
+<h1 id="DDD"><a href="#DDD" class="headerlink" title="DDD"></a>DDD</h1><p>Rich Model</p>
+<p><img src="http://images.zhuxingsheng.com/20220430151559_1651302959.jpg"></p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/ddd-opening.html">DDD是什么</a>也有提到，当前软件复杂性越来越高，<strong>程序员其实不是在编写代码，而是在摸索业务领域知识</strong>。</p>
+<p>如代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public void setPassword(String password) &#123;</span><br><span class="line">    this.password = password</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>password的确是被赋值了，但是为什么赋值，不知道。是注册了新用户，还是用户修改了密码。完全不知道是什么业务。导致当有新需求变更时，成本会越来越高。</p>
+<p>为了不影响以前不知所云的代码，只能做累加，也就加重了代码不必要复杂性，整个软件交付会越来越难。</p>
+<p><strong>这种模式结合了上面两个种模式，事务脚本重视的是交互行为，贫血模式重视的是数据，而充血模式结合数据与行为，这也是面向对象建模的优势。</strong></p>
+<hr>
+<h2 id="分离领域模型"><a href="#分离领域模型" class="headerlink" title="分离领域模型"></a>分离领域模型</h2><p>怎么才能得到充血模型，Eric给出了思路，就是分离领域模型。</p>
+<blockquote>
+<p>解决来自领域方面问题的软件部分通常只占整个软件系统的一小部分，这与它的重要性相比是不成比例的。</p>
+</blockquote>
+<p>在面向对象的程序中，用户界面、数据库和其他支持代码，经常被直接写到业务对象中。在UI和数据库脚本的行为中嵌入额外的业务逻辑。这正是上面两种模式的做法。</p>
+<p>当与领域相关的代码和大量的其他代码混在一起时，就很难阅读并理解了。对UI的简单改动就会改变业务逻辑。改变业务规则可能需要小心翼翼地跟踪UI代码、数据库代码或者其他的程序元素。实现一致的模型驱动对象变得不切实际，而且自动化测试也难以使用。如果在程序的每个行为中包括了所有的技术和逻辑，那么它必须很简单，否则难以理解。</p>
+<p><img src="http://images.zhuxingsheng.com/20220429153621_1651217781.jpg"></p>
+<p><a href="http://www.zhuxingsheng.com/blog/further-discussion-on-ddd-layering.html">DDD分层</a>就是一种解决方式。</p>
+<p>分层架构的目的是<strong>通过关注点分离来降低系统的复杂度</strong>，同时满足单一职责、高内聚、低耦合、提高可复用性和降低维护成本。</p>
+<h2 id="OO是最优解吗？"><a href="#OO是最优解吗？" class="headerlink" title="OO是最优解吗？"></a>OO是最优解吗？</h2><p>面向对象还是默认的最优模型构建方式吗？</p>
+<p>这是一个有意思的问题，我也从没有深入思考过。说几个当前流行的一些架构风格。</p>
+<p>当前DDD还是很火热的，大家都在追求充血模型。</p>
+<p>最近我在实践中，会加一层facade层，不管是提供API，还是提供SDK。有点类似application service。</p>
+<p>为系统提供一个统一门面，至于系统内部是用贫血模型，还是充血模型，对外部来讲是个黑盒，客户端不用关心。</p>
+<p>那么再放大点，现在微服务架构是标配，我们只要知道服务在哪儿，提供了什么能力。内部怎么构建，不用关心。架构师的考虑点不再是一个个对象，而是一个个endpoint。</p>
+<p>再就是像serverless架构风格，数据与行为是分开的，是以funcation为基本去构建服务。关注一个个function，process。</p>
+<p>再比如大数据架构，像hadoop，数据是巨大的，搬迁是不太可能，通过mapreduce，我们是移动process。</p>
+<p>经过这几种风格对比，随着AI的兴起，还会再出现新的模型方法，将来OO还是追求的最优解吗？</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>实现业务架构的三种方式，贫血模型随处可见，而事务脚本与充血模型倒却难得一见。</p>
+<p>事务脚本的确已经被抛弃，充血模型却是很多人爱不起来。看着很漂亮，但落地时又有性能、循环依赖、分层等等具体的问题。如何应对，且看<a href="http://www.zhuxingsheng.com/tags/DDD/">专栏《DDD》</a>。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/does-the-domain-service-throw-an-exception-or-return-an-error-code.html" rel="prev" title="领域服务上抛异常还是返回错误码">
+      <i class="fa fa-chevron-left"></i> 领域服务上抛异常还是返回错误码
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/how-to-make-software-design-beautiful.html" rel="next" title="怎么做软件设计才美">
+      怎么做软件设计才美 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E8%84%9A%E6%9C%AC"><span class="nav-number">1.</span> <span class="nav-text">事务脚本</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B4%AB%E8%A1%80%E6%A8%A1%E5%9E%8B"><span class="nav-number">2.</span> <span class="nav-text">贫血模型</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DDD"><span class="nav-number">3.</span> <span class="nav-text">DDD</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E7%A6%BB%E9%A2%86%E5%9F%9F%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.1.</span> <span class="nav-text">分离领域模型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OO%E6%98%AF%E6%9C%80%E4%BC%98%E8%A7%A3%E5%90%97%EF%BC%9F"><span class="nav-number">3.2.</span> <span class="nav-text">OO是最优解吗？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

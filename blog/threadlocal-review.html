@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="早时总结过《ThreadLocal解析》、《FastThreadLocal解析》 最近看些资料时，又注意到这个类，不尽想再重温下，很多知识点，之前已经总结了，此篇主要有两个问题： 1、弱引用的意义 2、如何防key冲突 弱引用ThreadLocal底层使用的ThreadLocalMap一直在进化中，早在JDK1.3时代还是使用的普通的HashMap，后来才改写成ThreadLocalMap 这个T">
+<meta property="og:type" content="article">
+<meta property="og:title" content="threadlocal再温习">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/threadlocal-review.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="早时总结过《ThreadLocal解析》、《FastThreadLocal解析》 最近看些资料时，又注意到这个类，不尽想再重温下，很多知识点，之前已经总结了，此篇主要有两个问题： 1、弱引用的意义 2、如何防key冲突 弱引用ThreadLocal底层使用的ThreadLocalMap一直在进化中，早在JDK1.3时代还是使用的普通的HashMap，后来才改写成ThreadLocalMap 这个T">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200706235459_1594050899.jpg">
+<meta property="article:published_time" content="2020-06-03T15:01:00.000Z">
+<meta property="article:modified_time" content="2022-07-23T03:55:19.907Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="ThreadLocal">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20200706235459_1594050899.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/threadlocal-review.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>threadlocal再温习 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/threadlocal-review.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          threadlocal再温习
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-06-03 23:01:00" itemprop="dateCreated datePublished" datetime="2020-06-03T23:01:00+08:00">2020-06-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-07-23 11:55:19" itemprop="dateModified" datetime="2022-07-23T11:55:19+08:00">2022-07-23</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>早时总结过<a href="http://www.zhuxingsheng.com/blog/threadlocal-analysis.html">《ThreadLocal解析》</a>、<a href="http://www.zhuxingsheng.com/blog/fastthreadlocal-analysis.html">《FastThreadLocal解析》</a></p>
+<p>最近看些资料时，又注意到这个类，不尽想再重温下，很多知识点，之前已经总结了，此篇主要有两个问题：</p>
+<p>1、弱引用的意义</p>
+<p>2、如何防key冲突</p>
+<h1 id="弱引用"><a href="#弱引用" class="headerlink" title="弱引用"></a>弱引用</h1><p>ThreadLocal底层使用的ThreadLocalMap一直在进化中，早在JDK1.3时代还是使用的普通的HashMap，后来才改写成ThreadLocalMap</p>
+<p>这个ThreadLocalMap有两个特殊之处，一是使用了线性探索法，详情见<a href="http://www.zhuxingsheng.com/blog/hashmap-source-code-analysis.html">《Hashmap源码解析》</a>；二是key使用了弱引用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * ThreadLocalMap is a customized hash map suitable only for</span><br><span class="line"> * maintaining thread local values. No operations are exported</span><br><span class="line"> * outside of the ThreadLocal class. The class is package private to</span><br><span class="line"> * allow declaration of fields in class Thread.  To help deal with</span><br><span class="line"> * very large and long-lived usages, the hash table entries use</span><br><span class="line"> * WeakReferences for keys. However, since reference queues are not</span><br><span class="line"> * used, stale entries are guaranteed to be removed only when</span><br><span class="line"> * the table starts running out of space.</span><br><span class="line"> */</span><br><span class="line">static class ThreadLocalMap&#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从注释可以看出作者为什么使用弱引用，为了处理大对象和长周期对象，在GC时可以主动回收</p>
+<p><strong>一直感觉这儿的弱引用设计是个鸡肋</strong></p>
+<p>在实际使用中，还是会出现内存泄漏，何必使用弱引用呢？</p>
+<p>在ThreadLocal的类注释中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">This class provides thread-local variables.  These variables differ from</span><br><span class="line"> * their normal counterparts in that each thread that accesses one (via its</span><br><span class="line"> * &#123;@code get&#125; or &#123;@code set&#125; method) has its own, independently initialized</span><br><span class="line"> * copy of the variable.  &#123;@code ThreadLocal&#125; instances are typically private</span><br><span class="line"> * static fields in classes that wish to associate state with a thread (e.g.,</span><br><span class="line"> * a user ID or Transaction ID).</span><br></pre></td></tr></table></figure>
+<p>建议使用static修饰</p>
+<p>阿里规范也有此建议：</p>
+<blockquote>
+<p>【参考】ThreadLocal 对象使用 static 修饰，ThreadLocal 无法解决共享对象的更新问题。 说明:这个变量是针对一个线程内所有操作共享的，所以设置为静态变量，所有此类实例共享此静态变量， 也就是说在类第一次被使用时装载，只分配一块存储空间，所有此类的对象(只要是这个线程内定义的)都可 以操控这个变量。</p>
+</blockquote>
+<p>在 stackflow上点赞比较多的回答：</p>
+<blockquote>
+<p>Because if it were an instance level field, then it would actually be “Per Thread - Per Instance”, not just a guaranteed “Per Thread.” That isn’t normally the semantic you’re looking for.</p>
+</blockquote>
+<blockquote>
+<p>Usually it’s holding something like objects that are scoped to a User Conversation, Web Request, etc. You don’t want them also sub-scoped to the instance of the class.<br>One web request &#x3D;&gt; one Persistence session.<br>Not one web request &#x3D;&gt; one persistence session per object.</p>
+</blockquote>
+<p>结合实际项目中都是使用线程池的，所以线程基本也是常驻内存的，根据建议使用static修饰，根本没有被回收的机会，虽是弱引用，但一直被强引用</p>
+<p>所以何必呢，还让这个点成为一个常备的面试题，同是程序员，非得难为自己人呢！</p>
+<hr>
+<p>上面的结论其实还是从大多数人的思维方式思考的，就是提到ThreadLocal都会与线程联系上，在线程的背景里讨论ThreadLocal</p>
+<p>但从类注释上看，它是个变量：This class provides thread-local variables，所以还是从变量角度考虑</p>
+<p>从变量范围讲，有类变量，局部变量，那ThreadLocal就是线程范围内的变量</p>
+<blockquote>
+<p>根据变量的作用域，可以将变量分为全局变量，局部变量。简单的说，类里面定义的变量是全局变量，函数里面定义的变量是局部变量。</p>
+</blockquote>
+<blockquote>
+<p>还有一种作用域是线程作用域，线程一般是跨越几个函数的。为了在几个函数之间共用一个变量，所以才出现：线程变量，这种变量在Java中就是ThreadLocal变量。</p>
+</blockquote>
+<blockquote>
+<p>全局变量，范围很大；局部变量，范围很小。无论是大还是小，其实都是定死的。而线程变量，调用几个函数，则决定了它的作用域有多大。</p>
+</blockquote>
+<blockquote>
+<p>ThreadLocal是跨函数的，虽然全局变量也是跨函数的，但是跨所有的函数，而且不是动态的。</p>
+</blockquote>
+<blockquote>
+<p>ThreadLocal是跨函数的，但是跨哪些函数呢，由线程来定，更灵活</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public class ThreadLocalDemo</span><br><span class="line">&#123;</span><br><span class="line">	public static void main(String[] args)</span><br><span class="line">	&#123;</span><br><span class="line">		ThreadLocal&lt;Integer&gt; count = new ThreadLocal&lt;Integer&gt;();</span><br><span class="line">		//使用count</span><br><span class="line">		count.set(10);</span><br><span class="line">		// count不再被使用，可以进行内存回收</span><br><span class="line">		System.out.println(&quot;&quot;);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个示例中，count要不要被回收</p>
+<blockquote>
+<p>我想，此时JDK的作者也是左右为难，从眼见为实的角度来说，变量不用了就应该进行回收，实现内存的自动回收，这是Java给人最大的特点。</p>
+</blockquote>
+<blockquote>
+<p>但是，此时不能回收count，因为它与10绑定到了一块，而且只能通过count才能读写10。最后JDK作者耍了一个小聪明，用弱引用包装了count，没有干脆利索的进行内存回收，而是拖拖拉拉的进行回收，反正，最后实现了变量不用就回收的基本原则，与Java的传统思想一脉相承</p>
+</blockquote>
+<hr>
+<p>到此，应该是知道为什么作者要设计为弱引用了，按建议使用ThreadLocal,修饰为static,就不是为了防内存泄漏，而只是为了达到java变量不使用就回收的基本原则，只是在线程范围时，只能曲线救国了</p>
+<h1 id="防碰撞"><a href="#防碰撞" class="headerlink" title="防碰撞"></a>防碰撞</h1><p>在hash数据结构中，最重要的一点就是如何更好地设计，尽量避免key的冲突</p>
+<p>普通的hashmap使用的是拉链法，把长度设置成2的N次方，还有负载因子</p>
+<p>ThreadLocalMap使用的线程探索法，作者使用了哪些奇技淫巧</p>
+<h2 id="map的长度"><a href="#map的长度" class="headerlink" title="map的长度"></a>map的长度</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * The initial capacity -- MUST be a power of two.</span><br><span class="line"> */</span><br><span class="line">private static final int INITIAL_CAPACITY = 16;</span><br></pre></td></tr></table></figure>
+<p>ThreadLocalMap没有设置容量的方法，一般情况下，也不会实例化那么多ThreadLocal实例</p>
+<p>必须是2的N次方，这个特性在HashMap中一样，就不解释了，详情见<a href="http://www.zhuxingsheng.com/blog/hashmap-source-code-analysis.html">《Hashmap源码解析》</a></p>
+<h2 id="负载因子"><a href="#负载因子" class="headerlink" title="负载因子"></a>负载因子</h2><p>在hashmap中，默认负载因子为了0.75，在ThreadLocal中呢？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Set the resize threshold to maintain at worst a 2/3 load factor.</span><br><span class="line"> */</span><br><span class="line">private void setThreshold(int len) &#123;</span><br><span class="line">    threshold = len * 2 / 3;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>看出负载因子为2&#x2F;3</p>
+<p>但threadlocalmap还有特别的地方，就是弱引用，key可能变成null，所以在get,set都会清理key为null的Entry</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">tab[i] = new Entry(key, value);</span><br><span class="line">int sz = ++size;</span><br><span class="line">if (!cleanSomeSlots(i, sz) &amp;&amp; sz &gt;= threshold)</span><br><span class="line">    rehash();</span><br></pre></td></tr></table></figure>
+
+<p>再看rehash();</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Re-pack and/or re-size the table. First scan the entire</span><br><span class="line"> * table removing stale entries. If this doesn&#x27;t sufficiently</span><br><span class="line"> * shrink the size of the table, double the table size.</span><br><span class="line"> */</span><br><span class="line">private void rehash() &#123;</span><br><span class="line">    expungeStaleEntries();</span><br><span class="line"></span><br><span class="line">    // Use lower threshold for doubling to avoid hysteresis</span><br><span class="line">    if (size &gt;= threshold - threshold / 4)</span><br><span class="line">        resize();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>rehash方法并不是直接就rehash了，会先清理过期元素，再判断size&gt;&#x3D; threshold-threshold&#x2F;4</p>
+<p>threshold&#x3D;len * 2 &#x2F; 3</p>
+<p>threshold-threshold&#x2F;4&#x3D;len * 2 &#x2F; 3-(len * 2 &#x2F; 3)&#x2F;4&#x3D; len&#x2F;2</p>
+<p>所以最终是在清理过期元素后，元素数量超过len&#x2F;2时，就会正式扩容两倍</p>
+<h2 id="0x61c88647"><a href="#0x61c88647" class="headerlink" title="0x61c88647"></a>0x61c88647</h2><p>hash函数的设计是hash类数据结构的一个重点，空间与时间的平衡是关键</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * ThreadLocals rely on per-thread linear-probe hash maps attached</span><br><span class="line"> * to each thread (Thread.threadLocals and</span><br><span class="line"> * inheritableThreadLocals).  The ThreadLocal objects act as keys,</span><br><span class="line"> * searched via threadLocalHashCode.  This is a custom hash code</span><br><span class="line"> * (useful only within ThreadLocalMaps) that eliminates collisions</span><br><span class="line"> * in the common case where consecutively constructed ThreadLocals</span><br><span class="line"> * are used by the same threads, while remaining well-behaved in</span><br><span class="line"> * less common cases.</span><br><span class="line"> */</span><br><span class="line">private final int threadLocalHashCode = nextHashCode();</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * The next hash code to be given out. Updated atomically. Starts at</span><br><span class="line"> * zero.</span><br><span class="line"> */</span><br><span class="line">private static AtomicInteger nextHashCode =</span><br><span class="line">    new AtomicInteger();</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * The difference between successively generated hash codes - turns</span><br><span class="line"> * implicit sequential thread-local IDs into near-optimally spread</span><br><span class="line"> * multiplicative hash values for power-of-two-sized tables.</span><br><span class="line"> */</span><br><span class="line">private static final int HASH_INCREMENT = 0x61c88647;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Returns the next hash code.</span><br><span class="line"> */</span><br><span class="line">private static int nextHashCode() &#123;</span><br><span class="line">    return nextHashCode.getAndAdd(HASH_INCREMENT);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每当创建ThreadLocal实例时这个值都会累加 0x61c88647</p>
+<p><img src="http://images.zhuxingsheng.com/20200706235459_1594050899.jpg"></p>
+<p>0x61c88647转化成十进制：2654435769为32位无符号整数的黄金分割值，而-1640531527就是32位带符号整数的黄金分割值</p>
+<p>当容量为2的N次方，并且使用上这个魔法值后，元素经过散列算法后恰好填充满了整个容器，也就是实现了完美散列</p>
+<p>对于这个数字由来，我也大致搜索了些资料，这已经超出作为一名码农的能力范围，只能反思数学老师讲的：不是数学用不上，而是你没有用上的能力</p>
+<h2 id="环形"><a href="#环形" class="headerlink" title="环形"></a>环形</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * Increment i modulo len.</span><br><span class="line"> */</span><br><span class="line">private static int nextIndex(int i, int len) &#123;</span><br><span class="line">    return ((i + 1 &lt; len) ? i + 1 : 0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * Decrement i modulo len.</span><br><span class="line"> */</span><br><span class="line">private static int prevIndex(int i, int len) &#123;</span><br><span class="line">    return ((i - 1 &gt;= 0) ? i - 1 : len - 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在寻找下一个位置时，虽然threadlocalmap是线性探索，但逻辑上使用环形结构，这个与防冲突关系不大，但也是个知识点，一并罗列下</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://threadlocal.cn/">一针见血 ThreadLocal</a></p>
+<p><a href="https://www.javaspecialists.eu/archive/Issue164.html">Why 0x61c88647?</a></p>
+<p><a href="https://www.jianshu.com/p/48eca67fb790">ThreadLocal源码——黄金分割数的使用</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/ThreadLocal/" rel="tag"># ThreadLocal</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/entropy-of-ddd.html" rel="prev" title="DDD之熵">
+      <i class="fa fa-chevron-left"></i> DDD之熵
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/deadlock-analysis.html" rel="next" title="死锁分析">
+      死锁分析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%B1%E5%BC%95%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">弱引用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%98%B2%E7%A2%B0%E6%92%9E"><span class="nav-number">2.</span> <span class="nav-text">防碰撞</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#map%E7%9A%84%E9%95%BF%E5%BA%A6"><span class="nav-number">2.1.</span> <span class="nav-text">map的长度</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9F%E8%BD%BD%E5%9B%A0%E5%AD%90"><span class="nav-number">2.2.</span> <span class="nav-text">负载因子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0x61c88647"><span class="nav-number">2.3.</span> <span class="nav-text">0x61c88647</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%BD%A2"><span class="nav-number">2.4.</span> <span class="nav-text">环形</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

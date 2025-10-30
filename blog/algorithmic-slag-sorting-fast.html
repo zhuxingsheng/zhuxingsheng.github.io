@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法  定义快速排序（Quicksort）是对冒泡排序的一种改进 快速排序由C. A. R. Hoare在1962年提出。 它的基本思想是：通过一趟排序将要排序的数据分割成独立的两部分，其中一部分的所有数据都比另外一部分的所有数据都要小，然后再按此方法对这两部分数据分别进行快速排序，整个排序过程可以递归进">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法渣-排序-快速">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-fast.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法  定义快速排序（Quicksort）是对冒泡排序的一种改进 快速排序由C. A. R. Hoare在1962年提出。 它的基本思想是：通过一趟排序将要排序的数据分割成独立的两部分，其中一部分的所有数据都比另外一部分的所有数据都要小，然后再按此方法对这两部分数据分别进行快速排序，整个排序过程可以递归进">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811052311_329.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811101906_691.png">
+<meta property="article:published_time" content="2018-11-28T03:36:00.000Z">
+<meta property="article:modified_time" content="2025-02-24T02:25:53.056Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201811052311_329.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-fast.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>算法渣-排序-快速 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-fast.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          算法渣-排序-快速
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-28 11:36:00" itemprop="dateCreated datePublished" datetime="2018-11-28T11:36:00+08:00">2018-11-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2025-02-24 10:25:53" itemprop="dateModified" datetime="2025-02-24T10:25:53+08:00">2025-02-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法</p>
+</blockquote>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>快速排序（Quicksort）是对冒泡排序的一种改进</p>
+<p>快速排序由C. A. R. Hoare在1962年提出。</p>
+<p>它的基本思想是：通过一趟排序将要排序的数据分割成独立的两部分，其中一部分的所有数据都比另外一部分的所有数据都要小，然后再按此方法对这两部分数据分别进行快速排序，整个排序过程可以递归进行，以此达到整个数据变成有序序列</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>设要排序的数组是A[0]……A[N-1]，首先任意选取一个数据（通常选用数组的第一个数）作为关键数据，然后将所有比它小的数都放到它前面，所有比它大的数都放到它后面，这个过程称为一趟快速排序。值得注意的是，快速排序不是一种稳定的排序算法，也就是说，多个相同的值的相对位置也许会在算法结束时产生变动</p>
+<p>一趟快速排序的算法是：</p>
+<ol>
+<li>设置两个变量i、j，排序开始的时候：i&#x3D;0，j&#x3D;N-1；</li>
+<li>以第一个数组元素作为关键数据，赋值给key，即key&#x3D;A[0]；</li>
+<li>从j开始向前搜索，即由后开始向前搜索(j–)，找到第一个小于key的值A[j]，将A[j]和A[i]互换；</li>
+<li>从i开始向后搜索，即由前开始向后搜索(i++)，找到第一个大于key的A[i]，将A[i]和A[j]互换；</li>
+<li>重复第3、4步，直到i&#x3D;j； (3,4步中，没找到符合条件的值，即3中A[j]不小于key,4中A[i]不大于key的时候改变j、i的值，使得j&#x3D;j-1，i&#x3D;i+1，直至找到为止。找到符合条件的值，进行交换的时候i， j指针位置不变。另外，i&#x3D;&#x3D;j这一过程一定正好是i+或j-完成的时候，此时令循环结束）。</li>
+</ol>
+<h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><p>上面的定义，算法都是很学术的表达，看得有点晕了，看一个示例：</p>
+<p>对数组[2,10,8,22,34,5,12,28,21,11]进行快速排序</p>
+<p><img src="http://images.zhuxingsheng.com/201811052311_329.png" alt="快速排序"></p>
+<p>也可以通过动画更清晰了解整个排序过程</p>
+<p>动画：<a href="http://www.zhuxingsheng.com/tools/sort/sort.html">http://www.zhuxingsheng.com/tools/sort/sort.html</a></p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>快速排序有好些实现手法，<strong>左右指针法、挖坑法、前后指针(快慢指针)法</strong></p>
+<h2 id="左右指针法"><a href="#左右指针法" class="headerlink" title="左右指针法"></a>左右指针法</h2><p>算法过程与上面的演示图差不多</p>
+<ol>
+<li>先从数列中取出一个数作为中轴基数。 </li>
+<li>分区过程，将比这个数大的数全放到它的右边，小于或等于它的数全放到它的左边。 </li>
+<li>再对左右区间重复第二步，直到各区间只有一个数</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 分治法,从小到大排序</span><br><span class="line"> * @param array</span><br><span class="line"> */</span><br><span class="line">public static int partition(int []array,int start,int end) &#123;</span><br><span class="line"></span><br><span class="line">    //取一位做为基数</span><br><span class="line">    int pivot = array[end];//这儿取最后一位作为基数了</span><br><span class="line"></span><br><span class="line">    int left = start;</span><br><span class="line">    int right = end-1;//从倒数第二位开始比较</span><br><span class="line"></span><br><span class="line">    //从两头向中间搜索,从小到大排序</span><br><span class="line">    while (left &lt; right) &#123;</span><br><span class="line">        //从left端开始搜索</span><br><span class="line">        while(left &lt; right &amp;&amp; array[left] &lt;= pivot) &#123;</span><br><span class="line">            left ++;</span><br><span class="line">        &#125;</span><br><span class="line">        //从right端开始搜索</span><br><span class="line">        while (left &lt; right &amp;&amp; array[right] &gt;= pivot) &#123;</span><br><span class="line">            right -- ;</span><br><span class="line">        &#125;</span><br><span class="line">        //两数交换,大的放到右边，小的放到左边</span><br><span class="line">        if(left &lt; right) &#123;</span><br><span class="line">            swap(array,left,right);</span><br><span class="line">            left++;</span><br><span class="line">            right--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    //</span><br><span class="line">    if(left != end &amp;&amp; array[left] &gt; array[end] ) &#123;</span><br><span class="line">        swap(array,left,end);</span><br><span class="line">        return left;</span><br><span class="line">    &#125;</span><br><span class="line">    //right == left</span><br><span class="line">    return left+1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 分治法,从小到大排序</span><br><span class="line"> * @param array</span><br><span class="line"> * @param start</span><br><span class="line"> * @param end</span><br><span class="line"> */</span><br><span class="line">private static void quicSort(int []array,int start,int end)&#123;</span><br><span class="line">    if( start &lt; end )&#123;</span><br><span class="line">        int partition = partition(array,start,end);</span><br><span class="line">        print(array);</span><br><span class="line">        quicSort(array,start,partition-1);</span><br><span class="line">        quicSort(array,partition+1,end);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="挖坑法"><a href="#挖坑法" class="headerlink" title="挖坑法"></a>挖坑法</h2><p>挖坑填坑，也可以叫拆东墙补西墙</p>
+<p>先演示一番,对[22,12,28,21,14]进行排序</p>
+<table>
+<thead>
+<tr>
+<th>index:</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>data:</td>
+<td>22</td>
+<td>12</td>
+<td>28</td>
+<td>21</td>
+<td>14</td>
+</tr>
+</tbody></table>
+<p><strong>第一步:挖最右边的数为坑</strong></p>
+<p>坑: pit&#x3D;array[right]&#x3D;14;左索引: left&#x3D;0,右索引: right&#x3D;3, </p>
+<table>
+<thead>
+<tr>
+<th>index:</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>data:</td>
+<td>22</td>
+<td>12</td>
+<td>28</td>
+<td>21</td>
+<td>X</td>
+</tr>
+</tbody></table>
+<p>从left开始搜索，寻找比坑大的数，发现array[left&#x3D;0]&gt;14,那就用left&#x3D;0 填 right&#x3D;4的坑</p>
+<p>array[right&#x3D;4]&#x3D;array[left&#x3D;0];left++;</p>
+<p>此时数组：</p>
+<table>
+<thead>
+<tr>
+<th>index:</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>data:</td>
+<td>X</td>
+<td>12</td>
+<td>28</td>
+<td>21</td>
+<td>22</td>
+</tr>
+</tbody></table>
+<p>left&#x3D;1,right&#x3D;3</p>
+<p><strong>第二步:</strong> 从right端开始找比pit小的数，发现array[1] &lt; 14,那就用right&#x3D;1 填 left&#x3D;0的坑</p>
+<p>array[left&#x3D;0]&#x3D; array[right&#x3D;1];</p>
+<p>此时数组：</p>
+<table>
+<thead>
+<tr>
+<th>index:</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>data:</td>
+<td>12</td>
+<td>X</td>
+<td>28</td>
+<td>21</td>
+<td>22</td>
+</tr>
+</tbody></table>
+<p>left&#x3D;1,right&#x3D;0; left&gt;right,那此回合结束,用pit填回坑array[left&#x3D;1]</p>
+<p>结束时：</p>
+<table>
+<thead>
+<tr>
+<th>index:</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>data:</td>
+<td>12</td>
+<td>14</td>
+<td>28</td>
+<td>21</td>
+<td>22</td>
+</tr>
+</tbody></table>
+<p>发现14左都是小于它的数，右边都是大于它的数</p>
+<p>以14为分界，两边数组进行递归下去，就行了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">int partion(int arr[], int begin, int end)</span><br><span class="line">&#123;</span><br><span class="line">    int pit = arr[end];//挖最右数，留一个坑</span><br><span class="line">    int left = begin;</span><br><span class="line">    int right = end;</span><br><span class="line"></span><br><span class="line">    while (left &lt; right)</span><br><span class="line">    &#123;</span><br><span class="line">        //从最左开始搜索比坑大的数</span><br><span class="line">        while (left &lt; right &amp;&amp; arr[left] &lt;= pit)</span><br><span class="line">            left++;</span><br><span class="line">        if (left&lt;right) &#123;</span><br><span class="line">            arr[right] = arr[left];//拿left去填坑，left成为新坑</span><br><span class="line">        &#125;</span><br><span class="line">        while (left &lt; right &amp;&amp; arr[right] &gt;= pit)</span><br><span class="line">            right--;</span><br><span class="line">        if (left &lt; right) &#123;</span><br><span class="line">            arr[left] = arr[right];//right去填left坑，left成为新坑</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    arr[left] = pit;//用key填坑</span><br><span class="line">    return left;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void QuickSort(int arr[], int left, int right)</span><br><span class="line">&#123;</span><br><span class="line">    if (left &lt; right)</span><br><span class="line">    &#123;</span><br><span class="line">        int mid = partion(arr, left, right);</span><br><span class="line">        print(arr);</span><br><span class="line">        QuickSort(arr, left, mid - 1);</span><br><span class="line">        QuickSort(arr, mid + 1, right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="前后指针法"><a href="#前后指针法" class="headerlink" title="前后指针法"></a>前后指针法</h2><p>大体思路：</p>
+<ol>
+<li>定义两个指针，一前一后，cur（前）指向起始位置，prev（后）指向cur的前一个位置；选择数组最后一个元素作为key（right）</li>
+<li>cur找比key小的数，prev在cur没有找到的情况下，一直不动（即保证prev一直指向比key大的数）；直到cur找到比key小的数（+ +prev &amp;&amp; prev !&#x3D; cur时）然后++cur,prev仍然不动</li>
+<li>直到cur走到right前一个位置，终止循环。最后++prev，交换prev和right的值。返回中间位置prev。最后再继续递归</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201811101906_691.png" alt="前后指针法"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">int partion(int arr[], int left, int right)</span><br><span class="line">&#123;</span><br><span class="line">    int key = arr[right];//取最后一位为key</span><br><span class="line"></span><br><span class="line">    int cur = left;//当前指针</span><br><span class="line">    int prev = left - 1;//前一个指针</span><br><span class="line"></span><br><span class="line">    while (cur &lt; right)</span><br><span class="line">    &#123;</span><br><span class="line">        if(arr[cur] &lt; key &amp;&amp; ++prev != cur)&#123;//发现比key小的数</span><br><span class="line">            swap(arr,cur,prev);</span><br><span class="line">        &#125;</span><br><span class="line">        cur++;</span><br><span class="line">    &#125;</span><br><span class="line">    //最后++prev交换</span><br><span class="line">    swap(arr,++prev,cur);</span><br><span class="line">    return prev;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void QuickSort(int arr[], int left, int right)</span><br><span class="line">&#123;</span><br><span class="line">    if (left &lt; right)</span><br><span class="line">    &#123;</span><br><span class="line">        int mid = partion(arr, left, right);</span><br><span class="line">        print(arr);</span><br><span class="line">        QuickSort(arr, left, mid - 1);</span><br><span class="line">        QuickSort(arr, mid + 1, right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="分治"><a href="#分治" class="headerlink" title="分治"></a>分治</h2><p>以上几个方法，不管怎样的思路，都是寻找一个标准数,让它成为一个分界，大于所有左边的数，小于所有右边的数，进行分而治之</p>
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><p>最好情况：最在最好的情况下，每次的划分都会恰好从中间将序列划分开来，那么只需要lgn次划分即可划分完成，是一个标准的分治算法Cn&#x3D;2Cn&#x2F;2+N，每一次划分都需要比较N次。时间复杂度O(nlogn)</p>
+<p>最坏情况：在最坏的情况下，即序列已经排好序的情况下，每次划分都恰好把数组划分成了0，n两部分，那么需要n次划分，但是比较的次数则变成了n, n-1, n-2,….1, 所以整个比较次数约为n(n-1)&#x2F;2~n2&#x2F;2</p>
+<p>比较和移动次数最少时间复杂度表示为O(nlogn);</p>
+<p>比较和移动次数最多的时间复杂度表示为O(n^2);</p>
+<p>使用的辅助存储空间最少为logn，最多为n^2；是不稳定的排序；</p>
+<p>Best| Average| Worst|Memory|Stable<br> — | —| —|——| :–: |—<br>nlog(n)	|nlog(n)|	n^2	| log(n) |	No</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/algorithm/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/algorithm---sorting---bubbling.html" rel="prev" title="算法渣-排序-冒泡">
+      <i class="fa fa-chevron-left"></i> 算法渣-排序-冒泡
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/algorithm---sort---insert.html" rel="next" title="算法渣-排序-插入">
+      算法渣-排序-插入 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA"><span class="nav-number">1.2.</span> <span class="nav-text">演示</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%A6%E5%8F%B3%E6%8C%87%E9%92%88%E6%B3%95"><span class="nav-number">2.1.</span> <span class="nav-text">左右指针法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%96%E5%9D%91%E6%B3%95"><span class="nav-number">2.2.</span> <span class="nav-text">挖坑法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E5%90%8E%E6%8C%87%E9%92%88%E6%B3%95"><span class="nav-number">2.3.</span> <span class="nav-text">前后指针法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%B2%BB"><span class="nav-number">2.4.</span> <span class="nav-text">分治</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">3.</span> <span class="nav-text">复杂度</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="《DDD之形》把当前一些流行的架构给通览了一篇，那是不是万事大吉，随便挑一个形态实践就行呢？ 正常情况对于有追求的程序员来讲，肯定不行，有两个原因 一因为完美，人人都是想要完美，每个架构实践都不是完美的，尤其离开业务场景去探讨架构，会使架构没法落地；因此你小抄的时候会变形，想把原先至少不太好的地方改得相对好些，但这样可能造成四不像 二因为没有意的形，只知其形，不得其意，必然会东施效颦；类似于第一点">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDD之熵">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/entropy-of-ddd.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="《DDD之形》把当前一些流行的架构给通览了一篇，那是不是万事大吉，随便挑一个形态实践就行呢？ 正常情况对于有追求的程序员来讲，肯定不行，有两个原因 一因为完美，人人都是想要完美，每个架构实践都不是完美的，尤其离开业务场景去探讨架构，会使架构没法落地；因此你小抄的时候会变形，想把原先至少不太好的地方改得相对好些，但这样可能造成四不像 二因为没有意的形，只知其形，不得其意，必然会东施效颦；类似于第一点">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200423202423_1587644663.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200315195302_1584273182.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/202003151738_845.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200319171211_1584609131.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/202001181240_593.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200426001431_1587831271.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20200427203135_1587990695.jpg">
+<meta property="article:published_time" content="2020-04-28T12:11:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.470Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20200423202423_1587644663.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/entropy-of-ddd.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>DDD之熵 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/entropy-of-ddd.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DDD之熵
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-28 20:11:00" itemprop="dateCreated datePublished" datetime="2020-04-28T20:11:00+08:00">2020-04-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>《DDD之形》把当前一些流行的架构给通览了一篇，那是不是万事大吉，随便挑一个形态实践就行呢？</p>
+<p>正常情况对于有追求的程序员来讲，肯定不行，有两个原因</p>
+<p>一因为完美，人人都是想要完美，每个架构实践都不是完美的，尤其离开业务场景去探讨架构，会使架构没法落地；因此你小抄的时候会变形，想把原先至少不太好的地方改得相对好些，但这样可能造成四不像</p>
+<p>二因为没有意的形，只知其形，不得其意，必然会东施效颦；类似于第一点，完美，何为完美，还是得根据自身经验理解程序得出的结论，如果高度不够必然会画蛇添足</p>
+<h2 id="标准形态"><a href="#标准形态" class="headerlink" title="标准形态"></a>标准形态</h2><p>根据DDD的理论，或者说DDD带来的优势，将三层架构进行演化，把业务逻辑层再细拆分成三层：应用层、领域层和基础设施层</p>
+<p>分离业务逻辑与技术细节</p>
+<p><img src="http://images.zhuxingsheng.com/20200423202423_1587644663.jpg"></p>
+<p>DDD的标准形态</p>
+<p><img src="http://images.zhuxingsheng.com/20200315195302_1584273182.jpg"></p>
+<p>分层架构分为两种：严格分层架构和松散分层架构</p>
+<p>严格分层，某层只能与直接位于其下方的层发生耦合；松散分层，允许任意上方层与任意下方层发生耦合</p>
+<ol>
+<li>User Interface是用户接口层，主要用于处理用户发送的Restful请求和解析用户输入的配置文件等，并将信息传递给Application层的接口</li>
+<li>Application层是应用层，负责多进程管理及调度、多线程管理及调度、多协程调度和维护业务实例的状态模型。当调度层收到用户接口层的请求后，委托Context层与本次业务相关的上下文进行处理</li>
+<li>Domain层是领域层，定义领域模型，不仅包括领域对象及其之间关系的建模，还包括对象的角色role的显式建模</li>
+<li>Infrastructure层是基础实施层，为其他层提供通用的技术能力：业务平台，编程框架，持久化机制，消息机制，第三方库的封装，通用算法，等等</li>
+</ol>
+<h3 id="DIP"><a href="#DIP" class="headerlink" title="DIP"></a>DIP</h3><p>上面的标准形态图形的左半边图，跟以往的很不一样，但从DIP角度看，低层服务应该依赖于高层组件</p>
+<p><img src="http://images.zhuxingsheng.com/202003151738_845.png"></p>
+<p>这是COLA2.0的分层，作者利用DIP对1.0版本进行了优化</p>
+<blockquote>
+<p>1、核心业务逻辑和技术细节相分离，使用DIP，让Infrastructure反向依赖Domain</p>
+</blockquote>
+<blockquote>
+<p>2、将repository上移到application层，把组装entity的责任转移到application</p>
+</blockquote>
+<hr>
+<p>到此一切都很常规，很标准，但在落地时有几个问题：</p>
+<p>一、Controller是哪一层，user interface层？还是infrastructure层？</p>
+<p>这好像不是个问题，一般都放在user interface层，负责向用户展现信息以及解释用户命令；但细想一下，我们的controller都是基于底层框架，是框架提供的能力，那理论上放在infrastructure更合理一些。</p>
+<p>二、再细化的架构元素放哪里？</p>
+<p>其实这只是分层的大体方向，还有更细节的元素，在实践DDD的过程中，最常见的问题就是元素到底放在哪儿，比如Event,有各样的event，eventHandler，应用层、领域层都有，怎么区分呢？貌似回到了怎么区分应用服务与领域服务；还有各处javabean，哪些层能复用，谁复用谁</p>
+<p>再比如COLA2.0，单从层次依赖图明显形成了循环依赖，落地不了；但作者把repository上移到了application层，又有些走不寻常路，一般来讲repository是放在domain层</p>
+<p>如何办呢？大方向有了，但到小细节时，又有各种困惑，《SOLID之DIP》文中提到，分层至少有两层，一是业务领域层，二是其它层</p>
+<p><img src="http://images.zhuxingsheng.com/20200319171211_1584609131.jpg"></p>
+<p>这就是端口和适配器架构，可以算是六边形的简化版，但也从整体方向分成了两层，对应用层与用户接口层以及基础设施层进行了合并，无论是接受请求，还是输出数据都是gateway</p>
+<p>但六边形架构仅仅区分了内外边界，提炼了端口与适配器角色，并没有规划限界上下文内部各个层次与各个对象之间的关系；怎么破？</p>
+<hr>
+<p>这似乎是两个矛盾体，标准的层次分明了，但还是有些不确定性，对象放在哪个包不明确；而端口与适配器架构又太粗放；如何平衡？</p>
+<p>本质上，领域驱动设计的限界上下文同样是对软件系统的切割，依据的关注点主要是根据领域知识的语境，从而体现业务能力的差异。在进入限界上下文内部，我们又可以针对限界上下文进行关注点的切割，并在其内部体现出清晰的层次结构，这个层次遵循整洁架构</p>
+<p><img src="http://images.zhuxingsheng.com/202001181240_593.png"></p>
+<p>根据张逸老师DDD课程中的案例</p>
+<p><img src="http://images.zhuxingsheng.com/20200426001431_1587831271.jpg"></p>
+<ul>
+<li>领域层：包含 PlaceOrderService、Order、Notification、OrderConfirmed 与抽象的 OrderRepository，封装了纯粹的业务逻辑，不掺杂任何与业务无关的技术实现。</li>
+<li>应用层：包含 OrderAppService 以及抽象的 EventBus 与 NotificationService，提供对外体现业务价值的统一接口，同时还包含了基础设施功能的抽象接口。</li>
+<li>基础设施层：包含 OrderMapper、RabbitEventBus 与 EmailSender，为业务实现提供对应的技术功能支撑，但真正的基础设施访问则委派给系统边界之外的外部框架或驱动器</li>
+</ul>
+<hr>
+<p>重新审视六边形架构，匹配分层架构，两者可以融合</p>
+<p><img src="http://images.zhuxingsheng.com/20200427203135_1587990695.jpg"></p>
+<p>位于六边形边线之上的出口端口就应该既不属于领域层，又不属于基础设施层。它的职责与属于应用层的入口端口也不同，因为应用层的应用服务是对外部请求的封装，相当于是一个业务用例的外观</p>
+<p>DDD引入repository放在了领域层，一是对应聚合根的概念，二是抽象了数据库访问，，但DDD限界上下文可能不仅限于访问数据库，还可能访问同样属于外部设备的文件、网络与消息队列。为了隔离领域模型与外部设备，同样需要为它们定义抽象的出口端口，这些出口端口该放在哪里呢？如果依然放在领域层，就很难自圆其说。例如，出口端口EventPublisher支持将事件消息发布到消息队列，要将这样的接口放在领域层，就显得不伦不类了。倘若不放在位于内部核心的领域层，就只能放在领域层外部，这又违背了整洁架构思想</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/dip-of-solid.html" rel="prev" title="SOLID之DIP">
+      <i class="fa fa-chevron-left"></i> SOLID之DIP
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/threadlocal-review.html" rel="next" title="threadlocal再温习">
+      threadlocal再温习 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%BD%A2%E6%80%81"><span class="nav-number">1.</span> <span class="nav-text">标准形态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DIP"><span class="nav-number">1.1.</span> <span class="nav-text">DIP</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

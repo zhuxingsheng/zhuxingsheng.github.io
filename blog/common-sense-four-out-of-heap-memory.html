@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="常识系列,作为一名互联网门外汉的科普系列  堆外内存除了在像netty开源框架中，在平常项目中使用的比较少，在现前的项目中，QPS要求高的系统中，堆外内存作为其中一级缓存是相当有成效的。所以来学习一下，文中主要涉及到这三分部内容   堆外内存是什么？与堆内内存的区别 怎么分配，与GC的影响 开源框架使用   这篇文章写到最后，发现还只是回答了开源框架OHC的Why not use ByteBuf">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常识四堆外内存">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/common-sense-four-out-of-heap-memory.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="常识系列,作为一名互联网门外汉的科普系列  堆外内存除了在像netty开源框架中，在平常项目中使用的比较少，在现前的项目中，QPS要求高的系统中，堆外内存作为其中一级缓存是相当有成效的。所以来学习一下，文中主要涉及到这三分部内容   堆外内存是什么？与堆内内存的区别 怎么分配，与GC的影响 开源框架使用   这篇文章写到最后，发现还只是回答了开源框架OHC的Why not use ByteBuf">
+<meta property="og:locale">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/off-heap/on-heap.jpg">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/java/buffer.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/linux/linux-user-kernel.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/linux/linux-invoke.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/linux/io-buffer.jpg">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/linux/copy-steps.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/linux/sendfile-copy-steps.jpeg">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/linux/sendfilev2-copy-steps.jpeg">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/java/transferTo.gif">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/java/transferTo-contextSwitch.gif">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/java/transferTov2.gif">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/java/bytebuffer-choise.jpg">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/java/bytebuffer-choise1.jpg">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/java/directbyebuffer-struts.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/java/off-heap-memory-before.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/java/off-heap-memory.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/java/cleaner.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/java/finalize.png">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/off-heap/allocator.png">
+<meta property="article:published_time" content="2017-12-31T15:12:00.000Z">
+<meta property="article:modified_time" content="2021-09-29T07:24:30.513Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="cache">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qnimages.zhuxingsheng.com/off-heap/on-heap.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/common-sense-four-out-of-heap-memory.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>常识四堆外内存 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/common-sense-four-out-of-heap-memory.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          常识四堆外内存
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-12-31 23:12:00" itemprop="dateCreated datePublished" datetime="2017-12-31T23:12:00+08:00">2017-12-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>常识系列,作为一名互联网门外汉的科普系列</p>
+</blockquote>
+<p>堆外内存除了在像netty开源框架中，在平常项目中使用的比较少，在现前的项目中，QPS要求高的系统中，堆外内存作为其中一级缓存是相当有成效的。所以来学习一下，文中主要涉及到这三分部内容</p>
+<blockquote>
+<ol>
+<li>堆外内存是什么？与堆内内存的区别</li>
+<li>怎么分配，与GC的影响</li>
+<li>开源框架使用</li>
+</ol>
+</blockquote>
+<p>这篇文章写到最后，发现还只是回答了开源框架OHC的<a href="#OHC">Why not use ByteBuffer.allocateDirect()?</a></p>
+<h1 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h1><h2 id="堆内内存"><a href="#堆内内存" class="headerlink" title="堆内内存"></a>堆内内存</h2><p>现在流行的还是使用分代管理方式</p>
+<p><img src="http://qnimages.zhuxingsheng.com/off-heap/on-heap.jpg" alt="image"></p>
+<p>之前写过相关文章<a href="https://zhuxingsheng.github.io/2017/02/27/gc-and-jvm-parameters/">GC及JVM参数</a></p>
+<p>在jvm参数中只要使用-Xms，-Xmx等参数就可以设置堆的大小和最大值</p>
+<h2 id="堆外内存"><a href="#堆外内存" class="headerlink" title="堆外内存"></a>堆外内存</h2><p>和堆内内存相对应，堆外内存就是把内存对象分配在Java虚拟机的堆以外的内存，这些内存直接受操作系统管理（而不是虚拟机）</p>
+<p>堆外内存有以下特点：</p>
+<ul>
+<li>对于大内存有良好的伸缩性</li>
+<li>对垃圾回收停顿的改善可以明显感觉到</li>
+<li>在进程间可以共享，减少虚拟机间的复制</li>
+</ul>
+<h1 id="堆外内存分配与回收"><a href="#堆外内存分配与回收" class="headerlink" title="堆外内存分配与回收"></a>堆外内存分配与回收</h1><p>其实堆外内存一直在使用,却没有真正关注过。最常见的nio,Netty，里面大量使用了堆外内存</p>
+<p>这儿会涉及到很多知识点，一步步来，抽丝剥茧</p>
+<h2 id="Buffer"><a href="#Buffer" class="headerlink" title="Buffer"></a>Buffer</h2><p>这儿回顾下io知识，java提供了两种io处理方式，一种是io，另一种是nio</p>
+<p>Java NIO和IO之间最大的区别是IO是面向流（Stream）的，NIO是面向块（buffer）的，所以，这意味着什么？</p>
+<p>面向流意味着从流中一次可以读取一个或多个字节，拿到读取的这些做什么你说了算，这里没有任何缓存（这里指的是使用流没有任何缓存，接收或者发送的数据是缓存到操作系统中的，流就像一根水管从操作系统的缓存中读取数据）而且只能顺序从流中读取数据，如果需要跳过一些字节或者再读取已经读过的字节，你必须将从流中读取的数据先缓存起来。<br>面向块的处理方式有些不同，数据是先被 读&#x2F;写到buffer中的，根据需要你可以控制读取什么位置的数据。这在处理的过程中给用户多了一些灵活性，然而，你需要额外做的工作是检查你需要的数据是否已经全部到了buffer中，你还需要保证当有更多的数据进入buffer中时，buffer中未处理的数据不会被覆盖</p>
+<p>对于stream流来讲，一个一个字节处理效率太差了，所以还提供了带buffer的bufferedStream</p>
+<p>对就到api，就是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">read()</span><br><span class="line">read(byte b[])</span><br><span class="line"></span><br><span class="line">write()</span><br><span class="line">write(byte b[])</span><br></pre></td></tr></table></figure>
+
+<p>nio是面向buffer的，所以有专门抽象了Buffer</p>
+<p><img src="http://qnimages.zhuxingsheng.com/java/buffer.png" alt="buffer"></p>
+<h2 id="zero-copy"><a href="#zero-copy" class="headerlink" title="zero copy"></a>zero copy</h2><p>虽然通过调节buffer的大小，使用bufferedstream可以提升性能，但还不够</p>
+<p>还可以通过Zero-Copy大大提高了应用程序的性能，并且减少了kernel和user模式上下文的切换</p>
+<p>这儿需要再深入底层机制，来看系统内核与应用程序的交互过程</p>
+<h3 id="linux科普"><a href="#linux科普" class="headerlink" title="linux科普"></a>linux科普</h3><p>这儿再回顾一下linux相关知识点</p>
+<p><img src="http://qnimages.zhuxingsheng.com/linux/linux-user-kernel.png" alt="linux的内核态和用户态"></p>
+<ul>
+<li>内核态：控制计算机的硬件资源，并提供上层应用程序运行的环境。比如socket I&#x2F;0操作或者文件的读写操作等</li>
+<li>用户态：上层应用程序的活动空间，应用程序的执行必须依托于内核提供的资源。</li>
+<li>系统调用：为了使上层应用能够访问到这些资源，内核为上层应用提供访问的接口。</li>
+</ul>
+<p><img src="http://qnimages.zhuxingsheng.com/linux/linux-invoke.png" alt="关系"></p>
+<p>因此我们可以得知当我们通过JNI调用的native方法实际上就是从用户态切换到了内核态的一种方式。并且通过该系统调用使用操作系统所提供的功能。</p>
+<p>Q：为什么需要用户进程(位于用户态中)要通过系统调用(Java中即使JNI)来调用内核态中的资源，或者说调用操作系统的服务了？<br>A：intel cpu提供Ring0-Ring3四种级别的运行模式，Ring0级别最高，Ring3最低。Linux使用了Ring3级别运行用户态，Ring0作为内核态。Ring3状态不能访问Ring0的地址空间，包括代码和数据。因此用户态是没有权限去操作内核态的资源的，它只能通过系统调用外完成用户态到内核态的切换，然后在完成相关操作后再有内核态切换回用户态。</p>
+<p>鉴于linux系统的特性，IO之流程就如下图</p>
+<p><img src="http://qnimages.zhuxingsheng.com/linux/io-buffer.jpg" alt="IO之流程与buffer概览"></p>
+<h3 id="copy过程"><a href="#copy过程" class="headerlink" title="copy过程"></a>copy过程</h3><p>大部分web服务器都要处理大量的静态内容，而其中大部分都是从磁盘文件中读取数据然后写到socket中。这种操作对cpu的消耗是比较小的，但也是十分低效的：内核首先从磁盘文件读取数据，然后从内核空间将数据传到用户空间，应用程序又将数据从用户空间返回到内核空间然后传输给socket(如果好奇数据为何如此来回传输，请继续看下文)。实际上，应用程序就相当于是个低效的中间者，从磁盘拿数据放到socket。</p>
+<h4 id="read-write模式"><a href="#read-write模式" class="headerlink" title="read&#x2F;write模式"></a>read&#x2F;write模式</h4><p>代码抽象：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">read(file, tmp_buf, len);</span><br><span class="line">write(socket, tmp_buf, len);</span><br></pre></td></tr></table></figure>
+
+<p>首先调用read将静态内容，这里假设为文件A，读取到tmp_buf, 然后调用write将tmp_buf写入到socket中</p>
+<p><img src="http://qnimages.zhuxingsheng.com/linux/copy-steps.png" alt="read&#x2F;write copy steps"></p>
+<p>1、当调用 read 系统调用时，通过 DMA（Direct Memory Access）将数据 copy 到内核模式</p>
+<p>2、然后由 CPU 控制将内核模式数据 copy 到用户模式下的 buffer 中</p>
+<p>3、read 调用完成后，write 调用首先将用户模式下 buffer 中的数据 copy 到内核模式下的 socket buffer 中</p>
+<p>4、最后通过 DMA copy 将内核模式下的 socket buffer 中的数据 copy 到网卡设备中传送。</p>
+<p>从上面的过程可以看出，数据白白从内核模式到用户模式走了一圈，浪费了两次 copy(第一次，从kernel模式拷贝到user模式；第二次从user模式再拷贝回kernel模式，即上面4次过程的第2和3步骤。)，而这两次 copy 都是 CPU copy，即占用CPU资源</p>
+<h4 id="sendfile模式"><a href="#sendfile模式" class="headerlink" title="sendfile模式"></a>sendfile模式</h4><p><img src="http://qnimages.zhuxingsheng.com/linux/sendfile-copy-steps.jpeg" alt="sendfile copy steps"></p>
+<p>通过 sendfile 传送文件只需要一次系统调用，当调用 sendfile 时：</p>
+<p>1、首先通过 DMA copy 将数据从磁盘读取到 kernel buffer 中</p>
+<p>2、然后通过 CPU copy 将数据从 kernel buffer copy 到 sokcet buffer 中</p>
+<p>3、最终通过 DMA copy 将 socket buffer 中数据 copy 到网卡 buffer 中发送</p>
+<p>sendfile 与 read&#x2F;write 方式相比，少了 一次模式切换一次 CPU copy。但是从上述过程中也可以发现从 kernel buffer 中将数据 copy 到socket buffer 是没必要的。</p>
+<h4 id="sendfile模式改进"><a href="#sendfile模式改进" class="headerlink" title="sendfile模式改进"></a>sendfile模式改进</h4><p>Linux2.4 内核对 sendfile 做了改进，下图所示</p>
+<p><img src="http://qnimages.zhuxingsheng.com/linux/sendfilev2-copy-steps.jpeg" alt="sendfilev2 copy steps"></p>
+<p>改进后的处理过程如下：</p>
+<p>1、DMA copy 将磁盘数据 copy 到 kernel buffer 中</p>
+<p>2、向 socket buffer 中追加当前要发送的数据在 kernel buffer 中的位置和偏移量</p>
+<p>3、DMA gather copy 根据 socket buffer 中的位置和偏移量直接将 kernel buffer 中的数据 copy 到网卡上。</p>
+<p>经过上述过程，数据只经过了 2 次 copy 就从磁盘传送出去了。（事实上这个 Zero copy 是针对内核来讲的，数据在内核模式下是 Zero－copy 的）。</p>
+<p>当前许多高性能 http server 都引入了 sendfile 机制，如 nginx，lighttpd 等。</p>
+<h3 id="java-zero-copy"><a href="#java-zero-copy" class="headerlink" title="java zero copy"></a>java zero copy</h3><p>Zero-Copy技术省去了将操作系统的read buffer拷贝到程序的buffer，以及从程序buffer拷贝到socket buffer的步骤，直接将read buffer拷贝到socket buffer. Java NIO中的FileChannal.transferTo()方法就是这样的实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public void transferTo(long position,long count,WritableByteChannel target);</span><br></pre></td></tr></table></figure>
+<p>transferTo()方法将数据从一个channel传输到另一个可写的channel上，其内部实现依赖于操作系统对zero copy技术的支持。在unix操作系统和各种linux的发型版本中，这种功能最终是通过sendfile()系统调用实现。下边就是这个方法的定义：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;sys/socket.h&gt;</span><br><span class="line">ssize_t sendfile(int out_fd, int in_fd, off_t *offset, size_t count);</span><br></pre></td></tr></table></figure>
+<p>可以通过调用transferTo()方法来替代上边的File.read()、Socket.send()</p>
+<p>通过transferTo实现数据传输的路径：</p>
+<p><img src="http://qnimages.zhuxingsheng.com/java/transferTo.gif" alt="transferTo"></p>
+<p>展示了内核态、用户态的切换情况:</p>
+<p><img src="http://qnimages.zhuxingsheng.com/java/transferTo-contextSwitch.gif" alt="transferTo-contextSwitch"></p>
+<p>使用transferTo()方式所经历的步骤：</p>
+<p>1、transferTo调用会引起DMA将文件内容复制到读缓冲区(内核空间的缓冲区)，然后数据从这个缓冲区复制到另一个与socket输出相关的内核缓冲区中。</p>
+<p>2、第三次数据复制就是DMA把socket关联的缓冲区中的数据复制到协议引擎上发送到网络上。</p>
+<p>这次改善，我们是通过将内核、用户态切换的次数从四次减少到两次，将数据的复制次数从四次减少到三次(只有一次用到cpu资源)。但这并没有达到我们零复制的目标。如果底层网络适配器支持收集操作的话，我们可以进一步减少内核对数据的复制次数。</p>
+<p>在内核为2.4或者以上版本的linux系统上，socket缓冲区描述符将被用来满足这个需求。这个方式不仅减少了内核用户态间的切换，而且也省去了那次需要cpu参与的复制过程。<br>从用户角度来看依旧是调用transferTo()方法，但是其本质发生了变化：</p>
+<p>1、调用transferTo方法后数据被DMA从文件复制到了内核的一个缓冲区中。</p>
+<p>2、数据不再被复制到socket关联的缓冲区中了，仅仅是将一个描述符（包含了数据的位置和长度等信息）追加到socket关联的缓冲区中。DMA直接将内核中的缓冲区中的数据传输给协议引擎，消除了仅剩的一次需要cpu周期的数据复制。</p>
+<p><img src="http://qnimages.zhuxingsheng.com/java/transferTov2.gif" alt="transferTo"></p>
+<h2 id="ByteBuffer创建"><a href="#ByteBuffer创建" class="headerlink" title="ByteBuffer创建"></a>ByteBuffer创建</h2><p>以上的知识点都是点缀，真正的主角上场了,看下java中是如何抽象上述理论的</p>
+<p>ByteBuffer有两种分配buffer的方式：</p>
+<p><em>分配HeapByteBuffer</em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ByteBuffer buffer = ByteBuffer.allocate(int capacity);  </span><br></pre></td></tr></table></figure>
+
+<p><em>分配DirectByteBuffer</em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ByteBuffer buffer = ByteBuffer.allocateDirect(int capacity);  </span><br></pre></td></tr></table></figure>
+<p>两者的区别，JDK里面说得很清楚</p>
+<blockquote>
+<p>A byte buffer is either direct or non-direct. Given a direct byte buffer, the Java virtual machine will make a best effort to perform native I&#x2F;O operations directly upon it. That is, it will attempt to avoid copying the buffer’s content to (or from) an intermediate buffer before (or after) each invocation of one of the underlying operating system’s native I&#x2F;O operations.<br>A direct byte buffer may be created by invoking the allocateDirect factory method of this class. The buffers returned by this method typically have somewhat higher allocation and deallocation costs than non-direct buffers. The contents of direct buffers may reside outside of the normal garbage-collected heap, and so their impact upon the memory footprint of an application might not be obvious. It is therefore recommended that direct buffers be allocated primarily for large, long-lived buffers that are subject to the underlying system’s native I&#x2F;O operations. In general it is best to allocate direct buffers only when they yield a measureable gain in program performance.<br>A direct byte buffer may also be created by mapping a region of a file directly into memory. An implementation of the Java platform may optionally support the creation of direct byte buffers from native code via JNI. If an instance of one of these kinds of buffers refers to an inaccessible region of memory then an attempt to access that region will not change the buffer’s content and will cause an unspecified exception to be thrown either at the time of the access or at some later time. </p>
+</blockquote>
+<p>从文中大致可以看到DirectByteBuffer的特点如下：</p>
+<ul>
+<li>对于native IO operation，JVM会有最佳的性能效果(它不需要一个中间缓冲区，而是可以直接使用，避免了将buffer中的数据再复制到中间缓冲区)。</li>
+<li>由于DirectByteBuffer分配与native memory中，不在heap区，不会受到heap区的gc影响。（一般在old gen的full gc才会收集。）</li>
+<li>分配和释放需要更多的成本。<br><img src="http://qnimages.zhuxingsheng.com/java/bytebuffer-choise.jpg" alt="bytebuffer"></li>
+</ul>
+<p>从上可以总结DirectByteBuffer大致的应用场景如下（socket通信和大文件处理还是比较适用的）：</p>
+<ul>
+<li>频繁的native IO操作。</li>
+<li>系统的要求处理响应速度快和稳定，即高吞吐和低延迟。</li>
+<li>ByteBuffer的生命周期长且容量需求较大，会占用较多的内存空间。<br><img src="http://qnimages.zhuxingsheng.com/java/bytebuffer-choise1.jpg" alt="bytebuffer"></li>
+</ul>
+<p>看下代码，更直观一些</p>
+<h3 id="HeapByteBuffer"><a href="#HeapByteBuffer" class="headerlink" title="HeapByteBuffer"></a>HeapByteBuffer</h3><p>分配在堆上的，直接由Java虚拟机负责垃圾收集，你可以把它想象成一个字节数组的包装类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">class HeapByteBuffer</span><br><span class="line">    extends ByteBuffer</span><br><span class="line">&#123;</span><br><span class="line">    HeapByteBuffer(int cap, int lim) &#123;            // package-private</span><br><span class="line"></span><br><span class="line">        super(-1, 0, lim, cap, new byte[cap], 0);</span><br><span class="line">        /*</span><br><span class="line">        hb = new byte[cap];</span><br><span class="line">        offset = 0;</span><br><span class="line">        */</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">    </span><br><span class="line">public abstract class ByteBuffer</span><br><span class="line">    extends Buffer</span><br><span class="line">    implements Comparable&lt;ByteBuffer&gt;</span><br><span class="line">&#123;</span><br><span class="line"></span><br><span class="line">    // These fields are declared here rather than in Heap-X-Buffer in order to</span><br><span class="line">    // reduce the number of virtual method invocations needed to access these</span><br><span class="line">    // values, which is especially costly when coding small buffers.</span><br><span class="line">    //</span><br><span class="line">    final byte[] hb;                  // Non-null only for heap buffers</span><br><span class="line">    final int offset;</span><br><span class="line">    boolean isReadOnly;                 // Valid only for heap buffers</span><br><span class="line"></span><br><span class="line">    // Creates a new buffer with the given mark, position, limit, capacity,</span><br><span class="line">    // backing array, and array offset</span><br><span class="line">    //</span><br><span class="line">    ByteBuffer(int mark, int pos, int lim, int cap,   // package-private</span><br><span class="line">                 byte[] hb, int offset)</span><br><span class="line">    &#123;</span><br><span class="line">        super(mark, pos, lim, cap);</span><br><span class="line">        this.hb = hb;</span><br><span class="line">        this.offset = offset;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+
+<h3 id="DirectByteBuffer"><a href="#DirectByteBuffer" class="headerlink" title="DirectByteBuffer"></a>DirectByteBuffer</h3><p>这个类就没有HeapByteBuffer简单了</p>
+<p><strong>DirectByteBuffer结构</strong></p>
+<p><img src="http://qnimages.zhuxingsheng.com/java/directbyebuffer-struts.png" alt="DirectByteBuffer结构"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">DirectByteBuffer(int cap) &#123;                   // package-private</span><br><span class="line"></span><br><span class="line">        super(-1, 0, cap, cap);</span><br><span class="line">        boolean pa = VM.isDirectMemoryPageAligned();</span><br><span class="line">        int ps = Bits.pageSize();</span><br><span class="line">        long size = Math.max(1L, (long)cap + (pa ? ps : 0));</span><br><span class="line">        Bits.reserveMemory(size, cap);</span><br><span class="line"></span><br><span class="line">        long base = 0;</span><br><span class="line">        try &#123;</span><br><span class="line">            base = unsafe.allocateMemory(size);</span><br><span class="line">        &#125; catch (OutOfMemoryError x) &#123;</span><br><span class="line">            Bits.unreserveMemory(size, cap);</span><br><span class="line">            throw x;</span><br><span class="line">        &#125;</span><br><span class="line">        unsafe.setMemory(base, size, (byte) 0);</span><br><span class="line">        if (pa &amp;&amp; (base % ps != 0)) &#123;</span><br><span class="line">            // Round up to page boundary</span><br><span class="line">            address = base + ps - (base &amp; (ps - 1));</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            address = base;</span><br><span class="line">        &#125;</span><br><span class="line">        cleaner = Cleaner.create(this, new Deallocator(base, size, cap));</span><br><span class="line">        att = null;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>Bits.reserveMemory(size, cap) 方法</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">static void reserveMemory(long size, int cap) &#123;</span><br><span class="line">        synchronized (Bits.class) &#123;</span><br><span class="line">            if (!memoryLimitSet &amp;&amp; VM.isBooted()) &#123;</span><br><span class="line">                maxMemory = VM.maxDirectMemory();</span><br><span class="line">                memoryLimitSet = true;</span><br><span class="line">            &#125;</span><br><span class="line">            // -XX:MaxDirectMemorySize limits the total capacity rather than the</span><br><span class="line">            // actual memory usage, which will differ when buffers are page</span><br><span class="line">            // aligned.</span><br><span class="line">            if (cap &lt;= maxMemory - totalCapacity) &#123;</span><br><span class="line">                reservedMemory += size;</span><br><span class="line">                totalCapacity += cap;</span><br><span class="line">                count++;</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.gc();</span><br><span class="line">        try &#123;</span><br><span class="line">            Thread.sleep(100);</span><br><span class="line">        &#125; catch (InterruptedException x) &#123;</span><br><span class="line">            // Restore interrupt status</span><br><span class="line">            Thread.currentThread().interrupt();</span><br><span class="line">        &#125;</span><br><span class="line">        synchronized (Bits.class) &#123;</span><br><span class="line">            if (totalCapacity + cap &gt; maxMemory)</span><br><span class="line">                throw new OutOfMemoryError(&quot;Direct buffer memory&quot;);</span><br><span class="line">            reservedMemory += size;</span><br><span class="line">            totalCapacity += cap;</span><br><span class="line">            count++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>在DirectByteBuffer中，首先向Bits类申请额度，Bits类有一个全局的totalCapacity变量，记录着全部DirectByteBuffer的总大小，每次申请，都先看看是否超限,堆外内存的限额默认与堆内内存(由-Xmx 设定)相仿，可用 -XX:MaxDirectMemorySize 重新设定。</p>
+<p>如果不指定，该参数的默认值为Xmx的值减去1个Survior区的值。</p>
+<blockquote>
+<p>如设置启动参数-Xmx20M -Xmn10M -XX：SurvivorRatio&#x3D;8,那么申请20M-1M&#x3D;19M的DirectMemory</p>
+</blockquote>
+<p>如果已经超限，会主动执行Sytem.gc()，期待能主动回收一点堆外内存。</p>
+<blockquote>
+<p>System.gc()会触发一个full gc，当然前提是你没有显示的设置-XX:+DisableExplicitGC来禁用显式GC。并且你需要知道，调用System.gc()并不能够保证full gc马上就能被执行。</p>
+</blockquote>
+<blockquote>
+<p>所以在使用netty这类框架时，一定要注意JVM优化，如果DisableExplicitGC那就可能会OOM了</p>
+</blockquote>
+<p>然后休眠一百毫秒，看看totalCapacity降下来没有，如果内存还是不足，就抛出OOM异常。如果额度被批准，就调用大名鼎鼎的sun.misc.Unsafe去分配内存,返回内存基地址</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// Used only by direct buffers</span><br><span class="line">// NOTE: hoisted here for speed in JNI GetDirectBufferAddress</span><br><span class="line">long address;</span><br></pre></td></tr></table></figure>
+<p>这样我们后面通过JNI对这个堆外内存操作时都是通过这个address来实现的了。</p>
+<p>Unsafe的<a href="http://hg.openjdk.java.net/jdk8/jdk8/hotspot/file/87ee5ee27509/src/share/vm/prims/unsafe.cpp#l583">C++实现在此</a>，标准的malloc。然后再调一次Unsafe把这段内存给清零。跑个题，Unsafe的名字是提醒大家这个类只给Sun自家用的</p>
+<p>JDK7开始，DirectByteBuffer分配内存时默认已不做分页对齐，不会再每次分配并清零实际需要＋分页大小(4k)的内存，这对性能应有较大提升，所以Oracle专门写在了<a href="https://docs.oracle.com/javase/8/docs/technotes/guides/io/enhancements.html#jdk7">Enhancements in Java I&#x2F;O</a>里。</p>
+<p>最后，创建一个Cleaner，并把代表清理动作的Deallocator类绑定 – 降低Bits里的totalCapacity，并调用Unsafe调free去释放内存。Cleaner的触发机制后面再说。</p>
+<p>DirectByteBuffer中</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">byte _get(int i) &#123;                          // package-private</span><br><span class="line">        return unsafe.getByte(address + i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">void _put(int i, byte b) &#123;                  // package-private</span><br><span class="line"></span><br><span class="line">    unsafe.putByte(address + i, b);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在前面我们说过，在linux中内核态的权限是最高的，那么在内核态的场景下，操作系统是可以访问任何一个内存区域的，所以操作系统是可以访问到Java堆的这个内存区域的。</p>
+<p>Q：那为什么操作系统不直接访问Java堆内的内存区域了？</p>
+<p>A：这是因为JNI方法访问的内存区域是一个已经确定了的内存区域地质，那么该内存地址指向的是Java堆内内存的话，那么如果在操作系统正在访问这个内存地址的时候，Java在这个时候进行了GC操作，而GC操作会涉及到数据的移动操作[GC经常会进行先标志在压缩的操作。即，将可回收的空间做标志，然后清空标志位置的内存，然后会进行一个压缩，压缩就会涉及到对象的移动，移动的目的是为了腾出一块更加完整、连续的内存空间，以容纳更大的新对象]，数据的移动会使JNI调用的数据错乱。所以JNI调用的内存是不能进行GC操作的，JNI不能直接访问Java堆内的内存区域</p>
+<p>Q：如上面所说，JNI不能直接访问Java堆内的内存区域，那该如何解决了？</p>
+<p>A：①堆内内存与堆外内存之间数据拷贝的方式(并且在将堆内内存拷贝到堆外内存的过程JVM会保证不会进行GC操作)：</p>
+<p>比如我们要完成一个从文件中读数据到堆内内存的操作，即FileChannelImpl.read(HeapByteBuffer)。这里实际上File I&#x2F;O会将数据读到堆外内存中，然后堆外内存再讲数据拷贝到堆内内存，这样我们就读到了文件中的内存。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">public int read(ByteBuffer var1) throws IOException &#123;</span><br><span class="line">        this.ensureOpen();</span><br><span class="line">        if(!this.readable) &#123;</span><br><span class="line">            throw new NonReadableChannelException();</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            Object var2 = this.positionLock;</span><br><span class="line">            synchronized(this.positionLock) &#123;</span><br><span class="line">                int var3 = 0;</span><br><span class="line">                int var4 = -1;</span><br><span class="line"></span><br><span class="line">                try &#123;</span><br><span class="line">                    this.begin();</span><br><span class="line">                    var4 = this.threads.add();</span><br><span class="line">                    if(!this.isOpen()) &#123;</span><br><span class="line">                        byte var12 = 0;</span><br><span class="line">                        return var12;</span><br><span class="line">                    &#125; else &#123;</span><br><span class="line">                        do &#123;</span><br><span class="line">                            //关键点在这行</span><br><span class="line">                            var3 = IOUtil.read(this.fd, var1, -1L, this.nd);</span><br><span class="line">                        &#125; while(var3 == -3 &amp;&amp; this.isOpen());</span><br><span class="line"></span><br><span class="line">                        int var5 = IOStatus.normalize(var3);</span><br><span class="line">                        return var5;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; finally &#123;</span><br><span class="line">                    this.threads.remove(var4);</span><br><span class="line">                    this.end(var3 &gt; 0);</span><br><span class="line"></span><br><span class="line">                    assert IOStatus.check(var3);</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p><em>IOUtil</em></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">static int read(FileDescriptor var0, ByteBuffer var1, long var2, NativeDispatcher var4) throws IOException &#123;</span><br><span class="line">        if (var1.isReadOnly()) &#123;</span><br><span class="line">            throw new IllegalArgumentException(&quot;Read-only buffer&quot;);</span><br><span class="line">        &#125; else if (var1 instanceof DirectBuffer) &#123;</span><br><span class="line">            return readIntoNativeBuffer(var0, var1, var2, var4);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            // 分配临时的堆外内存</span><br><span class="line">            ByteBuffer var5 = Util.getTemporaryDirectBuffer(var1.remaining());</span><br><span class="line"> </span><br><span class="line">            int var7;</span><br><span class="line">            try &#123;</span><br><span class="line">                // File I/O 操作会将数据读入到堆外内存中</span><br><span class="line">                int var6 = readIntoNativeBuffer(var0, var5, var2, var4);</span><br><span class="line">                var5.flip();</span><br><span class="line">                if (var6 &gt; 0) &#123;</span><br><span class="line">                    // 将堆外内存的数据拷贝到堆内内存中</span><br><span class="line">                    var1.put(var5);</span><br><span class="line">                &#125;</span><br><span class="line"> </span><br><span class="line">                var7 = var6;</span><br><span class="line">            &#125; finally &#123;</span><br><span class="line">                // 里面会调用DirectBuffer.cleaner().clean()来释放临时的堆外内存</span><br><span class="line">                Util.offerFirstTemporaryDirectBuffer(var5);</span><br><span class="line">            &#125;</span><br><span class="line"> </span><br><span class="line">            return var7;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p>而写操作则反之，我们会将堆内内存的数据线写到对堆外内存中，然后操作系统会将堆外内存的数据写入到文件中。</p>
+<p>假设我们要从网络中读入一段数据，再把这段数据发送出去的话，采用Non-direct ByteBuffer的流程是这样的：</p>
+<blockquote>
+<p>网络 –&gt; 临时的Direct ByteBuffer –&gt; 应用 Non-direct ByteBuffer –&gt; 临时的Direct ByteBuffer –&gt; 网络</p>
+</blockquote>
+<p>② 直接使用堆外内存，如DirectByteBuffer：</p>
+<p>这种方式是直接在堆外分配一个内存(即，native memory)来存储数据，<br>程序通过JNI直接将数据读&#x2F;写到堆外内存中。因为数据直接写入到了堆外内存中，所以这种方式就不会再在JVM管控的堆内再分配内存来存储数据了，也就不存在堆内内存和堆外内存数据拷贝的操作了。这样在进行I&#x2F;O操作时，只需要将这个堆外内存地址传给JNI的I&#x2F;O的函数就好了。</p>
+<p>采用Direct ByteBuffer的流程是这样的：</p>
+<blockquote>
+<p>网络 –&gt; 应用 Direct ByteBuffer –&gt; 网络</p>
+</blockquote>
+<p>可以看到，除开构造和析构临时Direct ByteBuffer的时间外，起码还能节约两次内存拷贝的时间。那么是否在任何情况下都采用Direct Buffer呢？</p>
+<p>不是。对于大部分应用而言，两次内存拷贝的时间几乎可以忽略不计，而构造和析构DirectBuffer的时间却相对较长。在JVM的实现当中，某些方法会缓存一部分临时Direct ByteBuffer，意味着如果采用Direct ByteBuffer仅仅能节约掉两次内存拷贝的时间，<br>而无法节约构造和析构的时间。就用Sun的实现来说，write(ByteBuffer)和read(ByteBuffer)方法都会缓存临时Direct ByteBuffer，而write(ByteBuffer[])和read(ByteBuffer[])每次都生成新的临时Direct ByteBuffer。</p>
+<p>根据这些区别，如下的建议：</p>
+<ul>
+<li>如果你做中小规模的应用（在这里，应用大小是按照使用ByteBuffer的次数和规模来做划分的），而且并不在乎这该死的细节问题，请选择Non-direct ByteBuffer</li>
+<li>如果采用Direct ByteBuffer后性能并没有出现你所期待的变化，请选择Non-direct ByteBuffer</li>
+<li>如果没有Direct ByteBuffer Pool，尽量不要使用Direct ByteBuffer</li>
+<li>除非你确定该ByteBuffer会长时间存在，并且和外界有频繁交互，可采用Direct ByteBuffer</li>
+<li>如果采用Non-direct ByteBuffer，那么采用非聚集(gather)的write&#x2F;read(ByteBuffer)效果反而可能超出聚集的write&#x2F;read(ByteBuffer[])，因为聚集的write&#x2F;read的临时Direct ByteBuffer是非缓存的</li>
+</ul>
+<p>基本上，采用Non-direct ByteBuffer总是对的！因为内存拷贝需要的开销对大部分应用而言都可以忽略不计。</p>
+<h2 id="ByteBuffer回收"><a href="#ByteBuffer回收" class="headerlink" title="ByteBuffer回收"></a>ByteBuffer回收</h2><p>HeapByteBuffer就不要说了，GC就帮忙处理了。这儿主要说下DirectByteBuffer</p>
+<h3 id="基于GC回收DirectByteBuffer"><a href="#基于GC回收DirectByteBuffer" class="headerlink" title="基于GC回收DirectByteBuffer"></a>基于GC回收DirectByteBuffer</h3><p>存在于堆内的DirectByteBuffer对象很小，只存着基地址和大小等几个属性，和一个Cleaner，但它代表着后面所分配的一大段内存，是所谓的冰山对象。</p>
+<p>在内存中基本是这样子<br><img src="http://qnimages.zhuxingsheng.com/java/off-heap-memory-before.png" alt="off-heap-memory"><br>其中first是Cleaner类的静态变量，Cleaner对象在初始化时会被添加到Clener链表中，和first形成引用关系，ReferenceQueue是用来保存需要回收的Cleaner对象。</p>
+<p>如果该DirectByteBuffer对象在一次GC中被回收了<br><img src="http://qnimages.zhuxingsheng.com/java/off-heap-memory.png" alt="off-heap-memory"><br>此时，只有Cleaner对象唯一保存了堆外内存的数据（开始地址、大小和容量），在下一次Full GC时，把该Cleaner对象放入到ReferenceQueue中，并触发clean方法。</p>
+<p>快速回顾一下堆内的GC机制，当新生代满了，就会发生young gc；如果此时对象还没失效，就不会被回收；撑过几次young gc后，对象被迁移到老生代；当老生代也满了，就会发生full gc。</p>
+<p>这里可以看到一种尴尬的情况，因为DirectByteBuffer本身的个头很小，只要熬过了young gc，即使已经失效了也能在老生代里舒服的呆着，不容易把老生代撑爆触发full gc，如果没有别的大块头进入老生代触发full gc，就一直在那耗着，占着一大片堆外内存不释放。</p>
+<p>这时，就只能靠前面提到的申请额度超限时触发的system.gc()来救场了。但这道最后的保险其实也不很好，首先它会中断整个进程，然后它让当前线程睡了整整一百毫秒，而且如果gc没在一百毫秒内完成，它仍然会无情的抛出OOM异常。还有，万一，万一大家迷信某个调优指南设置了-DisableExplicitGC禁止了system.gc()，那就不好玩了。</p>
+<p>所以，堆外内存还是自己主动点回收更好，比如Netty就是这么做的</p>
+<h3 id="主动回收DirectByteBuffer"><a href="#主动回收DirectByteBuffer" class="headerlink" title="主动回收DirectByteBuffer"></a>主动回收DirectByteBuffer</h3><p>对于Sun的JDK这其实很简单，只要从DirectByteBuffer里取出那个sun.misc.Cleaner，然后调用它的clean()就行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ByteBuffer byteBuffer = ByteBuffer.allocateDirect(1024 * 1024 * 500);</span><br><span class="line">((DirectBuffer)byteBuffer).cleaner().clean();</span><br></pre></td></tr></table></figure>
+
+<p>前面说的，clean()执行时实际调用的是被绑定的Deallocator类，这个类可被重复执行，释放过了就不再释放。所以GC时再被动执行一次clean()也没所谓。</p>
+<p>在Netty里，因为不确定跑在Sun的JDK里(比如安卓)，所以多废了些功夫来确定Cleaner的存在</p>
+<h3 id="Cleaner类"><a href="#Cleaner类" class="headerlink" title="Cleaner类"></a>Cleaner类</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class Cleaner extends PhantomReference&lt;Object&gt; &#123;</span><br><span class="line">    private static final ReferenceQueue&lt;Object&gt; dummyQueue = new ReferenceQueue();</span><br><span class="line">    private static Cleaner first = null;</span><br><span class="line">    private Cleaner next = null;</span><br><span class="line">    private Cleaner prev = null;</span><br><span class="line">    private final Runnable thunk;</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+<p>PhantomReference 这个虚引用类很少见，它是java中最弱的引用类型</p>
+<blockquote>
+<p>PhantomReference 类只能用于跟踪对被引用对象即将进行的收集。</p>
+</blockquote>
+<blockquote>
+<p>同样，它还能用于执行 pre-mortem 清除操作。 PhantomReference 必须与 ReferenceQueue 类一起使用。需要 ReferenceQueue 是因为它能够充当通知机制。当垃圾收集器确定了某个对象是虚可及对象时， PhantomReference 对象就被放在它的 ReferenceQueue 上。将 PhantomReference 对象放在 ReferenceQueue 上也就是一个通知，表明 PhantomReference 对象引用的对象已经结束，可供收集了。这使您能够刚好在对象占用的内存被回收之前采取行动。</p>
+</blockquote>
+<p>当GC时发现它除了PhantomReference外已不可达（持有它的DirectByteBuffer失效了），就会把它放进 Reference类pending list静态变量里。然后另有一条ReferenceHandler线程，名字叫 “Reference Handler”的，关注着这个pending list，如果看到有对象类型是Cleaner，就会执行它的clean()，其他类型就放入应用构造Reference时传入的ReferenceQueue中，这样应用的代码可以从Queue里拖出这些理论上已死的对象，做爱做的事情——这是一种比finalizer更轻量更好的机制。</p>
+<p><img src="http://qnimages.zhuxingsheng.com/java/cleaner.png" alt="cleaner"><br>比如创建DirectByteBuffer，会新建Cleaner对象，该对象添加到Cleaner链表中。<br>对象被GC，如果是Cleaner对象，则会执行该对象的clean方法,<br>Clean方法会将对应的cleaner对象从链表中移除，同时会回收DirectByteBuffer申请的资源</p>
+<p>看下ReferenceHandler源码:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">/* High-priority thread to enqueue pending References</span><br><span class="line">     */</span><br><span class="line">    private static class ReferenceHandler extends Thread &#123;</span><br><span class="line"></span><br><span class="line">        ReferenceHandler(ThreadGroup g, String name) &#123;</span><br><span class="line">            super(g, name);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        public void run() &#123;</span><br><span class="line">            for (;;) &#123;</span><br><span class="line">                Reference&lt;Object&gt; r;</span><br><span class="line">                synchronized (lock) &#123;</span><br><span class="line">                    if (pending != null) &#123;</span><br><span class="line">                        r = pending;</span><br><span class="line">                        pending = r.discovered;</span><br><span class="line">                        r.discovered = null;</span><br><span class="line">                    &#125; else &#123;</span><br><span class="line">                        // The waiting on the lock may cause an OOME because it may try to allocate</span><br><span class="line">                        // exception objects, so also catch OOME here to avoid silent exit of the</span><br><span class="line">                        // reference handler thread.</span><br><span class="line">                        //</span><br><span class="line">                        // Explicitly define the order of the two exceptions we catch here</span><br><span class="line">                        // when waiting for the lock.</span><br><span class="line">                        //</span><br><span class="line">                        // We do not want to try to potentially load the InterruptedException class</span><br><span class="line">                        // (which would be done if this was its first use, and InterruptedException</span><br><span class="line">                        // were checked first) in this situation.</span><br><span class="line">                        //</span><br><span class="line">                        // This may lead to the VM not ever trying to load the InterruptedException</span><br><span class="line">                        // class again.</span><br><span class="line">                        try &#123;</span><br><span class="line">                            try &#123;</span><br><span class="line">                                lock.wait();</span><br><span class="line">                            &#125; catch (OutOfMemoryError x) &#123; &#125;</span><br><span class="line">                        &#125; catch (InterruptedException x) &#123; &#125;</span><br><span class="line">                        continue;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                // Fast path for cleaners</span><br><span class="line">                if (r instanceof Cleaner) &#123;</span><br><span class="line">                    ((Cleaner)r).clean();</span><br><span class="line">                    continue;</span><br><span class="line">                &#125;</span><br><span class="line"></span><br><span class="line">                ReferenceQueue&lt;Object&gt; q = r.queue;</span><br><span class="line">                if (q != ReferenceQueue.NULL) q.enqueue(r);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>回顾下Finalize回收</strong></p>
+<p>sun不推荐实现finalize，实际上JDK内部很多类都实现了finalize。</p>
+<p><img src="http://qnimages.zhuxingsheng.com/java/finalize.png" alt="finalize"></p>
+<p>如果对象实现了finalize，在对象初始化后,会封装成Finalizer对象添加到 Finalizer链表中。</p>
+<p>对象被GC时，如果是Finalizer对象，会将对象赋值到pending对象。Reference Handler线程会将pending对象push到queue中。</p>
+<p>Finalizer线程poll到对象，先删除掉Finalizer链表中对应的对象，然后再执行对象的finalize方法(一般为资源的销毁)</p>
+<p>方案的缺点：</p>
+<ol>
+<li>对象至少跨越2个GC，垃圾对象无法及时被GC掉，并且存在多次拷贝。影响YGC和FGC</li>
+<li>Finalizer线程优先级较低，会导致finalize方法延迟执行</li>
+</ol>
+<h1 id="开源堆外缓存框架"><a href="#开源堆外缓存框架" class="headerlink" title="开源堆外缓存框架"></a>开源堆外缓存框架</h1><ul>
+<li>Ehcache 3.0：3.0基于其商业公司一个非开源的堆外组件的实现。</li>
+<li>Chronical Map：OpenHFT包括很多类库，使用这些类库很少产生垃圾，并且应用程序使用这些类库后也很少发生Minor GC。类库主要包括：Chronicle Map，Chronicle Queue等等。</li>
+<li>OHC：来源于Cassandra 3.0， Apache v2。</li>
+<li>Ignite: 一个规模宏大的内存计算框架，属于Apache项目。</li>
+</ul>
+<h2 id="OHC"><a href="#OHC" class="headerlink" title="OHC"></a>OHC</h2><p>DirectByteBuffer是使用unsafe(JNI)申请堆外空间(unsafe.allocateMemory(size))。还有一种申请堆外空间的手段：JNA。</p>
+<p>JNA的描述(<a href="https://github.com/java-native-access/jna">https://github.com/java-native-access/jna</a>)</p>
+<p>JNA provides Java programs easy access to native shared libraries without writing anything but Java code - no JNI or native code is required</p>
+<p>堆外缓存OHC便是使用JNA来申请堆外空间。</p>
+<p>线下测试：JNA内存申请的性能是unsafe（JNI）的2倍。</p>
+<h3 id="Why-not-use-ByteBuffer-allocateDirect"><a href="#Why-not-use-ByteBuffer-allocateDirect" class="headerlink" title="Why not use ByteBuffer.allocateDirect()?"></a>Why not use ByteBuffer.allocateDirect()?</h3><blockquote>
+<p>TL;DR allocating off-heap memory directly and bypassing ByteBuffer.allocateDirect is very gentle to the GC and we have explicit control over memory allocation and, more importantly, free. The stock implementation in Java frees off-heap memory during a garbage collection - also: if no more off-heap memory is available, it likely triggers a Full-GC, which is problematic if multiple threads run into that situation concurrently since it means lots of Full-GCs sequentially. Further, the stock implementation uses a global, synchronized linked list to track off-heap memory allocations.</p>
+</blockquote>
+<blockquote>
+<p>This is why OHC allocates off-heap memory directly and recommends to preload jemalloc on Linux systems to improve memory managment performance.</p>
+</blockquote>
+<p>这是OHC的wiki说明</p>
+<p>其实OHC实现了JNI(malloc),JNA(jemalloc)两种方式，默认使用了JNA(jemalloc),性能的提升最关键的是malloc与jemalloc的区别了</p>
+<p><img src="http://qnimages.zhuxingsheng.com/off-heap/allocator.png" alt="ohc-allocator"></p>
+<p>在org.caffinitas.ohc.chunked.Uns类中，创建IAllocator类片段代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">private static final String __ALLOCATOR = System.getProperty(OHCacheBuilder.SYSTEM_PROPERTY_PREFIX + &quot;allocator&quot;);</span><br><span class="line"></span><br><span class="line">IAllocator alloc;</span><br><span class="line">            String allocType = __ALLOCATOR != null ? __ALLOCATOR : &quot;jna&quot;;</span><br><span class="line">            switch (allocType)</span><br><span class="line">            &#123;</span><br><span class="line">                case &quot;unsafe&quot;:</span><br><span class="line">                    alloc = new UnsafeAllocator();</span><br><span class="line">                    LOGGER.info(&quot;OHC using sun.misc.Unsafe memory allocation&quot;);</span><br><span class="line">                    break;</span><br><span class="line">                case &quot;jna&quot;:</span><br><span class="line">                default:</span><br><span class="line">                    alloc = new JNANativeAllocator();</span><br><span class="line">                    LOGGER.info(&quot;OHC using JNA OS native malloc/free&quot;);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            allocator = alloc;</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<p>UnsafeAllocator</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Field field = sun.misc.Unsafe.class.getDeclaredField(&quot;theUnsafe&quot;);</span><br><span class="line">field.setAccessible(true);</span><br><span class="line">unsafe = (sun.misc.Unsafe) field.get(null);</span><br><span class="line">            </span><br><span class="line">            </span><br><span class="line">public long allocate(long size)</span><br><span class="line">    &#123;</span><br><span class="line">        try</span><br><span class="line">        &#123;</span><br><span class="line">            return unsafe.allocateMemory(size);</span><br><span class="line">        &#125;</span><br><span class="line">        catch (OutOfMemoryError oom)</span><br><span class="line">        &#123;</span><br><span class="line">            return 0L;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>JNANativeAllocator</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">public long allocate(long size)</span><br><span class="line">    &#123;</span><br><span class="line">        try</span><br><span class="line">        &#123;</span><br><span class="line">            return Native.malloc(size);</span><br><span class="line">        &#125;</span><br><span class="line">        catch (OutOfMemoryError oom)</span><br><span class="line">        &#123;</span><br><span class="line">            return 0L;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h3><p>OHC这只是一个开端，只是分配内存部分，它还有淘汰策略等等，之后说缓存时，再谈了</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="http://calvin1978.blogcn.com/articles/directbytebuffer.html">Netty之Java堆外内存扫盲贴</a></p>
+<p><a href="https://yq.aliyun.com/articles/66875">千丝万缕的FGC与Buffer pool</a></p>
+<p><a href="https://yq.aliyun.com/articles/2948">JVM源码分析之堆外内存完全解读</a></p>
+<p><a href="http://www.infoq.com/cn/articles/jvm-source-code-analysis-finalreference">JVM源码分析之FinalReference完全解读</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/cache/" rel="tag"># cache</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/kung-fu-is-beyond-poetry.html" rel="prev" title="功夫在诗外">
+      <i class="fa fa-chevron-left"></i> 功夫在诗外
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/game-gray-release.html" rel="next" title="游戏灰度发布">
+      游戏灰度发布 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">概念</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86%E5%86%85%E5%86%85%E5%AD%98"><span class="nav-number">1.1.</span> <span class="nav-text">堆内内存</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86%E5%A4%96%E5%86%85%E5%AD%98"><span class="nav-number">1.2.</span> <span class="nav-text">堆外内存</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A0%86%E5%A4%96%E5%86%85%E5%AD%98%E5%88%86%E9%85%8D%E4%B8%8E%E5%9B%9E%E6%94%B6"><span class="nav-number">2.</span> <span class="nav-text">堆外内存分配与回收</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Buffer"><span class="nav-number">2.1.</span> <span class="nav-text">Buffer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#zero-copy"><span class="nav-number">2.2.</span> <span class="nav-text">zero copy</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#linux%E7%A7%91%E6%99%AE"><span class="nav-number">2.2.1.</span> <span class="nav-text">linux科普</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#copy%E8%BF%87%E7%A8%8B"><span class="nav-number">2.2.2.</span> <span class="nav-text">copy过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#read-write%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">read&#x2F;write模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sendfile%E6%A8%A1%E5%BC%8F"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">sendfile模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sendfile%E6%A8%A1%E5%BC%8F%E6%94%B9%E8%BF%9B"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">sendfile模式改进</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java-zero-copy"><span class="nav-number">2.2.3.</span> <span class="nav-text">java zero copy</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ByteBuffer%E5%88%9B%E5%BB%BA"><span class="nav-number">2.3.</span> <span class="nav-text">ByteBuffer创建</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#HeapByteBuffer"><span class="nav-number">2.3.1.</span> <span class="nav-text">HeapByteBuffer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DirectByteBuffer"><span class="nav-number">2.3.2.</span> <span class="nav-text">DirectByteBuffer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ByteBuffer%E5%9B%9E%E6%94%B6"><span class="nav-number">2.4.</span> <span class="nav-text">ByteBuffer回收</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E4%BA%8EGC%E5%9B%9E%E6%94%B6DirectByteBuffer"><span class="nav-number">2.4.1.</span> <span class="nav-text">基于GC回收DirectByteBuffer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E5%8A%A8%E5%9B%9E%E6%94%B6DirectByteBuffer"><span class="nav-number">2.4.2.</span> <span class="nav-text">主动回收DirectByteBuffer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Cleaner%E7%B1%BB"><span class="nav-number">2.4.3.</span> <span class="nav-text">Cleaner类</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%80%E6%BA%90%E5%A0%86%E5%A4%96%E7%BC%93%E5%AD%98%E6%A1%86%E6%9E%B6"><span class="nav-number">3.</span> <span class="nav-text">开源堆外缓存框架</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#OHC"><span class="nav-number">3.1.</span> <span class="nav-text">OHC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Why-not-use-ByteBuffer-allocateDirect"><span class="nav-number">3.1.1.</span> <span class="nav-text">Why not use ByteBuffer.allocateDirect()?</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E5%AE%83"><span class="nav-number">3.1.2.</span> <span class="nav-text">其它</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

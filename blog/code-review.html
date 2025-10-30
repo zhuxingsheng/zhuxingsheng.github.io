@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="也不知code review是从哪年开始流行的，我的职场经历从刚开始完全没有到1对1，再到团队式review 一、Review Meeting 优点：   团队内新技术&#x2F;新观点的交流Meeting、项目开发思路、解决方案讨论，偏头脑风暴式； 各类项目都适合进行；  缺点：   依赖于主持者（项目owner）的素质、时间成本高（为会议上所有人时间的总和）； 集体评审的代码行数有限；  二、">
+<meta property="og:type" content="article">
+<meta property="og:title" content="code review">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/code-review.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="也不知code review是从哪年开始流行的，我的职场经历从刚开始完全没有到1对1，再到团队式review 一、Review Meeting 优点：   团队内新技术&#x2F;新观点的交流Meeting、项目开发思路、解决方案讨论，偏头脑风暴式； 各类项目都适合进行；  缺点：   依赖于主持者（项目owner）的素质、时间成本高（为会议上所有人时间的总和）； 集体评审的代码行数有限；  二、">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210218144512_1613630712.jpg">
+<meta property="article:published_time" content="2021-02-19T02:46:35.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.017Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20210218144512_1613630712.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/code-review.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>code review | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/code-review.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          code review
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-02-19 10:46:35" itemprop="dateCreated datePublished" datetime="2021-02-19T10:46:35+08:00">2021-02-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>也不知code review是从哪年开始流行的，我的职场经历从刚开始完全没有到1对1，再到团队式review</p>
+<p>一、Review Meeting</p>
+<p>优点： </p>
+<ol>
+<li>团队内新技术&#x2F;新观点的交流Meeting、项目开发思路、解决方案讨论，偏头脑风暴式；</li>
+<li>各类项目都适合进行；</li>
+</ol>
+<p>缺点： </p>
+<ol>
+<li>依赖于主持者（项目owner）的素质、时间成本高（为会议上所有人时间的总和）；</li>
+<li>集体评审的代码行数有限；</li>
+</ol>
+<p>二、Single Review</p>
+<p>优点： </p>
+<ol>
+<li>更偏重与具体的代码评审，人员分散参与，评审代码行数有保证；</li>
+<li>时间自由，reviewer什么时候进行评审时间可自控；</li>
+</ol>
+<p>缺点： </p>
+<ol>
+<li>依赖reviewer的技术水平，代码提交合并前强审核，只适用于重要项目或核心模块；</li>
+</ol>
+<h1 id="why"><a href="#why" class="headerlink" title="why"></a>why</h1><p>为什么需要code review，其实在任何行业，基本都是大厂带给整个行为最佳实践，code review就是其中一种实践</p>
+<blockquote>
+<p>The biggest thing that makes Google’s code so good is simple: Code Review.</p>
+</blockquote>
+<blockquote>
+<p>At Google, no code, for any product, for any project, gets checked in until it gets a positive review.</p>
+</blockquote>
+<p>code review的好处可以罗列出很多很多，设计、结构、编码方方面面</p>
+<blockquote>
+<p>代码有这几种级别：1）可编译，2）可运行，3）可测试，4）可读，5）可维护，6）可重用。<br>通过自动化测试的代码只能达到第3）级，而通过Code Review的代码少会在第4）级甚至更高</p>
+</blockquote>
+<blockquote>
+<p>Code Review主要是让你的代码可以更好的组织起来，有更易读，有更高的维护性，同时可以达到知识共享，找到bug只是其中的副产品</p>
+</blockquote>
+<p><strong>以我个人经验看，code review更多是技术及业务知识的分享，甚至可以相互结合，理论分享与code的结合</strong></p>
+<p>比如check list与最佳实践结合</p>
+<h1 id="how"><a href="#how" class="headerlink" title="how"></a>how</h1><p>code review有点类似TDD，但强于TDD，这儿的强于不是说功能性，而在于落地层面，只要大家坐一起，指点江山，就可以完成了，当然效果另说</p>
+<p>怎么更好地落地code review呢？或者说code review需要review些什么？code?</p>
+<p>每个团队都有各自的情况，所以并不是随便拿一份review check list对照就做好，至少侧重点不同</p>
+<p>比如人家团队人员素质普遍高一些，那人家的checklist可能就少了些基础知识点；团队职责不同，checklist也可能会相应不同，基础架构的checklist肯定跟业务线的不一样，各个不同业务线的也不同，需要根据团队情况制定合适的checklist</p>
+<p>极端情况，团队中无人能识别好代码，每次都是流水帐式看代码，那团队人员得流动一下了</p>
+<p>如何code review，结合why谈谈一些点</p>
+<p><img src="http://images.zhuxingsheng.com/20210218144512_1613630712.jpg"></p>
+<h2 id="不要挑毛病"><a href="#不要挑毛病" class="headerlink" title="不要挑毛病"></a>不要挑毛病</h2><p>这就是上面的图中显示的，尤其团队式review，一群坐在下面的人</p>
+<ol>
+<li>命名不太好啦</li>
+<li>空格太多了</li>
+<li>方法太长了</li>
+<li>编码没格式化啊</li>
+<li>这循环用lambda一行解决问题</li>
+<li>实现的不是产品要的</li>
+<li>这设计有问题啊</li>
+</ol>
+<p>对1~4点，这些纯粹是浪费时间，一个团队的时间是宝贵的，来review这些，极大的浪费</p>
+<p>因此需要明确两点：</p>
+<ul>
+<li>Code review 不应该承担发现代码错误的职责</li>
+<li>Code review 不应该成为保证代码风格和编码标准的手段</li>
+</ul>
+<p>【管理工具化、工具流程化】指导方针，这儿可以引入checkstyle工具，让团队统一code sytle,新人加入团队时的培训指南中，并加入到CI中，检查失败直接构建失败</p>
+<p>再引入sonar识别常见质量问题和安全问题，这样提高code review的质量</p>
+<p>第5点：这也很典型，从code review层面讲，这也不应该是code review的职责，但从知识分享角度讲，这的确是，怎么办呢？使用流还是经典的for循环最好，如果团队成员对同一段代码有不同的意见，那么开发人员应该如何进行修改，结束审阅，并将代码推送到生产中？</p>
+<p>解决这个问题最好能有一套最佳实践标准，明确什么情况使用流式，什么情况使用传统方式，其实这很难，真这样搞最佳实践会成为一本谁也学不完的手册，那只能说“这要看情况”，未尝不可，但需要有前提，团队中需要有一名裁决者来决定最终方案，而不能陷入长时间的争论</p>
+<p>好比service能不能跨业务调用dao，这也是无对错，需要是的团队的一致性和最初的决策方案，不必每次code review时无休争论</p>
+<p>6~7两点，这是最坑的，浪费了开发时间，也对代码作者造成极大打击，为什么到此时才发现，所以需要在开始前就得对功能设计和架构设计进行review，不能只看结果，得看起始与过程</p>
+<h2 id="保证正确性"><a href="#保证正确性" class="headerlink" title="保证正确性"></a>保证正确性</h2><p>这是code review的前提条件，如上述的6、7两点，不应该出现，一个优秀的工程师需要能够独当一面，能够在系统角度实现局部的良好设计，通过合理的测试方法论验证结果。能够用合理的数据结构、算法实现功能</p>
+<p>在技术驱动的团队里，即使需求很紧急，对于关键的功能，核心成员也会耐心地审视架构设计和实现方案，如何控制熵，如何用更合理的方式实现，如何考虑到未来的变化。<br>技术驱动的团队里，应该持续进行对设计的调整和代码的微小重构与改良，时刻在整个系统的设计和表现（performance）角度审视自己的工作。这也是“系统思考”的核心。<br>大部分的代码的熵增大难以控制，并不是因为没有好的架构，而是因为迭代中忽略了系统性的思考和审视，而是用局部的解决方案解决问题，在反复迭代后，复杂度过高导致控制熵变得异常困难。这是code review比较难解决的</p>
+<h2 id="分享"><a href="#分享" class="headerlink" title="分享"></a>分享</h2><p>从上面所述，code review虽然能发现代码中的一些错误，但不应该是他的核心价值。正好在<a href="http://www.zhuxingsheng.com/blog/ddd-opening-summary.html">《DDD总结》</a>中所述，“降低代码复杂度”是所有方法实践论的终极目标。降低复杂度、易于扩展是我们的目标。那么code review也应该是为实现这个目标的手段，因此code review需要去review设计的合理性（如实现方法，数据结构，设计模式，扩展性考虑等），是否存在大量重复代码等</p>
+<p>如何达到这些呢？需要发挥团队力量，三个臭皮匠顶过一个诸葛亮，代码终究是需要人去看的，通过与他人的交流，去寻求最佳实践，交流前提就是去分享自我，包括设计思想和实现路径</p>
+<p>小到与一个人分享，也就是一对一code reivew，这样让review的开发人员了解代码的设计和实现，即能得到别人的指导，又能传递自我，并且能互为backup,方便后期维护，减少项目风险</p>
+<p>大到与团队分享，产生技术氛围，让好的知识、设计在团队中分享，实现整体团队的成长和整体效益最大化</p>
+<p>也鉴于要去把代码与人分享，就更容易让大家写出更具可读性的代码，提高可维护性，随便也让别人发现除功能逻辑外的一些技术逻辑：比如数据库连接是否忘记关闭，线程池是否正确使用等等，也加强了checklist的广度和深度</p>
+<h1 id="when"><a href="#when" class="headerlink" title="when"></a>when</h1><p>什么时候code review，大多数时候都是在上线前才做这件事，但理论最佳时间应该在提测前，以防测试完成后，又要对代码做变动</p>
+<p>在实践时，可以拿出专门时间进行，以错开迭代发布的紧张期</p>
+<hr>
+<p>除了上述的方法论，team leader还要在如何更好地code review，让团队更有意愿地参与上花心思，让团队成为一个学习型组织，有工程师文化的组织</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/what-is-object-orientation.html" rel="prev" title="面向对象是什么">
+      <i class="fa fa-chevron-left"></i> 面向对象是什么
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/architecture-and-architect.html" rel="next" title="架构与架构师">
+      架构与架构师 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#why"><span class="nav-number">1.</span> <span class="nav-text">why</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#how"><span class="nav-number">2.</span> <span class="nav-text">how</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E8%A6%81%E6%8C%91%E6%AF%9B%E7%97%85"><span class="nav-number">2.1.</span> <span class="nav-text">不要挑毛病</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%9D%E8%AF%81%E6%AD%A3%E7%A1%AE%E6%80%A7"><span class="nav-number">2.2.</span> <span class="nav-text">保证正确性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E4%BA%AB"><span class="nav-number">2.3.</span> <span class="nav-text">分享</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#when"><span class="nav-number">3.</span> <span class="nav-text">when</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

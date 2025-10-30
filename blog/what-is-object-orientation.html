@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="近两年设计了几个系统，不管是直接使用传统设计ER图，还是使用4C建模，但在做架构评审时，ER却都是重中之重,让人不得不深思，编程思想经过了一代代发展，为什么还在围绕ER，在远古时代，没有OO,没有DDD，但为什么延续至今的伟大软件也比比皆是 带着这个问题，需要回头看看，结构化编程为什么不行？面向对象因何而起，到底解决了什么问题？ 《架构整洁之道》也特别介绍了面向对象编程，面向对象究竟是什么，大多从">
+<meta property="og:type" content="article">
+<meta property="og:title" content="面向对象是什么">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/what-is-object-orientation.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="近两年设计了几个系统，不管是直接使用传统设计ER图，还是使用4C建模，但在做架构评审时，ER却都是重中之重,让人不得不深思，编程思想经过了一代代发展，为什么还在围绕ER，在远古时代，没有OO,没有DDD，但为什么延续至今的伟大软件也比比皆是 带着这个问题，需要回头看看，结构化编程为什么不行？面向对象因何而起，到底解决了什么问题？ 《架构整洁之道》也特别介绍了面向对象编程，面向对象究竟是什么，大多从">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-02-08T03:18:00.000Z">
+<meta property="article:modified_time" content="2021-09-29T07:24:30.568Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="思维">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/what-is-object-orientation.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>面向对象是什么 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/what-is-object-orientation.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          面向对象是什么
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-02-08 11:18:00" itemprop="dateCreated datePublished" datetime="2021-02-08T11:18:00+08:00">2021-02-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>近两年设计了几个系统，不管是直接使用传统设计ER图，还是使用4C建模，但在做架构评审时，ER却都是重中之重,让人不得不深思，编程思想经过了一代代发展，为什么还在围绕ER，在远古时代，没有OO,没有DDD，但为什么延续至今的伟大软件也比比皆是</p>
+<p>带着这个问题，需要回头看看，结构化编程为什么不行？面向对象因何而起，到底解决了什么问题？</p>
+<p>《架构整洁之道》也特别介绍了面向对象编程，面向对象究竟是什么，大多从三大特性：封装、继承、抽象说起，但其实这三种特性并不是面向对象语言特有</p>
+<h1 id="结构化编程"><a href="#结构化编程" class="headerlink" title="结构化编程"></a>结构化编程</h1><p>提到结构化编程就自然想到其中的顺序结构：代码按照编写的顺序执行，选择结构： if&#x2F;else，而循环结构： do&#x2F;while</p>
+<p>虽然这些对每个程序员都很熟悉，但其实在结构化编程之间还有非结构化编程，也就是goto语句时代，没有if else、while，一切都通过goto语句对程序控制，它可以让程序跑到任何地方执行，这样当代码规模变大之后，就几乎难以维护</p>
+<p>编程是一项难度很大的活动。因为一个程序会包含非常多的细节，远超一个人的认知能力范围，任何一个细微的错误都会导致整个程序出现问题。因此需要将大问题拆分成小问题，逐步递归下去，这样，一个大问题就会被拆解成一系列高级函数的组合，而这些高级函数各自再拆分成一系列低一级函数，一步步拆分下去，每一个函数都需要按照结构化编程方式进行开发，这也是现在常被使用的模块功能分解开发方式</p>
+<p>结构化编程中，各模块的依赖关系太强，不能有效隔离开来，一旦需求变动，就会牵一发而动全身，关联的模块由于依赖关系都得变动，那么组织大规模程序就不是它的强项</p>
+<h1 id="面向对象"><a href="#面向对象" class="headerlink" title="面向对象"></a>面向对象</h1><p>正因为结构化编程的弊端，所以有了面向对象编程，可以更好的组织程序，相对结构局部性思维，我们有了更宏观视角：对象</p>
+<h2 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h2><p>把一组相关联的数据和函数圈起来，使圈外的代码只能看见部分函数，数据则完全不可见；如类中的公共函数和私有成员变量</p>
+<p>提取一下关键字：</p>
+<ol>
+<li>数据，完全不可见</li>
+<li>函数，只能看见</li>
+<li>相关联</li>
+</ol>
+<p>这些似乎就是我们追求的高内聚，也是常提的充血模型，如此看，在实践中最基本的封装都没有达成</p>
+<p>到处是贫血模型，一个整体却分成两部分：满是大方法的上帝类service与只有getter和setter的model</p>
+<p>service对外提供接口，model传输数据，数据库固化数据，哪有封装性，行为与数据割裂了</p>
+<p>怎么才能做到一个高内聚的封装特性呢？</p>
+<p>设计一个类，先要考虑其对象应该提供哪些行为。然后，我们根据这些行为提供对应的方法，最后才是考虑实现这些方法要有哪些字段</p>
+<p>并且对于这些字段尽可能不提供getter 和 setter，尤其是 setter</p>
+<p>暴露getter和setter，一是把实现细节暴露出来了；二是把数据当成了设计核心</p>
+<p>方法的命名，体现的是你的意图，而不是具体怎么做</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 修改密码 </span><br><span class="line">public void setPassword(final String password) &#123; </span><br><span class="line">    this.password = password; </span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">// 修改密码</span><br><span class="line">public void changePassword(final String password) &#123;</span><br><span class="line">    this.password = password;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>把setter改成具体的业务方法名，把意图体现出来，将意图与实现分离开来，这是一个优秀设计必须要考虑的问题</p>
+<p>构建一个内聚的单元，我们要减少这个单元对外的暴露，也就是定义中的【只能看到的函数】</p>
+<p>这句话的第一层含义是减少内部实现细节的暴露，它还有第二层含义，减少对外暴露的接口</p>
+<p>最小化接口暴露。也就是，每增加一个接口，你都要找到一个合适的理由。</p>
+<p>总结：<br><strong>基于行为进行封装，不要暴露实现细节，最小化接口暴露</strong></p>
+<h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><p>先看继承定义：</p>
+<blockquote>
+<p>继承（英语：inheritance）是面向对象软件技术当中的一个概念。这种技术使得复用以前的代码非常容易，能够大大缩短开发周期，降低开发费用<br>继承就是子类继承父类的特征和行为，使得子类对象（实例）具有父类的属性和方法，或子类从父类继承方法，使得子类具有父类相同的行为</p>
+</blockquote>
+<p>从定义看，继承就是为了复用，把一些公共代码放到父类，之后在实现子类时，可以少写一些代码，消除重复，代码复用</p>
+<p>继承分为两类：实现继承与接口继承</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Child object = new Child();</span><br><span class="line"></span><br><span class="line">Parent object = new Child();</span><br></pre></td></tr></table></figure>
+<p>但有个设计原则：组合优于继承Composition-over-inheritance</p>
+<p>为什么不推荐使用继承呢？</p>
+<p>继承意味着强耦合，而高内聚低耦合才符合我们的道，但其实并不是说不能使用继承，对于行为需要使用组合，而数据还得使用继承</p>
+<p>这样解释似乎不够形象，再进一步讲，继承也违背了<a href="http://www.zhuxingsheng.com/blog/ocp-of-solid.html">《SOLID》中的OCP</a>,继承虽然可以通过子类扩展新的行为，但因为子类可能直接依赖父类实现，导致一个变更可能会影响所有子类。也就是讲继承虽然能Open for extension，但很难做到Closed for modification</p>
+<p>借用阿里大牛的示例：</p>
+<p>有个游戏，基本规则就是玩家装备武器去攻击怪物</p>
+<ul>
+<li>玩家（Player）可以是战士（Fighter）、法师（Mage）、龙骑（Dragoon）</li>
+<li>怪物（Monster）可以是兽人（Orc）、精灵（Elf）、龙（Dragon），怪物有血量</li>
+<li>武器（Weapon）可以是剑（Sword）、法杖（Staff），武器有攻击力</li>
+<li>玩家可以装备一个武器，武器攻击可以是物理类型（0），火（1），冰（2）等，武器类型决定伤害类型</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public abstract class Player &#123;</span><br><span class="line">      Weapon weapon</span><br><span class="line">&#125;</span><br><span class="line">public class Fighter extends Player &#123;&#125;</span><br><span class="line">public class Mage extends Player &#123;&#125;</span><br><span class="line">public class Dragoon extends Player &#123;&#125;</span><br><span class="line"></span><br><span class="line">public abstract class Weapon &#123;</span><br><span class="line">    int damage;</span><br><span class="line">    int damageType; // 0 - physical, 1 - fire, 2 - ice etc.</span><br><span class="line">&#125;</span><br><span class="line">public Sword extends Weapon &#123;&#125;</span><br><span class="line">public Staff extends Weapon &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>攻击规则如下：</p>
+<ul>
+<li>兽人对物理攻击伤害减半</li>
+<li>精灵对魔法攻击伤害减半</li>
+<li>龙对物理和魔法攻击免疫，除非玩家是龙骑，则伤害加倍</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class Player &#123;</span><br><span class="line">    public void attack(Monster monster) &#123;</span><br><span class="line">        monster.receiveDamageBy(weapon, this);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Monster &#123;</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        this.health -= weapon.getDamage(); // 基础规则</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Orc extends Monster &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        if (weapon.getDamageType() == 0) &#123;</span><br><span class="line">            this.setHealth(this.getHealth() - weapon.getDamage() / 2); // Orc的物理防御规则</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            super.receiveDamageBy(weapon, player);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Dragon extends Monster &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        if (player instanceof Dragoon) &#123;</span><br><span class="line">            this.setHealth(this.getHealth() - weapon.getDamage() * 2); // 龙骑伤害规则</span><br><span class="line">        &#125;</span><br><span class="line">        // else no damage, 龙免疫力规则</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果此时，要增加一个武器类型：狙击枪，能够无视一切防御，此时需要修改</p>
+<ol>
+<li>Weapon,扩展狙击枪Gun</li>
+<li>Player和所有子类（是否能装备某个武器）</li>
+<li>Monster和所有子类（伤害计算逻辑）</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public class Monster &#123;</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        this.health -= weapon.getDamage(); // 老的基础规则</span><br><span class="line">        if (Weapon instanceof Gun) &#123; // 新的逻辑</span><br><span class="line">            this.setHealth(0);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Dragon extends Monster &#123;</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        if (Weapon instanceof Gun) &#123; // 新的逻辑</span><br><span class="line">                      super.receiveDamageBy(weapon, player);</span><br><span class="line">        &#125;</span><br><span class="line">        // 老的逻辑省略</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由此可见，增加一个规则，几乎链路上的所有类都得修改一遍，越往后业务越复杂，每一次业务需求变更基本要重写一次，这也是为什么建议尽量不要违背OCP，最核心的原因就是现有逻辑的变更可能会影响一些原有代码，导致一些无法预见的影响。这个风险只能通过完整的单元测试覆盖来保障，但在实际开发中很难保障UT的覆盖率</p>
+<p>也由此可见继承的确不是代码复用的好方式</p>
+<p>从设计原则角度看，继承不是好的复用方式；从语言特性看，也不是鼓励的做法。一是像Java，只能单继承，一旦被继承就再也无法被其他继承，而且java中有Variable Hiding的局限性</p>
+<p>比如现在添加一个业务规则：</p>
+<ul>
+<li>战士只能装备剑</li>
+<li>法师只能装备法杖</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@Data</span><br><span class="line">public class Fighter extends Player &#123;</span><br><span class="line">    private Sword weapon;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Test</span><br><span class="line">public void testEquip() &#123;</span><br><span class="line">    Fighter fighter = new Fighter(&quot;Hero&quot;);</span><br><span class="line"></span><br><span class="line">    Sword sword = new Sword(&quot;Sword&quot;, 10);</span><br><span class="line">    fighter.setWeapon(sword);</span><br><span class="line"></span><br><span class="line">    Staff staff = new Staff(&quot;Staff&quot;, 10);</span><br><span class="line">    fighter.setWeapon(staff);</span><br><span class="line"></span><br><span class="line">    assertThat(fighter.getWeapon()).isInstanceOf(Staff.class); // 错误了</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实只是修改了父类的weapon，并没有修改子类的；由此编程语言的强类型无法承载业务规则。</p>
+<p>继承并不是复用的唯一方法，如ruby中有mixin机制</p>
+<h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><p>多态（Polymorphism）按字面的意思就是“多种状态”。在面向对象语言中，接口的多种不同的实现方式即为多态</p>
+<p>在上一讲，接口继承更多是多态特性</p>
+<p>只使用封装和继承的编程方式，称之为基于对象编程，而只有把多态加进来，才能称之为面向对象编程，有了多态，才将基于对象与面向对象区分开；有了多态，软件设计才有了更大的弹性</p>
+<p>多态虽好，但想要运用多态，需要构建出一个抽象，构建抽象需要找出不同事物的共同点，这也是最有挑战地方。在构建抽象上，接口扮演着重要角色：一接口将变的部分和不变部分隔离开来，接口是约定，约定是不变的，变化的是各自的实现；二接口是一个边界，系统模块间通信重要的就是通信协议，而接口就是通信协议的表达</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;&gt; list = new ArrayList();</span><br><span class="line"></span><br><span class="line">List&lt;&gt; list = new ArrayList();</span><br></pre></td></tr></table></figure>
+<p>二者之间的差别就在于变量的类型，是面向一个接口，还是面向一个具体的实现类;看似没什么意义，但在<a href="http://www.zhuxingsheng.com/tags/SOLID/">《SOLID》</a>中可以发现，几乎所有原则都需要基于接口编程，才能达到目的</p>
+<p>而这也就是多态的威力</p>
+<p>就java这门语言，继承与多态相互依存，但对于其他语言并不是如此</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>除了结构化编程和面向对象编程，现在还有函数式编程，然通过上面的阐述，回到开篇的问题，我应该是把编程语言与编程范式搞混了，像结构化编程、面向对象编程是一种编程范式，而具体的C、Java其实是编程语言，对于编程语言是年轻的，的确在很多伟大软件之后才诞生，但编程范式是一直存在的，面向对象范式并不是java之后才有</p>
+<p>更不是C语言不能创造伟大软件，语言不过是工具，而最最重要的是思维方式，最近思考为什么TDD，DDD这些驱动式开发都很难，关键还是思维方式的转变</p>
+<p>为什么都要看ER图呢，这里面又常被混淆的概念：数据模型与领域模型，下一篇再分解</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p>《架构整洁之道》</p>
+<p>《软件之美》</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%80%9D%E7%BB%B4/" rel="tag"># 思维</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/further-discussion-on-ddd-layering.html" rel="prev" title="再议DDD分层">
+      <i class="fa fa-chevron-left"></i> 再议DDD分层
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/code-review.html" rel="next" title="code review">
+      code review <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E6%9E%84%E5%8C%96%E7%BC%96%E7%A8%8B"><span class="nav-number">1.</span> <span class="nav-text">结构化编程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.</span> <span class="nav-text">面向对象</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%81%E8%A3%85"><span class="nav-number">2.1.</span> <span class="nav-text">封装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%A7%E6%89%BF"><span class="nav-number">2.2.</span> <span class="nav-text">继承</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%9A%E6%80%81"><span class="nav-number">2.3.</span> <span class="nav-text">多态</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

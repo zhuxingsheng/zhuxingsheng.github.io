@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="DDD统一语言统一语言，最早听到这个概念是在学习DDD的时候。 统一语言在DDD中，是一个很重要的概念。 DDD中的几个大词：问题域，解决域，战略，战术，统一语言，界限上下文">
+<meta property="og:type" content="article">
+<meta property="og:title" content="架构师如何看待统一语言">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/how-do-architects-view-unified-language.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="DDD统一语言统一语言，最早听到这个概念是在学习DDD的时候。 统一语言在DDD中，是一个很重要的概念。 DDD中的几个大词：问题域，解决域，战略，战术，统一语言，界限上下文">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220925202428_1664108668.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220925210551_1664111151.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220925202358_1664108638.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220918224925_1663512565.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220918224957_1663512597.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220925172853_1664098133.jpg">
+<meta property="article:published_time" content="2022-10-07T14:47:00.000Z">
+<meta property="article:modified_time" content="2022-11-08T07:15:29.743Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta property="article:tag" content="架构师">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20220925202428_1664108668.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/how-do-architects-view-unified-language.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>架构师如何看待统一语言 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/how-do-architects-view-unified-language.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          架构师如何看待统一语言
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-10-07 22:47:00" itemprop="dateCreated datePublished" datetime="2022-10-07T22:47:00+08:00">2022-10-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="DDD统一语言"><a href="#DDD统一语言" class="headerlink" title="DDD统一语言"></a>DDD统一语言</h1><p>统一语言，最早听到这个概念是在学习DDD的时候。</p>
+<p>统一语言在DDD中，是一个很重要的概念。</p>
+<p>DDD中的几个大词：问题域，解决域，战略，战术，统一语言，界限上下文</p>
+<p><img src="http://images.zhuxingsheng.com/20220925202428_1664108668.jpg"></p>
+<span id="more"></span>
+
+<p>对于网上的这个版本，我不太认同，把图修改一下：</p>
+<p><img src="http://images.zhuxingsheng.com/20220925210551_1664111151.jpg"></p>
+<p>因为统一语言是贯穿整个过程的，不仅要有战略高度，也得有具体战术措施。</p>
+<p><img src="http://images.zhuxingsheng.com/20220925202358_1664108638.jpg"></p>
+<p>在实践DDD的过程中，虽然明白统一语言重要性，但似乎更多的还是关注在编码实施。</p>
+<p>引起的行为大致包含：</p>
+<ul>
+<li>技术人员使用业务人员的用语作为开发词汇</li>
+<li>技术人员要将这些词汇映射到代码实现中</li>
+<li>业务词汇整理出来，并随着项目发展一点点修正扩展</li>
+</ul>
+<p>希望能达到代码既模型，代码既文档。主要还是为了代码。</p>
+<p>通过这些理论的学习，至少可以规避一些问题：</p>
+<p>1、销售订单上可不可以增加是否投诉字段？从客服角度，必须要加上，你作为系统设计者同意这个需求吗？</p>
+<p>2、变更了profile上的买家地址，销售订单上的买家地址怎么也跟着变化了？</p>
+<h2 id="知识消化"><a href="#知识消化" class="headerlink" title="知识消化"></a>知识消化</h2><p>然而，在<a href="http://www.zhuxingsheng.com/blog/benefits-and-challenges-of-domain-driven-design-patterns.html">《领域驱动设计模式的收益与挑战》</a>中提到，其实代码是次要的，<strong>DDD中更核心的是知识消化</strong>。</p>
+<p><img src="http://images.zhuxingsheng.com/20220918224925_1663512565.jpg"></p>
+<p>1、业务方与技术方沟通业务需求，在交流中，对部分业务知识达到共识，这部分交流语言被标准化为统一语言；</p>
+<p>2、在不断地交流中，对于双方达成共识部分，凝炼成到模型中，对模型review，以确定描述了业务实际情况，发现缺乏或不适当概念时，进行修正，指取新的统一语言；</p>
+<p>3、当模型确认后，以模型为样本，使用代码实现它；</p>
+<p>4、上面是正向流程，技术方在重构代码时，也会同步修改模型，进来提取出新的统一语言，反哺业务方。</p>
+<p>5、通过正逆流程，达到修改统一语言就是修改模型，修改模型也就是修改代码；修改代码也是修改模型，修改模型也相继修改统一语言。</p>
+<p>6、这样打破了知识壁垒，给予业务方与技术方一种更好的协同方式。这就是DDD的精髓。让分析模型与实现模型融合了，不再像以前的方法一样分裂。</p>
+<hr>
+<h1 id="架构统一语义"><a href="#架构统一语义" class="headerlink" title="架构统一语义"></a>架构统一语义</h1><p>统一语言的认知似乎就这么多了，有没有更高层次的洞见呢？最近学习了《郭东白的架构课》，发现统一语言还真没那么简单。</p>
+<p>正如上面所说，之前更多的还是停留在编码实施层面。虽然整个项目参与方很多，但因为认知层次低，所以眼中只看到了产品经理和研发，因此统一语言的使用范围也被局限在了一个很小的规范内。</p>
+<p>而把视野提升到一个大型项目的架构师角度。统一语言有了更高的价值。</p>
+<p>郭东白讲不是统一语言，应该称为统一语义。我们要的是在语义环境中统一，而不单单是语言环境。</p>
+<p>以实践DDD的经验，可以理解为人的语言和计算机语言的维度，并且语义是相同的。因为希望代码即模型，代码即文档。项目参与者交流的都得体现在代码中。所以姑且称为统一语言涵盖语言和语义，不纠结两者的称谓统一。</p>
+<p>站到整个架构活动的层次上，项目的参与者就不仅仅是产品经理和程序员。事项也只是把代码写好。统一语言也不止存在于需求、模型、代码。</p>
+<p>从整个项目视角看待，架构师需要拉通所有参与者：业务方，主要执行者，其他参与者，时刻对齐目标。让所有人的信息通畅，协作高效。</p>
+<p>1、架构活动的目标，能够清晰传递并分解给每个参与者；</p>
+<p>2、所有参与者的诉求，能够被准确地表达、记录和传递；</p>
+<p>3、架构活动的目标和所有需求，能够反映到整体的架构规划中，并且能够被无损地拆分到多个子领域的任务中；</p>
+<p>4、需求方能得到执行者的真实反馈，从而对整个架构活动的产出有个合理的期望；</p>
+<p>5、每个子领域交付并组装好之后，能够语义契合、相互兼容，最终符合思想史活动的整体目标。</p>
+<p>结合上面的知识消化过程，整合后，如下图所示：</p>
+<p><img src="http://images.zhuxingsheng.com/20220918224957_1663512597.jpg"></p>
+<h2 id="为什么会有语义的分歧？"><a href="#为什么会有语义的分歧？" class="headerlink" title="为什么会有语义的分歧？"></a>为什么会有语义的分歧？</h2><p>1、语境不同</p>
+<p>如上面提到的为什么销售订单上不能增加投诉字段</p>
+<p>2、认知不同</p>
+<p>一种事物，从一个人的思维中，到表达出来，再由另一个人通过表达理解，并融入到自己的思维中，常常是有损的。</p>
+<p>所以在一个大型的架构活动中，团队内部都会有理解偏差，更何况跨团队，跨业务。</p>
+<h2 id="如何消除语义分歧？"><a href="#如何消除语义分歧？" class="headerlink" title="如何消除语义分歧？"></a>如何消除语义分歧？</h2><p>1、发现不同的语境</p>
+<p>2、定义概念</p>
+<p>上面知识消化图中，有一个方块叫统一语言提案，原因在于不是某个人直接定义一个语义，让所有人遵循。而是群策群力，深度思考和不断探索的过程。</p>
+<p>3、语义建模</p>
+<p>通过第2步定义概念，需要把不同概念引入到同一个语境中，也就是将两个不同的语境进行合并。</p>
+<p>如上面的销售订单，指的是售中阶段的订单，而非售后阶段，所以不能增加是否投诉字段。</p>
+<p>4、反馈修正</p>
+<p>如第2步一样，自己的认知通常是存在于自己语境中的认知，要与所有人重新确认并多次调整，才能找到基本正确的统一语境。</p>
+<p>5、公布、维护和使用统一的语境</p>
+<p>不断使用和打磨实体定义，为企业带来统一语境。从自然语言到需求描述、到域模型定义过程，延伸到接口定义、模块设计、代码实现等等。</p>
+<p><img src="http://images.zhuxingsheng.com/20220925172853_1664098133.jpg"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><strong>最后简单总结一下：</strong></p>
+<p>站高一个层级，提升一个维度，同样的内容就看出的更丰富的内涵。</p>
+<p>从一个兼职架构师提高到大型跨域项目的全职架构师，就不再是产品经理与研发之前围绕着需求的沟通，而应该再往前看，产品经理的前面还有真正的业务方，整个架构的目标。</p>
+<p>使整个项目所有参与者的需求能够无损地表达、记录和传递。促使项目整体架构在一个逻辑完备和语义一致的环境中，确认整个架构的完整性，提升项目的成功率。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+              <a href="/tags/%E6%9E%B6%E6%9E%84%E5%B8%88/" rel="tag"># 架构师</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/the-difference-between-jdk8-map-and-flatmap.html" rel="prev" title="JDK8的map与flatmap区别">
+      <i class="fa fa-chevron-left"></i> JDK8的map与flatmap区别
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/spring-boot-2.6.-x-and-swagger-3-compatibility-issue-tracking.html" rel="next" title="springboot2.6.x与swagger3兼容问题追踪">
+      springboot2.6.x与swagger3兼容问题追踪 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#DDD%E7%BB%9F%E4%B8%80%E8%AF%AD%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">DDD统一语言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9F%A5%E8%AF%86%E6%B6%88%E5%8C%96"><span class="nav-number">1.1.</span> <span class="nav-text">知识消化</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E7%BB%9F%E4%B8%80%E8%AF%AD%E4%B9%89"><span class="nav-number">2.</span> <span class="nav-text">架构统一语义</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%9C%89%E8%AF%AD%E4%B9%89%E7%9A%84%E5%88%86%E6%AD%A7%EF%BC%9F"><span class="nav-number">2.1.</span> <span class="nav-text">为什么会有语义的分歧？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%B6%88%E9%99%A4%E8%AF%AD%E4%B9%89%E5%88%86%E6%AD%A7%EF%BC%9F"><span class="nav-number">2.2.</span> <span class="nav-text">如何消除语义分歧？</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

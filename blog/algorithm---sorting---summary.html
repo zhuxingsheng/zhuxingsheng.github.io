@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="从第一篇《算法概要》开始，到此篇已经经历了将近四个月时间，常见的基础排序已经温习完成 内外排序内部排序：待排序记录存放在计算机随机存储器中（说简单点，就是内存）进行的排序过程 外部排序：待排序记录的数量很大，以致于内存不能一次容纳全部记录，所以在排序过程中需要对外存进行访问的排序过程 衡量效率内部排序：比较次数，也就是时间复杂度 外部排序：IO次数，也就是读写外存的次数 IO对排序的影响可以阅读">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法渣-排序-总结">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/algorithm---sorting---summary.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="从第一篇《算法概要》开始，到此篇已经经历了将近四个月时间，常见的基础排序已经温习完成 内外排序内部排序：待排序记录存放在计算机随机存储器中（说简单点，就是内存）进行的排序过程 外部排序：待排序记录的数量很大，以致于内存不能一次容纳全部记录，所以在排序过程中需要对外存进行访问的排序过程 衡量效率内部排序：比较次数，也就是时间复杂度 外部排序：IO次数，也就是读写外存的次数 IO对排序的影响可以阅读">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201810301458_422.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811291044_498.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201902230959_258.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201902221922_368.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201902231041_416.png">
+<meta property="article:published_time" content="2019-03-01T07:36:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.017Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201810301458_422.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/algorithm---sorting---summary.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>算法渣-排序-总结 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm---sorting---summary.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          算法渣-排序-总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-03-01 15:36:00" itemprop="dateCreated datePublished" datetime="2019-03-01T15:36:00+08:00">2019-03-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><img src="http://images.zhuxingsheng.com/201810301458_422.png"></p>
+<p>从第一篇<a href="http://www.zhuxingsheng.com/blog/algorithm-summary.html">《算法概要》</a>开始，到此篇已经经历了将近四个月时间，常见的基础排序已经温习完成</p>
+<h1 id="内外排序"><a href="#内外排序" class="headerlink" title="内外排序"></a>内外排序</h1><p><strong>内部排序</strong>：待排序记录存放在计算机随机存储器中（说简单点，就是内存）进行的排序过程</p>
+<p><strong>外部排序</strong>：待排序记录的数量很大，以致于内存不能一次容纳全部记录，所以在排序过程中需要对外存进行访问的排序过程</p>
+<h2 id="衡量效率"><a href="#衡量效率" class="headerlink" title="衡量效率"></a>衡量效率</h2><p>内部排序：比较次数，也就是时间复杂度</p>
+<p>外部排序：IO次数，也就是读写外存的次数</p>
+<p>IO对排序的影响可以阅读<a href="http://www.zhuxingsheng.com/blog/deep-and-shallow-index.html">《深入浅出索引》</a>体会</p>
+<h1 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h1><p><img src="http://images.zhuxingsheng.com/201811291044_498.png" alt="排序导图"></p>
+<h2 id="详细介绍"><a href="#详细介绍" class="headerlink" title="详细介绍"></a>详细介绍</h2><p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sort-bubble.html">算法渣-排序-冒泡</a></p>
+<p>冒泡排序，应该是很多人会且只会的算法；两两比较交换</p>
+<p>为了减小比较与交换的次数，通过双向比较(鸡尾酒排序)、设定是否交换位实现</p>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-fast.html">算法渣-排序-快速排序</a></p>
+<p>快速排序，相对冒泡又改进了，都是交换，但引入了分治思想</p>
+<hr>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-insertion.html">算法渣-排序-插入</a></p>
+<p>插入排序，像打牌时，整理牌一样，通过比较、移动来达到排序</p>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-hill.html">算法渣-排序-希尔</a></p>
+<p>希尔，相对插入做了改进，不是一步一步的移动，而是大步大步的移动</p>
+<hr>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-selection.html">算法渣-排序-选择</a></p>
+<p>选择，类似插入的反向操作；插入排序是边读边排，每当读入一个新的数时，目前的数组一定是排好序的。而选择排序不同，它必须是读完所有的数据之后才能开始排序的</p>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sort-heap-sort.html">算法渣-排序-堆排序</a></p>
+<p>堆排序，借助堆数据结构，构造堆结构，选取堆顶元素，不再需要遍历所有元素选择</p>
+<hr>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sort-merge-sort.html">算法渣-排序-归并排序</a></p>
+<p>归并排序，也是分治思想，但与快速有些区别；归并排序是由下向上的，先处理子数组然后再合并。而快速排序正好相反，它的过程是由上向下的，先分出两个子区间，再对子区间进行排序</p>
+<hr>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-cardinal-sorting.html">算法渣-排序-基数排序</a></p>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sort-bucket-sort.html">算法渣-排序-桶排序</a></p>
+<p><a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sort-count-sort.html">算法渣-排序-计数排序</a></p>
+<p>线性排序算法,非基于比较的排序算法，性能很高，但都有限制才能达到线性排序的效果</p>
+<p><img src="http://images.zhuxingsheng.com/201902230959_258.png"></p>
+<h2 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h2><p>对于排序算法选择，不能单从时间复杂上看，简单算法都是O(n^2),就不考虑，只选择改进算法</p>
+<h3 id="插入排序-vs-快速排序-vs-归并排序"><a href="#插入排序-vs-快速排序-vs-归并排序" class="headerlink" title="插入排序  vs 快速排序 vs 归并排序"></a>插入排序  vs 快速排序 vs 归并排序</h3><p>由下图可以看出，在输入规模小于100时，插入排序要好于归并和快速排序。在输入规模小于200时，插入排序优于归并排序。规模在30以下时，插入排序效率要比快速排序高50%以上，规模在50以下时，插入排序比归并排序效率高90%以上</p>
+<p><img src="http://images.zhuxingsheng.com/201902221922_368.png"></p>
+<h3 id="改进算法"><a href="#改进算法" class="headerlink" title="改进算法"></a>改进算法</h3><p>在数据量大时，使用改进算法</p>
+<p><img src="http://images.zhuxingsheng.com/201902231041_416.png"></p>
+<ol>
+<li>就时间性能而言， 希尔排序、快速排序、树形选择排序、堆排序和归并排序都是较为先进的排序方法。耗时远小于O(N^2)级别的算法。</li>
+<li>先进算法之中，快排的效率是最高的。 但其缺点十分明显：在待排序列基本有序的情况下，会蜕化成起泡排序，时间复杂度接近 O(N^2)。</li>
+<li>希尔排序的性能让人有点意外，这种增量插入排序的高效性完全说明了：在基本有序序列中，直接插入排序绝对能达到令人吃惊的效率。但是希尔排序对增量的选择标准依然没有较为满意的答案，要知道增量的选取直接影响排序的效率。</li>
+<li>归并排序的效率非常不错，在数据规模较大的情况下，它比希尔排序和堆排序都要好。</li>
+<li>堆排序在数据规模较小的情况下还是表现不错的，但是随着规模的增大，时间代价也开始和上面两种排序拉开的距离。</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>总的来说，并不存在“最佳”的排序算法。必须针对待排序列自身的特点来选择“良好”的算法。下面有一些指导性的意见：</p>
+<ol>
+<li>数据规模很小，而且待排序列基本有序的情况下，选择直接插入排序绝对是上策。不要小看它O(N^2)级别</li>
+<li>数据规模不是很大，完全可以使用内存空间。而且待排序列杂乱无序(越乱越开心)，快排永远是不错的选择，当然付出log(N)的额外空间是值得的。</li>
+<li>海量级别的数据，必须按块存放在外存(磁盘)中。此时的归并排序是一个比较优秀的算法</li>
+</ol>
+<h1 id="试题"><a href="#试题" class="headerlink" title="试题"></a>试题</h1><p>【京东】假设你只有100Mb的内存，需要对1Gb的数据进行排序，最合适的算法是（ ）</p>
+<p>A. 归并排序　　B. 插入排序　　C. 快速排序　　D. 冒泡排序</p>
+<blockquote>
+<p>根据题目，我们可以知道，我们现有的内存限制使得我们无法把数据一次性加载到内存中，所以我们只能先加载一部分数据，对其排序后存入磁盘中。然后再加载一些数据，把它们“合并”到已排序的数据集中去，重复这个过程直到排序完成，显然最能胜任这个工作的是归并排序。</p>
+</blockquote>
+<p>【2016阿里巴巴校招笔试题】现有1GB数据进行排序，计算资源只有1GB内存可用，下列排序方法中最可能出现性能问题的是（ ）</p>
+<p>A. 堆排序　　B. 插入排序　　C. 归并排序　　D. 快速排序　　E. 选择排序　　F. 冒泡排序</p>
+<blockquote>
+<p>根据题目的描述，我们能够很明确的知道这道题考察我们的是原地排序的概念，这里我们只需要选择非原地排序的占用额外空间最大的算法，显然答案是”C. 归并排序”。</p>
+</blockquote>
+<p>【2015阿里巴巴研发工程师笔试题】个数约为50K的数列需要进行从小到大排序，数列特征是基本逆序(多数数字从大大小，个别乱序)，以下哪种排序算法在事先不了解数列特征的情况下性能最优</p>
+<p>A. 冒泡排序　　B. 改进冒泡排序　　C. 选择排序　　D. 快速排序　　E. 堆排序　　F.插入排序</p>
+<blockquote>
+<p>根据题目中的描述，首先我们可以排除A、B、C，因为它们的时间复杂度都是O(n^2)。接下来我们看下D选项，我们前面提到过，快速排序在最坏情况下的时间复杂度会退化至O(n^2)，F选项的插入排序在逆序数很大时性能也很差（O(n^2)）。而堆排序在最坏情况下的复杂度也为O(logn)，所以这里我们应该选择堆排序</p>
+</blockquote>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://hxraid.iteye.com/blog/646760">基于比较的内部排序总结</a></p>
+<p><a href="https://www.cnblogs.com/stormli/p/sort.html">常见比较排序算法的耗时测试</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/algorithm/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/consistent-hashing-.html" rel="prev" title="一致性哈希">
+      <i class="fa fa-chevron-left"></i> 一致性哈希
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/restart-three-chaos.html" rel="next" title="再起航三混沌">
+      再起航三混沌 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E5%A4%96%E6%8E%92%E5%BA%8F"><span class="nav-number">1.</span> <span class="nav-text">内外排序</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A1%E9%87%8F%E6%95%88%E7%8E%87"><span class="nav-number">1.1.</span> <span class="nav-text">衡量效率</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%A6%E7%BB%86%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.1.</span> <span class="nav-text">详细介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF"><span class="nav-number">2.2.</span> <span class="nav-text">场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E5%85%A5%E6%8E%92%E5%BA%8F-vs-%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F-vs-%E5%BD%92%E5%B9%B6%E6%8E%92%E5%BA%8F"><span class="nav-number">2.2.1.</span> <span class="nav-text">插入排序  vs 快速排序 vs 归并排序</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E8%BF%9B%E7%AE%97%E6%B3%95"><span class="nav-number">2.2.2.</span> <span class="nav-text">改进算法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.2.3.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%95%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">试题</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

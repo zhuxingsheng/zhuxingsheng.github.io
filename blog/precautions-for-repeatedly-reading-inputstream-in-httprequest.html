@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="在Filter中获取请求体，就得解析一次request的inputStream。 而在tomcat的设计中，request的inputStream只能读取一次，读取完一次后，虽然inputStream还在那，也不会变成空，但里面的内容已经被没有了。 解决方案很简单，就是继承HttpServletRequestWrapper，缓存request中流的内容。 比如实现一个类:ServletReques">
+<meta property="og:type" content="article">
+<meta property="og:title" content="httpRequest中重复读取inputstream注意事项">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/precautions-for-repeatedly-reading-inputstream-in-httprequest.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="在Filter中获取请求体，就得解析一次request的inputStream。 而在tomcat的设计中，request的inputStream只能读取一次，读取完一次后，虽然inputStream还在那，也不会变成空，但里面的内容已经被没有了。 解决方案很简单，就是继承HttpServletRequestWrapper，缓存request中流的内容。 比如实现一个类:ServletReques">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20230304195812_1677931092.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20230304231226_1677942746.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20230304231410_1677942850.jpg">
+<meta property="article:published_time" content="2023-03-04T15:43:00.000Z">
+<meta property="article:modified_time" content="2023-03-04T15:43:57.166Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20230304195812_1677931092.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/precautions-for-repeatedly-reading-inputstream-in-httprequest.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>httpRequest中重复读取inputstream注意事项 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/precautions-for-repeatedly-reading-inputstream-in-httprequest.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          httpRequest中重复读取inputstream注意事项
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-03-04 23:43:00 / Modified: 23:43:57" itemprop="dateCreated datePublished" datetime="2023-03-04T23:43:00+08:00">2023-03-04</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在Filter中获取请求体，就得解析一次request的inputStream。</p>
+<p>而在tomcat的设计中，request的inputStream只能读取一次，读取完一次后，虽然inputStream还在那，也不会变成空，但里面的内容已经被没有了。</p>
+<p>解决方案很简单，就是继承HttpServletRequestWrapper，缓存request中流的内容。</p>
+<p>比如实现一个类:ServletRequestReadWrapper</p>
+<p>整个类的结构是这样的：</p>
+<p><img src="http://images.zhuxingsheng.com/20230304195812_1677931092.jpg"></p>
+<p>然而世事总不那么一帆风顺。</p>
+<p>当请求头Content-Type值为 multipart&#x2F;form-data 时，情况就出现了问题。在<a href="https://www.zhihu.com/question/434950674">https://www.zhihu.com/question/434950674</a> 这个回答中有说明。</p>
+<p>在使用multipart&#x2F;form-data上传文件时，controller类似这样的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">@PostMapping</span><br><span class="line">public void upload(MultipartFile file) throws IOException &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>想要得到一个MultipartFile类型的内容，原理与其他类型一样，spring从request中获得流内容，并反射创建MultipartFile。</p>
+<p>但相对于普通类型，Multipart并没有从request.getInputstream中获取内容，而是从另一个方法getParts里面获取，但getParts返回的内容也是解析的request.getInputStream中的内容。</p>
+<p><img src="http://images.zhuxingsheng.com/20230304231226_1677942746.jpg"></p>
+<p>是不是有点奇怪，为什么在wrapper里面已经缓存了inputstream内容，为什么到了右下解再去getInputStream时，却没有了呢？</p>
+<p>tomcat的request类结构是一个装饰器模式</p>
+<p><img src="http://images.zhuxingsheng.com/20230304231410_1677942850.jpg"></p>
+<p>requestWrapper中的getInputStream其实还得来源于真实的Request对象。而在整个处理过程的末端，获取inputStream，并不是从requestWrapper中获取的，而是从真实的Request对象中获取。此时流内容已经被读取过，自然就读取不到了。</p>
+<p>再回味下主要的源码，HttpServletRequestWrapper中getParts()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public Collection&lt;Part&gt; getParts() throws IOException, ServletException &#123;</span><br><span class="line">    return this._getHttpServletRequest().getParts(); </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private HttpServletRequest _getHttpServletRequest() &#123;</span><br><span class="line">    return (HttpServletRequest) super.getRequest();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>到了RquestFacade的getParts()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public Collection&lt;Part&gt; getParts() throws IllegalStateException,</span><br><span class="line">        IOException, ServletException &#123;</span><br><span class="line">    return request.getParts();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再到Request的getParts()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">public Collection&lt;Part&gt; getParts() throws IOException, IllegalStateException,</span><br><span class="line">            ServletException &#123;</span><br><span class="line"></span><br><span class="line">        parseParts(true);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private void parseParts(boolean explicit) &#123;</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line">//解析流中文件内容，upload.parseRequest中会调用request.getInputStream</span><br><span class="line">//而传入的request，并不requestWrapper，而是真实的Request本身</span><br><span class="line">//而此时Request中的流已经被读取过了，所以解析出的文件内容为空</span><br><span class="line">//controller中的file变成了null</span><br><span class="line">List&lt;FileItem&gt; items = upload.parseRequest(new ServletRequestContext(this));</span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>到此，原理已经讲清楚了。怎么解决呢？</p>
+<p>1、在Wrapper中，非multipart缓存inputstream，是multipart时，则缓存parts</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public ServletRequestReadWrapper(final HttpServletRequest request) throws IOException, ServletException &#123;</span><br><span class="line">    super(request);</span><br><span class="line">    if (HttpUtils.isMultipartContent(request)) &#123;</span><br><span class="line">        parts = request.getParts();</span><br><span class="line">    &#125; else &#123;</span><br><span class="line"></span><br><span class="line">        final ServletInputStream is = request.getInputStream();</span><br><span class="line"></span><br><span class="line">        if (null != is) &#123;</span><br><span class="line">            final ByteArrayOutputStream os = new ByteArrayOutputStream();</span><br><span class="line">            this.bodyLength = ByteStreams.copy(is, os);</span><br><span class="line">            this.body = os.toByteArray();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2、放弃multipart的消息体。</p>
+<p>得到消息体的内容，有时只是为了记录日志，像文件上传，其实得到的消息体也没啥好记录的，所以放弃记录mulipart类型消息体。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/what-are-the-principles-of-micro-service-division-in-the-cloud-era.html" rel="prev" title="云时代微服务划分原则是什么">
+      <i class="fa fa-chevron-left"></i> 云时代微服务划分原则是什么
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/what-kind-of-inheritance-is-good-inheritance.html" rel="next" title="什么样的继承才是好的继承">
+      什么样的继承才是好的继承 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

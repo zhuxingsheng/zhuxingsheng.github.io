@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="最近收到这样的问题：  领域服务做业务逻辑校验时应该返回错误码还是抛出业务异常？  这其实不算是领域服务的问题，而是Java异常处理问题。 之前总结过一次如何处理异常 上面的文章基本上就解决异常相关问题了。 这儿再回顾总结一下：">
+<meta property="og:type" content="article">
+<meta property="og:title" content="领域服务上抛异常还是返回错误码">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/does-the-domain-service-throw-an-exception-or-return-an-error-code.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="最近收到这样的问题：  领域服务做业务逻辑校验时应该返回错误码还是抛出业务异常？  这其实不算是领域服务的问题，而是Java异常处理问题。 之前总结过一次如何处理异常 上面的文章基本上就解决异常相关问题了。 这儿再回顾总结一下：">
+<meta property="og:locale">
+<meta property="article:published_time" content="2022-04-30T08:43:00.000Z">
+<meta property="article:modified_time" content="2022-11-08T07:15:29.700Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/does-the-domain-service-throw-an-exception-or-return-an-error-code.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>领域服务上抛异常还是返回错误码 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/does-the-domain-service-throw-an-exception-or-return-an-error-code.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          领域服务上抛异常还是返回错误码
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-04-30 16:43:00" itemprop="dateCreated datePublished" datetime="2022-04-30T16:43:00+08:00">2022-04-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近收到这样的问题：</p>
+<blockquote>
+<p>领域服务做业务逻辑校验时应该返回错误码还是抛出业务异常？</p>
+</blockquote>
+<p>这其实不算是领域服务的问题，而是<a href="http://www.zhuxingsheng.com/blog/java-exception-practice.html">Java异常处理</a>问题。</p>
+<p>之前总结过一次<a href="http://www.zhuxingsheng.com/blog/java-exception-handling.html">如何处理异常</a></p>
+<p>上面的文章基本上就解决异常相关问题了。</p>
+<p>这儿再回顾总结一下：</p>
+<span id="more"></span>
+
+<h1 id="返回错误码"><a href="#返回错误码" class="headerlink" title="返回错误码"></a>返回错误码</h1><p>在异常没有出现时，像C语言是如何处理问题的？</p>
+<p>在 C 语言中，错误码的返回方式有两种：一种是直接占用函数的返回值，函数正常执行的返回值放到出参中；另一种是将错误码定义为全局变量，在函数执行出错时，函数调用者通过这个全局变量来获取错误码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">// 错误码的返回方式一：pathname/flags/mode为入参；fd为出参，存储打开的文件句柄。</span><br><span class="line">int open(const char *pathname, int flags, mode_t mode, int* fd) &#123;</span><br><span class="line">  if (/*文件不存在*/) &#123;</span><br><span class="line">    return EEXIST;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  if (/*没有访问权限*/) &#123;</span><br><span class="line">    return EACCESS;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  if (/*打开文件成功*/) &#123;</span><br><span class="line">    return SUCCESS; // C语言中的宏定义：#define SUCCESS 0</span><br><span class="line">  &#125;</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br><span class="line">//使用举例</span><br><span class="line">int fd;</span><br><span class="line">int result = open(“c:\test.txt”, O_RDWR, S_IRWXU|S_IRWXG|S_IRWXO, &amp;fd);</span><br><span class="line">if (result == SUCCESS) &#123;</span><br><span class="line">  // 取出fd使用</span><br><span class="line">&#125; else if (result == EEXIST) &#123;</span><br><span class="line">  //...</span><br><span class="line">&#125; else if (result == EACESS) &#123;</span><br><span class="line">  //...</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 错误码的返回方式二：函数返回打开的文件句柄，错误码放到errno中。</span><br><span class="line">int errno; // 线程安全的全局变量</span><br><span class="line">int open(const char *pathname, int flags, mode_t mode）&#123;</span><br><span class="line">  if (/*文件不存在*/) &#123;</span><br><span class="line">    errno = EEXIST;</span><br><span class="line">    return -1;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  if (/*没有访问权限*/) &#123;</span><br><span class="line">    errno = EACCESS;</span><br><span class="line">    return -1;</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br><span class="line">// 使用举例</span><br><span class="line">int hFile = open(“c:\test.txt”, O_RDWR, S_IRWXU|S_IRWXG|S_IRWXO);</span><br><span class="line">if (-1 == hFile) &#123;</span><br><span class="line">  printf(&quot;Failed to open file, error no: %d.\n&quot;, errno);</span><br><span class="line">  if (errno == EEXIST ) &#123;</span><br><span class="line">    // ...        </span><br><span class="line">  &#125; else if(errno == EACCESS) &#123;</span><br><span class="line">    // ...    </span><br><span class="line">  &#125;</span><br><span class="line">  // ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>错误码没有性能问题，但带来了维护性，尤其没有了异常堆栈信息，失去了快速定位问题的能力。</p>
+<h1 id="抛异常"><a href="#抛异常" class="headerlink" title="抛异常"></a>抛异常</h1><p>在OO世界中，更推荐使用异常方式，显得更OO些</p>
+<h2 id="Checked-Exception"><a href="#Checked-Exception" class="headerlink" title="Checked Exception"></a>Checked Exception</h2><p>Spring创始人Rod Johnson列举了检查异常几个问题：</p>
+<p><strong>1、太多的代码</strong></p>
+<p>开发人员不得不捕捉他们无法处理的检查异常</p>
+<p><strong>2、难以读懂的代码</strong></p>
+<p>捕捉不能处理的异常并重新抛出，没有执行一点有用的功能，反而会使查找实际做某件事的代码变得更困难</p>
+<p><strong>3、异常无休止封装</strong></p>
+<p><strong>4、易毁坏的方法签名</strong></p>
+<p>一旦这么多调用者使用一个方法，添加一个额外的检查异常到该接口上将需要这么多代码被修改。也些违背<a href="https://note.youdao.com/">OCP原则</a></p>
+<p><strong>5、检查异常对接口不一定管用</strong></p>
+<p>接口有很多种实现，有些实现会出现异常，但有些是不会出现异常的，比如存储数据，放在文件会抛IO相关异常，但数据是数据库，刚不是此异常。</p>
+<h2 id="Runtime-Exception"><a href="#Runtime-Exception" class="headerlink" title="Runtime Exception"></a>Runtime Exception</h2><p>运行期异常被很多大牛接受推荐，但也有弊病，就是调用方需要知道内部实现细节，了解抛出了些什么异常，需在javadoc中给出明确说明。</p>
+<p>当然我们现在可以使用AOP技术，对异常进行兜底处理，以防泄漏到用户层。</p>
+<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>当使用异常时，性能得确会下降，尤其调用链路很深时，更加明显。但异常总归是少数情况，不影响正常情况的性能。</p>
+<p>但有些系统对性能要求比较高，怎么办？如正常情况是百万QPS，就算出现少许异常情况，对系统可用性也带来不小的影响。</p>
+<p>怎么办？退回错误码时代</p>
+<p>但从设计角度可改良一下，可以不再简单返回错误码，如可以使用vavr的Either</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Either&lt;ExceptionMessage,Result&gt; do();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>让调用方式来最终确定，当either.isLeft()时，是向上抛异常，还是额外处理。</p>
+<h2 id="良好实践"><a href="#良好实践" class="headerlink" title="良好实践"></a>良好实践</h2><p>使用检查异常还是运行时异常是个见解问题，不管如何选择，只要团队达成共识，统一规范就可以。</p>
+<p>良好的异常，不管是对开发人员，还是运维，用户都应该有全面友好的提示信息</p>
+<p>对开发人员，在异常中包含相关信息，使用getMessage()打印日志，方便定位问题</p>
+<p>对于用户，可以使用错误代码，字符串比数值语义更明确些。在spring初期代码中，Rod Johnson设计了一个接口ErrorCoded</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public interface ErrorCoded &#123;</span><br><span class="line">	</span><br><span class="line">	/** Constant to indicate that this failure isn&#x27;t coded */</span><br><span class="line">	public static final String UNCODED = &quot;uncoded&quot;;</span><br><span class="line">	</span><br><span class="line">	/** Return the error code associated with this failure. </span><br><span class="line">	 * The GUI can render this anyway it pleases, allowing for Int8ln etc.</span><br><span class="line">	 * @return a String error code associated with this failure</span><br><span class="line">	 */</span><br><span class="line">	String getErrorCode();</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>其实也不并是说所有场景都去使用异常，如openapi，最好使用errorCode。</p>
+<h2 id="异常与契约"><a href="#异常与契约" class="headerlink" title="异常与契约"></a>异常与契约</h2><p>乔新亮指出异常是那些让产品无法履行当初承诺用户的契约的问题。</p>
+<p>对于异常设计有5点认知：</p>
+<p>1、异常一定要消灭；有异常基本就意味着系统存在风险，一定要消灭异常</p>
+<p>2、异常一定要管理：消灭异常是个长期工程，短期要通过管理行为来进行控制</p>
+<p>3、对异常的处理水平，会极大影响产品的用户体验：用户规模越大，异常的影响往往越大</p>
+<p>4、每个异常都要有具体负责人</p>
+<p>5、与终端用户相关的异常，要以最高优先级处理</p>
+<p>异常设计包含：异常注册、异常事件触发、异常协作流程以及异常统计。</p>
+<p>要关注异常数据、异常发生频次、异常数据的增速和降速。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>回到起始问题，对于领域服务，自然OO更好些，抛出特定业务异常，业务语义更加清晰。</p>
+<p>性能问题，一是避免发生异常情况，二是通过横向扩展。毕竟业务可运维性更重要。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/cqrs-is-called-a-cult.html" rel="prev" title="CQRS被称为邪教">
+      <i class="fa fa-chevron-left"></i> CQRS被称为邪教
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/three-ways-to-implement-business-logic-transaction-script-anemia-model-and-ddd.html" rel="next" title="实现业务逻辑三种方式：事务脚本、贫血模型、DDD">
+      实现业务逻辑三种方式：事务脚本、贫血模型、DDD <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%94%E5%9B%9E%E9%94%99%E8%AF%AF%E7%A0%81"><span class="nav-number">1.</span> <span class="nav-text">返回错误码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%9B%E5%BC%82%E5%B8%B8"><span class="nav-number">2.</span> <span class="nav-text">抛异常</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Checked-Exception"><span class="nav-number">2.1.</span> <span class="nav-text">Checked Exception</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Runtime-Exception"><span class="nav-number">2.2.</span> <span class="nav-text">Runtime Exception</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD"><span class="nav-number">2.3.</span> <span class="nav-text">性能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%89%AF%E5%A5%BD%E5%AE%9E%E8%B7%B5"><span class="nav-number">2.4.</span> <span class="nav-text">良好实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E5%B8%B8%E4%B8%8E%E5%A5%91%E7%BA%A6"><span class="nav-number">2.5.</span> <span class="nav-text">异常与契约</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

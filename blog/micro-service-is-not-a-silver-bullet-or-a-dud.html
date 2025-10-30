@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="微服务的核心思路就在于将业务能力封装成独立的松耦合的服务。通过这样一组服务，构建企业内的能力生态系统。除了能满足当前应用的需要之外，也为未来可能的新应用提供了紧实的基础。 在《拆完中台再拆微服务》中也阐述了微服务是为了提升程序效能和团队效能。 当提到微服务时，总会想到各种各样的好处：1、使大型的复杂应用程序可以持续交付和持续部署 2、每个服务都相对较小并容易维护 3、服务可以独立部署 4、服务可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微服务不是银弹也不是哑弹">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/micro-service-is-not-a-silver-bullet-or-a-dud.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="微服务的核心思路就在于将业务能力封装成独立的松耦合的服务。通过这样一组服务，构建企业内的能力生态系统。除了能满足当前应用的需要之外，也为未来可能的新应用提供了紧实的基础。 在《拆完中台再拆微服务》中也阐述了微服务是为了提升程序效能和团队效能。 当提到微服务时，总会想到各种各样的好处：1、使大型的复杂应用程序可以持续交付和持续部署 2、每个服务都相对较小并容易维护 3、服务可以独立部署 4、服务可以">
+<meta property="og:locale">
+<meta property="article:published_time" content="2023-02-19T02:46:31.000Z">
+<meta property="article:modified_time" content="2023-02-19T02:46:41.948Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/micro-service-is-not-a-silver-bullet-or-a-dud.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>微服务不是银弹也不是哑弹 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/micro-service-is-not-a-silver-bullet-or-a-dud.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微服务不是银弹也不是哑弹
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-02-19 10:46:31 / Modified: 10:46:41" itemprop="dateCreated datePublished" datetime="2023-02-19T10:46:31+08:00">2023-02-19</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>微服务的核心思路就在于将业务能力封装成独立的松耦合的服务。通过这样一组服务，构建企业内的能力生态系统。除了能满足当前应用的需要之外，也为未来可能的新应用提供了紧实的基础。</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/remove-the-micro-service-after-removing-the-middle-console.html">《拆完中台再拆微服务》</a>中也阐述了微服务是为了提升程序效能和团队效能。</p>
+<h1 id="当提到微服务时，总会想到各种各样的好处："><a href="#当提到微服务时，总会想到各种各样的好处：" class="headerlink" title="当提到微服务时，总会想到各种各样的好处："></a>当提到微服务时，总会想到各种各样的好处：</h1><p>1、使大型的复杂应用程序可以持续交付和持续部署</p>
+<p>2、每个服务都相对较小并容易维护</p>
+<p>3、服务可以独立部署</p>
+<p>4、服务可以独立扩展</p>
+<p>5、微服务架构可以实现团队的自治</p>
+<p>6、更容易实验和采纳新的技术</p>
+<p>7、更好的容错性</p>
+<p>当然，没有一项技术是“银弹”。</p>
+<h1 id="微服务架构也存在一些显著的弊端和问题："><a href="#微服务架构也存在一些显著的弊端和问题：" class="headerlink" title="微服务架构也存在一些显著的弊端和问题："></a>微服务架构也存在一些显著的弊端和问题：</h1><p>1、服务的拆分和定义是一项挑战</p>
+<p>2、分布式系统带来的各种复杂性，使开发、测试和部署变得更困难</p>
+<p>3、当部署跨越多个服务的功能时需要谨慎地协调更多开发团队</p>
+<p>4、开发者需要思考到底应该在应用的什么阶段使用微服务架构</p>
+<p>近些年，反对微服务的声音越来越多。</p>
+<p>在twitter上有个很热门的贴子：<br>twitter.com&#x2F;xuwenhao&#x2F;status&#x2F;1593469165892820992 作者显明的数落了微服务的种种不是。为了更方便你了解作者的看法，我简单罗列下：</p>
+<p>1、微服务的适应场景非常有限。这么多巨头互联网公司的核心业务逐渐微服务化，的确是在特定的历史时期和场景下的解决方案。</p>
+<p>2、大型系统的开发，核心的挑战其实只有一个，就是“控制复杂性”。微服务不会减小复杂性，只会转移复杂性，它天然是为了解决极度复杂的计算、存储问题，中小规模系统其实是根本不需要的，至少在成为大型系统之前。</p>
+<p>3、在系统开发上，控制复杂性的方式，可以用三个关键词来描述，那就是“抽象”、“封装”和“复用”。</p>
+<p>4、服务化的第一个挑战：是“服务”并不是无状态的，“服务”也绑定了数据。以电商业务为例。商场生成订单，必在服务内持久化下来。然后，这个订单会发给到订单履约系统，也会持久化下来。然后两边都有可能触发订单状态的变更，商场用户可能取消订单，履约系统可能因为商品缺货也取消订单。两边都需要有对应的接口和实现，去完成这样的状态同步。这个过程中，就容易引入数据不一致的问题。</p>
+<p>5、第二个挑战：因为是不同的服务，就会面临“向前兼容”的问题，不同的系统并不是完全同步迭代的。而已经发布的服务，意味着对外有了明确的协议承诺。在服务发布新版本的时候，必须要确保向前兼容。</p>
+<p>6、第三个挑战：因为服务化划分了明确的边界，系统更容易变成异构的，更容易引入更多的技术栈。并且有些功能，会在两个不同的语言、框架下各实现一遍，也容易进一步放大之前所说的业务数据不一致的第一个挑战</p>
+<h1 id="三种典型的伪微服务"><a href="#三种典型的伪微服务" class="headerlink" title="三种典型的伪微服务"></a>三种典型的伪微服务</h1><p>在James Lewis 和 Martin Fowler的名作《微服务》中，将微服务定义为一种架构风格，并总结了它的九种特质：</p>
+<p>1、通过服务实现组件化</p>
+<p>2、服务按照业务能力划分组织</p>
+<p>3、服务以产品而不是项目研发</p>
+<p>4、逻辑集中在服务中，编排简单</p>
+<p>5、每个服务自主决策（技术栈、语言等等）</p>
+<p>6、每个服务自主管理数据（不强制使用统一数据源）</p>
+<p>7、基础设施自动化</p>
+<p>8、将服务失败当作常态纳入设计考量</p>
+<p>9、演进式设计（不求一步到位）</p>
+<p>在实现中，如果对上面的特质理解出现偏差，就会出现三种典型的伪微服务风格</p>
+<h2 id="1、分布式服务"><a href="#1、分布式服务" class="headerlink" title="1、分布式服务"></a>1、分布式服务</h2><p><strong>服务按照业务能力划分组织</strong></p>
+<p>微服务中的服务应该以业务能力为粒度。这间接回答了“微服务到底多微合适”，既不是单纯的技术能力（比如查询、获取系统时间），也不是完整的应用，而是用以支撑构建应用的业务能力。</p>
+<p><strong>通常所说的“恰当粒度”是在业务与实现两个维度上平衡的结果</strong>。并不会存在“只从单一维度入手，越怎么样就越好”这么简单粗暴的结论。所以微服务并不是越小越好，当小到不能表示业务能力，就不再是微服务了。</p>
+<p>如果不顾及服务是否按照业务能力划分组织，就是一种典型的伪微服务模式。被称之为分布式服务。当然分布式服务并不是反模式，它有其特有的用处，只不过它并不是微服务而已。</p>
+<h2 id="2、微工作组"><a href="#2、微工作组" class="headerlink" title="2、微工作组"></a>2、微工作组</h2><p><strong>服务以产品而不是项目研发</strong></p>
+<p>这主要是从生命周期角度看，产品和项目的差异体现在团体结构和生命周期上。</p>
+<p>产品的生命周期分为初始、稳定、支持和结束生命几个阶段。那么产品的不同版本，可能处在不同的生命周期中。所以产品团队需要在同一时间内，支持多个处在不同生命周期的产品版本。而项目通常假设只有唯一产物，随着项目生命周期的进项，项目化服务一直在改变。</p>
+<p>因此产品化服务的生命周期，实际上相当于承诺在产品生命周期内，服务是不变的。也就是说只要1.0不结束生命，那么我们就可以一直使用它。哪怕发布了1.5、2.0、3.0，只要1.0满足我的需要，并且还在生命周期内，作为消费者，可以无视你的后续版本。</p>
+<p>微服务需要服务间不仅仅在接口上松耦合，还在要生命周期上松耦合。也就是微服务可以自主发布，其他服务不应该受到影响。产品化是实现这一点的根本途径。</p>
+<p>如果服务缺乏产品化生命周期，那就会产生一组在生命周期上紧密耦合的服务，从而完全丧失微服务的意义。随着服务数量变多，这种生命周期的耦合还会带来难以承受的沟通成本。</p>
+<h2 id="3、傻服务"><a href="#3、傻服务" class="headerlink" title="3、傻服务"></a>3、傻服务</h2><p><strong>逻辑集中在服务中，编排简单</strong></p>
+<p>逻辑越在服务中集中，所需要的编排就越简单，通常通过RESTful API或者轻量的消息机制即可完成。</p>
+<p>如果服务中的逻辑简单，那就会有大量的逻辑泄露到编排逻辑中，此时就需要使用复杂的编排工具辅助我们工作。</p>
+<p>选择编排复杂的逻辑，听越来很有道理：既然我们希望在不同场景下复用服务，那么总有一些需要改变的订制代码，我们需要将它们与服务本身分离。分离之后，就能通过编排引擎，帮助我们在不同的场景下重用这些服务</p>
+<p>但按照这个逻辑下去，服务往往会变成对于数据的CRUD，然后大量的逻辑存在于编排引擎中，这也是典型的伪微服务。像傻服务一样。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>其实任何技术都可以说它既不是银弹也不是哑弹。就是优势与缺点并存。我们需要权衡的是在什么样的阶段引入什么样的技术来帮我们更好更快地解决问题。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/orthogonal-design-in-the-eyes-of-architects.html" rel="prev" title="架构师眼中的正交设计">
+      <i class="fa fa-chevron-left"></i> 架构师眼中的正交设计
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/what-are-the-principles-of-micro-service-division-in-the-cloud-era.html" rel="next" title="云时代微服务划分原则是什么">
+      云时代微服务划分原则是什么 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BD%93%E6%8F%90%E5%88%B0%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%97%B6%EF%BC%8C%E6%80%BB%E4%BC%9A%E6%83%B3%E5%88%B0%E5%90%84%E7%A7%8D%E5%90%84%E6%A0%B7%E7%9A%84%E5%A5%BD%E5%A4%84%EF%BC%9A"><span class="nav-number">1.</span> <span class="nav-text">当提到微服务时，总会想到各种各样的好处：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1%E6%9E%B6%E6%9E%84%E4%B9%9F%E5%AD%98%E5%9C%A8%E4%B8%80%E4%BA%9B%E6%98%BE%E8%91%97%E7%9A%84%E5%BC%8A%E7%AB%AF%E5%92%8C%E9%97%AE%E9%A2%98%EF%BC%9A"><span class="nav-number">2.</span> <span class="nav-text">微服务架构也存在一些显著的弊端和问题：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E7%A7%8D%E5%85%B8%E5%9E%8B%E7%9A%84%E4%BC%AA%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.</span> <span class="nav-text">三种典型的伪微服务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1%E3%80%81%E5%88%86%E5%B8%83%E5%BC%8F%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.1.</span> <span class="nav-text">1、分布式服务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2%E3%80%81%E5%BE%AE%E5%B7%A5%E4%BD%9C%E7%BB%84"><span class="nav-number">3.2.</span> <span class="nav-text">2、微工作组</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3%E3%80%81%E5%82%BB%E6%9C%8D%E5%8A%A1"><span class="nav-number">3.3.</span> <span class="nav-text">3、傻服务</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

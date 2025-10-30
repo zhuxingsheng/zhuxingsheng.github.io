@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="最近项目中使用了高版本的springboot-2.6.4，以及swagger3 12345&lt;dependency&gt;    &lt;groupId&gt;io.springfox&lt;&#x2F;groupId&gt;    &lt;artifactId&gt;springfox-boot-starter&lt;&#x2F;artifactId&gt;    &lt;version&gt;3.0.0&amp;lt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="springboot2.6.x与swagger3兼容问题追踪">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/spring-boot-2.6.-x-and-swagger-3-compatibility-issue-tracking.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="最近项目中使用了高版本的springboot-2.6.4，以及swagger3 12345&lt;dependency&gt;    &lt;groupId&gt;io.springfox&lt;&#x2F;groupId&gt;    &lt;artifactId&gt;springfox-boot-starter&lt;&#x2F;artifactId&gt;    &lt;version&gt;3.0.0&amp;lt">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20221016153622_1665905782.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20221016153859_1665905939.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20221016155051_1665906651.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20221016155556_1665906956.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20221016152702_1665905222.jpg">
+<meta property="article:published_time" content="2022-10-12T15:05:00.000Z">
+<meta property="article:modified_time" content="2022-10-22T15:06:18.468Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="spring">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20221016153622_1665905782.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/spring-boot-2.6.-x-and-swagger-3-compatibility-issue-tracking.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>springboot2.6.x与swagger3兼容问题追踪 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/spring-boot-2.6.-x-and-swagger-3-compatibility-issue-tracking.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          springboot2.6.x与swagger3兼容问题追踪
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-10-12 23:05:00" itemprop="dateCreated datePublished" datetime="2022-10-12T23:05:00+08:00">2022-10-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-10-22 23:06:18" itemprop="dateModified" datetime="2022-10-22T23:06:18+08:00">2022-10-22</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近项目中使用了高版本的springboot-2.6.4，以及swagger3</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;io.springfox&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;springfox-boot-starter&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;3.0.0&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>结果启动应用程序失败，报错：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Failed to start bean &#x27;documentationPluginsBootstrapper&#x27;; nested exception is java.lang.NullPointerException</span><br></pre></td></tr></table></figure>
+
+<p>这个问题，网上资料不少，主要原因是因为springboot2.6.x后，把pathMatcher默认值修改了，springfox年久失修，与springboot出现了兼容性问题。</p>
+<p>找到一个Spring Boot下的Issue：<a href="https://github.com/spring-projects/spring-boot/issues/28794">https://github.com/spring-projects/spring-boot/issues/28794</a>，但这个issue已经关闭了，目前这个问题的主要讨论在springfox，具体issue是这个：<a href="https://github.com/springfox/springfox/issues/3462">https://github.com/springfox/springfox/issues/3462</a></p>
+<p>主要项目中还需要使用springboot-actuator,所以简单的修改一下配置spring.mvc.pathmatch.matching-strategy&#x3D;ant-path-matcher还不行。可参考：<a href="https://www.jianshu.com/p/8d23ba70bc4f">Spring Boot 2.6.x 集成swagger3.0.0报错解决方案</a>，<a href="https://fullstackcode.dev/2022/06/12/swagger-is-not-working-with-spring-boot-2-6-x/">Swagger is not working with Spring Boot 2.6.X</a></p>
+<p>在此问题追踪过程中，第一个就是原先的Ant方式与当前的PathPattern有什么区别：</p>
+<h1 id="AntPathMatcher-vs-PathPattern"><a href="#AntPathMatcher-vs-PathPattern" class="headerlink" title="AntPathMatcher vs PathPattern"></a>AntPathMatcher vs PathPattern</h1><h2 id="诞生时间"><a href="#诞生时间" class="headerlink" title="诞生时间"></a>诞生时间</h2><p>AntPathMatcher是一个早在2003年(Spring的第一个版本)就已存在的路径匹配器，</p>
+<p>而PathPattern是Spring 5新增的，旨在用于替换掉较为“古老”的AntPathMatcher。</p>
+<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>PathPattern性能比AntPathMatcher优秀。</p>
+<p>理论上pattern越复杂，PathPattern的优势越明显</p>
+<h2 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h2><p>1、PathPattern只适用于web环境，AntPathMatcher可用于非web环境。</p>
+<p>2、PathPattern去掉了Ant字样，但保持了很好的向下兼容性。</p>
+<p>3、除了不支持将 ** 写在path中间之外（以消除歧义），其它的匹配规则从行为上均保持和AntPathMatcher一致</p>
+<p>4、并且还新增了强大的{*pathVariable}的支持</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@Test</span><br><span class="line">public void test() &#123;</span><br><span class="line">    System.out.println(&quot;=======&#123;*pathVariable&#125;语法======&quot;);</span><br><span class="line">    PathPattern pattern = PathPatternParser.defaultInstance.parse(&quot;/api/com/zhuxingsheng/&#123;*pathVariable&#125;&quot;);</span><br><span class="line"></span><br><span class="line">    // 提取匹配到的的变量值</span><br><span class="line">    System.out.println(&quot;是否匹配：&quot; + pattern.matches(PathContainer.parsePath(&quot;/api/com/zhuxingsheng/a/b/c&quot;)));</span><br><span class="line">    PathPattern.PathMatchInfo pathMatchInfo = pattern.matchAndExtract(PathContainer.parsePath(&quot;/api/com/zhuxingsheng/a/b/c&quot;));</span><br><span class="line">    System.out.println(&quot;匹配到的值情况：&quot; + pathMatchInfo.getUriVariables());</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">=======&#123;*pathVariable&#125;语法======</span><br><span class="line">是否匹配：true</span><br><span class="line">匹配到的值情况：&#123;pathVariable=/a/b/c&#125;</span><br></pre></td></tr></table></figure>
+<p>在没有PathPattern之前，虽然也可以通过&#x2F;**来匹配成功，但却无法得到匹配到的值，现在可以了！</p>
+<p>5、整体上可认为后者兼容了前者的功能</p>
+<p>具体介绍可查看：<br><a href="https://www.51cto.com/article/667796.html">《Spring5新宠PathPattern，AntPathMatcher：那我走？》</a></p>
+<p>在源码中也有详细说明：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">org.springframework.web.util.pattern.PathPattern</span><br><span class="line"></span><br><span class="line">? matches one character</span><br><span class="line">* matches zero or more characters within a path segment</span><br><span class="line">** matches zero or more path segments until the end of the path</span><br><span class="line">&#123;spring&#125; matches a path segment and captures it as a variable named &quot;spring&quot;</span><br><span class="line">&#123;spring:[a-z]+&#125; matches the regexp [a-z]+ as a path variable named &quot;spring&quot;</span><br><span class="line">&#123;*spring&#125; matches zero or more path segments until the end of the path and captures it as a variable named &quot;spring&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">Note: In contrast to org.springframework.util.AntPathMatcher,</span><br><span class="line"></span><br><span class="line">** is supported only at the end of a pattern. For example /pages/&#123;**&#125; is valid but /pages/&#123;**&#125;/details is not. The same applies also to the capturing variant &#123;*spring&#125;. </span><br><span class="line"></span><br><span class="line">The aim is to eliminate ambiguity when comparing patterns for specificity</span><br></pre></td></tr></table></figure>
+
+<p>在springboot 2.6后，Spring MVC处理程序映射匹配请求路径的默认策略已<strong>从AntPathMatcher更改为PathPatternParser</strong></p>
+<p>Actuator端点现在也使用基于 PathPattern 的 URL 匹配。需要注意的是，Actuator端点的路径匹配策略无法通过配置属性进行配置。</p>
+<p>如果需要将默认切换回 AntPathMatcher，可以将 spring.mvc.pathmatch.matching-strategy 设置为 ant-path-matcher</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring.mvc.pathmatch.matching-strategy=ant-path-matcher</span><br></pre></td></tr></table></figure>
+
+<h1 id="springboot2-6-X与swagger3兼容"><a href="#springboot2-6-X与swagger3兼容" class="headerlink" title="springboot2.6.X与swagger3兼容"></a>springboot2.6.X与swagger3兼容</h1><p>为什么改变了下pathmatch方式，就会影响到swagger，没想明白，毕竟swagger的路径，PathPattern也是可以正常解析的。</p>
+<p>debug了下代码：</p>
+<p>不配置spring.mvc.pathmatch.matching-strategy</p>
+<p>应用在启动时，会自动设置PatternPaser</p>
+<p><img src="http://images.zhuxingsheng.com/20221016153622_1665905782.jpg"></p>
+<p>可以看到默认值就是PATH_PATTERN_PARSER，也正是springboot2.6后的默认方式：</p>
+<p><img src="http://images.zhuxingsheng.com/20221016153859_1665905939.jpg"></p>
+<p>不配置时spring.mvc.pathmatch.matching-strategy，pathPatterns是被赋值的：</p>
+<p><img src="http://images.zhuxingsheng.com/20221016155051_1665906651.jpg"></p>
+<p>springfox.documentation.spring.web.WebMvcRequestHandler#getPatternsCondition时，就是null。</p>
+<p><img src="http://images.zhuxingsheng.com/20221016155556_1665906956.jpg"></p>
+<p>这样也就出现了文章开头的兼容问题。</p>
+<p>在配置ant-path-matcher后，RequestMappingInfo中的pathPatterns和patterns的赋值变化，pathPatterns是无值，patterns是有值。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring.mvc.pathmatch.matching-strategy=ant-path-matcher</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://images.zhuxingsheng.com/20221016152702_1665905222.jpg"></p>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><p><a href="https://blog.csdn.net/u011943534/article/details/121656010">解决springboot2.6和swagger冲突的问题</a>这篇文章算是列举方案比较全的。</p>
+<p>如果只是通过BeanProcessor修改了HandleMapping，但不修改pathmatch，会访问不了swagger，会出现以下错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">o.s.web.servlet.PageNotFound             : No mapping for GET /webjars/js/chunk-vendors.90e8ba20.js</span><br><span class="line">o.s.web.servlet.PageNotFound             : No mapping for GET /webjars/js/chunk-735c675c.be4e3cfe.js</span><br><span class="line">o.s.web.servlet.PageNotFound             : No mapping for GET /webjars/css/app.f802fc13.css</span><br></pre></td></tr></table></figure>
+<p>可以追加一下swagger资源的映射，最终出的方案：<a href="https://www.jianshu.com/p/1ea987c75073%EF%BC%9B">https://www.jianshu.com/p/1ea987c75073；</a></p>
+<p>在整合actuator时，<a href="https://blog.csdn.net/kkorkk/article/details/123774484">SpringBoot 2.6.* 整合springfox 3.0报错</a>中也指出了，并且解释了原理。但没有理解作者表达的springfox.documentation.spring.web.WebMvcRequestHandler#getPatternsCondition时为null的过滤掉。</p>
+<p>代码里面反而是把为null的提取出来了呀。</p>
+<h2 id="springdoc"><a href="#springdoc" class="headerlink" title="springdoc"></a>springdoc</h2><p>既然swagger3.0更新不及时，就不用再纠结，直接使用springdoc也是很好的方案。</p>
+<p>使用springdoc来替换swagger3.0，<a href="https://springdoc.org/migrating-from-springfox.html">《从springfox迁移到springdoc》</a></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>虽然解决了问题，但原理尚需追踪。不如用springdoc来得简单些。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/spring/" rel="tag"># spring</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/how-do-architects-view-unified-language.html" rel="prev" title="架构师如何看待统一语言">
+      <i class="fa fa-chevron-left"></i> 架构师如何看待统一语言
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/several-package-styles-of-ddd-project-code-model.html" rel="next" title="DDD工程代码模型的几种包风格">
+      DDD工程代码模型的几种包风格 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#AntPathMatcher-vs-PathPattern"><span class="nav-number">1.</span> <span class="nav-text">AntPathMatcher vs PathPattern</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%9E%E7%94%9F%E6%97%B6%E9%97%B4"><span class="nav-number">1.1.</span> <span class="nav-text">诞生时间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD"><span class="nav-number">1.2.</span> <span class="nav-text">性能</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD"><span class="nav-number">1.3.</span> <span class="nav-text">功能</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#springboot2-6-X%E4%B8%8Eswagger3%E5%85%BC%E5%AE%B9"><span class="nav-number">2.</span> <span class="nav-text">springboot2.6.X与swagger3兼容</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text">解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#springdoc"><span class="nav-number">3.1.</span> <span class="nav-text">springdoc</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="Eric在DDD第一章节就介绍了模型，可见模型的作用不言而喻，说DDD是一种模型驱动设计方法，绝对没有问题 那是不是我们在拿到业务需求时，就急呼呼的跟业务方来一起构造模型呢？毕竟模型是万事之首嘛 在《DDD开篇》提过DDD是一种基于面向对象的设计方法，我们既然已经有了面向对象，而且OOAD也很强大，为什么还需要DDD呢？ 要想弄清楚这两个问题，首先我们需要拿个示例来仔细比对一下 OOP小示例在《面">
+<meta property="og:type" content="article">
+<meta property="og:title" content="建模没必要">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/modeling-is-not-necessary.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="Eric在DDD第一章节就介绍了模型，可见模型的作用不言而喻，说DDD是一种模型驱动设计方法，绝对没有问题 那是不是我们在拿到业务需求时，就急呼呼的跟业务方来一起构造模型呢？毕竟模型是万事之首嘛 在《DDD开篇》提过DDD是一种基于面向对象的设计方法，我们既然已经有了面向对象，而且OOAD也很强大，为什么还需要DDD呢？ 要想弄清楚这两个问题，首先我们需要拿个示例来仔细比对一下 OOP小示例在《面">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210919215112_1632059472.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210919215132_1632059492.jpg">
+<meta property="article:published_time" content="2021-09-23T01:27:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.017Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20210919215112_1632059472.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/modeling-is-not-necessary.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>建模没必要 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/modeling-is-not-necessary.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          建模没必要
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-23 09:27:00" itemprop="dateCreated datePublished" datetime="2021-09-23T09:27:00+08:00">2021-09-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Eric在DDD第一章节就介绍了模型，可见模型的作用不言而喻，说DDD是一种模型驱动设计方法，绝对没有问题</p>
+<p>那是不是我们在拿到业务需求时，就急呼呼的跟业务方来一起构造模型呢？毕竟模型是万事之首嘛</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/ddd-opening.html">《DDD开篇》</a>提过DDD是一种基于面向对象的设计方法，我们既然已经有了面向对象，而且OOAD也很强大，为什么还需要DDD呢？</p>
+<p>要想弄清楚这两个问题，首先我们需要拿个示例来仔细比对一下</p>
+<h1 id="OOP小示例"><a href="#OOP小示例" class="headerlink" title="OOP小示例"></a>OOP小示例</h1><p>在<a href="http://www.zhuxingsheng.com/blog/what-is-objectoriented.html">《面向对象是什么》</a>一文中提到的游戏小示例</p>
+<p>有个游戏，基本规则就是玩家装备武器去攻击怪物</p>
+<ul>
+<li>玩家（Player）可以是战士（Fighter）、法师（Mage）、龙骑（Dragoon）</li>
+<li>怪物（Monster）可以是兽人（Orc）、精灵（Elf）、龙（Dragon），怪物有血量</li>
+<li>武器（Weapon）可以是剑（Sword）、法杖（Staff），武器有攻击力</li>
+<li>玩家可以装备一个武器，武器攻击可以是物理类型（0），火（1），冰（2）等，武器类型决定伤害类型</li>
+</ul>
+<p>作为一名受过OO熏陶的程序员，借助OO的继承特性把类结构设计成：</p>
+<p><img src="http://images.zhuxingsheng.com/20210919215112_1632059472.jpg"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public abstract class Player &#123;</span><br><span class="line">      Weapon weapon</span><br><span class="line">&#125;</span><br><span class="line">public class Fighter extends Player &#123;&#125;</span><br><span class="line">public class Mage extends Player &#123;&#125;</span><br><span class="line">public class Dragoon extends Player &#123;&#125;</span><br><span class="line"></span><br><span class="line">public abstract class Weapon &#123;</span><br><span class="line">    int damage;</span><br><span class="line">    int damageType; // 0 - physical, 1 - fire, 2 - ice etc.</span><br><span class="line">&#125;</span><br><span class="line">public Sword extends Weapon &#123;&#125;</span><br><span class="line">public Staff extends Weapon &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>攻击规则如下：</p>
+<ul>
+<li>兽人对物理攻击伤害减半</li>
+<li>精灵对魔法攻击伤害减半</li>
+<li>龙对物理和魔法攻击免疫，除非玩家是龙骑，则伤害加倍</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class Player &#123;</span><br><span class="line">    public void attack(Monster monster) &#123;</span><br><span class="line">        monster.receiveDamageBy(weapon, this);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Monster &#123;</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        this.health -= weapon.getDamage(); // 基础规则</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Orc extends Monster &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        if (weapon.getDamageType() == 0) &#123;</span><br><span class="line">            this.setHealth(this.getHealth() - weapon.getDamage() / 2); // Orc的物理防御规则</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            super.receiveDamageBy(weapon, player);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Dragon extends Monster &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        if (player instanceof Dragoon) &#123;</span><br><span class="line">            this.setHealth(this.getHealth() - weapon.getDamage() * 2); // 龙骑伤害规则</span><br><span class="line">        &#125;</span><br><span class="line">        // else no damage, 龙免疫力规则</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果此时，要增加一个武器类型：狙击枪，能够无视一切防御，此时需要修改</p>
+<ol>
+<li>Weapon,扩展狙击枪Gun</li>
+<li>Player和所有子类（是否能装备某个武器）</li>
+<li>Monster和所有子类（伤害计算逻辑）</li>
+</ol>
+<p>除了伤害逻辑有各种规则，还有装备武器也会有各种规则</p>
+<p>比如，战士只能装备剑，法师只能装备法杖，但他们都可以装备匕首</p>
+<p>再比如，当我们有不同的对象，但又有相同或类似的行为时，OOP会不可避免的导致代码的重复</p>
+<p>在这个例子里，如果我们去增加一个“可移动”的行为，需要在Player和Monster类中都增加类似的逻辑：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public abstract class Player &#123;</span><br><span class="line">    int x;</span><br><span class="line">    int y;</span><br><span class="line">    void move(int targetX, int targetY) &#123;</span><br><span class="line">        // logic</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public abstract class Monster &#123;</span><br><span class="line">    int x;</span><br><span class="line">    int y;</span><br><span class="line">    void move(int targetX, int targetY) &#123;</span><br><span class="line">        // logic</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>一个可能的解法是有个通用的父类：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public abstract class Movable &#123;</span><br><span class="line">    int x;</span><br><span class="line">    int y;</span><br><span class="line">    void move(int targetX, int targetY) &#123;</span><br><span class="line">        // logic</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public abstract class Player extends Movable;</span><br><span class="line">public abstract class Monster extends Movable;</span><br></pre></td></tr></table></figure>
+
+<p>但如果再增加一个跳跃能力Jumpable呢？一个跑步能力Runnable呢？如果Player可以Move和Jump，Monster可以Move和Run，怎么处理继承关系？要知道Java（以及绝大部分语言）是不支持多父类继承的，所以只能通过重复代码来实现</p>
+<hr>
+<h2 id="原生OOP力不从心"><a href="#原生OOP力不从心" class="headerlink" title="原生OOP力不从心"></a>原生OOP力不从心</h2><p>从OO角度看待，逻辑简单，代码也算过得去，也基本符合充血模型需要的数据与行为结合性要求</p>
+<p>但如果业务比较复杂，未来会有大量的业务规则变更时，简单的OOP代码会在后期变成复杂的一团浆糊，逻辑分散在各地，缺少全局视角，各种规则的叠加会触发bug。</p>
+<p>在这个小示例中，可以看到新增加一次规则几乎重写很多类，改造成本相当高，这还写得不够OO吗？</p>
+<p>总体而言，上面的代码没有处理好这三个问题：</p>
+<ul>
+<li>业务规则的归属到底是对象的“行为”还是独立的”规则对象“？</li>
+<li>业务规则之间的关系如何处理？</li>
+<li>通用“行为”应该如何复用和维护？</li>
+</ul>
+<hr>
+<h1 id="DDD应对"><a href="#DDD应对" class="headerlink" title="DDD应对"></a>DDD应对</h1><p>示例和单纯使用面向对象的问题已经很明晰了，DDD如何应对呢？</p>
+<p>当然，可以申辩</p>
+<p>虽然示例代码已经很OO，但却没有遵守OO原则<a href="http://www.zhuxingsheng.com/tags/SOLID/">SOLID</a>，至少没有达到OCP目标</p>
+<p>尤其开始就掉进OOP的陷阱，使用继承来实现看似是继承关系的逻辑，没有遵循组合优先于继承的原则</p>
+<p>尤其没有提取出业务规则，并理清业务规则的归属，不应该与实体对象混合</p>
+<h2 id="建模"><a href="#建模" class="headerlink" title="建模"></a>建模</h2><p>示例本身很简单，如果我们建模，大概是这样：</p>
+<p><img src="http://images.zhuxingsheng.com/20210919215132_1632059492.jpg"></p>
+<p>但很怪，模型则偏重于数据角度，描述了在不同业务维度下，数据将会如何改变，以及如何支撑对应的计算与统计，也就是说模型上看，会有实体以及实体间的关系，隐藏了业务维度，可以我们这个模型上却包含了动词，来描述业务行为</p>
+<p>当然这个模型可以再充实一下，比如把业务规则标识上去，这也说明了传统模型的缺点，如果你对其他模型感兴趣，请关注我，后期会详情介绍模型系列文章</p>
+<p>我们回到有问题的本质原点，为什么要建模呢，为了抽象复杂业务逻辑，降低理解业务的成本，挖掘更多的业务隐藏知识</p>
+<p>可上面的示例太清楚了，一览无余。一句话可以概述出整个业务需求：</p>
+<p>玩家使用武器攻击怪物，对怪物造成伤害，直至怪物死亡</p>
+<p>把规则加进去：</p>
+<p>玩家按规则使用武器按规则攻击怪物，对怪物、玩家、武器造成一定规则的影响(怪物受到伤害，玩家可能会有反弹伤害，武器持久属性会下降直到武器消失)，直至怪物死亡</p>
+<p>这其实是任何一款ARGP游戏的核心业务</p>
+<p>软件开发的核心难度在于处理隐藏在业务知识中的复杂度，模型就是对这种复杂度的简化与精练，DDD改进版还使用事件风暴方式挖掘业务知识，而像这种业务知识没有隐藏的简明型业务系统，我们已经把核心问题描述得很清楚，无需再去知识消化，事件风暴，为了DDD而DDD，所以建模价值不高，甚至毫无必要</p>
+<h2 id="DDD应对-1"><a href="#DDD应对-1" class="headerlink" title="DDD应对"></a>DDD应对</h2><p>在上面的申辩中，我们已经发现了并不是OO不行，而是使用OO方式不对，虽说要把OO原则深入骨髓，可有没有一种方法能直接上升一层次，就像我们在使用面向过程语言时，也要有面向对象思维，实践没那么容易，直接使用面向对象语言，会让我们更容易使用面向对象思维，领略OO精髓</p>
+<p>DDD正好就是这样一种方法，基于OO的升华，主要看看领域层的规范</p>
+<h3 id="实体，充血的实体"><a href="#实体，充血的实体" class="headerlink" title="实体，充血的实体"></a>实体，充血的实体</h3><p>这一点与原生OO一样，数据与行为相结合</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">public class Player &#123;</span><br><span class="line">    private String name;</span><br><span class="line">    private long health;</span><br><span class="line">    private WeaponId weaponId;</span><br><span class="line">    </span><br><span class="line">    public void equip(Weapon weapon) &#123;</span><br><span class="line">       // ...</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>任何实体的行为只能直接影响到本实体（和其子实体）</li>
+<li>因为 Weapon 是实体类，但是Weapon能独立存在，Player不是聚合根，所以Player只能保存WeaponId，而不能直接指向Weapon</li>
+<li>实体需要依赖其他服务时，也不能直接依赖，使用Double Dispatch</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">public class Player &#123;</span><br><span class="line"></span><br><span class="line">    public void equip(Weapon weapon, EquipmentService equipmentService) &#123;</span><br><span class="line">        if (equipmentService.canEquip(this, weapon)) &#123;</span><br><span class="line">            this.weaponId = weapon.getId();</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            throw new IllegalArgumentException(&quot;Cannot Equip: &quot; + weapon);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="领域服务-Domain-Service"><a href="#领域服务-Domain-Service" class="headerlink" title="领域服务(Domain Service)"></a>领域服务(Domain Service)</h3><h4 id="单对象"><a href="#单对象" class="headerlink" title="单对象"></a>单对象</h4><p>这种领域对象主要面向的是单个实体对象的变更，但涉及到多个领域对象或外部依赖的一些规则</p>
+<h4 id="跨对象领域服务"><a href="#跨对象领域服务" class="headerlink" title="跨对象领域服务"></a>跨对象领域服务</h4><p>当一个行为会直接修改多个实体时，不能再通过单一实体的方法作处理，而必须直接使用领域服务的方法来做操作。</p>
+<p>在这里，领域服务更多的起到了跨对象事务的作用，确保多个实体的变更之间是有一致性的</p>
+<p>不能学习实体的Double Dispatch</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">public class Player &#123;</span><br><span class="line">    void attack(Monster, CombatService) &#123;</span><br><span class="line">        CombatService.performAttack(this, Monster); // ❌，不要这么写，会导致副作用</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个原则也映射了“任何实体的行为只能直接影响到本实体（和其子实体）”的原则，即Player.attack会直接影响到Monster，但这个调用Monster又没有感知</p>
+<h4 id="通用组件型"><a href="#通用组件型" class="headerlink" title="通用组件型"></a>通用组件型</h4><p>像Movalbe、Runnable通用能力，提供组件化的行为，但本身又不直接绑死在一种实体类上</p>
+<h3 id="策略对象（Domain-Policy）"><a href="#策略对象（Domain-Policy）" class="headerlink" title="策略对象（Domain Policy）"></a>策略对象（Domain Policy）</h3><p>Policy或者Strategy设计模式是一个通用的设计模式，但是在DDD架构中会经常出现，其核心就是封装领域规则。</p>
+<p>一个Policy是一个无状态的单例对象，通常需要至少2个方法：canApply 和 一个业务方法。其中，canApply方法用来判断一个Policy是否适用于当前的上下文，如果适用则调用方会去触发业务方法。通常，为了降低一个Policy的可测试性和复杂度，Policy不应该直接操作对象，而是通过返回计算后的值，在Domain Service里对对象进行操作。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>DDD是一种模型驱动设计方法，但使用DDD也并不是一定要按固定方式方法一步步执行，建模是为了对复杂问题的简化和精炼，挖掘隐藏的业务知识。</p>
+<p>如果能通过简明方式就能把业务核心问题描述清楚，比其他一切手段都有用，也都重要。那我们就没必要再去为了DDD而DDD，去进行事件风暴，知识消化慢迭代方式</p>
+<p>本文中虽然提取了一些DDD领域层规范直接升华OO，但你有没有注意到一个问题，Player如果拥有很多能力，比如Moveable,Runnable,Jumpable,Fireable，那这个实体如何实现？</p>
+<p>首先我们肯定会面向接口编程，提取出interface Moveable,interface Runnable,interface Jumpable,interface Fireable，可Player呢？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">public class Player implements Moveable,Jumpable,Fireable &#123;</span><br><span class="line"></span><br><span class="line">    void move(int targetX, int targetY) &#123;</span><br><span class="line">        // logic</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    void jump() &#123;</span><br><span class="line">        // logic</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    void fire() &#123;</span><br><span class="line">        // logic</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以想象，随着能力越来越强大，player类会越来越臃肿，发展成超大类，充满坏味道，可我们这次也没有违反什么原则？难道达到了原生面向对象的能力极限？</p>
+<p>如果你有好的想法，欢迎留言交流。如果你觉得文章有帮助，多转发，点击右下角『看一看』</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/mo-daojun-goes-early.html" rel="prev" title="莫道君行早">
+      <i class="fa fa-chevron-left"></i> 莫道君行早
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/conway-law-and-inverse-conway-law.html" rel="next" title="康威定律与逆康威定律">
+      康威定律与逆康威定律 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#OOP%E5%B0%8F%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.</span> <span class="nav-text">OOP小示例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E7%94%9FOOP%E5%8A%9B%E4%B8%8D%E4%BB%8E%E5%BF%83"><span class="nav-number">1.1.</span> <span class="nav-text">原生OOP力不从心</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DDD%E5%BA%94%E5%AF%B9"><span class="nav-number">2.</span> <span class="nav-text">DDD应对</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E6%A8%A1"><span class="nav-number">2.1.</span> <span class="nav-text">建模</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DDD%E5%BA%94%E5%AF%B9-1"><span class="nav-number">2.2.</span> <span class="nav-text">DDD应对</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BD%93%EF%BC%8C%E5%85%85%E8%A1%80%E7%9A%84%E5%AE%9E%E4%BD%93"><span class="nav-number">2.2.1.</span> <span class="nav-text">实体，充血的实体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%86%E5%9F%9F%E6%9C%8D%E5%8A%A1-Domain-Service"><span class="nav-number">2.2.2.</span> <span class="nav-text">领域服务(Domain Service)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E5%AF%B9%E8%B1%A1"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">单对象</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%A8%E5%AF%B9%E8%B1%A1%E9%A2%86%E5%9F%9F%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">跨对象领域服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E7%BB%84%E4%BB%B6%E5%9E%8B"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">通用组件型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%96%E7%95%A5%E5%AF%B9%E8%B1%A1%EF%BC%88Domain-Policy%EF%BC%89"><span class="nav-number">2.2.3.</span> <span class="nav-text">策略对象（Domain Policy）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="马斯洛需求层次理论是管理心理学中人际关系理论、群体动力理论、权威理论、需要层次理论、社会测量理论的五大理论支柱之一。  以往对马斯洛需求层次理论的理解很肤浅：人对需求是有层次的，层次间都有依赖关系。当低层次的需求被满足后，才会去考虑更高一层次的需求。 而且好像也没什么用处。知道之后既不能提升硬技能，也不能升职加薪。 马斯洛理论定义通过《郭东白的架构课》的学习，了解到马斯洛理论的本意是：我们可能同时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="程序员得懂点马斯洛理论">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/programmers-need-to-understand-maslow-theory.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="马斯洛需求层次理论是管理心理学中人际关系理论、群体动力理论、权威理论、需要层次理论、社会测量理论的五大理论支柱之一。  以往对马斯洛需求层次理论的理解很肤浅：人对需求是有层次的，层次间都有依赖关系。当低层次的需求被满足后，才会去考虑更高一层次的需求。 而且好像也没什么用处。知道之后既不能提升硬技能，也不能升职加薪。 马斯洛理论定义通过《郭东白的架构课》的学习，了解到马斯洛理论的本意是：我们可能同时">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220626232621_1656257181.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220710194952_1657453792.jpg">
+<meta property="article:published_time" content="2022-07-23T09:31:00.000Z">
+<meta property="article:modified_time" content="2022-11-08T07:15:29.742Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="认知">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20220626232621_1656257181.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/programmers-need-to-understand-maslow-theory.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>程序员得懂点马斯洛理论 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/programmers-need-to-understand-maslow-theory.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          程序员得懂点马斯洛理论
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-07-23 17:31:00" itemprop="dateCreated datePublished" datetime="2022-07-23T17:31:00+08:00">2022-07-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>马斯洛需求层次理论是管理心理学中人际关系理论、群体动力理论、权威理论、需要层次理论、社会测量理论的五大理论支柱之一。</p>
+<p><img src="http://images.zhuxingsheng.com/20220626232621_1656257181.jpg"></p>
+<p>以往对马斯洛需求层次理论的理解很肤浅：人对需求是有层次的，层次间都有依赖关系。当低层次的需求被满足后，才会去考虑更高一层次的需求。</p>
+<p>而且好像也没什么用处。知道之后既不能提升硬技能，也不能升职加薪。</p>
+<h1 id="马斯洛理论定义"><a href="#马斯洛理论定义" class="headerlink" title="马斯洛理论定义"></a>马斯洛理论定义</h1><p>通过《郭东白的架构课》的学习，了解到马斯洛理论的本意是：我们可能同时并行存在着多个需求，这些需求之间并不存在依赖或层次关系。</p>
+<p>包含两个重点：</p>
+<p><strong>第一点：不是需求有层次，而是动机有优先级</strong></p>
+<p>如果这些需求得不到满足，那么它们各自会诱发动机。但<strong>动机有优先级，且具备抢占性质</strong>。所以任何时候，只有一个动机在主导着整个人的意识和行为。</p>
+<p><strong>第二点：动机跃迁模型</strong></p>
+<p>人有且只有一个主导动机。这个动机由人的内在需求所驱动，并独占且主导你当前的一切意识和行为，你整个人，包括你的视觉、听觉、嗅觉，你的思考、记忆、行为等。直到这个动机背后的需求被完全满足之后，更高层次的动机才可能进入主导位置。</p>
+<p>学习了理论本意后，由于理论抽象度高，需要更具象的事才能更好地理解，经过反复思考，找到了一些日常工作中的常见的场景，可以用为进一步理解此理论的抓手。</p>
+<h1 id="指导架构"><a href="#指导架构" class="headerlink" title="指导架构"></a>指导架构</h1><p>郭东白讲架构活动需要尊重和顺应人性，架构师必须洞察研发人员的人性，在方案设计和架构活动组织中充分考虑研发的人性，才能保障方案的正确性，以及方案的高效实施。</p>
+<p>什么样的架构才算是尊重和顺应人性呢？不得不再次搬出当下两个流行的事物：中台和微服务</p>
+<h2 id="中台"><a href="#中台" class="headerlink" title="中台"></a>中台</h2><p>对于中台概念，可以温习之前写的<a href="http://www.zhuxingsheng.com/blog/what-is-zhongtai.html">中台是什么</a>。定义中台为企业级能力复用平台。</p>
+<p>在做企业级业务架构时，做出来的模型，需要考虑两点：</p>
+<p>1、凡是公用的部分，应该照顾到所有利益相关方的需求；</p>
+<p>2、凡是已实现的功能都应该对新的需求方开放并支持必要的扩展。</p>
+<p>部门利益是做企业级的最大障碍，跨越这个障碍是对业务架构师设计能力的最高挑战。</p>
+<blockquote>
+<p>中台建设虽然需要兼顾各方的利益，但更多主要还是解决企业管理层对于公司长期生存与可持续发展的恐惧与焦虑问题</p>
+</blockquote>
+<p>中台建设的这两个考虑点，似乎是郭东白架构课程中重要价值输出的浓缩版本。</p>
+<p>前半段结合马斯洛理论，中台的建设通常都会伴随企业内的组织重构以及利益和职责的再分配，中台必然会触碰到前端业务团队利益，这自然威胁到了业务团队。</p>
+<p>尤其很多公司建设中台是跟风式的，本身就没有明确的战略意图，相当于架构活动没有正确目标，甚至没有目标，更没有清晰的构建路径，冒然简单粗暴地下沉前端业务功能，让原本根错综复杂的前端业务团队缺失了安全感，按马斯洛理论，业务团队满足安全需求的动机占据主导位置，可以想象，整个中台的推进速度。</p>
+<p>后半段则是任何企业活动的目标，都是为企业带来长期生存的优势。管理层、架构师都得考虑当下的活动是否真的带来生存优势。生存优势我简单理解为降本增效，ROI越高越有优势。</p>
+<h2 id="微服务"><a href="#微服务" class="headerlink" title="微服务"></a>微服务</h2><p>之前谈到微服务常会提到<a href="http://www.zhuxingsheng.com/blog/conway-law-and-inverse-conway-law.html">《康威定律与反康威定律》</a>，随着近些年互联网行业的不景色，从以前的拆掉中台到现在的<a href="http://www.zhuxingsheng.com/blog/remove-the-micro-service-after-removing-the-middle-console.html">《拆掉微服务》</a>。</p>
+<p>康威定律有个常用示例：如果有四个小组合作开发一个编译器，那么你将得到一款具有四个步骤的编辑器。</p>
+<p>结合马斯洛理论，每个小组都有了自己的一亩三分地，也就有了归属感和安全感，从人性角度，团队会更有活力、进取心和责任感。</p>
+<h1 id="技术管理"><a href="#技术管理" class="headerlink" title="技术管理"></a>技术管理</h1><p>作为TL，在<a href="http://www.zhuxingsheng.com/blog/three-underlying-cognition-of-code-and-excellence.html">《码而优则仕》</a>中提出三件重要事情。尤其激活团队。</p>
+<p>TL如何激励团队？</p>
+<p>都说现在00后是来整顿职场的，所以不能再像过去，员工以生存为目的，无条件接受资本主义压榨。</p>
+<p>现在生活条件大大改善，对应马斯洛最底层需求已经完全满足。管理者怎么办呢？会通过内部激励机制，如晋升职级；和红线制度，明确惩罚事项。</p>
+<p>有没有更高阶的方式方法呢？脱离上述的靠外部驱动。</p>
+<p>马斯洛理论给出指导方针：让员工有更多的归属和尊重。激发他们内部需求。</p>
+<p><img src="http://images.zhuxingsheng.com/20220710194952_1657453792.jpg"></p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>一个看似无用的理论，经过高人的讲解，可以感知到原来这个理论贯穿在每日生活的细节中。</p>
+<p>马斯洛理论就是这样，不管是做架构还是做管理，只要有人参与的活动，都渗透着它的威力。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A4%E7%9F%A5/" rel="tag"># 认知</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/classloader-of-springboot.html" rel="prev" title="springboot之ClassLoader">
+      <i class="fa fa-chevron-left"></i> springboot之ClassLoader
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/four-qualities-of-an-excellent-architect.html" rel="next" title="优秀架构师的四个素质">
+      优秀架构师的四个素质 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%A9%AC%E6%96%AF%E6%B4%9B%E7%90%86%E8%AE%BA%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">马斯洛理论定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8C%87%E5%AF%BC%E6%9E%B6%E6%9E%84"><span class="nav-number">2.</span> <span class="nav-text">指导架构</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%AD%E5%8F%B0"><span class="nav-number">2.1.</span> <span class="nav-text">中台</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BE%AE%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.2.</span> <span class="nav-text">微服务</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E7%AE%A1%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">技术管理</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

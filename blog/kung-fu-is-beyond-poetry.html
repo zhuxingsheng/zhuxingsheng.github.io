@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="功夫在诗外算是对今年，以及去年这两年的读书的一点思考，总结 为什么会有去年，因为今年读书过程中，让人不自然地想起了去年的类似内容。说的书类型不重复，但出现了很多相同的内容 可能与这些内容有缘分 迷思每次跳槽的时候，都会去思考我的核心竞争力到底是什么？这个问题代表了两个对立的思想一方面代表了不自知，迷茫，对未来的焦虑；另一方面代表了自不知，三人有我师，前进的动力。 职场规划一片迷茫，股票所学也是一无">
+<meta property="og:type" content="article">
+<meta property="og:title" content="功夫在诗外">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/kung-fu-is-beyond-poetry.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="功夫在诗外算是对今年，以及去年这两年的读书的一点思考，总结 为什么会有去年，因为今年读书过程中，让人不自然地想起了去年的类似内容。说的书类型不重复，但出现了很多相同的内容 可能与这些内容有缘分 迷思每次跳槽的时候，都会去思考我的核心竞争力到底是什么？这个问题代表了两个对立的思想一方面代表了不自知，迷茫，对未来的焦虑；另一方面代表了自不知，三人有我师，前进的动力。 职场规划一片迷茫，股票所学也是一无">
+<meta property="og:locale">
+<meta property="og:image" content="http://qnimages.zhuxingsheng.com/book/%E5%8A%9F%E5%A4%AB%E5%9C%A8%E8%AF%97%E5%A4%96.png">
+<meta property="article:published_time" content="2017-12-17T05:10:00.000Z">
+<meta property="article:modified_time" content="2021-09-29T07:24:30.506Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://qnimages.zhuxingsheng.com/book/%E5%8A%9F%E5%A4%AB%E5%9C%A8%E8%AF%97%E5%A4%96.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/kung-fu-is-beyond-poetry.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>功夫在诗外 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/kung-fu-is-beyond-poetry.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          功夫在诗外
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-12-17 13:10:00" itemprop="dateCreated datePublished" datetime="2017-12-17T13:10:00+08:00">2017-12-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="功夫在诗外"><a href="#功夫在诗外" class="headerlink" title="功夫在诗外"></a>功夫在诗外</h1><p>算是对今年，以及去年这两年的读书的一点思考，总结</p>
+<p>为什么会有去年，因为今年读书过程中，让人不自然地想起了去年的类似内容。说的书类型不重复，但出现了很多相同的内容</p>
+<p>可能与这些内容有缘分</p>
+<h1 id="迷思"><a href="#迷思" class="headerlink" title="迷思"></a>迷思</h1><p>每次跳槽的时候，都会去思考我的核心竞争力到底是什么？这个问题代表了两个对立的思想一方面代表了不自知，迷茫，对未来的焦虑；另一方面代表了自不知，三人有我师，前进的动力。</p>
+<p>职场规划一片迷茫，股票所学也是一无长进，甚是苦恼。<br>想起了陆游的这句话，《汝果欲学诗，功夫在诗外》；所以去年开始读了很多与专业不相关的书籍。</p>
+<p>名人传记，历史书籍，小说，这类书的价值在于引导成长；</p>
+<p>心智，心理类也是所好，可惜所得甚少。一些书籍还得多读，多思</p>
+<p>如《乌合之众》，知了很多年，却没读得很少，也没读懂。</p>
+<p>路漫漫其修远兮</p>
+<h1 id="所得"><a href="#所得" class="headerlink" title="所得"></a>所得</h1><p>在读《超级交易者》上半段时，突然有了一细细恍惚。好些内容都似曾相识，让人不得不想起一句老话，失败者的失败各有各的不同，而成功者的成功却具有惊人的相似之处。</p>
+<h2 id="责任"><a href="#责任" class="headerlink" title="责任"></a>责任</h2><p>这个词就像是个空词，人人都会把这个词挂在嘴边，但何为责任，责任有何妙处</p>
+<p>这在《人生五章》诗中也有体现</p>
+<p>《人生五章》 </p>
+<p>1、 </p>
+<p>我走上街， </p>
+<p>人行道上有一个深洞， </p>
+<p>我掉了进去。 </p>
+<p>我迷失了……我绝望了。 </p>
+<p>这不是我的错， </p>
+<p>费了好大的劲才爬出来。 </p>
+<p>2、 </p>
+<p>我走上同一条街。 </p>
+<p>人行道上有一个深洞， </p>
+<p>我假装没看到， </p>
+<p>还是掉了进去。 </p>
+<p>我不能相信我居然会掉在同样的地方。 </p>
+<p>但这不是我的错。 </p>
+<p>还是花了很长的时间才爬出来。 </p>
+<p>3、 </p>
+<p>我走上同一条街。 </p>
+<p>人行道上有一个深洞， </p>
+<p>我看到它在那儿， </p>
+<p>但还是掉了进去…… </p>
+<p>这是一种习惯。 </p>
+<p>我的眼睛张开着， </p>
+<p>我知道我在那儿。 </p>
+<p>这是我的错。 </p>
+<p>我立刻爬了出来。 </p>
+<p>4、 </p>
+<p>我走上同一条街， </p>
+<p>人行道上有一个深洞， </p>
+<p>我绕道而过。 </p>
+<p>5、 </p>
+<p>我走上另一条街。</p>
+<p>这首诗的内容在读《股票作手加快录》时，就有体会，大意就是一个人从意识到自身问题，到要改变，再到彻底改变的过程是相当艰辛的，习惯上升到性格再到内质的人性，是相当难以改变的。</p>
+<p>这一切的改变，自省的起始就在于责任两字，无责任怎么会想到自身问题。</p>
+<p>自己永无过错，一切都是别人的问题；代码没问题，是环境问题，自己买卖没问题，是庄家问题。</p>
+<h2 id="写作"><a href="#写作" class="headerlink" title="写作"></a>写作</h2><p>为什么写作？其实有各种理由</p>
+<ul>
+<li>文字可以重塑人</li>
+<li>写作是与自己的对话，引人思考</li>
+<li>输出倒逼输入</li>
+<li>形成闭环，输入输出完整的IO系统</li>
+<li>写作是睡后收入</li>
+</ul>
+<p>我算是写作的践行者，有什么意义呢？写作了很多年，有什么益处呢？</p>
+<p>之前我是记录时间日志，是在看《时间就是朋友》这本书得来的。</p>
+<p>后来李笑来又说要记注意力日志。还没有太多的实践，从时间开销日志来讲，只是发现了自我的浪费时间，这也算是所得之一吧。</p>
+<p>从去年开始写博客，为什么要写呢？关键是“形成有效的输入输出系统，以输出倒逼输入”，“写作也记录下学习过程，防止狗咬尾巴”。</p>
+<p>现在的博客目标是每篇文章写尽一个知识点，有广度，也得有深度。但任何知识都不是单点，‘台上一分钟，台下十年功’，‘冰山理论’。</p>
+<p>晨写也没有以前的质量和数量了，上次交易玫瑰讲了量化：一是两张A4纸，二是得有三十分钟。</p>
+<p>还有关键一点，我也疏忽的一点，<strong>没有及时回顾日记。需要温故知新。</strong></p>
+<h2 id="冥想"><a href="#冥想" class="headerlink" title="冥想"></a>冥想</h2><p>这个之前实践了几天，后来也没有坚持。这以后还是得有空多练习，看看效果了</p>
+<h2 id="读书"><a href="#读书" class="headerlink" title="读书"></a>读书</h2><p>很多人的理想生活就是 读万卷书，行万里路</p>
+<p>我现在的读书方法，以及读书效果还是很差，不让人满意。关键是缺少总结，一本书，至少要自己组织语言总结其主旨。</p>
+<p>不然读再多的书，还是一无所得，浪费时间，自我心理满足。不能学以致用。</p>
+<p>上次读李笑来的财富自由之路，一个读书亮点：慢读。</p>
+<p>现在很多的书籍都教人快速阅读以应对当代快速膨胀的知识，以快致胜。而李笑来提出，要慢读。</p>
+<p>快速膨胀的是信息，而不是知识。知识的出现需要很久的时间积累。所以要慢读，要有深度，现在流行快餐文化，让世人缺少了深度思考的过程，以致人浮于思，任何事都没有深度，人云亦云。</p>
+<h1 id="导图"><a href="#导图" class="headerlink" title="导图"></a>导图</h1><p>对于以上所得共同点，画了张思维导图更能一目了然</p>
+<p><img src="http://qnimages.zhuxingsheng.com/book/%E5%8A%9F%E5%A4%AB%E5%9C%A8%E8%AF%97%E5%A4%96.png" alt="image"></p>
+<h1 id="书单"><a href="#书单" class="headerlink" title="书单"></a>书单</h1><p>这些书单是今年看过超出一半内容的书籍，有几本是年初读的，现在都已经忘记内容了。主要就是没有写一段自己理解的总结。这些书，明年还会再读，重读。吸取知识的能力实在是差。</p>
+<p>《西藏生死书》</p>
+<p>《刻意练习》</p>
+<p>《简单思考》</p>
+<p>《自卑与超越》</p>
+<p>《超级交易员》</p>
+<p>《我做散户这十年：三万赚到千万》</p>
+<p>《走进我的交易室》</p>
+<p>《炒股的智慧》</p>
+<p>《红尘天幕》</p>
+<p>今年没有达到目标，计划是一个月一本的，不找客观原因，明年还得继续努力。育儿方面的内容也得加强。</p>
+<p>今年的博客也是打算一月一篇的，也没有正常发布。</p>
+<p>计划是用来执行的。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/microservices---monitoring.html" rel="prev" title="微服务-监控">
+      <i class="fa fa-chevron-left"></i> 微服务-监控
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/common-sense-four-out-of-heap-memory.html" rel="next" title="常识四堆外内存">
+      常识四堆外内存 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%9F%E5%A4%AB%E5%9C%A8%E8%AF%97%E5%A4%96"><span class="nav-number">1.</span> <span class="nav-text">功夫在诗外</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BF%B7%E6%80%9D"><span class="nav-number">2.</span> <span class="nav-text">迷思</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%80%E5%BE%97"><span class="nav-number">3.</span> <span class="nav-text">所得</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%A3%E4%BB%BB"><span class="nav-number">3.1.</span> <span class="nav-text">责任</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%99%E4%BD%9C"><span class="nav-number">3.2.</span> <span class="nav-text">写作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%A5%E6%83%B3"><span class="nav-number">3.3.</span> <span class="nav-text">冥想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%BB%E4%B9%A6"><span class="nav-number">3.4.</span> <span class="nav-text">读书</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%BC%E5%9B%BE"><span class="nav-number">4.</span> <span class="nav-text">导图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B9%A6%E5%8D%95"><span class="nav-number">5.</span> <span class="nav-text">书单</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

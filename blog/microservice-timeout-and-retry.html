@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="前言其实不只在微服务中，在平常网络请求，或者与第三方系统进行交互都需要设置超时时间 为什么需要超时与重试？ 总体上讲，肯定是为了增加系统可靠性，具体表现在两个方面  系统自我保护：快速失败，在业务最大允许等待时间内未收到返回数据，主动放弃等待，释放占用资源，避免请求不断累积带来的客户端雪崩效应 成功率：服务处理超时原因有很多，但常见的超时都是短暂的，主要是GC，或者有网络抖动等。这些短时间影响服务">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微服务超时与重试">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/microservice-timeout-and-retry.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="前言其实不只在微服务中，在平常网络请求，或者与第三方系统进行交互都需要设置超时时间 为什么需要超时与重试？ 总体上讲，肯定是为了增加系统可靠性，具体表现在两个方面  系统自我保护：快速失败，在业务最大允许等待时间内未收到返回数据，主动放弃等待，释放占用资源，避免请求不断累积带来的客户端雪崩效应 成功率：服务处理超时原因有很多，但常见的超时都是短暂的，主要是GC，或者有网络抖动等。这些短时间影响服务">
+<meta property="og:locale">
+<meta property="article:published_time" content="2018-11-29T02:36:00.000Z">
+<meta property="article:modified_time" content="2021-09-29T07:24:30.522Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="微服务">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/microservice-timeout-and-retry.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>微服务超时与重试 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/microservice-timeout-and-retry.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微服务超时与重试
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-29 10:36:00" itemprop="dateCreated datePublished" datetime="2018-11-29T10:36:00+08:00">2018-11-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>其实不只在微服务中，在平常网络请求，或者与第三方系统进行交互都需要设置超时时间</p>
+<p><strong>为什么需要超时与重试？</strong> 总体上讲，肯定是为了增加系统可靠性，具体表现在两个方面</p>
+<ol>
+<li>系统自我保护：<br>快速失败，在业务最大允许等待时间内未收到返回数据，主动放弃等待，释放占用资源，避免请求不断累积带来的客户端雪崩效应</li>
+<li>成功率：服务处理超时原因有很多，但常见的超时都是短暂的，主要是GC，或者有网络抖动等。这些短时间影响服务端状态的情况而造成请求成功率下降，需要补救措施。简单的补救有超时重试操作：当前请求超时后，将会重试到非当前服务器，降低重试超时的机率</li>
+</ol>
+<p>这一篇将由浅入深探索timeout机制，以及在微服务下的实践</p>
+<h1 id="超时"><a href="#超时" class="headerlink" title="超时"></a>超时</h1><p>经常被提起的两种超时：connection timeout、socket timeout</p>
+<p>通过最底层的Socket,ServerSocket演示一下这两种超时的表现，nio框架都会有对应的配置选项</p>
+<h2 id="connectionTimeout"><a href="#connectionTimeout" class="headerlink" title="connectionTimeout"></a>connectionTimeout</h2><p><strong>建立连接超时时间</strong></p>
+<p>客户端,随便写个IP，设置一个timeout</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Socket socket = new Socket();</span><br><span class="line">socket.connect(new InetSocketAddress(&quot;10.0.0.1&quot;,8080),20000);</span><br></pre></td></tr></table></figure>
+
+<p>在timeout时间到时，就会抛出connect timed out异常</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; java.net.SocketTimeoutException: connect timed out</span><br><span class="line">	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)</span><br><span class="line">	at java.net.DualStackPlainSocketImpl.socketConnect(DualStackPlainSocketImpl.java:85)</span><br><span class="line">	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)</span><br><span class="line">	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)</span><br><span class="line">	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)</span><br><span class="line">	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172)</span><br><span class="line">	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)</span><br><span class="line">	at java.net.Socket.connect(Socket.java:589)</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="socketTimeout"><a href="#socketTimeout" class="headerlink" title="socketTimeout"></a>socketTimeout</h2><blockquote>
+<p>Enable&#x2F;disable SO_TIMEOUT with the specified timeout, in milliseconds. With this option set to a non-zero timeout, a read() call on the InputStream associated with this Socket will block for only this amount of time. If the timeout expires, a java.net.SocketTimeoutException is raised, though the Socket is still valid. The option must be enabled prior to entering the blocking operation to have effect. The timeout must be &gt; 0. A timeout of zero is interpreted as an infinite timeout.</p>
+</blockquote>
+<p>服务端，只要让客户端能连接上就行，不发送数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ServerSocket serverSocket = new ServerSocket(8080);</span><br><span class="line">while ( true) &#123;</span><br><span class="line">    Socket socket = serverSocket.accept();</span><br><span class="line">    new Thread(new P(socket)).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>客户端，进行读数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Socket socket = new Socket();</span><br><span class="line">socket.connect(new InetSocketAddress(&quot;localhost&quot;,8080),20000);</span><br><span class="line">socket.setSoTimeout(3000);</span><br></pre></td></tr></table></figure>
+
+<p>3s后，就抛出Read timed out</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">java.net.SocketTimeoutException: Read timed out</span><br><span class="line">	at java.net.SocketInputStream.socketRead0(Native Method)</span><br><span class="line">	at java.net.SocketInputStream.socketRead(SocketInputStream.java:116)</span><br><span class="line">	at java.net.SocketInputStream.read(SocketInputStream.java:170)</span><br><span class="line">	at java.net.SocketInputStream.read(SocketInputStream.java:141)</span><br><span class="line">	at java.net.SocketInputStream.read(SocketInputStream.java:223)</span><br></pre></td></tr></table></figure>
+
+<h2 id="nio"><a href="#nio" class="headerlink" title="nio"></a>nio</h2><p>对NIO，看网上一些示例基本没有关注到这一点，所以值得思考，难道是nio不需要关注timeout?</p>
+<p>客户端对服务器的连接:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Selector selector = Selector.open();</span><br><span class="line">InetSocketAddress isa = new InetSocketAddress(host, port);</span><br><span class="line">// 调用open静态方法创建连接到指定主机的SocketChannel</span><br><span class="line">SocketChannel sc = SocketChannel.open(isa);</span><br></pre></td></tr></table></figure>
+
+<p><strong>在调用SocketChannel.open()方法时,如果连接不上服务器,那么此方法就会长时间阻塞</strong>,为了解决这个问题,我们可以在调用open()方法前,启动一个定时器,这个定时器会在指定的时间内检查是否已连接成功,这个指定的时间也就是我们希望设置的连接超时时间,当检查已连接上服务器时,提示用户已连接成功;若没有连接上,可在代码中抛出SocketTimeoutException,并提示用户连接超时</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">public void connect()&#123;</span><br><span class="line">	try&#123;</span><br><span class="line">		selector = Selector.open();</span><br><span class="line">		InetSocketAddress isa = new InetSocketAddress(host, port);</span><br><span class="line">		//10秒连接超时</span><br><span class="line">		new Timer().schedule(tt, 10000);</span><br><span class="line">		// 调用open静态方法创建连接到指定主机的SocketChannel</span><br><span class="line">		sc = SocketChannel.open(isa);</span><br><span class="line">		// 设置该sc以非阻塞方式工作</span><br><span class="line">		sc.configureBlocking(false);</span><br><span class="line">		// 将Socketchannel对象注册到指定Selector</span><br><span class="line">		sc.register(selector, SelectionKey.OP_READ);</span><br><span class="line">		Message msg = new Message();</span><br><span class="line">		msg.what = 0;</span><br><span class="line">		msg.obj = sc;</span><br><span class="line">		handler.sendMessage(msg); // 连接成功</span><br><span class="line">		new Thread(new NIOReceiveThread(selector, handler)).start();</span><br><span class="line">	&#125;catch (IOException e)	&#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		handler.sendEmptyMessage(-1); // IO异常</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">TimerTask tt = new TimerTask()&#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void run()&#123;</span><br><span class="line">		if (sc == null || !sc.isConnected())&#123;</span><br><span class="line">			try&#123;</span><br><span class="line">				throw new SocketTimeoutException(&quot;连接超时&quot;);</span><br><span class="line">			&#125;catch (SocketTimeoutException e)&#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">				handler.sendEmptyMessage(-6); // 连接超时</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在stackoverflow上有人回答了Read timeout for an NIO SocketChannel?</p>
+<blockquote>
+<ol>
+<li>You are using a Selector, in which case you have a select timeout which you can play with, and if it goes off (select(timeout) returns zero) you close all the registered channels, or</li>
+<li>You are using blocking mode, in which case you might think you should be able to call Socket.setSoTimeout() on the underlying socket (SocketChannel.socket()), and trap the SocketTimeoutException that is thrown when the timeout expires during read(), but you can’t, because it isn’t supported for sockets originating as channels, or</li>
+<li>You are using non-blocking mode without a Selector, in which case you need to change to case (1).</li>
+</ol>
+</blockquote>
+<h2 id="netty"><a href="#netty" class="headerlink" title="netty"></a>netty</h2><p>netty业界公认的高成熟nio产品，也是大多数微服务底层使用的通信框架，内部细节值得挖一挖处理方式，篇幅有限，另开篇深挖</p>
+<p>先看在微服务产品中的使用</p>
+<h3 id="connectionTimeout-1"><a href="#connectionTimeout-1" class="headerlink" title="connectionTimeout"></a>connectionTimeout</h3><p>这种场景很简单，在使用netty时,对应的配置选项</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Bootstrap b = new Bootstrap();</span><br><span class="line">b.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)</span><br></pre></td></tr></table></figure>
+
+<h3 id="socketTimeout-1"><a href="#socketTimeout-1" class="headerlink" title="socketTimeout"></a>socketTimeout</h3><p>这种场景各个框架在处理里，手法不尽相同，各有特色</p>
+<h4 id="motan"><a href="#motan" class="headerlink" title="motan"></a>motan</h4><p>Motan是一套高性能、易于使用的分布式远程服务调用(RPC)框架，新浪微博开源。</p>
+<p>之前解读过motan源码，《motan客户端解析》，《motan服务端解析》</p>
+<p><strong>NettyChannel.request</strong>：</p>
+<ol>
+<li>获取此method的配置timeout</li>
+<li>在write时，awaitUninterruptibly</li>
+<li>超时就抛出timeoutException</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">public Response request(Request request) throws TransportException &#123;</span><br><span class="line">    int timeout = nettyClient.getUrl().getMethodParameter(request.getMethodName(), request.getParamtersDesc(),</span><br><span class="line">            URLParamType.requestTimeout.getName(), URLParamType.requestTimeout.getIntValue());</span><br><span class="line">	if (timeout &lt;= 0) &#123;</span><br><span class="line">           throw new MotanFrameworkException(&quot;NettyClient init Error: timeout(&quot; + timeout + &quot;) &lt;= 0 is forbid.&quot;,</span><br><span class="line">                   MotanErrorMsgConstant.FRAMEWORK_INIT_ERROR);</span><br><span class="line">       &#125;</span><br><span class="line">	NettyResponseFuture response = new NettyResponseFuture(request, timeout, this.nettyClient);</span><br><span class="line">	this.nettyClient.registerCallback(request.getRequestId(), response);</span><br><span class="line"></span><br><span class="line">	ChannelFuture writeFuture = this.channel.write(request);</span><br><span class="line"></span><br><span class="line">	boolean result = writeFuture.awaitUninterruptibly(timeout, TimeUnit.MILLISECONDS);</span><br><span class="line"></span><br><span class="line">	if (result &amp;&amp; writeFuture.isSuccess()) &#123;</span><br><span class="line">		response.addListener(new FutureListener() &#123;</span><br><span class="line">			@Override</span><br><span class="line">			public void operationComplete(Future future) throws Exception &#123;</span><br><span class="line">				if (future.isSuccess() || (future.isDone() &amp;&amp; ExceptionUtil.isBizException(future.getException()))) &#123;</span><br><span class="line">					// 成功的调用 </span><br><span class="line">					nettyClient.resetErrorCount();</span><br><span class="line">				&#125; else &#123;</span><br><span class="line">					// 失败的调用 </span><br><span class="line">					nettyClient.incrErrorCount();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">		return response;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	writeFuture.cancel();</span><br><span class="line">	response = this.nettyClient.removeCallback(request.getRequestId());</span><br><span class="line"></span><br><span class="line">	if (response != null) &#123;</span><br><span class="line">		response.cancel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	// 失败的调用 </span><br><span class="line">	nettyClient.incrErrorCount();</span><br><span class="line"></span><br><span class="line">	if (writeFuture.getCause() != null) &#123;</span><br><span class="line">		throw new MotanServiceException(&quot;NettyChannel send request to server Error: url=&quot;</span><br><span class="line">				+ nettyClient.getUrl().getUri() + &quot; local=&quot; + localAddress + &quot; &quot;</span><br><span class="line">				+ MotanFrameworkUtil.toString(request), writeFuture.getCause());</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		throw new MotanServiceException(&quot;NettyChannel send request to server Timeout: url=&quot;</span><br><span class="line">				+ nettyClient.getUrl().getUri() + &quot; local=&quot; + localAddress + &quot; &quot;</span><br><span class="line">				+ MotanFrameworkUtil.toString(request));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意到其中的<strong>NettyResponseFuture</strong>，看名字就明白是个Future模式，在<a href="http://www.zhuxingsheng.com/blog/code-parsing---asynchronous-callback.html">《代码小析 - 异步回调》</a>中有分析过</p>
+<p><strong>接收到服务端返回</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">NettyResponseFuture responseFuture = NettyClient.this.removeCallback(response.getRequestId());</span><br><span class="line">if (responseFuture == null) &#123;</span><br><span class="line">	LoggerUtil.warn(</span><br><span class="line">			&quot;NettyClient has response from server, but resonseFuture not exist,  requestId=&#123;&#125;&quot;,</span><br><span class="line">			response.getRequestId());</span><br><span class="line">	return null;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (response.getException() != null) &#123;</span><br><span class="line">	responseFuture.onFailure(response);</span><br><span class="line">&#125; else &#123;</span><br><span class="line">	responseFuture.onSuccess(response);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>获取真实结果NettyResponseFuture.getValue()</strong></p>
+<p>通过long waitTime &#x3D; timeout - (System.currentTimeMillis() - createTime);计算一下真正的wait时间</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">public Object getValue() &#123;</span><br><span class="line">	synchronized (lock) &#123;</span><br><span class="line">		if (!isDoing()) &#123;</span><br><span class="line">			return getValueOrThrowable();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		if (timeout &lt;= 0) &#123;</span><br><span class="line">			try &#123;</span><br><span class="line">				lock.wait();</span><br><span class="line">			&#125; catch (Exception e) &#123;</span><br><span class="line">				cancel(new MotanServiceException(&quot;NettyResponseFuture getValue InterruptedException : &quot;</span><br><span class="line">						+ MotanFrameworkUtil.toString(request) + &quot; cost=&quot;</span><br><span class="line">						+ (System.currentTimeMillis() - createTime), e));</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			// don&#x27;t need to notifylisteners, because onSuccess or</span><br><span class="line">			// onFailure or cancel method already call notifylisteners</span><br><span class="line">			return getValueOrThrowable();</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			long waitTime = timeout - (System.currentTimeMillis() - createTime);</span><br><span class="line"></span><br><span class="line">			if (waitTime &gt; 0) &#123;</span><br><span class="line">				for (;;) &#123;</span><br><span class="line">					try &#123;</span><br><span class="line">						lock.wait(waitTime);</span><br><span class="line">					&#125; catch (InterruptedException e) &#123;</span><br><span class="line">					&#125;</span><br><span class="line"></span><br><span class="line">					if (!isDoing()) &#123;</span><br><span class="line">						break;</span><br><span class="line">					&#125; else &#123;</span><br><span class="line">						waitTime = timeout - (System.currentTimeMillis() - createTime);</span><br><span class="line">						if (waitTime &lt;= 0) &#123;</span><br><span class="line">							break;</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			if (isDoing()) &#123;</span><br><span class="line">				timeoutSoCancel();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		return getValueOrThrowable();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="totalTimeout"><a href="#totalTimeout" class="headerlink" title="totalTimeout"></a>totalTimeout</h4><p>有了timeout基本已经满足需求，但这儿再提一个totalTimeout，为什么需要一个总超时时间</p>
+<blockquote>
+<p>比如客户端希望服务端在60ms内返回，由于成功率要求必须加一次重试，但是设置超时时间30ms重试一次会很浪费（绝大部分重试很快，但预留了30ms则压缩了初次调用的时间）。设置40ms重试一次就可能出现整体耗时大于60ms。所以希望可以配置整体超时时间为60ms，单次40ms加重试一次，这样既充分利用看重试机会也不会导致整体超过60ms</p>
+</blockquote>
+<p>一次服务调用的正常请求的最长时间为：timeout * failovertimes + success_invocation_time</p>
+<p>比如某个服务的timeout为100ms，failovertimes为1，正常调用的平均耗时为10ms，那么它的上游在重试情况下的耗时就是：乐观估计100 * 1+10&#x3D;110ms；悲观估计100 * 1+100&#x3D;200ms</p>
+<p><strong>为了保证总体超时时间，只能把单次超时时间压缩，使得某些情况下可能不需求重试的场景也进行了重试</strong></p>
+<p>对比一下，设置totalTimeout与不设置的情况：</p>
+<ol>
+<li>某服务通常能在20ms返回，但是因为某些意外（比如gc），连续两次都要40ms</li>
+</ol>
+<ul>
+<li>只能设置单次timeout的情况下，timeout&#x3D;30ms，failovertimes&#x3D;1<br>因此对于client来说，它看到的调用耗时就是：30ms（超时） + 30ms（超时） &#x3D; 60ms</li>
+<li>分开设置首次超时和总体超时的情况下，timeout&#x3D;40ms，total_timeout&#x3D;60ms，failovertimes&#x3D;1<br>因此对于client来说，它看到的调用耗时就是：40ms（超时）+ （60ms-40ms）（超时） &#x3D; 60ms</li>
+</ul>
+<ol start="2">
+<li>某服务通常能在20ms返回，但是因为某些意外（比如gc），这次需要35ms才能返回。</li>
+</ol>
+<ul>
+<li>只能设置单次timeout的情况下，timeout&#x3D;30ms，failovertimes&#x3D;1。<br>因此对于client来说，它看到的调用耗时就是：30ms（超时） + 20ms &#x3D; 50ms</li>
+<li>分开设置首次超时和总体超时的情况下，timeout&#x3D;40ms，total_timeout&#x3D;60ms，failovertimes&#x3D;1。<br>因此对于client来说，它看到的调用耗时就是：35ms（正常返回） &#x3D; 35ms</li>
+</ul>
+<h1 id="重试"><a href="#重试" class="headerlink" title="重试"></a>重试</h1><p>因某个服务实例短暂状态不佳而造成的超时，使用重试处理可以让请求转向其他服务实例的做法可以很好改善非集中式问题的成功率。</p>
+<p>但如果超时重试只做简单的重试策略：有超时便重试，这样可能会导致服务端的崩溃。</p>
+<p>例如：当前基础组件（如db）压力过大而造成超时，如果一律重试的话，会导致服务端集群实际接受请求量翻倍，这会使得基础组件压力无减反增，可能会导致其最终崩溃</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><ul>
+<li>思路简单，配置重试次数，出现非业务异常就重试，达到次数上限或者中途成功结束</li>
+<li>重试限流,重试造成雪崩的可能性，所以重试需要控制流量</li>
+</ul>
+<h3 id="motan-1"><a href="#motan-1" class="headerlink" title="motan"></a>motan</h3><p>之前解读过motan源码，<a href="http://www.zhuxingsheng.com/blog/motan-client.html">《motan客户端解析》</a>，motan的failover就是这么处理的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">// 先使用method的配置</span><br><span class="line">int tryCount =</span><br><span class="line">        refUrl.getMethodParameter(request.getMethodName(), request.getParamtersDesc(), URLParamType.retries.getName(),</span><br><span class="line">                URLParamType.retries.getIntValue());</span><br><span class="line">// 如果有问题，则设置为不重试</span><br><span class="line">if (tryCount &lt; 0) &#123;</span><br><span class="line">    tryCount = 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">for (int i = 0; i &lt;= tryCount; i++) &#123;</span><br><span class="line">    Referer&lt;T&gt; refer = referers.get(i % referers.size());</span><br><span class="line">    try &#123;</span><br><span class="line">        request.setRetries(i);</span><br><span class="line">        return refer.call(request);</span><br><span class="line">    &#125; catch (RuntimeException e) &#123;</span><br><span class="line">        // 对于业务异常，直接抛出</span><br><span class="line">        if (ExceptionUtil.isBizException(e)) &#123;</span><br><span class="line">            throw e;</span><br><span class="line">        &#125; else if (i &gt;= tryCount) &#123;</span><br><span class="line">            throw e;</span><br><span class="line">        &#125;</span><br><span class="line">        LoggerUtil.warn(String.format(&quot;FailoverHaStrategy Call false for request:%s error=%s&quot;, request, e.getMessage()));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="超时重试"><a href="#超时重试" class="headerlink" title="超时重试"></a>超时重试</h3><p>但像我司框架就没有这样处理，只关注超时重试，因为超时重试主要是解决因偶尔短暂状态不佳而对成功率造成的影响，所以把重点放在处理短暂处于超时状态超时请求，对于长时间处于较大量的超时状态时，将选择不进行重试fail fast </p>
+<h3 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h3><p>主要是防止重试次数过多，引起系统雪崩，有必要进行一下限流</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/micro-service-fuse-mechanism.html">《微服务-熔断机制》</a>中提到过限流算法，细节可参考<a href="http://www.zhuxingsheng.com/blog/counter-algorithm.html">《计数器算法》</a></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://stackoverflow.com/questions/17340970/read-timeout-for-an-nio-socketchannel">Read timeout for an NIO SocketChannel?</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/microservice/" rel="tag"># 微服务</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/algorithm---sort---insert.html" rel="prev" title="算法渣-排序-插入">
+      <i class="fa fa-chevron-left"></i> 算法渣-排序-插入
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/algorithm---sorting---hill.html" rel="next" title="算法渣-排序-希尔">
+      算法渣-排序-希尔 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B6%85%E6%97%B6"><span class="nav-number">2.</span> <span class="nav-text">超时</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#connectionTimeout"><span class="nav-number">2.1.</span> <span class="nav-text">connectionTimeout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#socketTimeout"><span class="nav-number">2.2.</span> <span class="nav-text">socketTimeout</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nio"><span class="nav-number">2.3.</span> <span class="nav-text">nio</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#netty"><span class="nav-number">2.4.</span> <span class="nav-text">netty</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#connectionTimeout-1"><span class="nav-number">2.4.1.</span> <span class="nav-text">connectionTimeout</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#socketTimeout-1"><span class="nav-number">2.4.2.</span> <span class="nav-text">socketTimeout</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#motan"><span class="nav-number">2.4.2.1.</span> <span class="nav-text">motan</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#totalTimeout"><span class="nav-number">2.4.2.2.</span> <span class="nav-text">totalTimeout</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%87%8D%E8%AF%95"><span class="nav-number">3.</span> <span class="nav-text">重试</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">3.1.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#motan-1"><span class="nav-number">3.1.1.</span> <span class="nav-text">motan</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E6%97%B6%E9%87%8D%E8%AF%95"><span class="nav-number">3.1.2.</span> <span class="nav-text">超时重试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%99%90%E6%B5%81"><span class="nav-number">3.1.3.</span> <span class="nav-text">限流</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,1752 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="彪悍的人生需要书写">
+<meta property="og:type" content="website">
+<meta property="og:title" content="码农戏码">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/page/8/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="彪悍的人生需要书写">
+<meta property="og:locale">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/page/8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/socket-and-io-high-performance.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/socket-and-io-high-performance.html" class="post-title-link" itemprop="url">socket与IO高性能</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-04-19 14:06:00" itemprop="dateCreated datePublished" datetime="2021-04-19T14:06:00+08:00">2021-04-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-12-31 18:11:39" itemprop="dateModified" datetime="2021-12-31T18:11:39+08:00">2021-12-31</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近看到篇好文章<a href="https://mp.weixin.qq.com/s/vIeuDQ526blaQZYlPF6I9Q">《IO多路复用》</a>，记得早期学习时，也去探索过select、poll、epoll的区别，但后来也是没有及时记录总结，也忘记了，学习似乎就是在记忆与忘记中徘徊，最后在心中留下的火种，是熄灭还是燎原就看记忆与忘记间的博弈</p>
+<p>socket与io一对兄弟，有socket地方必然有io，io数据也大多来源于socket，回顾这两方面的知识点，大致梳理一下</p>
+<h1 id="socket"><a href="#socket" class="headerlink" title="socket"></a>socket</h1><p>Socket是应用层与TCP&#x2F;IP协议族通信的中间软件抽象层，它是一组接口。在设计模式中，Socket其实就是一个门面模式，它把复杂的TCP&#x2F;IP协议族隐藏在Socket接口后面，对用户来说，一组简单的接口就是全部，让Socket去组织数据，以符合指定的协议</p>
+<p>除了TCP协议（三次握手、四次挥手）知识点外，再就是各阶段与java api对应的方法</p>
+<p><img src="http://images.zhuxingsheng.com/20210410093442_1618018482.jpg"></p>
+<p>三次握手关联到两个方法：服务端的listen()与客户端的connect()</p>
+<p><strong>两个方法的共通点</strong>：TCP三次握手都不是他们本身完成的，握手都是内核完成的，他们只是通知内核，让内核自动完成三次握手连接</p>
+<p><strong>不同点</strong>：connect()是阻塞的，listen()是非阻塞的</p>
+<p>三次握手的过程细节：</p>
+<p><img src="http://images.zhuxingsheng.com/20210410093322_1618018402.jpg"></p>
+<ul>
+<li>第一次握手：客户端发送 SYN 报文，并进入 SYN_SENT 状态，等待服务器的确认；</li>
+<li>第二次握手：服务器收到 SYN 报文，需要给客户端发送 ACK 确认报文，同时服务器也要向客户端发送一个 SYN 报文，所以也就是向客户端发送 SYN + ACK 报文，此时服务器进入 SYN_RCVD 状态；</li>
+<li>第三次握手：客户端收到 SYN + ACK 报文，向服务器发送确认包，客户端进入ESTABLISHED 状态。待服务器收到客户端发送的 ACK 包也会进入ESTABLISHED 状态，完成三次握手</li>
+</ul>
+<h1 id="io"><a href="#io" class="headerlink" title="io"></a>io</h1><p>IO中常听到的就是同步阻塞IO，同步非阻塞IO，异步非阻塞IO；也就是同步、异步、阻塞、非阻塞四个词组合体，可从名字上看就不大对，既然同步，应该都是阻塞，怎么会有同步非阻塞？不知道哪位先贤的学习总结却流传深远</p>
+<p>还有些把non-blocking IO与NIO都混淆了</p>
+<p>对于IO模型，最正统的应该来自Richard Stevens的“UNIX® Network Programming Volume 1, Third Edition: The Sockets Networking ”，6.2节“I&#x2F;O Models”</p>
+<ul>
+<li>Blocking I&#x2F;O</li>
+<li>Non-Blocking I&#x2F;O</li>
+<li>I&#x2F;O Multiplexing</li>
+<li>Asynchronous I&#x2F;O</li>
+</ul>
+<p>在理解这四种常见模型前，先简单说下linux的机制，可以更方便理解IO，在<a href="http://www.zhuxingsheng.com/blog/common-sense-four-heaps-of-external-memory.html">《堆外内存》</a>中提到linux的处理IO流程以及Zero-Copy技术，算是IO模型更深入的知识点</p>
+<p>应用程序发起的一次IO操作实际包含两个阶段：</p>
+<ul>
+<li>1.IO调用阶段：应用程序进程向内核发起系统调用</li>
+<li>2.IO执行阶段：内核执行IO操作并返回<ul>
+<li>2.1. 准备数据阶段：内核等待I&#x2F;O设备准备好数据</li>
+<li>2.2. 拷贝数据阶段：将数据从内核缓冲区拷贝到用户空间缓冲区</li>
+</ul>
+</li>
+</ul>
+<p><strong>对于阻塞与非阻塞，讲的是用户进程&#x2F;线程与内核之间的切换；当内核数据没有准备好时，用户进程就得挂起</strong></p>
+<p><strong>对于同步与异步，重点在于执行结果是否一起返回</strong>,IO就是指read,send是否及时获取到结果</p>
+<p>大致分析一下，同步异步、阻塞非阻塞的两两组合其实是把宏观与微观进行了穿插，从应该程序角度获取结果是同步或异步，而IO内部再细分了阻塞与非阻塞</p>
+<p>由上文所述：IO操作分两个阶段 1、等待数据准备好(读到内核缓存) ，2、将数据从内核读到用户空间(进程空间)。 一般来说1花费的时间远远大于2。 1上阻塞2上也阻塞的是同步阻塞IO； 1上非阻塞2阻塞的是同步非阻塞IO，NIO，Reactor就是这种模型； 1上非阻塞2上非阻塞是异步非阻塞IO，AIO，Proactor就是这种模型。</p>
+<h2 id="同步阻塞IO（Blocking-IO）"><a href="#同步阻塞IO（Blocking-IO）" class="headerlink" title="同步阻塞IO（Blocking IO）"></a>同步阻塞IO（Blocking IO）</h2><p>因为用户态被阻塞，等待内核数据的完成，所以需要同步等待结果</p>
+<p><img src="http://images.zhuxingsheng.com/20210417172215_1618651335.jpg"></p>
+<h2 id="同步非阻塞IO（Non-blocking-IO）"><a href="#同步非阻塞IO（Non-blocking-IO）" class="headerlink" title="同步非阻塞IO（Non-blocking IO）"></a>同步非阻塞IO（Non-blocking IO）</h2><p>用户态与内核不再阻塞了，但需要不停地轮询获取结果，浪费CPU，这方式还不如BIO来得痛快</p>
+<p><img src="http://images.zhuxingsheng.com/20210417172316_1618651396.jpg"></p>
+<h2 id="IO多路复用"><a href="#IO多路复用" class="headerlink" title="IO多路复用"></a>IO多路复用</h2><p>Reactor模式,意为事件反应，操作系统的回调&#x2F;通知可以理解为一个事件，当事件发生时，进程&#x2F;线程对该事件作出反应。Reactor模式也称作Dispatcher模式，即I&#x2F;O多路复用统一监听事件，收到事件后分配（Dispatch）给某个进程&#x2F;线程</p>
+<p><img src="http://images.zhuxingsheng.com/20210417174414_1618652654.jpg"></p>
+<p>对于IO多路复用，里面再有的细节就是一个优化过程，select,poll,epoll</p>
+<p><img src="http://images.zhuxingsheng.com/20210412171113_1618218673.jpg"></p>
+<h2 id="AIO"><a href="#AIO" class="headerlink" title="AIO"></a>AIO</h2><p>Proactor模式,Reactor可理解为“来了事件我通知你，你来处理”，而Proactor是“来了事件我处理，处理完了我通知你”。这里“我”是指操作系统，“你”就是用户进程&#x2F;线程</p>
+<p><img src="http://images.zhuxingsheng.com/20210417175704_1618653424.jpg"></p>
+<h2 id="四种模型对比"><a href="#四种模型对比" class="headerlink" title="四种模型对比"></a>四种模型对比</h2><p><img src="http://images.zhuxingsheng.com/20210418101157_1618711917.jpg"></p>
+<p>对于IO模型的优化进程，一是操作系统的支持，减少系统调用，用户态与内核的切换；二是机制的变换，从命令式到响应性的转变</p>
+<hr>
+<h1 id="高性能架构"><a href="#高性能架构" class="headerlink" title="高性能架构"></a>高性能架构</h1><p>只温习Socket&#x2F;IO知识太无趣了，我们要温故知新，升华一下，从架构角度谈一谈</p>
+<p>从常规服务处理业务流程讲：request -&gt; process -&gt; response</p>
+<p><img src="http://images.zhuxingsheng.com/20210418114102_1618717262.jpg"></p>
+<p>站在架构师的角度，当然需要特别关注高性能架构的设计。高性能架构设计主要集中在两方面：</p>
+<ol>
+<li>尽量提升单服务器的性能，将单服务器的性能发挥到极致。</li>
+<li>如果单服务器无法支撑性能，设计服务器集群方案。</li>
+</ol>
+<p>除了以上两点，最终系统能否实现高性能，还和具体的实现及编码相关。但架构设计是高性能的基础，如果架构设计没有做到高性能，则后面的具体实现和编码能提升的空间是有限的。形象地说，架构设计决定了系统性能的上限，实现细节决定了系统性能的下限。</p>
+<p>单服务器高性能的关键之一就是服务器采取的并发模型，并发模型有如下两个关键设计点：</p>
+<ul>
+<li>服务器如何管理连接</li>
+<li>服务器如何处理请求</li>
+</ul>
+<p>以上两个设计点最终都和操作系统的 I&#x2F;O 模型及进程模型相关。</p>
+<ul>
+<li>I&#x2F;O 模型：阻塞、非阻塞、同步、异步</li>
+<li>进程模型：单进程、多进程、多线程</li>
+</ul>
+<h2 id="传统模式PPC-TPC"><a href="#传统模式PPC-TPC" class="headerlink" title="传统模式PPC&amp;TPC"></a>传统模式PPC&amp;TPC</h2><p>PPC，即Process Per Connection，为每个连接都创建一个进程去处理。此模式实现简单，适合服务器连接不多的场景，如数据库服务器</p>
+<p>TPC，即Thread Per Connection，为每个连接都创建一个线程去处理。线程创建消耗少，线程间通信简单</p>
+<p>这两种都是传统的并发模式，使用于常量连接的场景，如数据库（常量连接海量请求），企业内部（常量连接常量请求）</p>
+<p>至于是进程还是线程，大多与语言特性相关，Java语言由于JVM是一个进程，管理线程方便，故多使用线程，如Netty。C语言进程和线程均可使用，如Nginx使用进程，Memcached使用线程。</p>
+<p>不同并发模式的选择，还要考察三个指标，分别是响应时间（RT），并发数（Concurrency），吞吐量（TPS）。三者关系，吞吐量&#x3D;并发数&#x2F;平均响应时间。不同类型的系统，对这三个指标的要求不一样。</p>
+<p>三高系统，比如秒杀、即时通信，不能使用</p>
+<p>三低系统，比如ToB系统，运营类、管理类系统，一般可以使用</p>
+<p>高吞吐系统，如果是内存计算为主的，一般可以使用，如果是网络IO为主的，一般不能使用。</p>
+<h2 id="Reactor-Proactor"><a href="#Reactor-Proactor" class="headerlink" title="Reactor&amp;Proactor"></a>Reactor&amp;Proactor</h2><p>对于传统方式，显示只能适合常量连接常量请求，不能适应互联网场景</p>
+<p>如双十一场景下的海量连接海量请求；门户网站的海量连接常量请求；</p>
+<p>引入线程池也是一种手段，但也不能根本解决，如常量连接海量请求的中间件场景，线程虽然轻量但也有得消耗资源，终有上限</p>
+<p>Reactor，意为事件反应，操作系统的回调&#x2F;通知可以理解为一个事件，当事件发生时，进程&#x2F;线程对该事件作出反应。Reactor模式也称作Dispatcher模式，即I&#x2F;O多路复用统一监听事件，收到事件后分配（Dispatch）给某个进程&#x2F;线程。</p>
+<p>可以看到，I&#x2F;O多路复用技术是Reactor的核心，本质是将I&#x2F;O操作给剥离出具体的业务进程&#x2F;线程，从而能够进行统一管理，使用select&#x2F;epoll去同步管理I&#x2F;O连接。</p>
+<p>Reactor模式的核心分为Reactor和处理资源池。Reactor负责监听和分配事件，池负责处理事件</p>
+<p>如何高性能呢？就得IO多路复用，配合上进程、线程组合，就有：</p>
+<ul>
+<li>单Reactor 单进程 &#x2F; 线程</li>
+<li>单Reactor 多线程</li>
+<li>多Reactor 单进程 &#x2F; 线程(此实现方案相比“单 Reactor单进程”方案，既复杂又没有性能优势，所以很少实际应用)</li>
+<li>多Reactor 多进程 &#x2F; 线程</li>
+</ul>
+<h3 id="单Reactor单线程"><a href="#单Reactor单线程" class="headerlink" title="单Reactor单线程"></a>单Reactor单线程</h3><p><img src="http://images.zhuxingsheng.com/20210418214552_1618753552.jpg"></p>
+<p>在这种模式中，Reactor、Acceptor和Handler都运行在一个线程中</p>
+<p>单 Reactor 单进程的模式优点就是很简单，没有进程间通信，没有进程竞争，全部都在同一个进程内完成。</p>
+<p>但其缺点也是非常明显，具体表现有：</p>
+<ul>
+<li>只有一个进程，无法发挥多核 CPU 的性能；只能采取部署多个系统来利用多核 CPU，但这样会带来运维复杂度，本来只要维护一个系统，用这种方式需要在一台机器上维护多套系统。</li>
+<li>Handler 在处理某个连接上的业务时，整个进程无法处理其他连接的事件，很容易导致性能瓶颈</li>
+</ul>
+<p>因此，单 Reactor 单进程的方案在实践中应用场景不多，只适用于业务处理非常快速的场景，目前比较著名的开源软件中使用单 Reactor 单进程的是 Redis</p>
+<p>在redis中如果value比较大，redis的QPS会下降得很厉害，有时一个大key就可以拖垮</p>
+<p>现在redis6.0版本后，已经变成多线程模型，对于大value的删除性能就提高了</p>
+<h3 id="单Reactor多线程"><a href="#单Reactor多线程" class="headerlink" title="单Reactor多线程"></a>单Reactor多线程</h3><p><img src="http://images.zhuxingsheng.com/20210418214622_1618753582.jpg"></p>
+<p>在这种模式中，Reactor和Acceptor运行在同一个线程，而Handler只有在读和写阶段与Reactor和Acceptor运行在同一个线程，读写之间对数据的处理会被Reactor分发到线程池中</p>
+<p>单Reator多线程方案能够充分利用多核多 CPU的处理能力，但同时也存在下面的问题：</p>
+<ul>
+<li>多线程数据共享和访问比较复杂。例如，子线程完成业务处理后，要把结果传递给主线程的 Reactor 进行发送，这里涉及共享数据的互斥和保护机制。以 Java 的 NIO 为例，Selector 是线程安全的，但是通过 Selector.selectKeys() 返回的键的集合是非线程安全的，对 selected keys 的处理必须单线程处理或者采取同步措施进行保护。</li>
+<li>Reactor 承担所有事件的监听和响应，只在主线程中运行，瞬间高并发时会成为性能瓶颈</li>
+</ul>
+<h3 id="多Reactor多线程"><a href="#多Reactor多线程" class="headerlink" title="多Reactor多线程"></a>多Reactor多线程</h3><p>为了解决单 Reactor 多线程的问题，最直观的方法就是将单Reactor改为多Reactor</p>
+<p><img src="http://images.zhuxingsheng.com/20210418214649_1618753609.jpg"></p>
+<p>目前著名的开源系统 Nginx 采用的是多Reactor多进程，采用多Reactor多线程的实现有 Memcache 和 Netty</p>
+<p>使用5W根因分析法(它又叫 5Why 分析法或者丰田五问法,具体是重复问五次“为什么”)检查一下对这块知识的学习程度</p>
+<blockquote>
+<p>问题 1：为什么 Netty 网络处理性能高？</p>
+</blockquote>
+<blockquote>
+<p>答：因为 Netty 采用了 Reactor 模式 </p>
+</blockquote>
+<blockquote>
+<p>问题 2：为什么用了 Reactor 模式性能就高？</p>
+</blockquote>
+<blockquote>
+<p>答：因为 Reactor 模式是基于 IO 多路复用的事件驱动模式。 </p>
+</blockquote>
+<blockquote>
+<p>问题 3：为什么 IO 多路复用性能高？</p>
+</blockquote>
+<blockquote>
+<p>答：因为 IO 多路复用既不会像阻塞 IO 那样没有数据的时候挂起工作线程，也不需要像非阻塞 IO 那样轮询判断是否有数据。 </p>
+</blockquote>
+<blockquote>
+<p>问题 4：为什么 IO 多路复用既不需要挂起工作线程，也不需要轮询？</p>
+</blockquote>
+<blockquote>
+<p>答：因为 IO 多路复用可以在一个监控线程里面监控很多的连接，没有 IO 操作的时候只要挂起监控线程；只要其中有连接可以进行 IO 操作的时候，操作系统就会唤起监控线程进行处理。 </p>
+</blockquote>
+<blockquote>
+<p>问题 5：那还是会挂起监控线程啊，为什么这样做就性能高呢？</p>
+</blockquote>
+<blockquote>
+<p>答：首先，如果采取阻塞工作线程的方式，对于 Web 这样的系统，并发的连接可能几万十几万，如果每个连接开一个线程的话，系统性能支撑不了；而如果用线程池的话，因为线程被阻塞的时候是不能用来处理其他连接，会出现等待线程的问题。其次，线上单个系统的工作线程数配置可以达到几百上千，这样数量的线程频繁切换会有性能问题，而单个监控线程切换的性能影响可以忽略不计。第三，工作线程没有 IO 操作的时候可以做其他事情，能够大大提升系统的整体性能。</p>
+</blockquote>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://www.cnblogs.com/f-ck-need-u/p/7624733.html">五种IO模型透彻分析</a></p>
+<p><a href="https://www.cnblogs.com/sheng-jie/p/how-much-you-know-about-io-models.html">IO模型</a></p>
+<p><a href="http://gee.cs.oswego.edu/dl/cpjslides/nio.pdf">Scalable IO in Java</a></p>
+<p>《从零开始学架构》</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/programmer-growth-rank.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/programmer-growth-rank.html" class="post-title-link" itemprop="url">程序员成长职级</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-04-02 18:25:00" itemprop="dateCreated datePublished" datetime="2021-04-02T18:25:00+08:00">2021-04-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>之前与老同事叙旧，一同事讲起现在公司在压缩人员，另一同事马上讲谁让你们把系统搞得那么好，几年都出不了个二级Bug，想想真是悲壮</p>
+<p>有时想程序员这群可爱的人，自命清高，但不过是群工具人而已；技术人特别像古时的武将，君主开疆拓土时，那真是座上宾，可一旦休战，杯酒释兵权都是佳话</p>
+<p>习武之人有三重境界，见自己，见天地，见众生；这三重境界很适合技术人</p>
+<p>对于程序员，很多人都梦想成长一名架构师，程序员怎么成长，在成长的途径中，要打哪些怪，经验值怎么分布，知道这些后，就能有的放矢</p>
+<p>最近听了阿里P9关于架构师成长之路，我特地记录一下，对照一下自己的成长</p>
+<h1 id="职级"><a href="#职级" class="headerlink" title="职级"></a>职级</h1><p><strong>整体打怪升级路径：工程师 - 高级工程师 - 技术专家 - 初级架构师 - 中级架构师 - 高级架构师</strong></p>
+<h2 id="工程师P5（1-3年）"><a href="#工程师P5（1-3年）" class="headerlink" title="工程师P5（1~3年）"></a>工程师P5（1~3年）</h2><p>特点：求指导</p>
+<p>重点：基础（环境、工具、流程）</p>
+<p>技巧与误区：</p>
+<ol>
+<li>碎片化时间，系统化学习</li>
+<li>经典书籍系统学习：运行环境、编程语言、网络基础</li>
+<li>三大坑：编译原理，XXX内核代码、XX算法代码</li>
+</ol>
+<p><strong>要想打好基础能力，首先要明确什么才是真正的“基础能力”。我的观点是“基础能力是指工作任务相关的基础能力，不是整个计算机技术的基础能力”，核心就是“工作相关”，千万不要单纯照搬别人口中的基础能力</strong></p>
+<h2 id="高级工程师P6（2-5年）"><a href="#高级工程师P6（2-5年）" class="headerlink" title="高级工程师P6（2~5年）"></a>高级工程师P6（2~5年）</h2><p>特点：独挡一面（从需求设计到设计，编码完成整个流程）</p>
+<p>重点：积累经验（业务、套路【缓存，分库分表】、原理【redis,netty,看源码主要是了解怎么实现】）</p>
+<p>技巧与误区：</p>
+<ol>
+<li>掌握基础原理：JVM，开源软件等</li>
+<li>学习套路：分库分表、缓存、SOLID、设计模式、MVP等</li>
+<li>贪大求全，看了很多，但都是蜻蜓点水</li>
+</ol>
+<h2 id="技术专家P7（4-8年）"><a href="#技术专家P7（4-8年）" class="headerlink" title="技术专家P7（4~8年）"></a>技术专家P7（4~8年）</h2><p>特点：领域专家</p>
+<p>重点：技术深度+宽度(深度【不仅知道reactor,还得知道怎么实现，redis与netty的reactor有什么区别】、全面、业界)</p>
+<p>技巧与误区：</p>
+<ol>
+<li>熟悉核心源码：成熟的开源软件，Memcache、Redis、Nginx、Netty等</li>
+<li>业界交流：参加技术大会，关注大厂技术</li>
+<li>生搬硬套，直接拷贝大厂技术，以防水土不服</li>
+</ol>
+<h2 id="初级架构师P8（5-10年）"><a href="#初级架构师P8（5-10年）" class="headerlink" title="初级架构师P8（5~10年）"></a>初级架构师P8（5~10年）</h2><p>特点：构建普通系统【指导20人内开发的系统】</p>
+<p>重点：方法论(复杂度驱动，风险驱动，领域驱动)</p>
+<p>技巧与误区：</p>
+<ol>
+<li>架构对比：Redis vs Memcache,Nginx vs Apache,Vue vs React等</li>
+<li>架构重构：尝试去重构已有的系统</li>
+<li>过分依赖以往成功经验</li>
+</ol>
+<h2 id="中级架构师P9（8-年）"><a href="#中级架构师P9（8-年）" class="headerlink" title="中级架构师P9（8+年）"></a>中级架构师P9（8+年）</h2><p>特点：构建复杂系统【100人开发的系统】</p>
+<p>重点：技术本质</p>
+<ol>
+<li>理论：CAP</li>
+<li>算法：如Flink算法原理</li>
+<li>原理：cpu cache line</li>
+</ol>
+<p>技巧与误区：</p>
+<ol>
+<li>技术理论：CAP、BASE\分布式快照算法等</li>
+<li>技术原理：磁盘(kaffa)、CPU和内存(Disruptor)等</li>
+<li>好大喜功，过度设计，炫技式设计</li>
+</ol>
+<h2 id="高级架构师P10（10-年）"><a href="#高级架构师P10（10-年）" class="headerlink" title="高级架构师P10（10+年）"></a>高级架构师P10（10+年）</h2><p>特点：可以创建架构模式，如google大数据三大论文</p>
+<p>重点：创造</p>
+<ol>
+<li>业务</li>
+<li>技术</li>
+<li>文化</li>
+</ol>
+<hr>
+<p>从这个职级年限看，我这天赋太一般，职场规划也不行，现在大厂已经壮大，量级巨大，获取知识途径也更方便更多，所以对于当今程序员需要了解的知识面也更广更深，如果说以前北大青岛之类拉低了java程序员的门槛，那现在一些知识平台拉大程序员间的差距，不学则退</p>
+<h1 id="晋升"><a href="#晋升" class="headerlink" title="晋升"></a>晋升</h1><p>了解程序员进阶title之后，后面就是了解怎么能晋升，最好能快速晋升</p>
+<h2 id="三大原则"><a href="#三大原则" class="headerlink" title="三大原则"></a>三大原则</h2><h4 id="一、主动原则：主动做事"><a href="#一、主动原则：主动做事" class="headerlink" title="一、主动原则：主动做事"></a>一、主动原则：主动做事</h4><p>主动规划工作任务，不能一味服从命令听指挥，领导指哪打哪，成为职场工具人</p>
+<p>主动跟别人了解更信息，不只是做好自己本职工作，还了解业务上下游，业务价值、上线后效果、没有达到预期的原因、机房部署</p>
+<h4 id="二、成长原则：不断挖掘成长点"><a href="#二、成长原则：不断挖掘成长点" class="headerlink" title="二、成长原则：不断挖掘成长点"></a>二、成长原则：不断挖掘成长点</h4><p>误区：以为事情做得多，自然就能晋升；以为事情做得好，自然就晋升，把任务做完，保证效率和质量，拿到好绩效，但不一定晋升，因为不同级别的能力要求是有本质的区别的，而不仅仅是熟练度的区别，把事情做好，只能说明你已经熟练掌握当前级别所要求的能力，但并不一定意味着你的能力就自动达到下一职级的要求</p>
+<p><strong>不管事情做好了还是没有做好，都应该多做复盘总结，找到可以提升优化的点</strong></p>
+<h4 id="三、价值原则：学习为公司产出价值的技能"><a href="#三、价值原则：学习为公司产出价值的技能" class="headerlink" title="三、价值原则：学习为公司产出价值的技能"></a>三、价值原则：学习为公司产出价值的技能</h4><p>公司设计职级体系的初衷，是为了衡量不同员工的能力级别，然后根据级别来制定相应的薪酬、福利、管理等制度，同时鼓励员工尽量提升自己的能力，为公司产出更大的价值</p>
+<p><strong>让能力为公司产出价值的人，比空有一身能力的人更容易晋升，优先学能为公司产出价值的技能</strong></p>
+<h2 id="晋升逻辑"><a href="#晋升逻辑" class="headerlink" title="晋升逻辑"></a>晋升逻辑</h2><p>绩效关注的是业务结果，晋升关注的是能力提升；除了达到上述每个职级的技能要求，还有以下两条晋升逻辑</p>
+<h4 id="第一条逻辑：提前做下一级别的事"><a href="#第一条逻辑：提前做下一级别的事" class="headerlink" title="第一条逻辑：提前做下一级别的事"></a>第一条逻辑：提前做下一级别的事</h4><p>其实职级与本身能力是否匹配，有很多条件，就像你的薪资是否匹配当前能力一样，很难完美匹配，大多时候都是能力超过应有的福利；很多时候你的能力回报通常在下一份工作中兑现</p>
+<p>职级也一样，当你做了下一次职级的事情，就更有机会晋升</p>
+<h4 id="第二条逻辑：做好当前级别的事"><a href="#第二条逻辑：做好当前级别的事" class="headerlink" title="第二条逻辑：做好当前级别的事"></a>第二条逻辑：做好当前级别的事</h4><p>由第一条逻辑引出捷径：晋升通过之后，立刻跟主管要求安排下一级别的工作来快速晋升，但在能胜任下一级别工作前，必须先做好当前级别的事</p>
+<p>任何级别都有三层水平：基础、熟练和精通</p>
+<p>基础意味着会做，标志是能够独立完成；熟练意味着做好，标志是掌握最佳实践；精通意味着优化，标志是创造新的经验</p>
+<h2 id="晋升步骤"><a href="#晋升步骤" class="headerlink" title="晋升步骤"></a>晋升步骤</h2><ol>
+<li>按照晋升原则的指导，在当前级别拿到好结果，为公司创造价值，同时把当前级别要求的能力提升到精通程度，成为晋升备选人</li>
+<li>到了精通程度，对照下一级别要求提升自己能力，为可能的晋升做好准备</li>
+<li>主动寻找工作机会，尝试做下一级别事情，继续拿到好的结果，向主管证明具备下一级的能力</li>
+<li>拿到工作结果申请晋升，介绍做过的事情，展示相关能力和结果，证明自己具备了下一级别要求能力</li>
+</ol>
+<hr>
+<p>现在都讲究终身学习，学习为了什么？不是为了学习而学习，更多的是为了成长，如果只是一味地完成职场岗位本职工作，只能永远是棵随时被替换的螺丝钉，我们最根本的目标是成长，通过职场工作提升自己，成长自己。也许你很不屑晋升，认为那有很多厚黑学，但它是成长的催化剂，更与自己身利益息息相关，以终为始，事半功倍</p>
+<p><img src="http://images.zhuxingsheng.com/20210402091023_1617325823.jpg"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ddd-repository.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/ddd-repository.html" class="post-title-link" itemprop="url">DDD之Repository</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-03-20 20:17:00" itemprop="dateCreated datePublished" datetime="2021-03-20T20:17:00+08:00">2021-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>之前的DDD文章中也指出过，现在从理论角度对于repository是错误，但一直没有摸索出最佳实践，都是当DAO使用，区别在于repository是领域层，也没有深入思考过</p>
+<p>最近再次温习《DDD第二弹》时，看到了这个评论</p>
+<p><img src="http://images.zhuxingsheng.com/20210308140145_1615183305.jpg"></p>
+<p><strong>domain service不应该直接调用repository</strong>，这打破了我对repository的认知，对此让我不得不纠结一下repository,在之前的学习中，从没有听到此规则，repository与domain service都是领域层的，为什么两都不能相互调用呢？</p>
+<p>从源头重新梳理一下repository的知识，重新翻阅Eric Evans的《领域驱动设计》和Vaughn Vernon的《实现领域驱动设计》</p>
+<h1 id="repository"><a href="#repository" class="headerlink" title="repository"></a>repository</h1><p>repository是在《领域驱动设计》第六章领域对象的生命周期提出</p>
+<p><img src="http://images.zhuxingsheng.com/20210308133647_1615181807.jpg"></p>
+<blockquote>
+<p>factory用来创建领域对象，而repository就是在生命周期的中间和末尾使用，来提供查找和检索持久化对象并封装庞大基础设施的手段</p>
+</blockquote>
+<p>这句话就把repository的职责讲清楚了：</p>
+<ol>
+<li>提供查找和检索对象</li>
+<li>协调领域和数据映射层</li>
+</ol>
+<p>在现有技术范畴中，都使用DAO方式，为什么还需要引入repository呢？</p>
+<blockquote>
+<p>尽管repository和factory本身并不是来源于领域，但它们在领域设计中扮演着重要的角色。这些结构提供了易于掌握的模型对象处理方式，使model-driven design更完备</p>
+</blockquote>
+<blockquote>
+<p>领域驱动设计的目标是通过关注领域模型(而不是技术)来创建更好的软件。假设开发人员构造了一个SQL查询，并将它传递给基础设施层中的某个查询服务，然后再根据得到的表行数据的结果集提取出所需信息，最后将这些信息传递给构造函数或factory。开发人员执行这一连串操作的时候，早已不再把模型当作重点了。我们很自然地会把对象看作容器来放置查询出来的数据，这样整个设计就转向了数据处理风格。虽然具体的技术细节有所不同，但问题仍然存在–客户处理的是技术，而不是模型概念</p>
+</blockquote>
+<p>在DDD思想中，领域模型是最重要的，所有的一切手段都是为了让团队专注于模型，屏蔽一切非模型的技术细节，这样也才能做到通用语言，交流的都是模型</p>
+<h1 id="VS-DAO"><a href="#VS-DAO" class="headerlink" title="VS DAO"></a>VS DAO</h1><p>有人总结<strong>DDD就是分与合，分是手段、合是目的</strong>；对于DDD战略来讲，就是通过分来形成各个上下文界限，在各个上下文中，再去合，很类似归并算法</p>
+<p>而聚合就是最小的合，repository相对dao，是来管理聚合，管理领域对象生命周期</p>
+<ol>
+<li>为客户提供简单的模型，可用来获取持久化对象并管理生命周期</li>
+<li>使应用程序和领域设计与持久化技术（多种数据库策略甚至是多个数据源）解耦</li>
+<li>体现对象访问的设计决策</li>
+<li>可以很容易将它们替换为“哑实现”，以便在测试中使用（通常使用内存中的集合）</li>
+</ol>
+<hr>
+<p>而DAO的核心价值是封装了拼接SQL、维护数据库连接、事务等琐碎的底层逻辑，让业务开发可以专注于写代码。但是在本质上，DAO的操作还是数据库操作，DAO的某个方法还是在直接操作数据库和数据模型，只是少写了部分代码,并且可以操作任意表对象；在Uncle Bob的《代码整洁之道》一书里，作者用了一个非常形象的描述：</p>
+<ul>
+<li><strong>硬件（Hardware）</strong>：指创造了之后不可（或者很难）变更的东西。数据库对于开发来说，就属于”硬件“，数据库选型后基本上后面不会再变，比如：用了MySQL就很难再改为MongoDB，改造成本过高。</li>
+<li><strong>软件（Software）</strong>：指创造了之后可以随时修改的东西。对于开发来说，业务代码应该追求做”软件“，因为业务流程、规则在不停的变化，我们的代码也应该能随时变化。</li>
+<li><strong>固件（Firmware）</strong>：即那些强烈依赖了硬件的软件。我们常见的是路由器里的固件或安卓的固件等等。固件的特点是对硬件做了抽象，但仅能适配某款硬件，不能通用。所以今天不存在所谓的通用安卓固件，而是每个手机都需要有自己的固件。</li>
+</ul>
+<p>从上面的描述我们能看出来，数据库在本质上属于”硬件“，DAO 在本质上属于”固件“，而我们自己的代码希望是属于”软件“。但是，固件有个非常不好的特性，那就是会传播，也就是说当一个软件强依赖了固件时，由于固件的限制，会导致软件也变得难以变更，最终让软件变得跟固件一样难以变更</p>
+<p>举个软件很容易被“固化”的例子：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">private OrderDAO orderDAO;</span><br><span class="line">public Long addOrder(RequestDTO request) &#123;</span><br><span class="line">    // 此处省略很多拼装逻辑</span><br><span class="line">    OrderDO orderDO = new OrderDO();</span><br><span class="line">    orderDAO.insertOrder(orderDO);</span><br><span class="line">    return orderDO.getId();</span><br><span class="line">&#125;</span><br><span class="line">public void updateOrder(OrderDO orderDO, RequestDTO updateRequest) &#123;</span><br><span class="line">    orderDO.setXXX(XXX); // 省略很多</span><br><span class="line">    orderDAO.updateOrder(orderDO);</span><br><span class="line">&#125;</span><br><span class="line">public void doSomeBusiness(Long id) &#123;</span><br><span class="line">    OrderDO orderDO = orderDAO.getOrderById(id);</span><br><span class="line">    // 此处省略很多业务逻辑</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在上面的这段简单代码里，该对象依赖了DAO，也就是依赖了DB。虽然乍一看感觉并没什么毛病，但是假设未来要加一个缓存逻辑，代码则需要改为如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">private OrderDAO orderDAO;</span><br><span class="line">private Cache cache;</span><br><span class="line">public Long addOrder(RequestDTO request) &#123;</span><br><span class="line">    // 此处省略很多拼装逻辑</span><br><span class="line">    OrderDO orderDO = new OrderDO();</span><br><span class="line">    orderDAO.insertOrder(orderDO);</span><br><span class="line">    cache.put(orderDO.getId(), orderDO);</span><br><span class="line">    return orderDO.getId();</span><br><span class="line">&#125;</span><br><span class="line">public void updateOrder(OrderDO orderDO, RequestDTO updateRequest) &#123;</span><br><span class="line">    orderDO.setXXX(XXX); // 省略很多</span><br><span class="line">    orderDAO.updateOrder(orderDO);</span><br><span class="line">    cache.put(orderDO.getId(), orderDO);</span><br><span class="line">&#125;</span><br><span class="line">public void doSomeBusiness(Long id) &#123;</span><br><span class="line">    OrderDO orderDO = cache.get(id);</span><br><span class="line">    if (orderDO == null) &#123;</span><br><span class="line">        orderDO = orderDAO.getOrderById(id);</span><br><span class="line">    &#125;</span><br><span class="line">    // 此处省略很多业务逻辑</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这时，你会发现因为插入的逻辑变化了，导致在所有的使用数据的地方，都需要从1行代码改为至少3行。而当你的代码量变得比较大，然后如果在某个地方你忘记了查缓存，或者在某个地方忘记了更新缓存，轻则需要查数据库，重则是缓存和数据库不一致，导致bug。当你的代码量变得越来越多，直接调用DAO、缓存的地方越来越多时，每次底层变更都会变得越来越难，越来越容易导致bug。这就是软件被“固化”的后果。</p>
+<p>所以，我们需要一个模式，能够隔离我们的软件（业务逻辑）和固件&#x2F;硬件（DAO、DB），让我们的软件变得更加健壮，而这个就是Repository的核心价值</p>
+<hr>
+<p>这也是上面所述的第二点：协调领域和数据映射层</p>
+<p>如果说DAO是低层抽象，那么Repository是高层抽象，也更衬托出repository的本质：管理领域的生命周期，不管数据来源于何方，只要把聚合根完整地构建出来就可以</p>
+<h1 id="data-model与domain-model"><a href="#data-model与domain-model" class="headerlink" title="data model与domain model"></a>data model与domain model</h1><p>数据模型与领域模型，按照Robert在《整洁架构》里面的观点，领域模型是核心，数据模型是技术细节。然而现实情况是，二者都很重要</p>
+<p><img src="http://images.zhuxingsheng.com/20210318092459_1616030699.jpg"></p>
+<p><strong>数据模型负责的是数据存储，其要义是扩展性、灵活性、性能</strong></p>
+<p><strong>而领域模型负责业务逻辑的实现，其要义是业务语义显性化的表达，以及充分利用OO的特性增加代码的业务表征能力</strong></p>
+<h1 id="调用关系"><a href="#调用关系" class="headerlink" title="调用关系"></a>调用关系</h1><p>对于domain service不要调用repository，这个规则我不太明白，只能请教作者了，为什么要这样限制？ 作者回复：</p>
+<blockquote>
+<p>Domain Service是业务规则的集合，不是业务流程，所以Domain Service不应该有需要调用到Repo的地方。如果需要从另一个地方拿数据，最好作为入参，而不是在内部调用。DomainService需要是无状态的，加了Repo就有状态了。</p>
+</blockquote>
+<blockquote>
+<p>我一般的思考方式是：domainService是规则引擎，appService才是流程引擎。Repo跟规则无关</p>
+</blockquote>
+<p>业务规则与业务流程怎么区分？</p>
+<blockquote>
+<p>有个很简单的办法区分，业务规则是有if&#x2F;else的，业务流程没有</p>
+</blockquote>
+<p>作者这样回答，我还是觉得太抽象了，在domain service拿数据太常见，还在看DDD第四讲时，作者有个示例是用domain service直接调用repository的，以此为矛再次追问作者</p>
+<p><img src="http://images.zhuxingsheng.com/20210319162236_1616142156.jpg"></p>
+<p>这儿的domain service是直接使用repo的，如果里面的数据都使用入参，结构就有些怪啊</p>
+<blockquote>
+<p>在这个例子里确实是有点问题的（因为当时的关注点不是在这个细节上），一个更合理的方法是在AppService里查到Weapon，然后performAttack(Player, Monster, Weapon)。如果嫌多个入参太麻烦，可以封装一个AttackContext的集合对象。</p>
+</blockquote>
+<blockquote>
+<p>为什么要这么做？最直接的就是DomainService变得“无副作用”。如果你了解FP的话，可以认为他像一个pure function（当然只是像而已，本身不是pure的，因为会变更Entity，但至少不会有内存外的调用）。这个更多是一个选择，我更倾向于让DomainService无副作用（在这里副作用是是否有持久化的数据变更）。</p>
+</blockquote>
+<blockquote>
+<p>如果说Weapon无非是提供一些数据而已，那么我们假设扩展一下，每次attack都会降低Weapon的durability，那你在performAttack里面如果用了repo，是不是应该调用repo.save(weapon)？那为什么不直接在完成后直接用UserRepo.save(player)、MonsterRepo.save(monster)？然后再延伸一下，如果这些都做了，还要AppService干啥？这个Service到底是“业务规则”还是“业务流程”呢？</p>
+</blockquote>
+<blockquote>
+<p>从另一个角度来看，有的时候也不需要那么教条。DomainService不是完全不能用Repo，有时候一些复杂的规则肯定是要从”某个地方“拿数据的，特别是“只读”型的数据。但是我说DomainService不要调用repo时的核心思考是不希望大家在DomainService里有“副作用”。</p>
+</blockquote>
+<p>对于这种限制，我现在只能想到domain service要纯内存操作，不依赖repository可以提升可测试性</p>
+<h1 id="性能安全"><a href="#性能安全" class="headerlink" title="性能安全"></a>性能安全</h1><p>这是在落地时，很多人都会想到的问题</p>
+<h2 id="性能"><a href="#性能" class="headerlink" title="性能"></a>性能</h2><p>查询聚合与性能的平衡，比如Order聚合根，但有时只想查订单主信息，不需要明细信息，但repository构建Order都全部查出来了，怎么办？在《实现领域驱动设计》中，也是不推荐这么干的，使用延迟加载，很多人也觉得这应该是设计问题，不能依赖延迟加载</p>
+<p>对此问题请教了作者：</p>
+<blockquote>
+<p>在业务系统里，最核心的目标就是要确保数据的一致性，而性能（包括2次数据库查询、序列化的成本）通常不是大问题。如果为了性能而牺牲一致性，就是捡了芝麻漏了西瓜，未来基本上必然会触发bug。</p>
+</blockquote>
+<blockquote>
+<p>如果性能实在是瓶颈，说明你的设计出了问题，说明你的查询目标（主订单信息）和写入目标（主子订单集合）是不一致的。这个时候一个通常的建议是用CQRS的方式，Read侧读取的可能是另一个存储（可能是搜索、缓存等），然后写侧是用完整的Aggregate来做变更操作，然后通过消息或binlog同步的方式做读写数据同步。</p>
+</blockquote>
+<p>这也涉及到业务类型，比如电商，一个订单下的订单明细是很少量的，而像票税，一张巨额业务单会有很多很多的订单明细，真要构建一个完整的聚合根相当吃内存</p>
+<h3 id="对象追踪"><a href="#对象追踪" class="headerlink" title="对象追踪"></a>对象追踪</h3><p>repostiory都是操作的聚合根，每次保存保存大多只会涉及部分数据，所以得对变化的对象进行追踪</p>
+<p>《实现领域驱动设计》中提到两种方法：</p>
+<ol>
+<li>隐式读时复制（Implicit Copy-on-Read）[Keith &amp; Stafford]：在从数据存储中读取一个对象时，持久化机制隐式地对该对象进行复制，在提交时，再将该复制对象与客户端中的对象进行比较。详细过程如下：当客户端请求持久化机制从数据存储中读取一个对象时，该持久化机制一方面将获取到的对象返回给客户端，一方面立即创建一份该对象的备份（除去延迟加载部分，这些部分可以在之后实际加载时再进行复制）。当客户端提交事务时，持久化机制把该复制对象与客户端中的对象进行比较。所有的对象修改都将更新到数据存储中。</li>
+<li>隐式写时复制Implicit Copy-on-Write）[Keith &amp; Stafford]：持久化机制通过委派来管理所有被加载的持久化对象。在加载每个对象时，持久化机制都会为其创建一个微小的委派并将其交给客户端。客户端并不知道自己调用的是委派对象中的行为方法，委派对象会调用真实对象中的行为方法。当委派对象首次接收到方法调用时，它将创建一份对真实对象的备份。委派对象将跟踪发生在真实对象上的改变，并将其标记为“肮脏的”（dirty）。当事务提交时，该事务检查所有的“肮脏”对象并将对它们的修改更新到数据存储中。</li>
+</ol>
+<p>以上两种方式之间的优势和区别可能会根据具体情况而不同。对于你的系统来说，如果两种方案都存在各自的优缺点，那么此时你便需要慎重考虑了。当然，你可以选择自己最喜欢的方式，但是这不见得是最安全的选择。<br>无论如何，这两种方式都有一个相同的优点，即它们都可以隐式地跟踪发生在持久化对象中的变化，而不需要客户端自行处理。这里的底线是，持久化机制，比如Hibernate，能够允许我们创建一个传统的、面向集合的资源库。<br>另一方面，即便我们能够使用诸如Hibernate这样的持久化机制来创建面向集合的资源库，我们依然会遇到一些不合适的场景。如果你的领域对性能要求非常高，并且在任何一个时候内存中都存在大量的对象，那么持久化机制将会给系统带来额外的负担。此时，你需要考虑并决定这样的持久化机制是否适合于你。当然，在很多情况下，Hibernate都是可以工作得很好的。因此，虽然我是在提醒大家这些持久化机制有可能带来的问题，但这并不意味着你就不应该采用它们。对任何工具的使用都需要多方位权衡</p>
+<p>《DDD第二弹》中也提到 业界有两个主流的变更追踪方案：这两个方案只是上面两种方案另取的两外名字而已，意思是一样的</p>
+<ol>
+<li>基于Snapshot的方案：当数据从DB里取出来后，在内存中保存一份snapshot，然后在数据写入时和snapshot比较。常见的实现如Hibernate</li>
+<li>基于Proxy的方案：当数据从DB里取出来后，通过weaving的方式将所有setter都增加一个切面来判断setter是否被调用以及值是否变更，如果变更则标记为Dirty。在保存时根据Dirty判断是否需要更新。常见的实现如Entity Framework</li>
+</ol>
+<p>Snapshot方案的好处是比较简单，成本在于每次保存时全量Diff的操作（一般用Reflection），以及保存Snapshot的内存消耗。<br>Proxy方案的好处是性能很高，几乎没有增加的成本，但是坏处是实现起来比较困难，且当有嵌套关系存在时不容易发现嵌套对象的变化（比如子List的增加和删除等），有可能导致bug。</p>
+<p>由于Proxy方案的复杂度，业界主流（包括EF Core）都在使用Snapshot方案。这里面还有另一个好处就是通过Diff可以发现哪些字段有变更，然后只更新变更过的字段，再一次降低UPDATE的成本。</p>
+<h2 id="安全"><a href="#安全" class="headerlink" title="安全"></a>安全</h2><p>设计聚合时，聚合要小，一是事务考虑，二是安全性考虑。当并发高时，对聚合根操作时，都需要增加乐观锁</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://blog.csdn.net/significantfrank/article/details/112570279">一文教你认清领域模型和数据模型</a></p>
+<p><a href="https://mp.weixin.qq.com/s/1bcymUcjCkOdvVygunShmw">第三讲 - Repository模式</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/java-exception-practice.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/java-exception-practice.html" class="post-title-link" itemprop="url">Java异常实践</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-03-16 22:22:00" itemprop="dateCreated datePublished" datetime="2021-03-16T22:22:00+08:00">2021-03-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>对于Java理论在<a href="http://www.zhuxingsheng.com/blog/java-exception-handling.html">《Java异常处理》</a>中已经阐述了，看看理论如何指导落地</p>
+<p>现流行的文章SpringBoot如何优雅处理异常，落地的确方便，使用AOP统一处理异常，但只是处理了api层次的异常</p>
+<p>应用中抛出异常有两种方式：</p>
+<ol>
+<li>带有ErrorCode的异常</li>
+<li>明确类型的异常</li>
+</ol>
+<p>对于controller层，也是面向用户的，需要error code,所以采用第一种方式</p>
+<p>前端通过映射关系给出更好用户体验的提示语，也有很多项目都是controller层直接拼接出提示语，前端直接展示</p>
+<p>所以一般会定义一个接口ErrorCode</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">interface ErrorCode &#123;</span><br><span class="line">    String getErrorCode();</span><br><span class="line">    String getMessage();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>具体的实现可以通过enum</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">@Getter</span><br><span class="line">enum ApiErrorCode implements ErrorCode &#123;</span><br><span class="line">    </span><br><span class="line">    USER_NOT_FOUND(&quot;10000&quot;,&quot;用户不存在&quot;);</span><br><span class="line">    </span><br><span class="line">    private String errorCode;</span><br><span class="line">    private String message;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>再定义一个统一异常</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">public class ApiException extends RuntimeException &#123;</span><br><span class="line"></span><br><span class="line">    public ApiException(ErrorCode errorCode) &#123;</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在aop拦截时，直接拦截此异常就行</p>
+<p>api层次的异常可以这么处理，那业务层呢？很多时候都是缺失设计的，这也在上篇说过exception从语法层面看很简单，但要设计一个好的异常是很难的</p>
+<p>大多项目直接把api exception拿来当做business exception使用</p>
+<p>对于一个良好的业务接口，应该采用第二种方法：细致的异常</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User login(String username, String password) throws UserNotFoundException, PasswordNotMatchException; </span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>已检查异常要比错误返回码（许多老式的语言中使用）好很多。迟早（或许不久），人们将不能检查一个错误返回值；使用编译程序来实施正确的错误处理是一件好事。同参数与返回值一样，这样的已检查异常对一个对象的API来说是整体的一个不可分割部分</p>
+</blockquote>
+<p>这样的接口更丰富，也更面向对象，可也给客户端带来的麻烦,缺点在上篇已经阐述</p>
+<blockquote>
+<p>对可恢复的情况使用已检查异常，对程序错误使用运行时异常</p>
+</blockquote>
+<p>在大多项目中，其实业务层抛出异常后，通常会“可恢复”吗？大多数情况也需要用户手工干预，系统无法自行恢复，比如UserNotFoundException, PasswordNotMatchException系统能怎么处理，无非还是得给用户重新输入用户名和密码</p>
+<p>在controller层去调用service方法，也只能如此处理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Response login(String username,String password) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        userService.login(username,password);</span><br><span class="line">    &#125;catch(UserNotFoundException ue) &#123;</span><br><span class="line">        throw new ApiException(ApiErrorCode.USER_NOT_FOUND);</span><br><span class="line">    &#125;catch(PasswordNotMatchException pe)&#123;</span><br><span class="line">        throw new ApiException(ApiErrorCode.Password_Not_Match);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这样处理也就理论化了，带来了多少优点呢？这些缺点不正是checked exception被嘟囔的地方吗</p>
+<p>那我们把业务异常也定义为runtime exception,这样减少客户端压力，想处理就处理，不想处理，我们也可在拦截器中兜底</p>
+<p>不过抛出运行期异常，减少客户端的压力，但也带来了接口不明确的困惑</p>
+<blockquote>
+<p>非检查型异常的最大风险之一就是它并没有按照检查型异常采用的方式那样自我文档化。除非 API 的创建者明确地文档化将要抛出的异常，否则调用者没有办法知道在他们的代码中将要捕获的异常是什么</p>
+</blockquote>
+<p>总结起来，还是那句话，异常语法很简单，但设计好异常不易；现在技术快速发展，通过技术手段可以达到更大的便捷性，但不能只有技术手段而忽略设计，没有设计的代码称不上好代码，可以取舍，但不能全舍</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/java-exception-handling.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/java-exception-handling.html" class="post-title-link" itemprop="url">Java异常处理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-03-15 10:16:00" itemprop="dateCreated datePublished" datetime="2021-03-15T10:16:00+08:00">2021-03-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Java异常，本身知识体系很简单，但要设计好异常，却不是易事</p>
+<p>Java异常如何使用，尤其checked exception,好些语言（c#,python）都没有此类型异常，只有unchecked exception；对于java为什么有checked exception,是不是设计过渡，在java初期被讨论了很多回，以及如何使用异常也被讨论了很多次，最近我在落地DDD时，又思考到此问题，不得不再翻回这个老问题，翻阅《Effective java》、《J2EE设计开发编程指南》这些经典</p>
+<p>按普世标准，处理异常最佳实践有：</p>
+<ul>
+<li>【强制】异常不要用来做流程控制，条件控制。说明：异常设计的初衷是解决程序运行中的各种意外情况，且异常的处理效率比条件判断方式要低很多</li>
+<li>异常应该只用于异常的情况下：它们永远不应该用于正常的控制流，设计良好的API不应该强迫它的客户端为了正常的控制流而使用异常</li>
+<li>对可恢复情况使用受检异常，对编程错误使用运行时异常</li>
+<li>抛出与抽象相对应的异常</li>
+<li>每个方法抛出的异常都要有文档</li>
+<li>优先使用标准异常</li>
+</ul>
+<hr>
+<p>再来看看前人的论述：</p>
+<p>在使用UseCase来描述一个场景的时候，有一个主事件流和n个异常流。异常流可能发生在主事件流的过程，而try语句里面实现的是主事件流，而catch里面实现的是异常流，在这里Exception不代表程序出现了异常或者错误，Exception只是面向对象化的业务逻辑控制方法。如果没有明白这一点，那么我认为并没有真正明白应该怎么使用Java来正确的编程。</p>
+<p>而我自己写的程序，会自定义大量的Exception类，所有这些Exception类都不意味着程序出现了异常或者错误，只是代表非主事件流的发生的，用来进行那些分支流程的流程控制的。例如你往权限系统中增加一个用户，应该定义1个异常类，UserExistedException，抛出这个异常不代表你插入动作失败，只说明你碰到一个分支流程，留待后面的catch中来处理这个分支流程。<strong>传统的程序员会写一个if else来处理，而一个合格的OOP程序员应该有意识的使用try catch 方式来区分主事件流和n个分支流程的处理，通过try catch，而不是if else来从代码上把不同的事件流隔离开来进行分别的代码撰写</strong></p>
+<p><strong>很多人喜欢定义方法的返回类型为boolean型的，当方法正确执行，没有出错的时候返回true，而方法出现出现了问题，返回false。这在Java编程当中是大错而特错的！</strong></p>
+<p>方法的返回值只意味着当你的方法调用要返回业务逻辑的处理结果的。如果业务逻辑不带处理结果，那么就是void的，不要使用返回值boolean来代表方法是否正确执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">boolean login(String username, String password);</span><br></pre></td></tr></table></figure>
+
+<p>很多人喜欢用boolean返回，如果是true，就是login了，如果false就是没有登陆上。其实是错误的。还有的人定义返回值为int型的，例如如果正确返回就是0，如果用户找不到就是-1，如果密码不对，就是-2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int login(String username, String password);</span><br></pre></td></tr></table></figure>
+
+<p>然后在主程序里面写一个if else来判断不同的流程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">int logon = UserManager.login(xx,xx);;  </span><br><span class="line"> if (logon ==0); &#123;  </span><br><span class="line">...  </span><br><span class="line">&#125; else if (logon == 1); &#123;  </span><br><span class="line">...  </span><br><span class="line">&#125; else if (logon ==2); &#123;  </span><br><span class="line">..&#125;  </span><br></pre></td></tr></table></figure>
+
+<p>这是面向过程的编程逻辑，不是面向对象的编程逻辑。</p>
+<p>应该这样来写：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User login(String username, String password); throws UserNotFoundException, PasswordNotMatchException; </span><br></pre></td></tr></table></figure>
+
+<p>主程序这样写：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">try &#123;  </span><br><span class="line">  UserManager.login(xx,xx);;  </span><br><span class="line">....   </span><br><span class="line">用户登陆以后的主事件流代码  </span><br><span class="line">  </span><br><span class="line">&#125; catch (UserNotFoundException e); &#123;  </span><br><span class="line">  </span><br><span class="line">...  </span><br><span class="line">  </span><br><span class="line">用户名称没有的事件处理，例如产生一个提示用户注册的页面  </span><br><span class="line">  </span><br><span class="line">&#125; catch (PasswordNotMatchException e); &#123;  </span><br><span class="line">  </span><br><span class="line">....  </span><br><span class="line">  </span><br><span class="line">密码不对的事件处理，例如forward到重新登陆的页面  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>看到这个示例，似乎明显违背了最佳实践的第一条：不要用来流程控制</p>
+<p>如果这不是流程控制，那这种写法与流程控制有什么区别呢？再进一步，什么时候使用异常呢？</p>
+<h1 id="什么时候使用异常"><a href="#什么时候使用异常" class="headerlink" title="什么时候使用异常"></a>什么时候使用异常</h1><p>在异常最佳实践中：异常只用于异常情况下！</p>
+<p>需要捕捉的异常也有两种，一种是自己的程序抛出的，一种是系统抛出的</p>
+<p>什么叫做程序抛出的异常，什么叫做系统抛出的异常，你能明确界定吗？FileNotFoundException你说算是系统异常呢？还是程序异常？站在某些程序员的角度，他会觉得是系统异常，不过像我喜欢看JDK源代码的人来说，我对Sun的程序什么情况下抛出FileNotFoundException很清楚，这些代码对我来说，和我自己写的代码能有什么不同吗？对我来说，FileNotFoundException就是程序异常。既然JDK可以抛出异常，凭什么我就不能抛出异常？</p>
+<p>站在底层程序员的角度来看，根本没有什么系统异常可言，否则的话，还不如不要定义任何异常得了，干脆就是函数调用返回值，你说为什么Sun不定义0，1，2这样的返回值，而是抛出异常呢？Java程序无非就是一堆class，JDK的class可以抛异常，我写的class为什么不能抛出？</p>
+<p>异常不异常的界定取决于你所关注的软件层面，例如你是应用软件开发人员，你关心的是业务流程，那么你就应该捕获业务层异常，你就应该定义业务层异常，向上抛出业务层异常。如果是底层程序员，你就应该定义和抛出底层异常。要不要抛出异常和抛出什么异常取决你站在什么软件层面了，离开这个前提，空谈异常不异常是没有意义的</p>
+<blockquote>
+<p>因为0,1,2这样的值表达的含义不够丰富，但是作为返回值，又不合理。<br>————函数有它的本身的返回值。</p>
+</blockquote>
+<p>因此，返回一个异常，其实就是一个封装完好的，返回的对象。这个对象Type不是在函数名的前面说明，而是在一个更加特别的地方，函数的后面说明。这就是异常的本质————非正常的返回值。这个返回值，为什么不能用传统的方法处理呢？因为Object x&#x3D;method();表明它只能接受某一个特定的对象，如果出现Exception的对象，就会报错。因此需要catch来接手处理这样的返回值。</p>
+<h1 id="checked与unchecked选择"><a href="#checked与unchecked选择" class="headerlink" title="checked与unchecked选择"></a>checked与unchecked选择</h1><p>对于何时抛出异常，上面的论述大致已经清楚，使用Exception的关键是，你站在什么样的角度来看这个问题，这也得看大家对异常写法的习惯，异常并不只是单单的异常，在OO中，异常也是方法返回值的一部分</p>
+<p>Java正统观点认为：已检查异常应该是标准用法，运行时异常表明编程错误，这也正如上面的例子，方法申明异常表明了有这些异常情况，那业务调用方需要考虑这些情况，但是检查异常引起了几个问题</p>
+<ol>
+<li>太多的代码：开发人员将会因为不得不捕捉他们无法合理地处理的已检查异常（属于“某个东西出了可怕错误”种类）并编写忽略（忍受）它们的代码而感到无力。</li>
+<li>难以读懂的代码：捕捉不能被正确地处理的异常并重新抛出它们没有执行一点有用的功能，反而会使查找实际做某件事的代码变得更困难</li>
+<li>异常的无休止封装：一个已检查异常要么必须被捕捉，要么必须在一个遇到它的那个方法的抛出子句中被声明。这时要么重新抛出数量不断增长的异常，或者说捕捉低级异常，要么重新抛出被封装在一个较高级的新异常中的它们</li>
+<li>易毁坏的方法签名</li>
+<li>已检查异常对接口不一定管用</li>
+</ol>
+<p>异常受检的本质并没有为程序员提供任何好处，它反而需要付出努力，还使程序更为复杂</p>
+<p>被一个方法单独抛出的受检异常，会给程序员带 来非常高的额外负担。如果这个方法还有其他的受检异常，它被调用的时候一定已经出现在一个try块中，所以这个异常只需要别外一个catch块</p>
+<p>非检查型异常的最大风险之一就是它并没有按照检查型异常采用的方式那样自我文档化。除非 API 的创建者明确地文档化将要抛出的异常，否则调用者没有办法知道在他们的代码中将要捕获的异常是什么</p>
+<p>Rod Johnson采取了一种比eckel 稍正统的观点，因为Johnson认为已检查异常有一定用武之地，在一个异常相当于来自方法的一个可替代返回值得地方，这个异常无疑应该被检查，并且该语言能帮助实施这一点就再好不过了。但是觉得传统的java方法过分强调了已检查异常。</p>
+<hr>
+<p>使用Checked Exception还是UnChecked Exception的原则，我的看法是根据需求而定。</p>
+<p>如果你希望强制你的类调用者来处理异常，那么就用Checked Exception；<br>如果你不希望强制你的类调用者来处理异常，就用UnChecked。</p>
+<p>那么究竟强制还是不强制，权衡的依据在于从业务系统的逻辑规则来考虑，如果业务规则定义了调用者应该处理，那么就必须Checked，如果业务规则没有定义，就应该用UnChecked。</p>
+<p>还是拿那个用户登陆的例子来说，可能产生的异常有：</p>
+<p>IOException (例如读取配置文件找不到)<br>SQLException (例如连接数据库错误)<br>ClassNotFoundException(找不到数据库驱动类)</p>
+<p>NoSuchUserException<br>PasswordNotMatchException</p>
+<p>以上3个异常是和业务逻辑无关的系统容错异常，所以应该转换为RuntimeException，不强制类调用者来处理；而下面两个异常是和业务逻辑相关的流程，从业务实现的角度来说，类调用者必须处理，所以要Checked，强迫调用者去处理。</p>
+<p>在这里将用户验证和密码验证转化为方法返回值是一个非常糟糕的设计，不但不能够有效的标示业务逻辑的各种流程，而且失去了强制类调用者去处理的安全保障。</p>
+<p>至于类调用者catch到NoSuchUserException和PasswordNotMatchException怎么处理，也要根据他自己具体的业务逻辑了。或者他有能力也应该处理，就自己处理掉了；或者他不关心这个异常，也不希望上面的类调用者关心，就转化为RuntimeException；或者他希望上面的类调用者处理，而不是自己处理，就转化为本层的异常继续往上抛出来。</p>
+<hr>
+<p>Checked Exception与UnChecked Exception：</p>
+<ol>
+<li>抛出Checked Exception，给直接客户施加一个约束，必须处理，但也是一种自由，客户可分门别类的处理不同异常；<br>UnChecked Exception则给直接客户以自由，但也是一种欺瞒，因为客户不知道将要发生什么，所有的处理将是系统默认的处理（如打印堆栈到控制台，对开发者、用户都返回一样的内容，不管别人懂与不懂）。<br>二者的选择其实是约束与自由的权衡。</li>
+<li>“对可恢复的情况使用已检查异常，对程序错误使用运行时异常。”而不是一咕脑的全抛出Checker Exception，这服务提供者是友好的</li>
+<li>所以，若不需要客户依据不同异常采取不同后续行为，那么抛出UnChecked Exception是友好的；但若客户需要根据不同异常类采取不同行动，抛出Checked Exception是友好的。</li>
+</ol>
+<p>对于checked exception转unchecked exception，大家都有共识，只是偏执于两方哪一方多些，在前期还是后期</p>
+<p>Rod Johnson在spring的data access exception中就是个好示例，一是把异常细分化，更明确具体异常；二是把检查异常SQLException都转化为了unchecked exception</p>
+<h1 id="ErrorCode"><a href="#ErrorCode" class="headerlink" title="ErrorCode"></a>ErrorCode</h1><p>异常对代码和开发、维护及管理一个应用的人都有用是至关重要的</p>
+<h2 id="对于开发、维护人"><a href="#对于开发、维护人" class="headerlink" title="对于开发、维护人"></a>对于开发、维护人</h2><p>异常消息串具有有限的价值：当这些消息串出现在日志文件中时，他们对解释问题可能是有帮助的，但它们将无法使调用代码正确地做出反应，并且不能依靠它们本身来把它们显示给用户。当不同的问题可能需要不同的动作时，相应的异常应该被建模为一个公用超类的独立子类。有时，该超类应该是抽象的。现在，调用代码将可自由地在相关的细节级别上捕捉异常</p>
+<p>已检查异常要比错误返回码（许多老式的语言中使用）好很多。迟早（或许不久），人们将不能检查一个错误返回值；</p>
+<p>使用编译程序来实施正确的错误处理时一件好事。同参数和返回值一样，这样的已检查异常对一个对象的api来说是整体的不可分部分</p>
+<h2 id="用户"><a href="#用户" class="headerlink" title="用户"></a>用户</h2><p>应该通过在异常中包括错误代码来处理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String getErrorCode();</span><br><span class="line"></span><br><span class="line">String getMessage();</span><br></pre></td></tr></table></figure>
+<p>在spring早期代码中，就有ErrorCoded接口定义这两个方法，errorCode能够把为终端用户而计划的错误与为开发人员而计划的错误消息区分开。getMessage()用户记录日志，并且是面向开发人员</p>
+<hr>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/architecture-and-architect-2.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/architecture-and-architect-2.html" class="post-title-link" itemprop="url">架构与架构师2</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-02-24 23:39:00" itemprop="dateCreated datePublished" datetime="2021-02-24T23:39:00+08:00">2021-02-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-17 14:28:23" itemprop="dateModified" datetime="2021-11-17T14:28:23+08:00">2021-11-17</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近闲了，看了几次李运华关于架构的视频，不尽再次反问架构是什么？架构师的职责是什么？</p>
+<p>对于这两个问题，之前也总结过一篇<a href="http://www.zhuxingsheng.com/blog/architecture-and-architect.html">《架构和架构师》</a>，再结合他的专栏文章和视频，补充一下</p>
+<h1 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h1><p>李运华给架构的定义：<strong>软件架构指软件系统的顶层结构</strong>，缩句成<strong>架构指结构</strong>，而结构的修饰语蕴含了太多东西，抽象不够直白</p>
+<p>这个定义里面蕴含了作者介绍的系统和子系统、模块与组件、框架与架构三组常见的概念</p>
+<blockquote>
+<p>系统泛指由一群有关联的个体组成，根据某种规则运作，能完成个别元件不能单独完成的工作的群体。它的意思是“总体”“整体”或“联盟”</p>
+</blockquote>
+<blockquote>
+<p>软件模块（Module）是一套一致而互相有紧密关连的软件组织。它分别包含了程序和数据结构两部分。现代软件开发往往利用模块作为合成的单位。模块的接口表达了由该模块提供的功能和调用它时所需的元素。模块是可能分开被编写的单位。这使它们可再用和允许人员同时协作、编写及研究不同的模块。</p>
+</blockquote>
+<blockquote>
+<p>软件组件定义为自包含的、可编程的、可重用的、与语言无关的软件单元，软件组件可以很容易被用于组装应用程序中。</p>
+</blockquote>
+<blockquote>
+<p>从逻辑的角度来拆分系统后，得到的单元就是“模块”；从物理的角度来拆分系统后，得到的单元就是“组件”。</p>
+</blockquote>
+<blockquote>
+<p>划分模块的主要目的是职责分离；划分组件的主要目的是单元复用。其实，“组件”的英文 component 也可翻译成中文的“零件”一词，“零件”更容易理解一些，“零件”是一个物理的概念，并且具备“独立且可替换”的特点。</p>
+</blockquote>
+<blockquote>
+<p>软件框架（Software framework）通常指的是为了实现某个业界标准或完成特定基本任务的软件组件规范，也指为了实现某个软件组件规范时，提供规范所要求之基础功能的软件产品</p>
+</blockquote>
+<blockquote>
+<p>软件架构指软件系统的“基础结构”，创造这些基础结构的准则，以及对这些结构的描述</p>
+</blockquote>
+<p>这么多的概念，在不理解的情况下，最多能记忆一小时吧，其实就算是理解了，最多也就记忆一天。因为这些概念比较虚，离我们具体coding有点远，但学习新知识又都是从定义起始，定义不理解时，就实践，再回看定义，可架构太大了，短时间没能力也没条件去架构设计</p>
+<p>而且这定义可是一位阿里P9级别多年经验总结归纳出来的，得行多少路，抽象了多少回，才有的认知，所以我也不打算靠记忆了，不过对于模块和组件的认知很独到</p>
+<p>虽然架构定义众家纷说，但对于如何描述架构还是有共识的，那就是“4+1视图”，在<a href="http://www.zhuxingsheng.com/blog/architecture-and-architect.html">《架构和架构师》</a>也描述了，也就是说架构的确需要从各角度观察和考虑</p>
+<p>想来还是喜欢ISO&#x2F;IEC 42010:20072 中对架构有如下定义</p>
+<blockquote>
+<p>The fundamental organization of a system, embodied in its components, their relationships to each other and the environment, and the principles governing its design and evolution.　</p>
+</blockquote>
+<p><img src="http://images.zhuxingsheng.com/20210220163602_1613810162.jpg"></p>
+<p>这里定义了架构的三要素：</p>
+<ul>
+<li>职责明确的模块或者组件</li>
+<li>组件间明确的关联关系</li>
+<li>约束和指导原则</li>
+</ul>
+<p>即架构是一种结构，是由组件（Components）+ 组件之间的关系 + 指导原则组成的</p>
+<p>在《code review》中也提了，万事要以降低代码复杂度为大计，先Review设计实现思路，然后Review设计模式，接着Review成形的骨干代码，最后Review完成的代码；到了架构设计更是得如此，落地到代码层面，也就是要解决代码要如何被组织的问题，以业务为核心，解耦外部依赖，分离业务复杂度和技术复杂度</p>
+<hr>
+<h1 id="架构师"><a href="#架构师" class="headerlink" title="架构师"></a>架构师</h1><p>架构说清楚了，那架构师呢？在《架构和架构师》中，也说了</p>
+<blockquote>
+<p>【优秀程序员的价值,不在于其所掌握的几招屠龙之术,而是在细节中见真著】，那么架构师则不仅要有屠龙刀，还得有绣花针</p>
+</blockquote>
+<p>但如何拥有屠龙刀和绣花针呢？架构师在国内，大多时候可能不是个岗位，而是个角色。大厂还有架构师一说，小厂难得有专职架构师，所以架构师职能还得多多取经大牛，学习一下大牛</p>
+<h4 id="架构师能力模型"><a href="#架构师能力模型" class="headerlink" title="架构师能力模型"></a>架构师能力模型</h4><p><img src="http://images.zhuxingsheng.com/20210222001022_1613923822.jpg"></p>
+<p>这三部分好似是任何一个职业的三条腿，要像走向人生巅峰迎娶白富美，这三条腿都得硬，越往上走，尤其管理和业务</p>
+<p>技术只是技术人的最基本敲门砖，初级阶段以技术为重，往上走时，重点就得向后偏移，不能一直安静地码代码</p>
+<h4 id="架构设计过程"><a href="#架构设计过程" class="headerlink" title="架构设计过程"></a>架构设计过程</h4><p><img src="http://images.zhuxingsheng.com/20210214153020_1613287820.jpg"></p>
+<p>这个过程，回顾最近几个系统设计的确是这样的</p>
+<ol>
+<li>业务方提出一个业务，刚开始可能只是个目标，轮廓</li>
+<li>与业务方、产品不停的交流，交流得越深入，需求就越明确</li>
+<li>理解业务并明确需求后，划分模块，不管是传统画ER图，还是4色建模，找出实体以及他们的关系</li>
+<li>模块确定后，就是再深入细节，模块内部的业务流程，模块之间的交互</li>
+<li>最后整理，确定技术选型，输出设计方案</li>
+</ol>
+<p>之后，在架构落地过程中，随着业务进化，不停地演化架构，这些像上面说的宏观面的屠龙刀，绣花针就体现在细节，有时细节决定成败，架构师需要去识别哪些细节会影响到架构，以防后面不停地打补丁</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/architecture-and-architect.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/architecture-and-architect.html" class="post-title-link" itemprop="url">架构与架构师</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-02-24 23:38:00" itemprop="dateCreated datePublished" datetime="2021-02-24T23:38:00+08:00">2021-02-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-07-31 18:04:24" itemprop="dateModified" datetime="2022-07-31T18:04:24+08:00">2022-07-31</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>究竟什么才是“软件架构”？架构师的工作内容究竟是什么？</p>
+<h1 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h1><p>“架构”这个词给人的直观感受就充满了权力与神秘感，因此谈论架构总让人有一种正在进行责任重大的决策或者深度技术分析的感觉。毕竟，进阶到软件架构这一层次是我们走技术路线的人的终极目标</p>
+<p>应用程序有两个层面需求，第一类是功能性需求；第二类是非功能性需求</p>
+<p><img src="http://images.zhuxingsheng.com/202002162142_54.png"></p>
+<p>架构的重要性就在于非功能需求，这些非功能需求决定一个应用程序在运行时质量，比如可扩展性和可靠性。它们也决定了开发阶段的质量，包括可维护性、可测试性、可扩展性和可部署性。</p>
+<p>架构设计的主要目标是支撑软件系统的全生命周期，设计良好的架构可以让系统便于理解、易于修改、方便维护、并且能轻松部署。软件架构的终极目标就是最大化程序员的生产力，同时最小化系统的总运营成本。</p>
+<blockquote>
+<p>软件的系统架构应该为该系统的用例提供支持；软件系统的架构设计图也应该非常明确地凸显该应用程序会有哪些用例</p>
+</blockquote>
+<blockquote>
+<p>架构设计不是与框架相关的，不应该是基于框架来完成，框架只是一个可用的工具和手段</p>
+</blockquote>
+<blockquote>
+<p>一个良好的架构设计应该围绕着用例来展开，这样的架构设计可以在脱离框架、工具以及使用环境的情况下完整地描述用例</p>
+</blockquote>
+<blockquote>
+<p>不管什么样的架构，它们都具有同一个设计目标：按照不同关注点对软件进行切割。也就是这些架构都会将软件切割成不同的层，至少有一层是只包含该软件的业务逻辑的，而用户接口、系统接口则属于其他层</p>
+</blockquote>
+<blockquote>
+<p>计算机系统的软件架构是构建这个系统所需要的一组架构，包括软件元素、它们之间的关系以及两者的属性</p>
+</blockquote>
+<blockquote>
+<p>所谓“架构”，是“以组件、组件之间的关系、组件与环境之间的关系为内容的某一系统的基本组织结构，以及指导上述内容设计与演化的原则”。之所以要确定系统的组件、组件关系以及设计与演化的原则，目的是通过不同层面的结构视图来促进团队的交流，为设计与开发提供指导。架构不仅仅是指我们设计产生的输出文档，还包括整个设计分析与讨论的过程，这个过程产生的所有决策、方案都可以视为是架构的一部分</p>
+</blockquote>
+<p>架构这么多定义，怎么描述架构呢？</p>
+<p>Phillip Krutchen在他经典的论文《Architectural Blueprints —The 4+1 View Model of Software Architecture》中提出了软件架构的4+1视图</p>
+<p><img src="http://images.zhuxingsheng.com/202002162309_209.png"></p>
+<ul>
+<li><p>逻辑视图：开发人员创建的软件元素。在面向对象的语言中，这些元素是类和包。它们之间的关系是类和包之间的关系，包括继承、关联和依赖。</p>
+</li>
+<li><p>实现视图：构建编译系统的输出。此视图由表示打包代码的模块和组件组成，组件是由一个或多个模块组成的可执行或可部署单元。在JAVA中，模块是JAR文件，组件通常是WAR文件或可执行JAR文件。它们之间的关系包括模块之间的依赖关系以及组件和模块之间的组合关系。</p>
+</li>
+<li><p>进程视图：运行时的组件。每个元素都是一个进程，进程之间的关系代表进程间通信。</p>
+</li>
+<li><p>部署视图：进程如何映射到机器。此视图中的元素由（物理或虚拟）计算机和进程组成。机器之间的关系代表网络。该视图还描述了进程和机器之间的关系。</p>
+</li>
+</ul>
+<p>除了这四个视图以外，4+1中的+1是指场景，它负责把视图串联在一起。每个场景负责描述在一个视图中的多个架构元素如何协作，以完成一个请求。例如，在逻辑视图中的场景，展现了类是如何协作的。同样，在进程视图中的场景，展现了进程是如何协作的</p>
+<p>4+1视图是描述应用程序架构的绝佳方式。每一个视图都描述了架构的一个重要侧面。场景把视图中的元素如何协作串联在一起</p>
+<p>良好的架构有如下特点：</p>
+<ul>
+<li>独立于框架</li>
+<li>要被测试</li>
+<li>独立于UI</li>
+<li>独立于数据库</li>
+<li>独立于任何外部机构</li>
+</ul>
+<hr>
+<h1 id="架构师"><a href="#架构师" class="headerlink" title="架构师"></a>架构师</h1><p>架构师干什么？画PPT吗？写不写代码？</p>
+<p>首先，软件架构师自身需要是程序员，并且必须一直坚持做一线程序员，绝对不要听从那些说应该让软件架构师从代码中解放出来以专心解决高阶问题的伪建议</p>
+<p>软件架构师应该是能力最强的一群程序员，他们通常会在自身承接编程任务的同时，逐渐引导整个团队向一个能够最大化生产力的系统设计方向前进</p>
+<p>概括一下：</p>
+<p>有人讲【优秀程序员的价值,不在于其所掌握的几招屠龙之术,而是在细节中见真著】，那么架构师则不仅要有屠龙刀，还得有绣花针</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/code-review.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/code-review.html" class="post-title-link" itemprop="url">code review</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-02-19 10:46:35" itemprop="dateCreated datePublished" datetime="2021-02-19T10:46:35+08:00">2021-02-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>也不知code review是从哪年开始流行的，我的职场经历从刚开始完全没有到1对1，再到团队式review</p>
+<p>一、Review Meeting</p>
+<p>优点： </p>
+<ol>
+<li>团队内新技术&#x2F;新观点的交流Meeting、项目开发思路、解决方案讨论，偏头脑风暴式；</li>
+<li>各类项目都适合进行；</li>
+</ol>
+<p>缺点： </p>
+<ol>
+<li>依赖于主持者（项目owner）的素质、时间成本高（为会议上所有人时间的总和）；</li>
+<li>集体评审的代码行数有限；</li>
+</ol>
+<p>二、Single Review</p>
+<p>优点： </p>
+<ol>
+<li>更偏重与具体的代码评审，人员分散参与，评审代码行数有保证；</li>
+<li>时间自由，reviewer什么时候进行评审时间可自控；</li>
+</ol>
+<p>缺点： </p>
+<ol>
+<li>依赖reviewer的技术水平，代码提交合并前强审核，只适用于重要项目或核心模块；</li>
+</ol>
+<h1 id="why"><a href="#why" class="headerlink" title="why"></a>why</h1><p>为什么需要code review，其实在任何行业，基本都是大厂带给整个行为最佳实践，code review就是其中一种实践</p>
+<blockquote>
+<p>The biggest thing that makes Google’s code so good is simple: Code Review.</p>
+</blockquote>
+<blockquote>
+<p>At Google, no code, for any product, for any project, gets checked in until it gets a positive review.</p>
+</blockquote>
+<p>code review的好处可以罗列出很多很多，设计、结构、编码方方面面</p>
+<blockquote>
+<p>代码有这几种级别：1）可编译，2）可运行，3）可测试，4）可读，5）可维护，6）可重用。<br>通过自动化测试的代码只能达到第3）级，而通过Code Review的代码少会在第4）级甚至更高</p>
+</blockquote>
+<blockquote>
+<p>Code Review主要是让你的代码可以更好的组织起来，有更易读，有更高的维护性，同时可以达到知识共享，找到bug只是其中的副产品</p>
+</blockquote>
+<p><strong>以我个人经验看，code review更多是技术及业务知识的分享，甚至可以相互结合，理论分享与code的结合</strong></p>
+<p>比如check list与最佳实践结合</p>
+<h1 id="how"><a href="#how" class="headerlink" title="how"></a>how</h1><p>code review有点类似TDD，但强于TDD，这儿的强于不是说功能性，而在于落地层面，只要大家坐一起，指点江山，就可以完成了，当然效果另说</p>
+<p>怎么更好地落地code review呢？或者说code review需要review些什么？code?</p>
+<p>每个团队都有各自的情况，所以并不是随便拿一份review check list对照就做好，至少侧重点不同</p>
+<p>比如人家团队人员素质普遍高一些，那人家的checklist可能就少了些基础知识点；团队职责不同，checklist也可能会相应不同，基础架构的checklist肯定跟业务线的不一样，各个不同业务线的也不同，需要根据团队情况制定合适的checklist</p>
+<p>极端情况，团队中无人能识别好代码，每次都是流水帐式看代码，那团队人员得流动一下了</p>
+<p>如何code review，结合why谈谈一些点</p>
+<p><img src="http://images.zhuxingsheng.com/20210218144512_1613630712.jpg"></p>
+<h2 id="不要挑毛病"><a href="#不要挑毛病" class="headerlink" title="不要挑毛病"></a>不要挑毛病</h2><p>这就是上面的图中显示的，尤其团队式review，一群坐在下面的人</p>
+<ol>
+<li>命名不太好啦</li>
+<li>空格太多了</li>
+<li>方法太长了</li>
+<li>编码没格式化啊</li>
+<li>这循环用lambda一行解决问题</li>
+<li>实现的不是产品要的</li>
+<li>这设计有问题啊</li>
+</ol>
+<p>对1~4点，这些纯粹是浪费时间，一个团队的时间是宝贵的，来review这些，极大的浪费</p>
+<p>因此需要明确两点：</p>
+<ul>
+<li>Code review 不应该承担发现代码错误的职责</li>
+<li>Code review 不应该成为保证代码风格和编码标准的手段</li>
+</ul>
+<p>【管理工具化、工具流程化】指导方针，这儿可以引入checkstyle工具，让团队统一code sytle,新人加入团队时的培训指南中，并加入到CI中，检查失败直接构建失败</p>
+<p>再引入sonar识别常见质量问题和安全问题，这样提高code review的质量</p>
+<p>第5点：这也很典型，从code review层面讲，这也不应该是code review的职责，但从知识分享角度讲，这的确是，怎么办呢？使用流还是经典的for循环最好，如果团队成员对同一段代码有不同的意见，那么开发人员应该如何进行修改，结束审阅，并将代码推送到生产中？</p>
+<p>解决这个问题最好能有一套最佳实践标准，明确什么情况使用流式，什么情况使用传统方式，其实这很难，真这样搞最佳实践会成为一本谁也学不完的手册，那只能说“这要看情况”，未尝不可，但需要有前提，团队中需要有一名裁决者来决定最终方案，而不能陷入长时间的争论</p>
+<p>好比service能不能跨业务调用dao，这也是无对错，需要是的团队的一致性和最初的决策方案，不必每次code review时无休争论</p>
+<p>6~7两点，这是最坑的，浪费了开发时间，也对代码作者造成极大打击，为什么到此时才发现，所以需要在开始前就得对功能设计和架构设计进行review，不能只看结果，得看起始与过程</p>
+<h2 id="保证正确性"><a href="#保证正确性" class="headerlink" title="保证正确性"></a>保证正确性</h2><p>这是code review的前提条件，如上述的6、7两点，不应该出现，一个优秀的工程师需要能够独当一面，能够在系统角度实现局部的良好设计，通过合理的测试方法论验证结果。能够用合理的数据结构、算法实现功能</p>
+<p>在技术驱动的团队里，即使需求很紧急，对于关键的功能，核心成员也会耐心地审视架构设计和实现方案，如何控制熵，如何用更合理的方式实现，如何考虑到未来的变化。<br>技术驱动的团队里，应该持续进行对设计的调整和代码的微小重构与改良，时刻在整个系统的设计和表现（performance）角度审视自己的工作。这也是“系统思考”的核心。<br>大部分的代码的熵增大难以控制，并不是因为没有好的架构，而是因为迭代中忽略了系统性的思考和审视，而是用局部的解决方案解决问题，在反复迭代后，复杂度过高导致控制熵变得异常困难。这是code review比较难解决的</p>
+<h2 id="分享"><a href="#分享" class="headerlink" title="分享"></a>分享</h2><p>从上面所述，code review虽然能发现代码中的一些错误，但不应该是他的核心价值。正好在<a href="http://www.zhuxingsheng.com/blog/ddd-opening-summary.html">《DDD总结》</a>中所述，“降低代码复杂度”是所有方法实践论的终极目标。降低复杂度、易于扩展是我们的目标。那么code review也应该是为实现这个目标的手段，因此code review需要去review设计的合理性（如实现方法，数据结构，设计模式，扩展性考虑等），是否存在大量重复代码等</p>
+<p>如何达到这些呢？需要发挥团队力量，三个臭皮匠顶过一个诸葛亮，代码终究是需要人去看的，通过与他人的交流，去寻求最佳实践，交流前提就是去分享自我，包括设计思想和实现路径</p>
+<p>小到与一个人分享，也就是一对一code reivew，这样让review的开发人员了解代码的设计和实现，即能得到别人的指导，又能传递自我，并且能互为backup,方便后期维护，减少项目风险</p>
+<p>大到与团队分享，产生技术氛围，让好的知识、设计在团队中分享，实现整体团队的成长和整体效益最大化</p>
+<p>也鉴于要去把代码与人分享，就更容易让大家写出更具可读性的代码，提高可维护性，随便也让别人发现除功能逻辑外的一些技术逻辑：比如数据库连接是否忘记关闭，线程池是否正确使用等等，也加强了checklist的广度和深度</p>
+<h1 id="when"><a href="#when" class="headerlink" title="when"></a>when</h1><p>什么时候code review，大多数时候都是在上线前才做这件事，但理论最佳时间应该在提测前，以防测试完成后，又要对代码做变动</p>
+<p>在实践时，可以拿出专门时间进行，以错开迭代发布的紧张期</p>
+<hr>
+<p>除了上述的方法论，team leader还要在如何更好地code review，让团队更有意愿地参与上花心思，让团队成为一个学习型组织，有工程师文化的组织</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/what-is-object-orientation.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/what-is-object-orientation.html" class="post-title-link" itemprop="url">面向对象是什么</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-02-08 11:18:00" itemprop="dateCreated datePublished" datetime="2021-02-08T11:18:00+08:00">2021-02-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>近两年设计了几个系统，不管是直接使用传统设计ER图，还是使用4C建模，但在做架构评审时，ER却都是重中之重,让人不得不深思，编程思想经过了一代代发展，为什么还在围绕ER，在远古时代，没有OO,没有DDD，但为什么延续至今的伟大软件也比比皆是</p>
+<p>带着这个问题，需要回头看看，结构化编程为什么不行？面向对象因何而起，到底解决了什么问题？</p>
+<p>《架构整洁之道》也特别介绍了面向对象编程，面向对象究竟是什么，大多从三大特性：封装、继承、抽象说起，但其实这三种特性并不是面向对象语言特有</p>
+<h1 id="结构化编程"><a href="#结构化编程" class="headerlink" title="结构化编程"></a>结构化编程</h1><p>提到结构化编程就自然想到其中的顺序结构：代码按照编写的顺序执行，选择结构： if&#x2F;else，而循环结构： do&#x2F;while</p>
+<p>虽然这些对每个程序员都很熟悉，但其实在结构化编程之间还有非结构化编程，也就是goto语句时代，没有if else、while，一切都通过goto语句对程序控制，它可以让程序跑到任何地方执行，这样当代码规模变大之后，就几乎难以维护</p>
+<p>编程是一项难度很大的活动。因为一个程序会包含非常多的细节，远超一个人的认知能力范围，任何一个细微的错误都会导致整个程序出现问题。因此需要将大问题拆分成小问题，逐步递归下去，这样，一个大问题就会被拆解成一系列高级函数的组合，而这些高级函数各自再拆分成一系列低一级函数，一步步拆分下去，每一个函数都需要按照结构化编程方式进行开发，这也是现在常被使用的模块功能分解开发方式</p>
+<p>结构化编程中，各模块的依赖关系太强，不能有效隔离开来，一旦需求变动，就会牵一发而动全身，关联的模块由于依赖关系都得变动，那么组织大规模程序就不是它的强项</p>
+<h1 id="面向对象"><a href="#面向对象" class="headerlink" title="面向对象"></a>面向对象</h1><p>正因为结构化编程的弊端，所以有了面向对象编程，可以更好的组织程序，相对结构局部性思维，我们有了更宏观视角：对象</p>
+<h2 id="封装"><a href="#封装" class="headerlink" title="封装"></a>封装</h2><p>把一组相关联的数据和函数圈起来，使圈外的代码只能看见部分函数，数据则完全不可见；如类中的公共函数和私有成员变量</p>
+<p>提取一下关键字：</p>
+<ol>
+<li>数据，完全不可见</li>
+<li>函数，只能看见</li>
+<li>相关联</li>
+</ol>
+<p>这些似乎就是我们追求的高内聚，也是常提的充血模型，如此看，在实践中最基本的封装都没有达成</p>
+<p>到处是贫血模型，一个整体却分成两部分：满是大方法的上帝类service与只有getter和setter的model</p>
+<p>service对外提供接口，model传输数据，数据库固化数据，哪有封装性，行为与数据割裂了</p>
+<p>怎么才能做到一个高内聚的封装特性呢？</p>
+<p>设计一个类，先要考虑其对象应该提供哪些行为。然后，我们根据这些行为提供对应的方法，最后才是考虑实现这些方法要有哪些字段</p>
+<p>并且对于这些字段尽可能不提供getter 和 setter，尤其是 setter</p>
+<p>暴露getter和setter，一是把实现细节暴露出来了；二是把数据当成了设计核心</p>
+<p>方法的命名，体现的是你的意图，而不是具体怎么做</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">// 修改密码 </span><br><span class="line">public void setPassword(final String password) &#123; </span><br><span class="line">    this.password = password; </span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line">// 修改密码</span><br><span class="line">public void changePassword(final String password) &#123;</span><br><span class="line">    this.password = password;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>把setter改成具体的业务方法名，把意图体现出来，将意图与实现分离开来，这是一个优秀设计必须要考虑的问题</p>
+<p>构建一个内聚的单元，我们要减少这个单元对外的暴露，也就是定义中的【只能看到的函数】</p>
+<p>这句话的第一层含义是减少内部实现细节的暴露，它还有第二层含义，减少对外暴露的接口</p>
+<p>最小化接口暴露。也就是，每增加一个接口，你都要找到一个合适的理由。</p>
+<p>总结：<br><strong>基于行为进行封装，不要暴露实现细节，最小化接口暴露</strong></p>
+<h2 id="继承"><a href="#继承" class="headerlink" title="继承"></a>继承</h2><p>先看继承定义：</p>
+<blockquote>
+<p>继承（英语：inheritance）是面向对象软件技术当中的一个概念。这种技术使得复用以前的代码非常容易，能够大大缩短开发周期，降低开发费用<br>继承就是子类继承父类的特征和行为，使得子类对象（实例）具有父类的属性和方法，或子类从父类继承方法，使得子类具有父类相同的行为</p>
+</blockquote>
+<p>从定义看，继承就是为了复用，把一些公共代码放到父类，之后在实现子类时，可以少写一些代码，消除重复，代码复用</p>
+<p>继承分为两类：实现继承与接口继承</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Child object = new Child();</span><br><span class="line"></span><br><span class="line">Parent object = new Child();</span><br></pre></td></tr></table></figure>
+<p>但有个设计原则：组合优于继承Composition-over-inheritance</p>
+<p>为什么不推荐使用继承呢？</p>
+<p>继承意味着强耦合，而高内聚低耦合才符合我们的道，但其实并不是说不能使用继承，对于行为需要使用组合，而数据还得使用继承</p>
+<p>这样解释似乎不够形象，再进一步讲，继承也违背了<a href="http://www.zhuxingsheng.com/blog/ocp-of-solid.html">《SOLID》中的OCP</a>,继承虽然可以通过子类扩展新的行为，但因为子类可能直接依赖父类实现，导致一个变更可能会影响所有子类。也就是讲继承虽然能Open for extension，但很难做到Closed for modification</p>
+<p>借用阿里大牛的示例：</p>
+<p>有个游戏，基本规则就是玩家装备武器去攻击怪物</p>
+<ul>
+<li>玩家（Player）可以是战士（Fighter）、法师（Mage）、龙骑（Dragoon）</li>
+<li>怪物（Monster）可以是兽人（Orc）、精灵（Elf）、龙（Dragon），怪物有血量</li>
+<li>武器（Weapon）可以是剑（Sword）、法杖（Staff），武器有攻击力</li>
+<li>玩家可以装备一个武器，武器攻击可以是物理类型（0），火（1），冰（2）等，武器类型决定伤害类型</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">public abstract class Player &#123;</span><br><span class="line">      Weapon weapon</span><br><span class="line">&#125;</span><br><span class="line">public class Fighter extends Player &#123;&#125;</span><br><span class="line">public class Mage extends Player &#123;&#125;</span><br><span class="line">public class Dragoon extends Player &#123;&#125;</span><br><span class="line"></span><br><span class="line">public abstract class Weapon &#123;</span><br><span class="line">    int damage;</span><br><span class="line">    int damageType; // 0 - physical, 1 - fire, 2 - ice etc.</span><br><span class="line">&#125;</span><br><span class="line">public Sword extends Weapon &#123;&#125;</span><br><span class="line">public Staff extends Weapon &#123;&#125;</span><br></pre></td></tr></table></figure>
+
+<p>攻击规则如下：</p>
+<ul>
+<li>兽人对物理攻击伤害减半</li>
+<li>精灵对魔法攻击伤害减半</li>
+<li>龙对物理和魔法攻击免疫，除非玩家是龙骑，则伤害加倍</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class Player &#123;</span><br><span class="line">    public void attack(Monster monster) &#123;</span><br><span class="line">        monster.receiveDamageBy(weapon, this);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Monster &#123;</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        this.health -= weapon.getDamage(); // 基础规则</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Orc extends Monster &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        if (weapon.getDamageType() == 0) &#123;</span><br><span class="line">            this.setHealth(this.getHealth() - weapon.getDamage() / 2); // Orc的物理防御规则</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            super.receiveDamageBy(weapon, player);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Dragon extends Monster &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        if (player instanceof Dragoon) &#123;</span><br><span class="line">            this.setHealth(this.getHealth() - weapon.getDamage() * 2); // 龙骑伤害规则</span><br><span class="line">        &#125;</span><br><span class="line">        // else no damage, 龙免疫力规则</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果此时，要增加一个武器类型：狙击枪，能够无视一切防御，此时需要修改</p>
+<ol>
+<li>Weapon,扩展狙击枪Gun</li>
+<li>Player和所有子类（是否能装备某个武器）</li>
+<li>Monster和所有子类（伤害计算逻辑）</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public class Monster &#123;</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        this.health -= weapon.getDamage(); // 老的基础规则</span><br><span class="line">        if (Weapon instanceof Gun) &#123; // 新的逻辑</span><br><span class="line">            this.setHealth(0);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public class Dragon extends Monster &#123;</span><br><span class="line">    public void receiveDamageBy(Weapon weapon, Player player) &#123;</span><br><span class="line">        if (Weapon instanceof Gun) &#123; // 新的逻辑</span><br><span class="line">                      super.receiveDamageBy(weapon, player);</span><br><span class="line">        &#125;</span><br><span class="line">        // 老的逻辑省略</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由此可见，增加一个规则，几乎链路上的所有类都得修改一遍，越往后业务越复杂，每一次业务需求变更基本要重写一次，这也是为什么建议尽量不要违背OCP，最核心的原因就是现有逻辑的变更可能会影响一些原有代码，导致一些无法预见的影响。这个风险只能通过完整的单元测试覆盖来保障，但在实际开发中很难保障UT的覆盖率</p>
+<p>也由此可见继承的确不是代码复用的好方式</p>
+<p>从设计原则角度看，继承不是好的复用方式；从语言特性看，也不是鼓励的做法。一是像Java，只能单继承，一旦被继承就再也无法被其他继承，而且java中有Variable Hiding的局限性</p>
+<p>比如现在添加一个业务规则：</p>
+<ul>
+<li>战士只能装备剑</li>
+<li>法师只能装备法杖</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">@Data</span><br><span class="line">public class Fighter extends Player &#123;</span><br><span class="line">    private Sword weapon;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Test</span><br><span class="line">public void testEquip() &#123;</span><br><span class="line">    Fighter fighter = new Fighter(&quot;Hero&quot;);</span><br><span class="line"></span><br><span class="line">    Sword sword = new Sword(&quot;Sword&quot;, 10);</span><br><span class="line">    fighter.setWeapon(sword);</span><br><span class="line"></span><br><span class="line">    Staff staff = new Staff(&quot;Staff&quot;, 10);</span><br><span class="line">    fighter.setWeapon(staff);</span><br><span class="line"></span><br><span class="line">    assertThat(fighter.getWeapon()).isInstanceOf(Staff.class); // 错误了</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实只是修改了父类的weapon，并没有修改子类的；由此编程语言的强类型无法承载业务规则。</p>
+<p>继承并不是复用的唯一方法，如ruby中有mixin机制</p>
+<h2 id="多态"><a href="#多态" class="headerlink" title="多态"></a>多态</h2><p>多态（Polymorphism）按字面的意思就是“多种状态”。在面向对象语言中，接口的多种不同的实现方式即为多态</p>
+<p>在上一讲，接口继承更多是多态特性</p>
+<p>只使用封装和继承的编程方式，称之为基于对象编程，而只有把多态加进来，才能称之为面向对象编程，有了多态，才将基于对象与面向对象区分开；有了多态，软件设计才有了更大的弹性</p>
+<p>多态虽好，但想要运用多态，需要构建出一个抽象，构建抽象需要找出不同事物的共同点，这也是最有挑战地方。在构建抽象上，接口扮演着重要角色：一接口将变的部分和不变部分隔离开来，接口是约定，约定是不变的，变化的是各自的实现；二接口是一个边界，系统模块间通信重要的就是通信协议，而接口就是通信协议的表达</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ArrayList&lt;&gt; list = new ArrayList();</span><br><span class="line"></span><br><span class="line">List&lt;&gt; list = new ArrayList();</span><br></pre></td></tr></table></figure>
+<p>二者之间的差别就在于变量的类型，是面向一个接口，还是面向一个具体的实现类;看似没什么意义，但在<a href="http://www.zhuxingsheng.com/tags/SOLID/">《SOLID》</a>中可以发现，几乎所有原则都需要基于接口编程，才能达到目的</p>
+<p>而这也就是多态的威力</p>
+<p>就java这门语言，继承与多态相互依存，但对于其他语言并不是如此</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>除了结构化编程和面向对象编程，现在还有函数式编程，然通过上面的阐述，回到开篇的问题，我应该是把编程语言与编程范式搞混了，像结构化编程、面向对象编程是一种编程范式，而具体的C、Java其实是编程语言，对于编程语言是年轻的，的确在很多伟大软件之后才诞生，但编程范式是一直存在的，面向对象范式并不是java之后才有</p>
+<p>更不是C语言不能创造伟大软件，语言不过是工具，而最最重要的是思维方式，最近思考为什么TDD，DDD这些驱动式开发都很难，关键还是思维方式的转变</p>
+<p>为什么都要看ER图呢，这里面又常被混淆的概念：数据模型与领域模型，下一篇再分解</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p>《架构整洁之道》</p>
+<p>《软件之美》</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/further-discussion-on-ddd-layering.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/further-discussion-on-ddd-layering.html" class="post-title-link" itemprop="url">再议DDD分层</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-01-22 23:29:00" itemprop="dateCreated datePublished" datetime="2021-01-22T23:29:00+08:00">2021-01-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>之前整理过<a href="http://www.zhuxingsheng.com/blog/ddd-layering.html">《DDD分层》</a> 以及<a href="http://www.zhuxingsheng.com/blog/layered-architecture.html">《分层架构》</a></p>
+<p>最近看网友讨论，整理一些有亮点的地方</p>
+<p>现在分层架构+整洁架构似乎是个万金油组合了</p>
+<p>之前DDD的标准分层结构：</p>
+<p><img src="http://images.zhuxingsheng.com/20200315195302_1584273182.jpg"></p>
+<p>右边传统分层，左边经过DIP改进型，两者有什么区别呢？</p>
+<p><img src="http://images.zhuxingsheng.com/20201216114010_1608090010.jpg"></p>
+<p>眼尖的人可以看出来，两者确实差了不少</p>
+<p>线条1：application到infrastructure被反转了</p>
+<p>线条2：这条线没有了，在MVC里面这线是常见的，applicaton与domain没分开，但DDD中这条线是不推荐的，就算在松散分层架构中也一般不使用,除非简单的CRUD项目</p>
+<p>线条3：也被反转了，这其实类似CQRS中的Q部分</p>
+<hr>
+<p>以上来源于群友的讨论，真的是世上无难事，只怕有心人；这点区别真没留意过</p>
+<p><img src="http://images.zhuxingsheng.com/20210106225405_1609944845.jpg"></p>
+<p>这图来源于阿里大牛殷浩之手，<a href="http://www.zhuxingsheng.com/blog/ali-ddd-four-bombs-to-read.html">《阿里DDD四弹》</a>中进行过总结，DTOAssembler放在了application层,有些不太合理</p>
+<p>在《分层架构》中thrift的TService，为了不与controller重复，所以需要一个application service,此时thrift与controller可以有相同的业务请求</p>
+<p>也就是说controller对外有多种输入，但对应用层来说都是同一个user case，如果放在应用层内转化，是不是应该层为了同一个use case要爆露多过方法</p>
+<p><img src="http://images.zhuxingsheng.com/20210106225149_1609944709.jpg"></p>
+<p>适配层做三件事：</p>
+<ol>
+<li>协议适配（如采用controller，通过 @RequestMapping 注解和 JSON 序列化)</li>
+<li>参数规则验证（如，不能为空、手机是数字并且11位、邮箱要有@之类简单验证）</li>
+<li>为调用下层（应用层）转化输入（assembler）</li>
+</ol>
+<p>如果说分4层的话：</p>
+<ol>
+<li>controller （assembler、转化）</li>
+<li>appliction</li>
+<li>domain</li>
+<li>repository（convertor、转化）</li>
+</ol>
+<p>应用层是真正的业务入口，是很披的一层：</p>
+<ol>
+<li>用来协调领域操作 这里一般看系统架构不一样会有所不同，主要再分为同步调用的方式，和步骤事件的方式。</li>
+<li>关注点分离的操作（如日志、通知等）</li>
+</ol>
+<p>application service编排业务，domain service编排领域</p>
+<p><img src="http://images.zhuxingsheng.com/20210122232037_1611328837.jpg"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/blog/page/7/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/blog/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/16/">16</a><a class="extend next" rel="next" href="/blog/page/9/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

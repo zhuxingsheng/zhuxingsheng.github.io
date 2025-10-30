@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="先前已经对异常如何设计，如何实践异常都写了几篇阐述了。再一次从Clean Code角度来谈谈异常的使用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Clean Code系列之异常处理">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/exception-handling-of-clean-code-series.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="先前已经对异常如何设计，如何实践异常都写了几篇阐述了。再一次从Clean Code角度来谈谈异常的使用。">
+<meta property="og:locale">
+<meta property="article:published_time" content="2022-05-24T10:35:00.000Z">
+<meta property="article:modified_time" content="2022-11-08T07:15:29.629Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="Clean Code">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/exception-handling-of-clean-code-series.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Clean Code系列之异常处理 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/exception-handling-of-clean-code-series.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Clean Code系列之异常处理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-05-24 18:35:00" itemprop="dateCreated datePublished" datetime="2022-05-24T18:35:00+08:00">2022-05-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>先前已经对异常如何设计，如何实践异常都写了几篇阐述了。再一次从Clean Code角度来谈谈异常的使用。</p>
+<span id="more"></span>
+
+<h1 id="1、使用异常替代返回错误码"><a href="#1、使用异常替代返回错误码" class="headerlink" title="1、使用异常替代返回错误码"></a>1、使用异常替代返回错误码</h1><p>为什么？是从函数的角度去考虑：</p>
+<p>函数要么做什么事，要么回答什么事，但二者不可得兼。也就是修改某对象状态，或者是返回该对象的有关信息。也就是<strong>指令与询问分隔开来</strong>。</p>
+<p>如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">boolean set(String attribute,String value);</span><br></pre></td></tr></table></figure>
+
+<p>该函数设置某个指定属性，如果成功，就返回true，如果不存在那个属性，就返回false。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if(set(&quot;website&quot;,&quot;zhuxingsheng.com&quot;))&#123;</span><br><span class="line">    //</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但从读者角度考虑一下，它是在问websit属性值是否之前已经设置为zhuxingsheng.com，还是在问websit属性值是否成功设置为zhuxingsheng.com呢？从该行语句很难判断其含义，因为set是动词还是形容词并不清楚。</p>
+<p>作者本意是，set是一个动词，但在if语句的上下文中，感觉它是一个形容词。该语句读起来像是在说“如果websit属性值之前已经被设置为zhuxingsheng.com”，而不是“设置websit属性值为zhuxingsheng.com，看看是否可行，然后…”。</p>
+<p>要解决这个问题，可以将set函数重命名为setAndCheckIfExists，但这对提高if语句的可读性帮助不大。真正的解决方案是把指令与询问分隔开来，防止产生混淆：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if(attributeExists(&quot;website&quot;)&#123;</span><br><span class="line">    setAttribute(&quot;website&quot;,&quot;zhuxingsheng.com&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在<a href="http://www.zhuxingsheng.com/blog/does-the-domain-service-throw-an-exception-or-return-an-error-code.html">《领域服务是抛出异常还是返回错误码》</a>，提到过如何编写返回错误码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">if(deletePage(page)) == OK)&#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但这样，从指令式函数返回错误码，有些违反指令与询问分隔的规则。</p>
+<p>虽然这儿没有像上面的示例一样，引起动词与形容词的混淆，却会导致更深层次嵌套结构</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">if(deletePage(page) == OK)&#123;</span><br><span class="line">    if(deleteRefrence(page.name) == OK) &#123;</span><br><span class="line">        if (deleteKey(page.name.key()) == OK) &#123;</span><br><span class="line">            //</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">          //  </span><br><span class="line">        &#125;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        //</span><br><span class="line">    &#125;</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    //</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用异常替代错误码，错误处理代码能从主路径代码中分离出来：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">    deletePage(page);</span><br><span class="line">    deleteRefrence(page.name);</span><br><span class="line">    deleteKey(page.name.key());</span><br><span class="line">&#125; catch (Exception e) &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="抽离try-catch-代码块"><a href="#抽离try-catch-代码块" class="headerlink" title="抽离try&#x2F;catch 代码块"></a>抽离try&#x2F;catch 代码块</h2><p>try&#x2F;catch代码块丑陋不堪，搞乱了代码结构，把错误处理与正常流程结构分离开来。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">void delete(Page page) &#123;</span><br><span class="line">    try &#123;</span><br><span class="line">        deltePageAndAllReferences(page)</span><br><span class="line">    &#125; catch(Exception e) &#123;</span><br><span class="line">        log;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>正常流程结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">void deletePageAndAllReferences(Page page) &#123;</span><br><span class="line">    deletePage(page);</span><br><span class="line">    deleteRefrence(page.name);</span><br><span class="line">    deleteKey(page.name.key());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样子代码干净了些，而且函数只干一件事。错误处理就是一件事。</p>
+<p>想要更简化一下try&#x2F;catch代码块，可以使用vavr工具包中的Try类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Try.of((page) -&gt; deltePageAndAllReferences(page)).onFailure(e -&gt; log(e));</span><br></pre></td></tr></table></figure>
+
+<h2 id="ErrorCode枚举类"><a href="#ErrorCode枚举类" class="headerlink" title="ErrorCode枚举类"></a>ErrorCode枚举类</h2><p>返回的错误码，我们常会使用一个常量类或者枚举定义所有错误码。</p>
+<p>当新增逻辑需要增加新错误码时，就会增加新代码，而且还要来修改这个错误码类。</p>
+<p>这样的类被称为依赖磁铁，当这个类修改时，其他所有类都需要重新编译和部署。</p>
+<p>使用异常类代替错误码，新异常可以从异常类派生出来，而无须重新编译或重新部署。</p>
+<h1 id="2、使用未检查异常"><a href="#2、使用未检查异常" class="headerlink" title="2、使用未检查异常"></a>2、使用未检查异常</h1><p>在之前的异常文章中，提到检查异常有很强的穿透力，当类调用链路长，在底层方法上增加新检查异常就会导致上层所有方法修改声明，有点违反OCP。</p>
+<h1 id="3、异常防腐"><a href="#3、异常防腐" class="headerlink" title="3、异常防腐"></a>3、异常防腐</h1><p>在DDD中有防腐层的概念，通过防腐层去隔离两个界限上下文的变化。</p>
+<p>异常也有类似的情况。</p>
+<p>当调用第三方API时，会需要处理异常情况。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">ThirdPartAPI third = new ThirdPartAPI();</span><br><span class="line"></span><br><span class="line">try &#123;</span><br><span class="line">    third.open();</span><br><span class="line">&#125; catch (Third1Exception e) &#123;</span><br><span class="line">    //</span><br><span class="line">&#125; catch (Thrid2Exception e) &#123;</span><br><span class="line">    //</span><br><span class="line">&#125; catch (Third3Exception e) &#123;</span><br><span class="line">    //</span><br><span class="line">&#125; finally &#123;</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先我们需要打包这个第三方API，降低对它的依赖；也不必绑死在某一特定供应商API上，定义自己的API还要抽象异常</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">class ThirdPartService &#123;</span><br><span class="line">    public void open() &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            third.open();</span><br><span class="line">        &#125; catch (Third1Exception e) &#123;</span><br><span class="line">            //</span><br><span class="line">            throw new SelfException(e);</span><br><span class="line">        &#125; catch (Thrid2Exception e) &#123;</span><br><span class="line">            //</span><br><span class="line">            throw new SelfException(e);</span><br><span class="line">        &#125; catch (Third3Exception e) &#123;</span><br><span class="line">            //</span><br><span class="line">            throw new SelfException(e);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码，定义了抽象的ThirdPartSevice,并且抽象出SelfException。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>经过上面的三种手法，可以让代码在处理异常时，更加整洁。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Clean-Code/" rel="tag"># Clean Code</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/how-to-make-software-design-beautiful.html" rel="prev" title="怎么做软件设计才美">
+      <i class="fa fa-chevron-left"></i> 怎么做软件设计才美
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/problems-and-solutions-of-java-concurrency.html" rel="next" title="Java并发的问题及应对办法">
+      Java并发的问题及应对办法 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1%E3%80%81%E4%BD%BF%E7%94%A8%E5%BC%82%E5%B8%B8%E6%9B%BF%E4%BB%A3%E8%BF%94%E5%9B%9E%E9%94%99%E8%AF%AF%E7%A0%81"><span class="nav-number">1.</span> <span class="nav-text">1、使用异常替代返回错误码</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%BD%E7%A6%BBtry-catch-%E4%BB%A3%E7%A0%81%E5%9D%97"><span class="nav-number">1.1.</span> <span class="nav-text">抽离try&#x2F;catch 代码块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ErrorCode%E6%9E%9A%E4%B8%BE%E7%B1%BB"><span class="nav-number">1.2.</span> <span class="nav-text">ErrorCode枚举类</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2%E3%80%81%E4%BD%BF%E7%94%A8%E6%9C%AA%E6%A3%80%E6%9F%A5%E5%BC%82%E5%B8%B8"><span class="nav-number">2.</span> <span class="nav-text">2、使用未检查异常</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3%E3%80%81%E5%BC%82%E5%B8%B8%E9%98%B2%E8%85%90"><span class="nav-number">3.</span> <span class="nav-text">3、异常防腐</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

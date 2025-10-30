@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="技术人员的未来是什么？ 我想作为一名技术人，在夜深人静时候，都会想想这个直击灵魂的问题。 作为一名搬砖人，哪里需要哪里搬？ 不甘于作为工具人，但出路在何方？ 新技术层出不穷，学到何年何月？怎么保持活到老学到老的状态？ 在之前的一系列文章中，写过《程序员成长职级》、《最好的职业建议》、《首席架构师的打怪之路》等，其实也都是来源于对上述问题的思考。 怎么突破呢？其实市场也给了部分答案，比如市场要求从几">
+<meta property="og:type" content="article">
+<meta property="og:title" content="技术人的三个阶段">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/three-stages-of-technician.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="技术人员的未来是什么？ 我想作为一名技术人，在夜深人静时候，都会想想这个直击灵魂的问题。 作为一名搬砖人，哪里需要哪里搬？ 不甘于作为工具人，但出路在何方？ 新技术层出不穷，学到何年何月？怎么保持活到老学到老的状态？ 在之前的一系列文章中，写过《程序员成长职级》、《最好的职业建议》、《首席架构师的打怪之路》等，其实也都是来源于对上述问题的思考。 怎么突破呢？其实市场也给了部分答案，比如市场要求从几">
+<meta property="og:locale">
+<meta property="article:published_time" content="2022-08-13T14:41:00.000Z">
+<meta property="article:modified_time" content="2022-11-08T07:15:29.649Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="认知">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/three-stages-of-technician.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>技术人的三个阶段 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/three-stages-of-technician.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          技术人的三个阶段
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-08-13 22:41:00" itemprop="dateCreated datePublished" datetime="2022-08-13T22:41:00+08:00">2022-08-13</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>技术人员的未来是什么？</p>
+<p>我想作为一名技术人，在夜深人静时候，都会想想这个直击灵魂的问题。</p>
+<p>作为一名搬砖人，哪里需要哪里搬？</p>
+<p>不甘于作为工具人，但出路在何方？</p>
+<p>新技术层出不穷，学到何年何月？怎么保持活到老学到老的状态？</p>
+<p>在之前的一系列文章中，写过<a href="http://www.zhuxingsheng.com/blog/programmer-growth-rank.html">《程序员成长职级》</a>、<a href="http://www.zhuxingsheng.com/blog/what's-your-best-career-advice.html">《最好的职业建议》</a>、<a href="http://www.zhuxingsheng.com/blog/the-way-to-become-the-chief-architect.html">《首席架构师的打怪之路》</a>等，其实也都是来源于对上述问题的思考。</p>
+<p>怎么突破呢？其实市场也给了部分答案，比如市场要求从几年前的<strong>T型人才</strong>到<strong>π型人才</strong>，这也是作为一名技术人，需要三条腿：技术、业务、管理。</p>
+<p>尤其业务，对于技术人员的重要性，很多技术人不理解，甚至工作多年的人也不理解。技术只是工具，达到目标的手段。而业务才是最终目标。不懂业务，最后必然会成为工具人。</p>
+<p>很多技术人被沦为随时可替代的工具人也不自知，甚至对自身技术自鸣得意，孤芳自赏。</p>
+<p>也许会有人反驳，我再深入解释一下。技术人想干什么？技术牛啊，怎么体现技术牛呢？写个数据库，写个操作系统，写个docker，或者写个开源框架等等。</p>
+<p>为什么是这些东东呢？因为这些技术通用，与技术紧密关联，但其实这些只是更具技术属性而已，它们对外的统一特征是产品，首先是个产品，其次是个技术属性偏强的产品。</p>
+<p>如果你对自己要达到的目标都不了解，再牛的技术也会有种无力感，报国无门空自怨。</p>
+<p>回归到主题，技术人员的三个阶段。最近看到陶勇医生著作的《自造》，他讲了学医的三个阶段，我常见得对技术人是通用的。</p>
+<span id="more"></span>
+
+<p><strong>第一阶段：“技”</strong></p>
+<p>这阶段<strong>既练内功也练外功，主要靠勤奋和坚持</strong>。</p>
+<p>对应到程序员，这个阶段是一样的，就是学习各种知识，不管是基础理论知识，还是上机操作实践。有一种进步感推动着自己。</p>
+<p>程序员这个阶段，学校的基础理论，再进入职场后5年左右时间。基本能独当一面了。多点努力，开始成为团队内的骨干，再有点运气会成为TL。</p>
+<p><strong>第二阶段：“艺”</strong></p>
+<p>“艺”就是艺术，需要创新，解决疑难杂症。这阶段<strong>靠谦卑和勇敢，敢于打破现有的自我，走向一个可能更费劲的阶段。</strong></p>
+<p>对应到程序员，团队出现各种各样的难题，一些会是别人碰到的，一此可能是全新的，不管是解决方案还是落地步骤都得自己想办法了。</p>
+<p>类似于兼职架构师的职位，解决各种横向问题，以及制定业务落地方案。</p>
+<p><strong>第三阶段：“理”</strong></p>
+<p>“理”指哲理和道理。从术层面上升到道层面。</p>
+<p>就是我们人可能就像是在大河上面的一片树叶，你确实不好把握方向，东南西北，随波逐流。当你进入到“理”阶段，了解了更多的人生哲理和道理的时候，你仍然是河上的一片树叶，仍然不一定能把握东南西北的方向，但你就能感知到重力和浮力的关系，于是你就能对自己的定位有一个更清晰的感觉。</p>
+<p>类似在<a href="http://www.zhuxingsheng.com/blog/do-not-study-inefficiently-all-your-life.html">《不要终身低效学习》</a>中提到的ThoughtWorks中国区CTO徐昊说，技术没有反哺过我的生活，反而我的人生给养了在技术上的洞见。</p>
+<p>这个阶段我想应该就是一通百通的阶段，像我当初学习微服务治理知识时，感觉互联网真是厉害。各种场景都有技术对应。感觉这个世界都应该去学习互联网的运作方式。</p>
+<p>直到有一天，我在高速上，因为是节假日，前方要限流。交警不会直接把路拦截，而是会使用锥形桶，形成一个漏斗状，慢慢控制车流速度。</p>
+<p>突然意识到，并不是互联网是创意的源头，其实现实世界中早有了类似方案，只是自己眼中只看到了互联网这一个场景而已。</p>
+<hr>
+<p>这三个阶段让我想起多年前读的一本小说：<a href="http://www.zhuxingsheng.com/blog/the-distant-savior.html">《遥远的救世主》</a></p>
+<blockquote>
+<p>透视社会依次有三个层面：技术、制度和文化。小到一个人，大到一个国家一个民族，任何一种命运归根到底都是那种文化属性的产物。强势文化造就强者，弱势文化造就弱者，这是规律，也可以理解为天道，不以人的意志为转移</p>
+</blockquote>
+<p>技术、制度和文化似乎也对应着这三个阶段。</p>
+<hr>
+<p>总结：</p>
+<p>常听人讲，我们要举一反三，触类旁通，一通百通。</p>
+<p>但现实没有这么理想。</p>
+<p>学习新东西，大概有两条路径：</p>
+<p>1、学习一个具体事务，经过实战，消化，再抽象吸引，达到一通百通。</p>
+<p>2、学习一个抽象理论，但还得事上练，绝知此事要躬行。由理论具象到每一件事。</p>
+<p>但大多数时候，大多数人，是没法一通百通的，因为这就像面向对象，可教的是基础，但要掌握得靠自己感悟。只要多实践，再萃取出自己的理论。</p>
+<p>再比如学了一门语言，别的语言是一样的？但你看看有多少人是全栈，全语言的。</p>
+<p>说透了，还是王阳明的知行合一，这是我们是追求的目标，但能达到目标的凤毛麟角。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AE%A4%E7%9F%A5/" rel="tag"># 认知</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/four-qualities-of-an-excellent-architect.html" rel="prev" title="优秀架构师的四个素质">
+      <i class="fa fa-chevron-left"></i> 优秀架构师的四个素质
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/the-dilemma-of-ddd-aggregation-design.html" rel="next" title="DDD聚合设计的困境">
+      DDD聚合设计的困境 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

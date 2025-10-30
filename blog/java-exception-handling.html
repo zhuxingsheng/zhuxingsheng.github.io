@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="Java异常，本身知识体系很简单，但要设计好异常，却不是易事 Java异常如何使用，尤其checked exception,好些语言（c#,python）都没有此类型异常，只有unchecked exception；对于java为什么有checked exception,是不是设计过渡，在java初期被讨论了很多回，以及如何使用异常也被讨论了很多次，最近我在落地DDD时，又思考到此问题，不得不再翻">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java异常处理">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/java-exception-handling.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="Java异常，本身知识体系很简单，但要设计好异常，却不是易事 Java异常如何使用，尤其checked exception,好些语言（c#,python）都没有此类型异常，只有unchecked exception；对于java为什么有checked exception,是不是设计过渡，在java初期被讨论了很多回，以及如何使用异常也被讨论了很多次，最近我在落地DDD时，又思考到此问题，不得不再翻">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-03-15T02:16:00.000Z">
+<meta property="article:modified_time" content="2021-09-29T07:24:30.454Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/java-exception-handling.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Java异常处理 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/java-exception-handling.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java异常处理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-03-15 10:16:00" itemprop="dateCreated datePublished" datetime="2021-03-15T10:16:00+08:00">2021-03-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>Java异常，本身知识体系很简单，但要设计好异常，却不是易事</p>
+<p>Java异常如何使用，尤其checked exception,好些语言（c#,python）都没有此类型异常，只有unchecked exception；对于java为什么有checked exception,是不是设计过渡，在java初期被讨论了很多回，以及如何使用异常也被讨论了很多次，最近我在落地DDD时，又思考到此问题，不得不再翻回这个老问题，翻阅《Effective java》、《J2EE设计开发编程指南》这些经典</p>
+<p>按普世标准，处理异常最佳实践有：</p>
+<ul>
+<li>【强制】异常不要用来做流程控制，条件控制。说明：异常设计的初衷是解决程序运行中的各种意外情况，且异常的处理效率比条件判断方式要低很多</li>
+<li>异常应该只用于异常的情况下：它们永远不应该用于正常的控制流，设计良好的API不应该强迫它的客户端为了正常的控制流而使用异常</li>
+<li>对可恢复情况使用受检异常，对编程错误使用运行时异常</li>
+<li>抛出与抽象相对应的异常</li>
+<li>每个方法抛出的异常都要有文档</li>
+<li>优先使用标准异常</li>
+</ul>
+<hr>
+<p>再来看看前人的论述：</p>
+<p>在使用UseCase来描述一个场景的时候，有一个主事件流和n个异常流。异常流可能发生在主事件流的过程，而try语句里面实现的是主事件流，而catch里面实现的是异常流，在这里Exception不代表程序出现了异常或者错误，Exception只是面向对象化的业务逻辑控制方法。如果没有明白这一点，那么我认为并没有真正明白应该怎么使用Java来正确的编程。</p>
+<p>而我自己写的程序，会自定义大量的Exception类，所有这些Exception类都不意味着程序出现了异常或者错误，只是代表非主事件流的发生的，用来进行那些分支流程的流程控制的。例如你往权限系统中增加一个用户，应该定义1个异常类，UserExistedException，抛出这个异常不代表你插入动作失败，只说明你碰到一个分支流程，留待后面的catch中来处理这个分支流程。<strong>传统的程序员会写一个if else来处理，而一个合格的OOP程序员应该有意识的使用try catch 方式来区分主事件流和n个分支流程的处理，通过try catch，而不是if else来从代码上把不同的事件流隔离开来进行分别的代码撰写</strong></p>
+<p><strong>很多人喜欢定义方法的返回类型为boolean型的，当方法正确执行，没有出错的时候返回true，而方法出现出现了问题，返回false。这在Java编程当中是大错而特错的！</strong></p>
+<p>方法的返回值只意味着当你的方法调用要返回业务逻辑的处理结果的。如果业务逻辑不带处理结果，那么就是void的，不要使用返回值boolean来代表方法是否正确执行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">boolean login(String username, String password);</span><br></pre></td></tr></table></figure>
+
+<p>很多人喜欢用boolean返回，如果是true，就是login了，如果false就是没有登陆上。其实是错误的。还有的人定义返回值为int型的，例如如果正确返回就是0，如果用户找不到就是-1，如果密码不对，就是-2</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">int login(String username, String password);</span><br></pre></td></tr></table></figure>
+
+<p>然后在主程序里面写一个if else来判断不同的流程</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">int logon = UserManager.login(xx,xx);;  </span><br><span class="line"> if (logon ==0); &#123;  </span><br><span class="line">...  </span><br><span class="line">&#125; else if (logon == 1); &#123;  </span><br><span class="line">...  </span><br><span class="line">&#125; else if (logon ==2); &#123;  </span><br><span class="line">..&#125;  </span><br></pre></td></tr></table></figure>
+
+<p>这是面向过程的编程逻辑，不是面向对象的编程逻辑。</p>
+<p>应该这样来写：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">User login(String username, String password); throws UserNotFoundException, PasswordNotMatchException; </span><br></pre></td></tr></table></figure>
+
+<p>主程序这样写：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">try &#123;  </span><br><span class="line">  UserManager.login(xx,xx);;  </span><br><span class="line">....   </span><br><span class="line">用户登陆以后的主事件流代码  </span><br><span class="line">  </span><br><span class="line">&#125; catch (UserNotFoundException e); &#123;  </span><br><span class="line">  </span><br><span class="line">...  </span><br><span class="line">  </span><br><span class="line">用户名称没有的事件处理，例如产生一个提示用户注册的页面  </span><br><span class="line">  </span><br><span class="line">&#125; catch (PasswordNotMatchException e); &#123;  </span><br><span class="line">  </span><br><span class="line">....  </span><br><span class="line">  </span><br><span class="line">密码不对的事件处理，例如forward到重新登陆的页面  </span><br><span class="line">&#125;  </span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>看到这个示例，似乎明显违背了最佳实践的第一条：不要用来流程控制</p>
+<p>如果这不是流程控制，那这种写法与流程控制有什么区别呢？再进一步，什么时候使用异常呢？</p>
+<h1 id="什么时候使用异常"><a href="#什么时候使用异常" class="headerlink" title="什么时候使用异常"></a>什么时候使用异常</h1><p>在异常最佳实践中：异常只用于异常情况下！</p>
+<p>需要捕捉的异常也有两种，一种是自己的程序抛出的，一种是系统抛出的</p>
+<p>什么叫做程序抛出的异常，什么叫做系统抛出的异常，你能明确界定吗？FileNotFoundException你说算是系统异常呢？还是程序异常？站在某些程序员的角度，他会觉得是系统异常，不过像我喜欢看JDK源代码的人来说，我对Sun的程序什么情况下抛出FileNotFoundException很清楚，这些代码对我来说，和我自己写的代码能有什么不同吗？对我来说，FileNotFoundException就是程序异常。既然JDK可以抛出异常，凭什么我就不能抛出异常？</p>
+<p>站在底层程序员的角度来看，根本没有什么系统异常可言，否则的话，还不如不要定义任何异常得了，干脆就是函数调用返回值，你说为什么Sun不定义0，1，2这样的返回值，而是抛出异常呢？Java程序无非就是一堆class，JDK的class可以抛异常，我写的class为什么不能抛出？</p>
+<p>异常不异常的界定取决于你所关注的软件层面，例如你是应用软件开发人员，你关心的是业务流程，那么你就应该捕获业务层异常，你就应该定义业务层异常，向上抛出业务层异常。如果是底层程序员，你就应该定义和抛出底层异常。要不要抛出异常和抛出什么异常取决你站在什么软件层面了，离开这个前提，空谈异常不异常是没有意义的</p>
+<blockquote>
+<p>因为0,1,2这样的值表达的含义不够丰富，但是作为返回值，又不合理。<br>————函数有它的本身的返回值。</p>
+</blockquote>
+<p>因此，返回一个异常，其实就是一个封装完好的，返回的对象。这个对象Type不是在函数名的前面说明，而是在一个更加特别的地方，函数的后面说明。这就是异常的本质————非正常的返回值。这个返回值，为什么不能用传统的方法处理呢？因为Object x&#x3D;method();表明它只能接受某一个特定的对象，如果出现Exception的对象，就会报错。因此需要catch来接手处理这样的返回值。</p>
+<h1 id="checked与unchecked选择"><a href="#checked与unchecked选择" class="headerlink" title="checked与unchecked选择"></a>checked与unchecked选择</h1><p>对于何时抛出异常，上面的论述大致已经清楚，使用Exception的关键是，你站在什么样的角度来看这个问题，这也得看大家对异常写法的习惯，异常并不只是单单的异常，在OO中，异常也是方法返回值的一部分</p>
+<p>Java正统观点认为：已检查异常应该是标准用法，运行时异常表明编程错误，这也正如上面的例子，方法申明异常表明了有这些异常情况，那业务调用方需要考虑这些情况，但是检查异常引起了几个问题</p>
+<ol>
+<li>太多的代码：开发人员将会因为不得不捕捉他们无法合理地处理的已检查异常（属于“某个东西出了可怕错误”种类）并编写忽略（忍受）它们的代码而感到无力。</li>
+<li>难以读懂的代码：捕捉不能被正确地处理的异常并重新抛出它们没有执行一点有用的功能，反而会使查找实际做某件事的代码变得更困难</li>
+<li>异常的无休止封装：一个已检查异常要么必须被捕捉，要么必须在一个遇到它的那个方法的抛出子句中被声明。这时要么重新抛出数量不断增长的异常，或者说捕捉低级异常，要么重新抛出被封装在一个较高级的新异常中的它们</li>
+<li>易毁坏的方法签名</li>
+<li>已检查异常对接口不一定管用</li>
+</ol>
+<p>异常受检的本质并没有为程序员提供任何好处，它反而需要付出努力，还使程序更为复杂</p>
+<p>被一个方法单独抛出的受检异常，会给程序员带 来非常高的额外负担。如果这个方法还有其他的受检异常，它被调用的时候一定已经出现在一个try块中，所以这个异常只需要别外一个catch块</p>
+<p>非检查型异常的最大风险之一就是它并没有按照检查型异常采用的方式那样自我文档化。除非 API 的创建者明确地文档化将要抛出的异常，否则调用者没有办法知道在他们的代码中将要捕获的异常是什么</p>
+<p>Rod Johnson采取了一种比eckel 稍正统的观点，因为Johnson认为已检查异常有一定用武之地，在一个异常相当于来自方法的一个可替代返回值得地方，这个异常无疑应该被检查，并且该语言能帮助实施这一点就再好不过了。但是觉得传统的java方法过分强调了已检查异常。</p>
+<hr>
+<p>使用Checked Exception还是UnChecked Exception的原则，我的看法是根据需求而定。</p>
+<p>如果你希望强制你的类调用者来处理异常，那么就用Checked Exception；<br>如果你不希望强制你的类调用者来处理异常，就用UnChecked。</p>
+<p>那么究竟强制还是不强制，权衡的依据在于从业务系统的逻辑规则来考虑，如果业务规则定义了调用者应该处理，那么就必须Checked，如果业务规则没有定义，就应该用UnChecked。</p>
+<p>还是拿那个用户登陆的例子来说，可能产生的异常有：</p>
+<p>IOException (例如读取配置文件找不到)<br>SQLException (例如连接数据库错误)<br>ClassNotFoundException(找不到数据库驱动类)</p>
+<p>NoSuchUserException<br>PasswordNotMatchException</p>
+<p>以上3个异常是和业务逻辑无关的系统容错异常，所以应该转换为RuntimeException，不强制类调用者来处理；而下面两个异常是和业务逻辑相关的流程，从业务实现的角度来说，类调用者必须处理，所以要Checked，强迫调用者去处理。</p>
+<p>在这里将用户验证和密码验证转化为方法返回值是一个非常糟糕的设计，不但不能够有效的标示业务逻辑的各种流程，而且失去了强制类调用者去处理的安全保障。</p>
+<p>至于类调用者catch到NoSuchUserException和PasswordNotMatchException怎么处理，也要根据他自己具体的业务逻辑了。或者他有能力也应该处理，就自己处理掉了；或者他不关心这个异常，也不希望上面的类调用者关心，就转化为RuntimeException；或者他希望上面的类调用者处理，而不是自己处理，就转化为本层的异常继续往上抛出来。</p>
+<hr>
+<p>Checked Exception与UnChecked Exception：</p>
+<ol>
+<li>抛出Checked Exception，给直接客户施加一个约束，必须处理，但也是一种自由，客户可分门别类的处理不同异常；<br>UnChecked Exception则给直接客户以自由，但也是一种欺瞒，因为客户不知道将要发生什么，所有的处理将是系统默认的处理（如打印堆栈到控制台，对开发者、用户都返回一样的内容，不管别人懂与不懂）。<br>二者的选择其实是约束与自由的权衡。</li>
+<li>“对可恢复的情况使用已检查异常，对程序错误使用运行时异常。”而不是一咕脑的全抛出Checker Exception，这服务提供者是友好的</li>
+<li>所以，若不需要客户依据不同异常采取不同后续行为，那么抛出UnChecked Exception是友好的；但若客户需要根据不同异常类采取不同行动，抛出Checked Exception是友好的。</li>
+</ol>
+<p>对于checked exception转unchecked exception，大家都有共识，只是偏执于两方哪一方多些，在前期还是后期</p>
+<p>Rod Johnson在spring的data access exception中就是个好示例，一是把异常细分化，更明确具体异常；二是把检查异常SQLException都转化为了unchecked exception</p>
+<h1 id="ErrorCode"><a href="#ErrorCode" class="headerlink" title="ErrorCode"></a>ErrorCode</h1><p>异常对代码和开发、维护及管理一个应用的人都有用是至关重要的</p>
+<h2 id="对于开发、维护人"><a href="#对于开发、维护人" class="headerlink" title="对于开发、维护人"></a>对于开发、维护人</h2><p>异常消息串具有有限的价值：当这些消息串出现在日志文件中时，他们对解释问题可能是有帮助的，但它们将无法使调用代码正确地做出反应，并且不能依靠它们本身来把它们显示给用户。当不同的问题可能需要不同的动作时，相应的异常应该被建模为一个公用超类的独立子类。有时，该超类应该是抽象的。现在，调用代码将可自由地在相关的细节级别上捕捉异常</p>
+<p>已检查异常要比错误返回码（许多老式的语言中使用）好很多。迟早（或许不久），人们将不能检查一个错误返回值；</p>
+<p>使用编译程序来实施正确的错误处理时一件好事。同参数和返回值一样，这样的已检查异常对一个对象的api来说是整体的不可分部分</p>
+<h2 id="用户"><a href="#用户" class="headerlink" title="用户"></a>用户</h2><p>应该通过在异常中包括错误代码来处理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String getErrorCode();</span><br><span class="line"></span><br><span class="line">String getMessage();</span><br></pre></td></tr></table></figure>
+<p>在spring早期代码中，就有ErrorCoded接口定义这两个方法，errorCode能够把为终端用户而计划的错误与为开发人员而计划的错误消息区分开。getMessage()用户记录日志，并且是面向开发人员</p>
+<hr>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/architecture-and-architect-2.html" rel="prev" title="架构与架构师2">
+      <i class="fa fa-chevron-left"></i> 架构与架构师2
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/java-exception-practice.html" rel="next" title="Java异常实践">
+      Java异常实践 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E4%BD%BF%E7%94%A8%E5%BC%82%E5%B8%B8"><span class="nav-number">1.</span> <span class="nav-text">什么时候使用异常</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#checked%E4%B8%8Eunchecked%E9%80%89%E6%8B%A9"><span class="nav-number">2.</span> <span class="nav-text">checked与unchecked选择</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ErrorCode"><span class="nav-number">3.</span> <span class="nav-text">ErrorCode</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AF%B9%E4%BA%8E%E5%BC%80%E5%8F%91%E3%80%81%E7%BB%B4%E6%8A%A4%E4%BA%BA"><span class="nav-number">3.1.</span> <span class="nav-text">对于开发、维护人</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%88%B7"><span class="nav-number">3.2.</span> <span class="nav-text">用户</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

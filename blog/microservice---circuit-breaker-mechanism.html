@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="背景由于微服务间通过RPC来进行数据交换，所以我们可以做一个假设：在IO型服务中，假设服务A依赖服务B和服务C，而B服务和C服务有可能继续依赖其他的服务，继续下去会使得调用链路过长，技术上称1-&gt;N扇出  问题如果在A的链路上某个或几个被调用的子服务不可用或延迟较高，则会导致调用A服务的请求被堵住，堵住的请求会消耗占用掉系统的线程、io等资源，当该类请求越来越多，占用的计算机资源越来越多的时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微服务-熔断机制">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/microservice---circuit-breaker-mechanism.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="背景由于微服务间通过RPC来进行数据交换，所以我们可以做一个假设：在IO型服务中，假设服务A依赖服务B和服务C，而B服务和C服务有可能继续依赖其他的服务，继续下去会使得调用链路过长，技术上称1-&gt;N扇出  问题如果在A的链路上某个或几个被调用的子服务不可用或延迟较高，则会导致调用A服务的请求被堵住，堵住的请求会消耗占用掉系统的线程、io等资源，当该类请求越来越多，占用的计算机资源越来越多的时">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201804281326_732.png?imageView/2/w/500/q/70">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201804281126_490.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201804281126_55.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201804281127_30.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201805021603_479.png">
+<meta property="article:published_time" content="2018-04-16T13:29:36.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.469Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="微服务">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201804281326_732.png?imageView/2/w/500/q/70">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/microservice---circuit-breaker-mechanism.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>微服务-熔断机制 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/microservice---circuit-breaker-mechanism.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微服务-熔断机制
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-04-16 21:29:36" itemprop="dateCreated datePublished" datetime="2018-04-16T21:29:36+08:00">2018-04-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h1><p>由于微服务间通过RPC来进行数据交换，所以我们可以做一个假设：在IO型服务中，假设服务A依赖服务B和服务C，而B服务和C服务有可能继续依赖其他的服务，继续下去会使得调用链路过长，技术上称1-&gt;N扇出</p>
+<p><img src="http://images.zhuxingsheng.com/201804281326_732.png?imageView/2/w/500/q/70" alt="1-&gt;N扇出"></p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>如果在A的链路上某个或几个被调用的子服务不可用或延迟较高，则会导致调用A服务的请求被堵住，堵住的请求会消耗占用掉系统的线程、io等资源，当该类请求越来越多，占用的计算机资源越来越多的时候，会导致系统瓶颈出现，造成其他的请求同样不可用，最终导致业务系统崩溃</p>
+<ol>
+<li>服务器失败影响服务质量</li>
+<li>超负荷导致整个服务失败</li>
+<li>服务失败造成的雪崩效应</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201804281126_490.png" alt="微服务服务依赖调用"></p>
+<p><img src="http://images.zhuxingsheng.com/201804281126_55.png" alt="超负荷导致整个服务失败"></p>
+<p><img src="http://images.zhuxingsheng.com/201804281127_30.png" alt="服务失败造成的雪崩效应"></p>
+<h1 id="熔断"><a href="#熔断" class="headerlink" title="熔断"></a>熔断</h1><p><strong>熔断模式</strong>：这种模式主要是参考电路熔断，如果一条线路电压过高，保险丝会熔断，防止火灾。放到我们的系统中，如果某个目标服务调用慢或者有大量超时，此时，熔断该服务的调用，对于后续调用请求，不在继续调用目标服务，直接返回，快速释放资源。如果目标服务情况好转则恢复调用。</p>
+<p>定义里面有几个量化的地方</p>
+<ol>
+<li>目标服务调用慢或者超时：开启熔断的阀值量化</li>
+</ol>
+<p>可以通过两个维度：时间与请求数</p>
+<p><strong>时间</strong><br>多长时间内的超时请求达到多少，触发熔断</p>
+<p><strong>请求数</strong><br>从服务启动，超时请求数达到多少，触发</p>
+<p>这两个维度都需要记录超时请求数和统计总请求数</p>
+<ol start="2">
+<li>情况好转，恢复调用</li>
+</ol>
+<p>如何量化情况好转：多长时间之后超时请求数低于多少关闭熔断</p>
+<h2 id="熔断状态"><a href="#熔断状态" class="headerlink" title="熔断状态"></a>熔断状态</h2><p><img src="http://images.zhuxingsheng.com/201805021603_479.png" alt="熔断状态"></p>
+<p>三种状态的切换</p>
+<p><strong>开 – 半开 – 关</strong></p>
+<p><strong>开</strong>：使用快速失败返回，调用链结束</p>
+<p><strong>半开</strong>：当熔断开启一段时间后，尝试阶段</p>
+<p><strong>关</strong>：调用正常</p>
+<h2 id="实现机制"><a href="#实现机制" class="headerlink" title="实现机制"></a>实现机制</h2><p>可以使用一段伪代码表示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">//正常request</span><br><span class="line">if( request is open) &#123;</span><br><span class="line">    //fastfail</span><br><span class="line">&#125; else if( request is halfopen) &#123;</span><br><span class="line">    if ( request success count &gt; recoverySampleVolume) &#123;</span><br><span class="line">        //state --&gt; close</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">//失败request</span><br><span class="line">if( request is failcount &gt; requestVolumeThreshold &amp;&amp; errorPercentage &gt; threshold) &#123;</span><br><span class="line">    //close --&gt; open</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>请求熔断开启时，直接快速失败</p>
+<p>是halfopen状态，如果成功处理次数是否大于恢复配置，就关闭熔断</p>
+<p>如果失败次数超过阀值，开启熔断</p>
+<p>而对于open–&gt;halfopen的转换，可以通过定时器主动触发</p>
+<h2 id="具体实现"><a href="#具体实现" class="headerlink" title="具体实现"></a>具体实现</h2><p>现在有很多开源的</p>
+<p>failsafe:<a href="https://github.com/jhalterman/failsafe">https://github.com/jhalterman/failsafe</a></p>
+<p>Hystrix</p>
+<h3 id="个案实现"><a href="#个案实现" class="headerlink" title="个案实现"></a>个案实现</h3><p>在没有熔断时，请求链路：</p>
+<p>client –&gt; request –&gt; balance – &gt; handler</p>
+<p>一个请求过来，通过负载均衡找到具体的server,再执行</p>
+<p>加入熔断后：</p>
+<p>client –&gt; request –&gt; circuitBreakerfilter –&gt; balance – &gt; handler</p>
+<p>CircuitBreakerFilter过滤掉被熔断的server,在负载均衡时，不再被选中</p>
+<ol>
+<li>getAllServers() 获取所有服务器列表</li>
+<li>根据requestService,requestMethod获取熔断的servers<ul>
+<li>从allserverList中剔除这些server</li>
+</ul>
+</li>
+</ol>
+<p>熔断服务列表怎么维护呢？</p>
+<h5 id="正常状态-–-熔断状态"><a href="#正常状态-–-熔断状态" class="headerlink" title="正常状态 –&gt; 熔断状态"></a>正常状态 –&gt; 熔断状态</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">1. 收到失败请求(e.g.超时，系统异常)</span><br><span class="line">2. 判断此service是否配置了熔断策略 map&lt;serviceName,circuitBreakerpolicy&gt;</span><br><span class="line">    - 根据serviceName,method,serverInfo获取CircuitBreakerCounter</span><br><span class="line">    - counter对失败次数+1</span><br><span class="line">    - 此server是否在half open状态  HalfOpenServersMap&lt;serverName+method,serverList&gt;</span><br><span class="line">        - 在：如果失败次数超过RecoverySampleVolume，openserversmap&lt;servername+method,serverlist&gt;进行put操作、并从HalfOpenServersMap中remove</span><br><span class="line">        - 不在：请求数大于等于10笔(requestVolumeThreshold)，且错误率达到60%(errorPercentage),openserversmap&lt;servername+method,serverlist&gt;进行put操作</span><br></pre></td></tr></table></figure>
+<h5 id="熔断状态-–-正常状态"><a href="#熔断状态-–-正常状态" class="headerlink" title="熔断状态 –&gt; 正常状态"></a>熔断状态 –&gt; 正常状态</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">1. 收到请求</span><br><span class="line">2. 判断此service是否配置了熔断策略 map&lt;serviceName,circuitBreakerpolicy&gt;</span><br><span class="line">    - 根据serviceName,method,serverInfo获取CircuitBreakerCounter</span><br><span class="line">    - counter调用次数+1</span><br><span class="line">    - 若half-open 状态下的服务instance被调用次数超过取样的sample数,从HalfOpenServersMap中remove</span><br></pre></td></tr></table></figure>
+
+<h5 id="疑问"><a href="#疑问" class="headerlink" title="疑问"></a>疑问</h5><ol>
+<li>错误率怎么计算？</li>
+<li>counter的实现</li>
+<li>上面是close与open的转换，怎么转换到halfopen？</li>
+</ol>
+<p>错误率&#x3D; 错误次数&#x2F;请求次数</p>
+<p><strong>halfopen状态</strong></p>
+<p>在上面的提到，被熔断的服务，如果情况好转就会关闭熔断！“情况好转”：什么时候去判断情况好转，怎么判断情况好转两方面</p>
+<ol>
+<li>在加入到openserversmap时，同时开启延迟时间窗口后的定时任务<ul>
+<li>从openserversmap中移除，加入到halfOpenServersMap</li>
+</ul>
+</li>
+</ol>
+<p><strong>counter实现</strong></p>
+<ol>
+<li>简单点：AtomicLong，如当是halfopen时，使用这种简单的计数器叠加</li>
+<li>滑动时间窗口实现</li>
+</ol>
+<h1 id="VS-降级"><a href="#VS-降级" class="headerlink" title="VS 降级"></a>VS 降级</h1><p>提到熔断，不得不起一下降级。两者的区别</p>
+<p>有时语言真是乏力，不容易表达清楚，罗列一下</p>
+<p>熔断是框架提供，不管业务什么样，防止系统雪崩，都需要提供一下基本功能；而降级与业务有关，自动或手动。比如支付，有很多种支付方式，储蓄卡，信用卡，支付宝，微信。若发现某一支付通道不稳定，或压力过大，手动先关闭，这就是一种降级</p>
+<p>由此可看出：</p>
+<ol>
+<li>触发原因不太一样，服务熔断一般是某个服务（下游服务）故障引起，而服务降级一般是从整体负荷考虑；</li>
+<li>管理目标的层次不太一样，熔断其实是一个框架级的处理，每个微服务都需要（无层级之分），而降级一般需要对业务有层级之分（比如降级一般是从最外围服务开始）</li>
+<li>实现方式不一样</li>
+</ol>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="https://yq.aliyun.com/articles/7443">微服务熔断与隔离</a></p>
+<p><a href="https://martinfowler.com/bliki/CircuitBreaker.html">CircuitBreaker</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/microservice/" rel="tag"># 微服务</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/zookeeper-paxos.html" rel="prev" title="zookeeper-paxos">
+      <i class="fa fa-chevron-left"></i> zookeeper-paxos
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/volatile-synchronized--cas.html" rel="next" title="volatile synchronized  cas">
+      volatile synchronized  cas <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%83%8C%E6%99%AF"><span class="nav-number">1.</span> <span class="nav-text">背景</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.</span> <span class="nav-text">问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%86%94%E6%96%AD"><span class="nav-number">2.</span> <span class="nav-text">熔断</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%86%94%E6%96%AD%E7%8A%B6%E6%80%81"><span class="nav-number">2.1.</span> <span class="nav-text">熔断状态</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%9C%BA%E5%88%B6"><span class="nav-number">2.2.</span> <span class="nav-text">实现机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B7%E4%BD%93%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.3.</span> <span class="nav-text">具体实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AA%E6%A1%88%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.3.1.</span> <span class="nav-text">个案实现</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E6%AD%A3%E5%B8%B8%E7%8A%B6%E6%80%81-%E2%80%93-%E7%86%94%E6%96%AD%E7%8A%B6%E6%80%81"><span class="nav-number">2.3.1.1.</span> <span class="nav-text">正常状态 –&gt; 熔断状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%86%94%E6%96%AD%E7%8A%B6%E6%80%81-%E2%80%93-%E6%AD%A3%E5%B8%B8%E7%8A%B6%E6%80%81"><span class="nav-number">2.3.1.2.</span> <span class="nav-text">熔断状态 –&gt; 正常状态</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E7%96%91%E9%97%AE"><span class="nav-number">2.3.1.3.</span> <span class="nav-text">疑问</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#VS-%E9%99%8D%E7%BA%A7"><span class="nav-number">3.</span> <span class="nav-text">VS 降级</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

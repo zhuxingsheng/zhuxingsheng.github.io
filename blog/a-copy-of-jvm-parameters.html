@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="想写个一份百万QPS系统的JVM参数，感觉太标题党了，虽然这的确是，但还是朴实点； JVM参数调优是性能重器，安全第一，不可乱用，更不能因为网上推荐文章(此篇)而随便用 之前关于JVM的几篇文章《是否需要主动GC》、《JIT优化》、《GC及JVM参数》； 这些都涉及到JVM参数,然道理懂不少，还是配置不好参数；调优的确是个费劲的事。这儿直接给一份参数，可以直接拿来主义，当然也有些参数需要配合硬件及">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一份JVM参数">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/a-copy-of-jvm-parameters.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="想写个一份百万QPS系统的JVM参数，感觉太标题党了，虽然这的确是，但还是朴实点； JVM参数调优是性能重器，安全第一，不可乱用，更不能因为网上推荐文章(此篇)而随便用 之前关于JVM的几篇文章《是否需要主动GC》、《JIT优化》、《GC及JVM参数》； 这些都涉及到JVM参数,然道理懂不少，还是配置不好参数；调优的确是个费劲的事。这儿直接给一份参数，可以直接拿来主义，当然也有些参数需要配合硬件及">
+<meta property="og:locale">
+<meta property="article:published_time" content="2019-04-25T03:41:00.000Z">
+<meta property="article:modified_time" content="2021-12-07T15:02:19.845Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="jvm">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/a-copy-of-jvm-parameters.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>一份JVM参数 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/a-copy-of-jvm-parameters.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          一份JVM参数
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-04-25 11:41:00" itemprop="dateCreated datePublished" datetime="2019-04-25T11:41:00+08:00">2019-04-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-12-07 23:02:19" itemprop="dateModified" datetime="2021-12-07T23:02:19+08:00">2021-12-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>想写个一份百万QPS系统的JVM参数，感觉太标题党了，虽然这的确是，但还是朴实点；</p>
+<p>JVM参数调优是性能重器，安全第一，不可乱用，更不能因为网上推荐文章(此篇)而随便用</p>
+<p>之前关于JVM的几篇文章<a href="http://www.zhuxingsheng.com/blog/does-active-gc-need.html">《是否需要主动GC》</a>、<a href="http://www.zhuxingsheng.com/blog/the-way-of-jit-optimization.html">《JIT优化》</a>、<a href="http://www.zhuxingsheng.com/blog/gc-and-jvm-parameters.html">《GC及JVM参数》</a>；</p>
+<p>这些都涉及到JVM参数,然道理懂不少，还是配置不好参数；调优的确是个费劲的事。这儿直接给一份参数，可以直接拿来主义，当然也有些参数需要配合硬件及应用环境，斟酌使用，一切以实战为准</p>
+<p>其实有很多现成的，如<a href="https://github.com/elastic/elasticsearch/blob/master/distribution/src/config/jvm.options">elasticsearch</a>、<a href="https://github.com/apache/cassandra/tree/trunk/conf">cassandra</a>、<a href="https://github.com/vipshop/vjtools/blob/master/vjstar/src/main/script/jvm-options/jvm-options.sh">VIP</a></p>
+<p>jvm参数总体分两种：标准参数(以-开始)与非标准参数;</p>
+<p>非标准参数又分了两种：不太标准(以-X开始)与特别不标准(以-XX开始)</p>
+<p>参数列表就标准到非标准一一进行说明</p>
+<h2 id="标准参数"><a href="#标准参数" class="headerlink" title="标准参数"></a>标准参数</h2><p>顾名思义，标准参数中包括功能和输出的参数都是很稳定的，很可能在将来的JVM版本中不会改变。你可以用java命令（或者是用 java -help）检索出所有标准参数</p>
+<p><strong>-server</strong></p>
+<p>这个参数涉及分层编译策略，简单讲，就是把更多的代码更早地编译成本地代码</p>
+<p><strong>-D</strong></p>
+<p>应用附加配置参数，通过System.getProperty读取</p>
+<p>-Djava.security.egd&#x3D;file:&#x2F;dev&#x2F;.&#x2F;urandom </p>
+<p>-Djava.net.preferIPv4Stack&#x3D;true </p>
+<p>-Djava.awt.headless&#x3D;true </p>
+<p>-Dspring.profiles.active&#x3D;dev</p>
+<h2 id="非标准参数"><a href="#非标准参数" class="headerlink" title="非标准参数"></a>非标准参数</h2><p>非标准化的参数在将来的版本中可能会改变</p>
+<p>在实际情况中X参数和XX参数并没有什么不同。X参数的功能是十分稳定的，然而很多XX参数仍在实验当中（主要是JVM的开发者用于debugging和调优JVM自身的实现）</p>
+<h3 id="X参数"><a href="#X参数" class="headerlink" title="X参数"></a>X参数</h3><p><strong>-Xms2048m</strong></p>
+<p><strong>-Xmx2048m</strong></p>
+<p><strong>-Xmn2048m</strong></p>
+<p><strong>-Xss512K</strong></p>
+<p>这几个老面孔，设置堆大小</p>
+<p>Xms和Xmx设置一样，可以减轻伸缩堆大小带来的压力;Xmn新年代大小</p>
+<p>Xss规定了每个线程堆栈的大小。一般情况下256K是足够了； 如果线程数较多，函数的递归较少，线程栈内存可以调小节约内存，默认1M</p>
+<p><strong>-Xloggc</strong></p>
+<p>-Xloggc:&#x2F;dev&#x2F;shm&#x2F;gc.log</p>
+<p>有人担心写GC日志会影响性能，但测试下来实在没什么影响，GC问题是Java里最常见的问题，没日志怎么行。</p>
+<p>后来又发现如果遇上高IO的情况，GC时操作系统正在flush pageCache 到磁盘，也可能导致GC log文件被锁住，从而让GC结束不了。所以把它指向了&#x2F;dev&#x2F;shm 这种内存中文件系统，避免这种停顿，详见<a href="https://note.youdao.com/">Eliminating Large JVM GC Pauses Caused by Background IO Traffic</a></p>
+<hr>
+<h3 id="XX参数"><a href="#XX参数" class="headerlink" title="XX参数"></a>XX参数</h3><p>XX参数 虽然是最不稳定参数，但使用的最多，好神奇，很多特殊的性能调优都需要用到</p>
+<ul>
+<li>对于布尔类型的参数，我们有”+”或”-“，然后才设置JVM选项的实际名称。例如，-XX:+用于激活选项，而-XX:-用于注销选项</li>
+<li>对于需要非布尔值的参数，如string或者integer，我们先写参数的名称，后面加上”&#x3D;”，最后赋值。例如， -XX:&#x3D;给赋值</li>
+</ul>
+<p>在使用此类参数时，可以使用两个命令先确认一下JVM默认值，防止JVM变动，最好还是明确设置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-XX:+PrintFlagsInitial表示打印出所有XX选项的默认值</span><br><span class="line">-XX:+PrintFlagsFinal表示打印出XX选项在运行程序时生效的值</span><br></pre></td></tr></table></figure>
+
+<p>这些参数从功能大体分类一下</p>
+<ol>
+<li>空间大小，类似-X参数，但这些空间各个JVM可能不同实现，如PermSize</li>
+<li>监控类，帮助确定问题Trouble shooting Options</li>
+<li>优化类，调优性能</li>
+<li>GC策略类</li>
+</ol>
+<h4 id="内存类"><a href="#内存类" class="headerlink" title="内存类"></a>内存类</h4><p><strong>-XX:PermSize&#x3D;512m -XX:MaxPermSize&#x3D;512m</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Java HotSpot(TM) 64-Bit Server VM warning: ignoring option PermSize=200m; support was removed in 8.0</span><br><span class="line">Java HotSpot(TM) 64-Bit Server VM warning: ignoring option MaxPermSize=256m; support was removed in 8.0</span><br></pre></td></tr></table></figure>
+<p>在JDK8之后，永久代向元空间的转换，配置项变成了</p>
+<p><strong>-XX:MetaspaceSize&#x3D;200m -XX:MaxMetaspaceSize&#x3D;256m</strong></p>
+<p>为什么需要这样转换？</p>
+<blockquote>
+<p>1、字符串存在永久代中，容易出现性能问题和内存溢出。<br>2、类及方法的信息等比较难确定其大小，因此对于永久代的大小指定比较困难，太小容易出现永久代溢出，太大则容易导致老年代溢出。<br>3、永久代会为 GC 带来不必要的复杂度，并且回收效率偏低。<br>4、Oracle 可能会将HotSpot 与 JRockit 合二为一。</p>
+</blockquote>
+<p><strong>-XX:MaxDirectMemorySize&#x3D;2048m</strong></p>
+<p>堆外内存的最大值，默认为Heap区总内存减去一个Survivor区的大小；像使用netty之类框架，用得多些。</p>
+<p>在DirectByteBuffer中，首先向Bits类申请额度，Bits类有一个全局的 totalCapacity变量，记录着全部DirectByteBuffer的总大小，每次申请，都先看看是否超限 – 堆外内存的限额默认与堆内内存(由-XMX 设定)相仿，可用 -XX:MaxDirectMemorySize 重新设定。</p>
+<p>如果已经超限，会主动执行Sytem.gc()，期待能主动回收一点堆外内存。然后休眠一百毫秒，看看totalCapacity降下来没有，如果内存还是不足，就抛出大家最头痛的OOM异常；详细可见《堆外内存》</p>
+<p><strong>-XX:ReservedCodeCacheSize&#x3D;240M</strong></p>
+<p>JIT编译后二进制代码的存放区，满了之后就不再编译，对性能影响很大。JDK7默认不开多层编译48M，开了96M，而JDK8默认开多层编译240M。可以在JMX里看看CodeCache的大小，JDK7下的48M一般够了，也可以把它设大点，反正内存多</p>
+<p><strong>-XX:NewRatio&#x3D;1</strong></p>
+<p>这个参数，与-Xmn or (-XX:NewSize and -XX:MaxNewSize) or -XX:NewRatio并列，都是设置年轻代大小。默认值为2, 也就是新生代占堆大小的1&#x2F;3， 个人喜欢把对半分， 增大新生代的大小，能减少GC的频率（但也会加大每次GC的停顿时间），主要是看老生代里没多少长期对象的话，占2&#x2F;3太多了。可以用-Xmn 直接赋值(等于-XX:NewSize and -XX:MaxNewSize同值的缩写)，或把NewRatio设为1来对半分(但如果想设置新生代比老生代大就只能用-Xmn)</p>
+<p>参数中带Ratio的还有一个-XX:SurvivorRatio，从字面意思看好像是新年代占比、survivor占比。<strong>其实是反的</strong>。</p>
+<p><strong>-XX:NewRatio&#x3D;4表示年老代与年轻代的比值为4:1</strong></p>
+<p><strong>-XX:SurvivorRatio&#x3D;8表示Eden区与Survivor区的大小比值是8:1:1</strong>, 因为Survivor区有两个</p>
+<h4 id="监控类"><a href="#监控类" class="headerlink" title="监控类"></a>监控类</h4><p><strong>-XX:+PrintCommandLineFlags</strong></p>
+<p>让JVM打印出那些已经被用户或者JVM设置过的详细的XX参数的名称和值，还会打印出以及因为这些参数隐式影响的参数</p>
+<p>打印出来，需要核实线上运行状态时，有据可查</p>
+<p><strong>-XX:-OmitStackTraceInFastThrow</strong></p>
+<p>有时查线上问题时，看到有异常信息，但只有</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">...</span><br><span class="line">java.lang.NullPointerException</span><br><span class="line">java.lang.NullPointerException</span><br><span class="line">java.lang.NullPointerException</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+<p>具体的异常栈没了，有时异常监控不位，人工发现这些异常时，却看不出哪里的问题，很是恼火</p>
+<p>JVM对一些特定的异常类型做了Fast Throw优化，如果检测到在代码里某个位置连续多次抛出同一类型异常的话，C2会决定用Fast Throw方式来抛出异常，而异常Trace即详细的异常栈信息会被清空。这种异常抛出速度非常快，因为不需要在堆里分配内存，也不需要构造完整的异常栈信息</p>
+<p>特定异常：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">NullPointerException</span><br><span class="line">ArithmeticException</span><br><span class="line">ArrayIndexOutOfBoundsException</span><br><span class="line">ArrayStoreException</span><br><span class="line">ClassCastException</span><br></pre></td></tr></table></figure>
+
+<p><strong>-XX:+PrintGCCause</strong></p>
+<p>打印产生GC的原因，比如AllocationFailure什么的，在JDK8已默认打开，JDK7要显式打开一下</p>
+<p><strong>-XX:+PrintGCApplicationStoppedTime</strong></p>
+<p>这是个非常非常重要的参数，但它的名字没起好，其实除了打印清晰的完整的GC停顿时间外，还可以打印其他的JVM停顿时间，比如取消偏向锁，class 被agent redefine，code deoptimization等等，有助于发现一些原来没想到的问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">2018-10-18T03:27:39.204+0800: 33729.026: Total time for which application threads were stopped: 0.0059280 seconds, Stopping threads took: 0.0001000 seconds</span><br></pre></td></tr></table></figure>
+
+<p><strong>-XX:+PrintGCDateStamps</strong></p>
+<p>输出GC的时间戳（以日期的形式，如 2013-05-04T21:53:59.234+0800）</p>
+<p>用PrintGCDateStamps而不是PrintGCTimeStamps，打印可读的日期而不是时间戳</p>
+<p><strong>-XX:+PrintGCDetails</strong></p>
+<p>输出GC的详细日志</p>
+<p><strong>-XX:ErrorFile</strong></p>
+<p>-XX:ErrorFile&#x3D;${MYLOGDIR}&#x2F;jvmerr_%p.log</p>
+<p>JVM crash时，hotspot 会生成一个error文件，提供JVM状态信息的细节。如前所述，将其输出到固定目录，避免到时会到处找这文件。文件名中的%p会被自动替换为应用的PID</p>
+<p><strong>-XX:+HeapDumpOnOutOfMemoryError</strong></p>
+<p>两个配合使用 -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath&#x3D;${LOGDIR}&#x2F;</p>
+<p>在Out Of Memory，JVM快死掉的时候，输出Heap Dump到指定文件。不然开发很多时候还真不知道怎么重现错误。</p>
+<p>路径只指向目录，JVM会保持文件名的唯一性，叫java_pid${pid}.hprof。因为如果指向文件，而文件已存在，反而不能写入。</p>
+<p>但在容器环境下，输出4G的HeapDump，在普通硬盘上会造成20秒以上的硬盘IO跑满，也是个十足的恶邻，影响了同一宿主机上所有其他的容器</p>
+<hr>
+<h4 id="优化类"><a href="#优化类" class="headerlink" title="优化类"></a>优化类</h4><p><strong>-XX:AutoBoxCacheMax</strong></p>
+<p>-XX:AutoBoxCacheMax&#x3D;20000</p>
+<p>这个参数的意义是缓存自动装箱最大值</p>
+<blockquote>
+<p>设为20000后，我们应用的QPS有足足4%的影响</p>
+</blockquote>
+<p>看代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Integer i = 129;</span><br><span class="line">Integer j = 129;</span><br><span class="line"></span><br><span class="line">i == j //true or false ?</span><br></pre></td></tr></table></figure>
+<p>JDK默认只缓存 -128 ~ +127的Integer 和 Long，超出范围的数字就要即时构建新的Integer对象;</p>
+<p>如果这儿配置了最大值20000，那就是[-128,20000]都不再创建新对象，但有点奇怪的时，你不能认为AutoBoxCacheMax的默认值是127</p>
+<p>为什么配置值是20000呢，就得说到-XX:+AggressiveOpts参数，这是是一些还没默认打开的优化参数集合, -XX:AutoBoxCacheMax是其中的一项。但这个参数在关键系统里不建议打开</p>
+<blockquote>
+<p>There’s a JVM option -XX:+AggressiveOpts that supposedly makes your JVM faster. Lots of people turn this on in Eclipse to try to make it faster. But it makes your JVM less correct. Today I found it to be the cause of a longstanding bug in dx.<br><a href="http://code.google.com/p/android/issues/detail?id=5817">http://code.google.com/p/android/issues/detail?id=5817</a></p>
+</blockquote>
+<blockquote>
+<p>-XX:+AggressiveOpts was deprecated in JDK 11 and should be removed in JDK 12</p>
+</blockquote>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">-     bool AggressiveOpts                           := false           &#123;product&#125;</span><br><span class="line">+     bool AggressiveOpts                           := true            &#123;product&#125;</span><br><span class="line"></span><br><span class="line">-     intx AutoBoxCacheMax                           = 128             &#123;C2 product&#125;</span><br><span class="line">+     intx AutoBoxCacheMax                           = 20000           &#123;C2 product&#125;</span><br></pre></td></tr></table></figure>
+<p>通过上面的打印设置配置值的参数，可以看出此项默认值是128,在打开AggressiveOpts参数时，是20000</p>
+<p><strong>-XX:-UseCounterDecay</strong></p>
+<p>禁止JIT调用计数器衰减。默认情况下，每次GC时会对调用计数器进行砍半的操作，导致有些方法一直温热，<br>永远都达不到触发C2编译的1万次（server默认值）的阀值，详细可参考《JIT优化》</p>
+<p><strong>-XX:-UseBiasedLocking</strong></p>
+<p>JDK1.6开始默认打开的偏向锁，会尝试把锁赋给第一个访问它的线程，取消同步块上的synchronized原语</p>
+<p>如果始终只有一条线程在访问它，就成功略过同步操作以获得性能提升</p>
+<p>为什么会有偏向锁出现？因为经验表明，其实大部分情况下，都会是同一个线程进入同一块同步代码块</p>
+<p>但线上应用基本都是使用多线程，一旦出现锁竞争，就会锁膨胀，GC日志中有不少RevokeBiasd的纪录，像GC一样Stop The World的干活，虽然只是很短的停顿，但对于多线程并发的应用，取消掉它反而有性能的提升</p>
+<p><strong>-XX:+PerfDisableSharedMem</strong></p>
+<p>JVM经常会默默的在&#x2F;tmp&#x2F;hperf目录写上一点statistics数据，如果刚好遇到PageCache刷盘，把文件阻塞了，就不能结束这个Stop the World的安全点</p>
+<p>禁止JVM写statistics数据的代价，是jps和jstat用不了；详细可看jstat的具体实现</p>
+<p><strong>-XX:MaxTenuringThreshold&#x3D;4</strong></p>
+<p>这是改动效果最明显的一个参数了。对象在Survivor区最多熬过多少次Young GC后晋升到年老代，JDK8里默认是15</p>
+<p>Young GC是最大的应用停顿来源，而新生代里GC后存活对象的多少又直接影响停顿的时间，所以如果清楚Young GC的执行频率和应用里大部分临时对象的最长生命周期，可以把它设的更短一点，让其实不是临时对象的新生代对象赶紧晋升到年老代，别呆着。</p>
+<p>用-XX:+PrintTenuringDistribution观察下，如果后面几代的大小总是差不多，证明过了某个年龄后的对象总能晋升到老生代，就可以把晋升阈值设小，比如JMeter里2就足够了</p>
+<p><strong>-XX:+UnlockDiagnosticVMOptions -XX: ParGCCardsPerStrideChunk&#x3D;1024</strong></p>
+<blockquote>
+<p>Linkined的黑科技， 上一个版本的文章不建议打开，后来发现有些场景的确能减少YGC时间，详见<a href="https://toutiao.io/posts/hltb1e/preview/">《难道这些 Java 大牛说的都是真的？》</a>，简单说就是影响YGC时扫描老生代的时间，默认值256太小了，但32K也未必对，需要自己试验</p>
+</blockquote>
+<p><strong>-XX:+ExplicitGCInvokesConcurrent</strong></p>
+<p>full gc时，使用CMS算法，不是全程停顿，必选</p>
+<p><strong>-XX:+AlwaysPreTouch</strong></p>
+<p>启动时访问并置零内存页面；启动时就把参数里说好了的内存全部舔一遍，可能令得启动时慢上一点，但后面访问时会更流畅，比如页面会连续分配，比如不会在晋升新生代到老生代时才去访问页面使得GC停顿时间加长。ElasticSearch和Cassandra都打开了它</p>
+<hr>
+<h4 id="GC策略"><a href="#GC策略" class="headerlink" title="GC策略"></a>GC策略</h4><p>配置-server时默认使用ParallelScavenge系的GC,是个吞吐量优先的收集器</p>
+<p>虽然现在有了G1 GC,甚至JDK11后的ZGC,但在大型互联网项目上估计CMS还是主流</p>
+<p>CMS三个基本配置</p>
+<p><strong>-XX:+UseConcMarkSweepGC -XX:CMSInitiatingOccupancyFraction&#x3D;75 -XX:+UseCMSInitiatingOccupancyOnly</strong></p>
+<blockquote>
+<p>因为我们的监控系统会通过JMX监控内存达到90%的状况（留点处理的时间），所以设置让它75%就开始跑了，早点开始也能避免Full GC等意外情况(概念重申，这种主动的CMS GC，和JVM的老生代、永久代、堆外内存完全不能分配内存了而强制Full GC是不同的概念)。为了让这个设置生效，还要设置-XX:+UseCMSInitiatingOccupancyOnly，否则75只被用来做开始的参考值，后面还是JVM自己算</p>
+</blockquote>
+<p><strong>-XX:+ParallelRefProcEnabled -XX:+CMSParallelInitialMarkEnabled</strong></p>
+<p>并行的处理Reference对象，如WeakReference，默认为false，除非在GC log里出现Reference处理时间较长的日志，否则效果不会很明显，但我们总是要JVM尽量的并行，所以设了也就设了。同理还有-XX:+CMSParallelInitialMarkEnabled，JDK8已默认开启，但小版本比较低的JDK7甚至不支持</p>
+<h2 id="建议参数"><a href="#建议参数" class="headerlink" title="建议参数"></a>建议参数</h2><p><strong>-XX:ParallelGCThreads&#x3D;? -XX:ConcGCThreads&#x3D;?</strong></p>
+<p>-XX:ParallelGCThreads&#x3D;n	GC在并行处理阶段多少个线程，默认值和平台有关。（译者注：和程序一起跑的时候，使用多少个线程)</p>
+<p>-XX:ConcGCThreads&#x3D;n	并发收集的时候使用多少个线程，默认值和平台有关。（译者注:stop-the-world的时候，并发处理的时候使用多少个线程)</p>
+<p>ParallelGCThreads＝Processor &lt; 8 ? 8 : 8 +( Processor - 8 ) ( 5&#x2F;8 )；</p>
+<p>ConcGCThreads &#x3D; (ParallelGCThreads + 3)&#x2F;4</p>
+<p>24个处理器，小于8个处理器时ParallelGCThreads按处理器数量，大于时按上述公式YGC线程数＝18， CMS GC线程数＝5。</p>
+<p>CMS GC线程数的公式太怪，也有人提议简单改为YGC线程数的1&#x2F;2。</p>
+<p>一些不在乎停顿时间的后台辅助程序，比如日志收集的logstash，建议把它减少到2，避免在GC时突然占用太多CPU核，影响主应用。</p>
+<p>而另一些并不独占服务器的应用，比如旁边跑着一堆sidecar的，也建议减少YGC线程数。</p>
+<p>一个真实的案例，24核的服务器，默认18条YGC线程，但因为旁边有个繁忙的Service Mesh Proxy在跑着，这18条线程并不能100%的抢到CPU，出现了不合理的慢GC。把线程数降低到12条之后，YGC反而快了很多。 所以那些贪心的把YGC线程数＝CPU 核数的，通常弄巧成拙。</p>
+<p><strong>不要-XX:+DisableExplicitGC</strong></p>
+<p>像R大说的，System GC是保护机制（如堆外内存满时清理它的堆内引用对象），禁了system.gc() 未必是好事，只要没用什么特别烂的类库，真有人调了总有调的原因，所以不应该加这个烂大街的参数。</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="http://calvin1978.blogcn.com/articles/jvmoption-7.html">关键业务系统的JVM参数推荐</a></p>
+<p><a href="https://yq.aliyun.com/articles/62538">JVM源码分析之Jstat工具原理完全解读</a></p>
+<p><a href="https://toutiao.io/posts/hltb1e/preview/">《难道这些 Java 大牛说的都是真的？》</a></p>
+<p><a href="http://calvin1978.blogcn.com/articles/securerandom.html">SecureRandom的江湖偏方与真实效果</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/jvm/" rel="tag"># jvm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/zookeeper-knowledge-structure-3-distributed-lock.html" rel="prev" title="zookeeper知识结构3-分布式锁">
+      <i class="fa fa-chevron-left"></i> zookeeper知识结构3-分布式锁
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/monitored-traceid.html" rel="next" title="监控之traceid">
+      监控之traceid <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%8F%82%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">标准参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%9E%E6%A0%87%E5%87%86%E5%8F%82%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">非标准参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#X%E5%8F%82%E6%95%B0"><span class="nav-number">2.1.</span> <span class="nav-text">X参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XX%E5%8F%82%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text">XX参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%B1%BB"><span class="nav-number">2.2.1.</span> <span class="nav-text">内存类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E7%B1%BB"><span class="nav-number">2.2.2.</span> <span class="nav-text">监控类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E7%B1%BB"><span class="nav-number">2.2.3.</span> <span class="nav-text">优化类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GC%E7%AD%96%E7%95%A5"><span class="nav-number">2.2.4.</span> <span class="nav-text">GC策略</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BB%BA%E8%AE%AE%E5%8F%82%E6%95%B0"><span class="nav-number">3.</span> <span class="nav-text">建议参数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

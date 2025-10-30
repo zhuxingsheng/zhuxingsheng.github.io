@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="motan第二篇,本来想写motan的rpc调用过程的，但项目中的需求需要对motan进行扩展，所以就先记录下 引导在写一个框架或者在项目中提供一些底层服务时，都会有这种情况，会有一些默认的实现，但你知道这些默认实现只是很满足很基本的自身需求，开发人员可能会扩展，想自定义一个实现 处理方式  提供一个设置实现类的setter，开发者在初始化时调用一下 提供配置入口，给个key,配置上自定义类名 类">
+<meta property="og:type" content="article">
+<meta property="og:title" content="motan扩展机制">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/motan-extension-mechanism.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="motan第二篇,本来想写motan的rpc调用过程的，但项目中的需求需要对motan进行扩展，所以就先记录下 引导在写一个框架或者在项目中提供一些底层服务时，都会有这种情况，会有一些默认的实现，但你知道这些默认实现只是很满足很基本的自身需求，开发人员可能会扩展，想自定义一个实现 处理方式  提供一个设置实现类的setter，开发者在初始化时调用一下 提供配置入口，给个key,配置上自定义类名 类">
+<meta property="og:locale">
+<meta property="article:published_time" content="2017-01-08T08:04:00.000Z">
+<meta property="article:modified_time" content="2021-09-29T07:24:30.475Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="motan">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/motan-extension-mechanism.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>motan扩展机制 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/motan-extension-mechanism.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          motan扩展机制
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-01-08 16:04:00" itemprop="dateCreated datePublished" datetime="2017-01-08T16:04:00+08:00">2017-01-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/source/" itemprop="url" rel="index"><span itemprop="name">源码解读</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>motan第二篇,本来想写motan的rpc调用过程的，但项目中的需求需要对motan进行扩展，所以就先记录下</p>
+<h2 id="引导"><a href="#引导" class="headerlink" title="引导"></a>引导</h2><p>在写一个框架或者在项目中提供一些底层服务时，都会有这种情况，会有一些默认的实现，但你知道这些默认实现只是很满足很基本的自身需求，开发人员可能会扩展，想自定义一个实现</p>
+<p>处理方式</p>
+<ol>
+<li>提供一个设置实现类的setter，开发者在初始化时调用一下</li>
+<li>提供配置入口，给个key,配置上自定义类名</li>
+<li>类似slf4j一样，提供桥接类</li>
+</ol>
+<h2 id="SPI"><a href="#SPI" class="headerlink" title="SPI"></a>SPI</h2><p>motan使用了spi的方式</p>
+<p>SPI(Service Provider Interface),服务提供接口；也是一种服务发现机制</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">系统里抽象的各个模块，往往有很多不同的实现方案，</span><br><span class="line">比如日志模块的方案，xml解析模块、jdbc模块的方案等。面向的对象的设计里，</span><br><span class="line">我们一般推荐模块之间基于接口编程，模块之间不对实现类进行硬编码</span><br><span class="line">。一旦代码里涉及具体的实现类，就违反了可拔插的原则，</span><br><span class="line">如果需要替换一种实现，就需要修改代码。</span><br><span class="line"></span><br><span class="line">为了实现在模块装配的时候能不在程序里动态指明，这就需要一种服务发现机制。</span><br><span class="line">java spi就是提供这样的一个机制：为某个接口寻找服务实现的机制。</span><br><span class="line">有点类似IOC的思想，就是将装配的控制权移到程序之外，在模块化设计中这个机制尤其重要。</span><br></pre></td></tr></table></figure>
+
+<p>在JDK6之前，你可能会自己定义一种服务提供的约定，在JDK6之后，java也提供了标准约定</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">扩展者在jar包的META-INF/services/目录下放置与接口同名的文本文件 </span><br><span class="line">内容为接口实现类名，多个实现类名用换行符分隔</span><br></pre></td></tr></table></figure>
+<p>java.util.ServiceLoader类来实现从配置文件中加载子类或者接口的实现类</p>
+<h4 id="SPI与API的区别"><a href="#SPI与API的区别" class="headerlink" title="SPI与API的区别"></a>SPI与API的区别</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">What is the difference between Service Provider Interface (SPI) and Application Programming Interface (API)?</span><br><span class="line">More specifically, for Java libraries, what makes them an API and/or SPI?</span><br><span class="line">the API is the description of classes/interfaces/methods/... </span><br><span class="line">that you call and use to achieve a goal</span><br><span class="line">the SPI is the description of classes/interfaces/methods/... </span><br><span class="line">that you extend and implement to achieve a goal</span><br><span class="line">Put differently, the API tells you what a specific class/method does for you and the SPI tells you what you must do to conform.</span><br><span class="line">Sometimes SPI and API overlap. </span><br><span class="line">For example in JDBC the Driver class is part of the SPI: </span><br><span class="line">If you simply want to use JDBC, you don&#x27;t need to use it directly, but everyone who implements a JDBC driver must implement that class.</span><br><span class="line">The Connection interface on the other hand is both SPI and API: </span><br><span class="line">You use it routinely when you use a JDBC driver and it needs to be implemented by the developer of the JDBC driver。</span><br><span class="line">        </span><br></pre></td></tr></table></figure>
+
+<h2 id="JDK-spi"><a href="#JDK-spi" class="headerlink" title="JDK spi"></a>JDK spi</h2><p>使用jdk自带的ServiceLoader写一个示例：</p>
+<p>一个接口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public interface Spi &#123;</span><br><span class="line"></span><br><span class="line">    public void provide();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>一个实现类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class DefaultSpi implements Spi&#123;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void provide() &#123;</span><br><span class="line">        System.out.println(&quot;默认spi实现&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>入口类</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 一个spi的demo</span><br><span class="line"> *</span><br><span class="line"> */</span><br><span class="line">public class SpiDemoMain</span><br><span class="line">&#123;</span><br><span class="line">    public static void main( String[] args )</span><br><span class="line">    &#123;</span><br><span class="line">        ServiceLoader&lt;Spi&gt; spiServiceLoader = ServiceLoader.load(Spi.class);</span><br><span class="line"></span><br><span class="line">        Iterator&lt;Spi&gt; spiIterator = spiServiceLoader.iterator();</span><br><span class="line"></span><br><span class="line">        while ( spiIterator.hasNext()) &#123;</span><br><span class="line">            spiIterator.next().provide();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在META-INF文件夹里面新建个services文件夹，在services文件夹里面新建一个<br>com.jjk.spi.Spi文件</p>
+<p>完整的代码可从<a href="https://github.com/zhuxingsheng/spidemo">https://github.com/zhuxingsheng/spidemo</a>下载</p>
+<h4 id="ServiceLoader源码解析"><a href="#ServiceLoader源码解析" class="headerlink" title="ServiceLoader源码解析"></a>ServiceLoader源码解析</h4><p>原理很简单，一个类实现这个SPI机制</p>
+<p>它的本质，也就是从某个地方加载服务实现类，文件名是服务接口名</p>
+<p>定义存放文件的地方</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">private static final String PREFIX = &quot;META-INF/services/&quot;;</span><br></pre></td></tr></table></figure>
+
+<p>类内部使用了延迟加载LazyIterator，在使用到了实现类时，才去实例化。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">private S nextService() &#123;</span><br><span class="line">            if (!hasNextService())</span><br><span class="line">                throw new NoSuchElementException();</span><br><span class="line">            String cn = nextName;</span><br><span class="line">            nextName = null;</span><br><span class="line">            Class&lt;?&gt; c = null;</span><br><span class="line">            try &#123;</span><br><span class="line">                </span><br><span class="line">                c = Class.forName(cn, false, loader);</span><br><span class="line">            &#125; catch (ClassNotFoundException x) &#123;</span><br><span class="line">                fail(service,</span><br><span class="line">                     &quot;Provider &quot; + cn + &quot; not found&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            if (!service.isAssignableFrom(c)) &#123;</span><br><span class="line">                fail(service,</span><br><span class="line">                     &quot;Provider &quot; + cn  + &quot; not a subtype&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            try &#123;</span><br><span class="line">            // 调用next方法时，才实例化</span><br><span class="line">                S p = service.cast(c.newInstance());</span><br><span class="line">                providers.put(cn, p);</span><br><span class="line">                return p;</span><br><span class="line">            &#125; catch (Throwable x) &#123;</span><br><span class="line">                fail(service,</span><br><span class="line">                     &quot;Provider &quot; + cn + &quot; could not be instantiated&quot;,</span><br><span class="line">                     x);</span><br><span class="line">            &#125;</span><br><span class="line">            throw new Error();          // This cannot happen</span><br><span class="line">        &#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="motan-spi"><a href="#motan-spi" class="headerlink" title="motan spi"></a>motan spi</h2><p>motan的spi，跟java spi差不多，但做了一些加强</p>
+<p>先看官方文档</p>
+<blockquote>
+<ol>
+<li>实现SPI扩展点接口</li>
+</ol>
+</blockquote>
+<blockquote>
+<ol start="2">
+<li>实现类增加注解<br>@Spi(scope &#x3D; Scope.SINGLETON)  &#x2F;&#x2F;扩展加载形式，单例或多例<br>@SpiMeta(name &#x3D; “motan”)  &#x2F;&#x2F;name表示扩展点的名称，根据name加载对应扩展<br>@Activation(sequence &#x3D; 100) &#x2F;&#x2F;同类型扩展生效顺序，部分扩展点支持。非必填<br>增加SPI实现声明 ${classpath}&#x2F;MATA-INF&#x2F;services&#x2F;${SPI interface fullname}文件中添加对应SPI接口实现类全名。 可参照motan-core模块&#x2F;MATA-INF&#x2F;services&#x2F;下的配置</li>
+</ol>
+</blockquote>
+<p>主要类就是com.weibo.api.motan.core.extension.ExtensionLoader<br>代码在<a href="https://github.com/zhuxingsheng/motan/blob/master/motan-core/src/main/java/com/weibo/api/motan/core/extension/ExtensionLoader.java#L100-99">https://github.com/zhuxingsheng/motan/blob/master/motan-core/src/main/java/com/weibo/api/motan/core/extension/ExtensionLoader.java#L100-99</a><br>其实代码很简单，不需要额外的解读，都能看明白</p>
+<p>还有几个注解类</p>
+<p>@Spi  指定类生命周期</p>
+<p>@SpiMeta 给类一个别名，方便配置时使用</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/motan/" rel="tag"># motan</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/introduction-to-motan.html" rel="prev" title="motan入门">
+      <i class="fa fa-chevron-left"></i> motan入门
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/motan-client.html" rel="next" title="motan客户端">
+      motan客户端 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E5%AF%BC"><span class="nav-number">1.</span> <span class="nav-text">引导</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SPI"><span class="nav-number">2.</span> <span class="nav-text">SPI</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SPI%E4%B8%8EAPI%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">2.1.</span> <span class="nav-text">SPI与API的区别</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JDK-spi"><span class="nav-number">3.</span> <span class="nav-text">JDK spi</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ServiceLoader%E6%BA%90%E7%A0%81%E8%A7%A3%E6%9E%90"><span class="nav-number">3.1.</span> <span class="nav-text">ServiceLoader源码解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#motan-spi"><span class="nav-number">4.</span> <span class="nav-text">motan spi</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

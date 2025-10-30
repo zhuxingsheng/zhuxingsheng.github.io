@@ -1,0 +1,1959 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="彪悍的人生需要书写">
+<meta property="og:type" content="website">
+<meta property="og:title" content="码农戏码">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/page/12/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="彪悍的人生需要书写">
+<meta property="og:locale">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/page/12/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm---sorting---counting-sorting.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/algorithm---sorting---counting-sorting.html" class="post-title-link" itemprop="url">算法渣-排序-计数排序</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-02-21 13:55:00" itemprop="dateCreated datePublished" datetime="2019-02-21T13:55:00+08:00">2019-02-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法</p>
+</blockquote>
+<h1 id="线性排序"><a href="#线性排序" class="headerlink" title="线性排序"></a>线性排序</h1><p>常见的三种以线性时间运行的算法：计数排序、基数排序和桶排序</p>
+<p>需要注意的是线性排序算法是非基于比较的排序算法，都有使用限制才能达到线性排序的效果</p>
+<p>线性排序是个神奇的算法，比基数排序及桶排序神奇得多</p>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>计数排序是一个非基于比较的排序算法，该算法于1954年由 Harold H. Seward 提出。它的优势在于在对一定范围内的整数排序时，它的复杂度为Ο(n+k)（其中k是整数的范围），快于任何比较排序算法</p>
+<h1 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h1><p>计数排序的基本思想是对于给定的输入序列中的每一个元素x，确定该序列中值小于x的元素的个数（<em>此处并非比较各元素的大小，而是通过对元素值的计数和计数值的累加来确定</em>）。一旦有了这个信息，就可以将x直接存放到最终的输出序列的正确位置上</p>
+<p>首先需要三个数组，第一个数组记录A要排序的数列大小为n，第二个数组B要记录比某个数小的其他数字的个数所以第二个数组的大小应当为K（数列中最大数的大小），第三个数组C为记录排序好了的数列的数组，大小应当为n。</p>
+<p>接着需要确定数组最大值并确定B数组的大小。并对每个数由小到大的记录数列中每个数的出现次数。因为是有小到大通过出现次数可以通过前面的所有数的出现次数来确定比这个数小的数的个数，从而确定其位置</p>
+<p>假定20个随机整数的值，也就是第一个数组A：</p>
+<p>9，3，5，4，9，1，2，7，8，1，3，6，5，3，4，0，10，9 ，7，9</p>
+<p>数组A中最大数为10，数组B需要0~10索引</p>
+<p><img src="http://images.zhuxingsheng.com/201902201404_335.png"></p>
+<p>比如第一个整数是9，那么数组下标为9的元素加1：</p>
+<p><img src="http://images.zhuxingsheng.com/201902201625_528.png"></p>
+<p>第二个整数是3，那么数组下标为3的元素加1：</p>
+<p><img src="http://images.zhuxingsheng.com/201902201625_378.png"></p>
+<p>最终，数列遍历完毕时，数组的状态如下：</p>
+<p><img src="http://images.zhuxingsheng.com/201902201637_597.png"></p>
+<p>数组每一个下标位置的值，代表了数列中对应整数出现的次数。</p>
+<p>有了这个“统计结果”，排序就很简单了。直接遍历数组，输出数组元素的下标值，元素的值是几，就输出几次：</p>
+<p>0，1，1，2，3，3，3，4，4，5，5，6，7，7，8，9，9，9，9，10</p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 计数排序</span><br><span class="line"> * @param array</span><br><span class="line"> */</span><br><span class="line">public static void countSort(int []array)&#123;</span><br><span class="line">    //最大最小数</span><br><span class="line">    int min = Integer.MAX_VALUE;</span><br><span class="line">    int max = Integer.MIN_VALUE;</span><br><span class="line">    for ( int a:array) &#123;</span><br><span class="line">        if(min &gt; a) &#123;</span><br><span class="line">            min = a;</span><br><span class="line">        &#125;</span><br><span class="line">        if(max &lt; a) &#123;</span><br><span class="line">            max = a;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //数组索引数量,统计数组计数</span><br><span class="line">    // max-min 主要是考虑到像[90,99,93,95]不是从很小数开始的数组排序，减小空间消耗</span><br><span class="line">    int indexCount = max - min + 1;</span><br><span class="line">    System.err.println(&quot;统计数组长度&quot;+indexCount);</span><br><span class="line">    int []countArray = new int[indexCount];</span><br><span class="line"></span><br><span class="line">    for (int i=0;i&lt;array.length;i++)&#123;</span><br><span class="line">        System.err.println(array[i]-min);</span><br><span class="line">        countArray[array[i]-min]++;</span><br><span class="line">    &#125;</span><br><span class="line">    System.err.println(&quot;countArray:&quot;+Arrays.toString(countArray));</span><br><span class="line"></span><br><span class="line">    //排好序的数组</span><br><span class="line">    int [] sortArray = new int[array.length];</span><br><span class="line">    int index = 0;</span><br><span class="line">    for (int i=0;i&lt;indexCount;i++) &#123;</span><br><span class="line">        for (int j=0;j&lt;countArray[i];j++)&#123;</span><br><span class="line">            sortArray[index++] = min + i;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    //输出就是有序</span><br><span class="line">    System.err.println(Arrays.toString(sortArray));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="改进"><a href="#改进" class="headerlink" title="改进"></a>改进</h1><p>上面的实现为什么要改进，主要是当两个元素相同时，算法的稳定性问题</p>
+<p>改进之前，数组B存放的是元素出现的次数</p>
+<p>改进之后，会引入一个新数组(也可以共用数组B)，存放的是元素的位置号(这个纯粹是个人理解，之前数组B是存放元素出现的次数，新数组存放每一个元素都加上前面所有元素出现次数之和，当找到对应排序数组元素时，新数组元素就是位置号)</p>
+<p>语言比较空洞，直接来个示例(转自小灰程序员)</p>
+<p>将数组arr中的数据当作是学生的成绩，要求不但要按照顺序从低到高排序，成绩相同时，按原有顺序显示：</p>
+<p><img src="http://images.zhuxingsheng.com/201902210958_334.png"></p>
+<p><img src="http://images.zhuxingsheng.com/201902210959_450.png"></p>
+<p>统计数组从第二个元素开始，每一个元素都加上前面所有元素之和</p>
+<p><img src="http://images.zhuxingsheng.com/201902211000_447.png"></p>
+<p>第一步，我们遍历成绩表最后一行的小绿：</p>
+<p>小绿是95分，我们找到countArray下标是5的元素，值是4，代表小绿的成绩排名位置在第4位。</p>
+<p>同时，我们给countArray下标是5的元素值减1，从4变成3,，代表着下次再遇到95分的成绩时，最终排名是第3。</p>
+<p><img src="http://images.zhuxingsheng.com/201902211001_936.png"></p>
+<p>第二步，我们遍历成绩表倒数第二行的小白：</p>
+<p>小白是94分，我们找到countArray下标是4的元素，值是2，代表小白的成绩排名位置在第2位。</p>
+<p>同时，我们给countArray下标是4的元素值减1，从2变成1,，代表着下次再遇到94分的成绩时（实际上已经遇不到了），最终排名是第1。</p>
+<p><img src="http://images.zhuxingsheng.com/201902211001_208.png"></p>
+<p>第三步，我们遍历成绩表倒数第三行的小红：</p>
+<p>小红是95分，我们找到countArray下标是5的元素，值是3（最初是4，减1变成了3），代表小红的成绩排名位置在第3位。</p>
+<p>同时，我们给countArray下标是5的元素值减1，从3变成2,，代表着下次再遇到95分的成绩时（实际上已经遇不到了），最终排名是第2。</p>
+<p><img src="http://images.zhuxingsheng.com/201902211002_941.png"></p>
+<p>这样一来，同样是95分的小红和小绿就能够清楚地排出顺序了，也正因此，优化版本的计数排序属于稳定排序。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 稳定计数排序</span><br><span class="line"> * @param array</span><br><span class="line"> */</span><br><span class="line">public static void countSort1(int []array) &#123;</span><br><span class="line">    //最大最小数</span><br><span class="line">    int min = Integer.MAX_VALUE;</span><br><span class="line">    int max = Integer.MIN_VALUE;</span><br><span class="line">    for ( int a:array) &#123;</span><br><span class="line">        if(min &gt; a) &#123;</span><br><span class="line">            min = a;</span><br><span class="line">        &#125;</span><br><span class="line">        if(max &lt; a) &#123;</span><br><span class="line">            max = a;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //数组索引数量,统计数组计数</span><br><span class="line">    // max-min 主要是考虑到像[90,99,93,95]不是从很小数开始的数组排序，减小空间消耗</span><br><span class="line">    int indexCount = max - min + 1;</span><br><span class="line">    System.err.println(&quot;统计数组长度&quot;+indexCount);</span><br><span class="line">    int []countArray = new int[indexCount];</span><br><span class="line"></span><br><span class="line">    for (int i=0;i&lt;array.length;i++)&#123;</span><br><span class="line">        System.err.println(array[i]-min);</span><br><span class="line">        countArray[array[i]-min]++;</span><br><span class="line">    &#125;</span><br><span class="line">    System.err.println(&quot;countArray:&quot;+Arrays.toString(countArray));</span><br><span class="line">    //位置数组</span><br><span class="line">    int []pointArray = new int[indexCount];</span><br><span class="line"></span><br><span class="line">    int sum =0;</span><br><span class="line">    for (int i = 0;i&lt;indexCount;i++)&#123;</span><br><span class="line">        sum += countArray[i];</span><br><span class="line">        pointArray[i] = sum;</span><br><span class="line">    &#125;</span><br><span class="line">    System.err.println(&quot;pointArray:&quot;+Arrays.toString(pointArray));</span><br><span class="line">    System.err.println(&quot;aaaaaArray:&quot;+Arrays.toString(array));</span><br><span class="line">    //排好序的数组</span><br><span class="line">    int [] sortArray = new int[array.length];</span><br><span class="line">    for (int i=array.length-1;i&gt;=0;i--) &#123;</span><br><span class="line">            sortArray[pointArray[array[i]-min] -1 ] = array[i];</span><br><span class="line">            pointArray[array[i]-min]--;</span><br><span class="line">    &#125;</span><br><span class="line">    //输出就是有序</span><br><span class="line">    System.err.println(Arrays.toString(sortArray));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><h2 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h2><p>假设array元素有N个，取值范围是M。</p>
+<p>时间复杂度：3N(计算最大最小数、计数、排好序的数组) + M(位置数组)，去掉系数，时间复杂度是O(N+M)</p>
+<p>空间复杂度：只考虑统计数组，那就是M</p>
+<h2 id="局限性"><a href="#局限性" class="headerlink" title="局限性"></a>局限性</h2><p>1.当数列最大最小值差距过大时，并不适用计数排序。</p>
+<p>比如给定20个随机整数，范围在0到1亿之间，这时候如果使用计数排序，需要创建长度1亿的数组。不但严重浪费空间，而且时间复杂度也随之升高。</p>
+<p>2.当数列元素不是整数，并不适用计数排序。</p>
+<p>如果数列中的元素都是小数，比如25.213，或是0.00000001这样子，则无法创建对应的统计数组。这样显然无法进行计数排序。</p>
+<h2 id="引申阅读"><a href="#引申阅读" class="headerlink" title="引申阅读"></a>引申阅读</h2><p><a href="https://mp.weixin.qq.com/s/bb9y4QeNyX3vNgSY0diYIg">算法渣-排序-基数排序</a></p>
+<p><a href="https://mp.weixin.qq.com/s/dxuswQ835Y3LlnE8dkm8oA">算法渣-排序-桶排序</a></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://www.sohu.com/a/258882297_478315">漫画：什么是计数排序</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/current-limiting.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/current-limiting.html" class="post-title-link" itemprop="url">限流</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-02-14 11:25:00" itemprop="dateCreated datePublished" datetime="2019-02-14T11:25:00+08:00">2019-02-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ol>
+<li>为什么需要限流</li>
+<li>如何限流</li>
+</ol>
+<p>限流主要就是考虑这两点</p>
+<h1 id="为什么需要限流"><a href="#为什么需要限流" class="headerlink" title="为什么需要限流"></a>为什么需要限流</h1><p>之前已经介绍了熔断，降级，为什么还需要一个限流呢？是不是多此一举呢？</p>
+<p>先来个结论：</p>
+<p><strong>熔断是为了防止雪崩，明哲保身；而限流则是在已有条件下，最大限制发挥系统效能</strong></p>
+<p>根据<a href="http://www.zhuxingsheng.com/blog/micro-service-fuse-mechanism.html">《熔断机制》</a>可以知道，熔断有三种状态，[熔断关闭],[半熔断],[熔断开启]三种状态，如果系统压力过大，一个服务就会在三种状态来回切换</p>
+<p>会出现一种情况，就像一辆开在崎岖山路上的法拉利，不管车的性能多好，都需要不停的加速减速</p>
+<p><img src="http://images.zhuxingsheng.com/201902121514_700.png"></p>
+<p>要想速度达到最佳，就得让车开在一条笔直的高速公路上</p>
+<p><strong>系统就是一条河，服务就像行驶在河里的船，岸的两边，一边是熔断，另一边就是限流</strong>；一个保障系统安全，一个保持最大限度运转，让系统达到高可用</p>
+<h1 id="如何限流"><a href="#如何限流" class="headerlink" title="如何限流"></a>如何限流</h1><p>限流如何实施？</p>
+<ol>
+<li>量化限流阀值</li>
+<li>确定限流策略、算法</li>
+<li>被限制流量的处理</li>
+</ol>
+<p>限流阀值，这个其实就是通过系统压力测试来确定</p>
+<p>这个工作其实在系统开发之初就需要有初步的估量，涉及到业务规模，增长速度，架构选择等等，根据现有资源及其服务能力，给出上限值</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/counter-algorithm.html">《计数器算法》</a>中已经说明了几种限流算法：固定窗口、滑动窗口、漏桶、令牌桶</p>
+<p>有人总结为【两窗两桶】，很形象</p>
+<p><strong>固定窗口</strong>：临界问题，一旦流量波动，计数器提前计满，剩余时间都会被限流</p>
+<p><strong>滑动窗口</strong>：固定窗口的「固定周期」已经很小，那么使用滑动窗口也就没有意义，虽然大大减小临界问题，但总归需要预估一个窗口量，很难把握，过小引起性能和资源损耗</p>
+<p><strong>漏桶</strong>：不管进来多少量，出去的速率是恒定的，“出口”速度固定；当桶容量满时，就会被限流</p>
+<p><strong>令牌桶</strong>：“进口”速度固定；只要令牌的生成速度大于等于请求被处理的速度,系统就能正常处理</p>
+<p>有了限流策略，那制定在服务端还是客户端呢？</p>
+<p>从效果上讲，肯定是客户端，限制越靠入口，系统就越安全，可以防止不必要的无效流量进入服务端系统</p>
+<p>你也可能想到对网络资源的浪费，但一般各个服务都是在同一IDC机房，因此这点不必考虑</p>
+<p>但成本相对在服务端过高，放在客户端，客户端的数量与扩张速度也是动态的，无法评估，对每个端的限流阀值分配与下发都很复杂</p>
+<p>因此一般都是在服务端进行限流</p>
+<p>至于被限制的流量如何处理？大多数情况是直接抛弃，在系统之初，就有了对流量预判，从设计到资源准备都很充足，会有合理的限流阀值；如果有突发流量，可能配合监控及时增加机器，横向扩展</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>限流与熔断，一个让系统保持最大活跃性，一个保障安全，两者技术手段有重叠，但意义完全不同，所以两者都是微服务中不可少的两个服务治理手段</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/distributed-semaphore.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/distributed-semaphore.html" class="post-title-link" itemprop="url">分布式Semaphore</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-02-14 11:24:00" itemprop="dateCreated datePublished" datetime="2019-02-14T11:24:00+08:00">2019-02-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ol>
+<li>semaphore的定义，意义</li>
+<li>在没有juc semaphore之前怎么实现</li>
+<li>semaphore使用</li>
+<li>分布式semaphore实现</li>
+</ol>
+<h1 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h1><p>最早用来解决进程同步与互斥问题的机制:<br>包括一个称为信号量的变量及对它进行的两个原语操作(PV操作)</p>
+<p>什么是信号量？</p>
+<p>信号量（semaphore）的数据结构为一个值和一个指针，指针指向等待该信号量的下一个进程。信号量的值与相应资源的使用情况有关。</p>
+<p>PV操作由P操作原语和V操作原语组成（原语是不可中断的过程）</p>
+<p>(注,P是荷兰语的Passeren，相当于英文的pass,V是荷兰语的Verhoog,相当于英文中的incremnet)</p>
+<p>对信号量进行操作，具体定义如下：</p>
+<ul>
+<li>P（S）：<ul>
+<li>①将信号量S的值减1，即S&#x3D;S-1；</li>
+<li>②如果S&gt;&#x3D;0，则该进程继续执行；否则该进程置为等待状态，排入等待队列</li>
+</ul>
+</li>
+<li>V（S）：<ul>
+<li>①将信号量S的值加1，即S&#x3D;S+1；</li>
+<li>②如果S&gt;0，则该进程继续执行；否则释放队列中第一个等待信号量的进程</li>
+</ul>
+</li>
+</ul>
+<p>PV操作的意义：我们用信号量及PV操作来实现进程的同步和互斥。PV操作属于进程的低级通信</p>
+<p>使用PV操作实现进程互斥时应该注意的是：</p>
+<ol>
+<li>每个程序中用户实现互斥的P、V操作必须成对出现，先做P操作，进临界区，后做V操作，出临界区。若有多个分支，要认真检查其成对性</li>
+<li>P、V操作应分别紧靠临界区的头尾部，临界区的代码应尽可能短，不能有死循环</li>
+<li>互斥信号量的初值一般为1</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">//许可数量</span><br><span class="line">private int permits = 1;</span><br><span class="line"></span><br><span class="line">public synchronized void P() &#123;</span><br><span class="line">    permits--;</span><br><span class="line">    if(permits &lt; 0 )&#123;</span><br><span class="line">        try &#123;</span><br><span class="line">            wait();</span><br><span class="line">        &#125; catch (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public synchronized void V()&#123;</span><br><span class="line">    permits++;</span><br><span class="line">    if(permits &lt;=0)&#123;</span><br><span class="line">        notifyAll();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="J-U-C-Semaphore"><a href="#J-U-C-Semaphore" class="headerlink" title="J.U.C Semaphore"></a>J.U.C Semaphore</h1><p>JUC提供了工具类之一就是Semaphore，提供了丰富的API，不再需要自己实现</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">// 创建具有给定的许可数和非公平的公平设置的 Semaphore。</span><br><span class="line">Semaphore(int permits)</span><br><span class="line">// 创建具有给定的许可数和给定的公平设置的 Semaphore。</span><br><span class="line">Semaphore(int permits, boolean fair)</span><br><span class="line"> </span><br><span class="line">// 从此信号量获取一个许可，在提供一个许可前一直将线程阻塞，否则线程被中断。</span><br><span class="line">void acquire()</span><br><span class="line">// 从此信号量获取给定数目的许可，在提供这些许可前一直将线程阻塞，或者线程已被中断。</span><br><span class="line">void acquire(int permits)</span><br><span class="line">// 从此信号量中获取许可，在有可用的许可前将其阻塞。</span><br><span class="line">void acquireUninterruptibly()</span><br><span class="line">// 从此信号量获取给定数目的许可，在提供这些许可前一直将线程阻塞。</span><br><span class="line">void acquireUninterruptibly(int permits)</span><br><span class="line">// 返回此信号量中当前可用的许可数。</span><br><span class="line">int availablePermits()</span><br><span class="line">// 获取并返回立即可用的所有许可。</span><br><span class="line">int drainPermits()</span><br><span class="line">// 返回一个 collection，包含可能等待获取的线程。</span><br><span class="line">protected Collection&lt;Thread&gt; getQueuedThreads()</span><br><span class="line">// 返回正在等待获取的线程的估计数目。</span><br><span class="line">int getQueueLength()</span><br><span class="line">// 查询是否有线程正在等待获取。</span><br><span class="line">boolean hasQueuedThreads()</span><br><span class="line">// 如果此信号量的公平设置为 true，则返回 true。</span><br><span class="line">boolean isFair()</span><br><span class="line">// 根据指定的缩减量减小可用许可的数目。</span><br><span class="line">protected void reducePermits(int reduction)</span><br><span class="line">// 释放一个许可，将其返回给信号量。</span><br><span class="line">void release()</span><br><span class="line">// 释放给定数目的许可，将其返回到信号量。</span><br><span class="line">void release(int permits)</span><br><span class="line">// 返回标识此信号量的字符串，以及信号量的状态。</span><br><span class="line">String toString()</span><br><span class="line">// 仅在调用时此信号量存在一个可用许可，才从信号量获取许可。</span><br><span class="line">boolean tryAcquire()</span><br><span class="line">// 仅在调用时此信号量中有给定数目的许可时，才从此信号量中获取这些许可。</span><br><span class="line">boolean tryAcquire(int permits)</span><br><span class="line">// 如果在给定的等待时间内此信号量有可用的所有许可，并且当前线程未被中断，则从此信号量获取给定数目的许可。</span><br><span class="line">boolean tryAcquire(int permits, long timeout, TimeUnit unit)</span><br><span class="line">// 如果在给定的等待时间内，此信号量有可用的许可并且当前线程未被中断，则从此信号量获取一个许可。</span><br><span class="line">boolean tryAcquire(long timeout, TimeUnit unit)</span><br></pre></td></tr></table></figure>
+
+<p>对于JUC的Semaphore源码，此篇不阐述了，另开新篇；但对分布式的Semaphore倒是可以研究下</p>
+<h1 id="分布式Semaphore"><a href="#分布式Semaphore" class="headerlink" title="分布式Semaphore"></a>分布式Semaphore</h1><p>Redission中有对应的RSemaphore</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RSemaphore semaphore = redisson.getSemaphore(&quot;semaphore&quot;);</span><br><span class="line">semaphore.acquire();</span><br><span class="line">//或</span><br><span class="line">semaphore.acquireAsync();</span><br><span class="line">semaphore.acquire(23);</span><br><span class="line">semaphore.tryAcquire();</span><br></pre></td></tr></table></figure>
+
+<p>可过期信号量</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">RPermitExpirableSemaphore semaphore = redisson.getPermitExpirableSemaphore(&quot;mySemaphore&quot;);</span><br><span class="line">String permitId = semaphore.acquire();</span><br><span class="line">// 获取一个信号，有效期只有2秒钟。</span><br><span class="line">String permitId = semaphore.acquire(2, TimeUnit.SECONDS);</span><br><span class="line">// ...</span><br><span class="line">semaphore.release(permitId);</span><br></pre></td></tr></table></figure>
+
+<p>直接上最本质的源码片段，lua脚本很简单，对信号量进行计数，acquire时，信号量减1，release时，信号量加1；主要是保证操作的原子性</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public RFuture&lt;Boolean&gt; tryAcquireAsync(int permits) &#123;</span><br><span class="line">    if (permits &lt; 0) &#123;</span><br><span class="line">        throw new IllegalArgumentException(&quot;Permits amount can&#x27;t be negative&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    if (permits == 0) &#123;</span><br><span class="line">        return RedissonPromise.newSucceededFuture(true);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return commandExecutor.evalWriteAsync(getName(), LongCodec.INSTANCE, RedisCommands.EVAL_BOOLEAN,</span><br><span class="line">              &quot;local value = redis.call(&#x27;get&#x27;, KEYS[1]); &quot; +</span><br><span class="line">              &quot;if (value ~= false and tonumber(value) &gt;= tonumber(ARGV[1])) then &quot; +</span><br><span class="line">                  &quot;local val = redis.call(&#x27;decrby&#x27;, KEYS[1], ARGV[1]); &quot; +</span><br><span class="line">                  &quot;return 1; &quot; +</span><br><span class="line">              &quot;end; &quot; +</span><br><span class="line">              &quot;return 0;&quot;,</span><br><span class="line">              Collections.&lt;Object&gt;singletonList(getName()), permits);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">@Override</span><br><span class="line">public RFuture&lt;Void&gt; releaseAsync(int permits) &#123;</span><br><span class="line">    if (permits &lt; 0) &#123;</span><br><span class="line">        throw new IllegalArgumentException(&quot;Permits amount can&#x27;t be negative&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    if (permits == 0) &#123;</span><br><span class="line">        return RedissonPromise.newSucceededFuture(null);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    return commandExecutor.evalWriteAsync(getName(), StringCodec.INSTANCE, RedisCommands.EVAL_VOID,</span><br><span class="line">        &quot;local value = redis.call(&#x27;incrby&#x27;, KEYS[1], ARGV[1]); &quot; +</span><br><span class="line">        &quot;redis.call(&#x27;publish&#x27;, KEYS[2], value); &quot;,</span><br><span class="line">        Arrays.&lt;Object&gt;asList(getName(), getChannelName()), permits);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在最本质的基础上，再深入看一下还做了哪些事，能真正达到一个工业生产标准</p>
+<h2 id="tryAcquire"><a href="#tryAcquire" class="headerlink" title="tryAcquire()"></a>tryAcquire()</h2><p>非阻塞式，有信息量就正常获取，没有刚快速返回，就是lua本质，没有做额外的事情</p>
+<h2 id="acquire"><a href="#acquire" class="headerlink" title="acquire()"></a>acquire()</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public void acquire(int permits) throws InterruptedException &#123;</span><br><span class="line">    if (tryAcquire(permits)) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    RFuture&lt;RedissonLockEntry&gt; future = subscribe();</span><br><span class="line">    commandExecutor.syncSubscription(future);</span><br><span class="line">    try &#123;</span><br><span class="line">        while (true) &#123;</span><br><span class="line">            if (tryAcquire(permits)) &#123;</span><br><span class="line">                return;</span><br><span class="line">            &#125;</span><br><span class="line">            getEntry().getLatch().acquire(permits);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        unsubscribe(future);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>阻塞式，相对非阻塞式就多了一些事</p>
+<ul>
+<li>1.先tryAcquire，看是否能获取到信号量</li>
+<li>2.订阅channel事件</li>
+<li>3.无限循环<ul>
+<li>3.1.先tryAcquire()，尝试一下</li>
+<li>3.2.通过getEntry().getLatch()，也就是j.u.c.Semaphore,acquire()阻塞</li>
+</ul>
+</li>
+<li>4.取消订阅</li>
+</ul>
+<p>订阅事件内部细节，另开篇再说了，他的目的其实就是释放Semaphore</p>
+<p>想像一下，同一个client的两个线程A，B 同时需要获取信号量，如果A成功获取，那么B将被Semaphore阻塞住了，何时退出阻塞呢？</p>
+<p>就在线程A进行release()之后，会publish,细节可查看上面的release()中的lua脚本，当B监听到事件时，就会调用Semaphore.release(),再次进行tryAcquire()</p>
+<h2 id="tryAcquire-int-permits-long-waitTime-TimeUnit-unit"><a href="#tryAcquire-int-permits-long-waitTime-TimeUnit-unit" class="headerlink" title="tryAcquire(int permits, long waitTime, TimeUnit unit)"></a>tryAcquire(int permits, long waitTime, TimeUnit unit)</h2><p>如果在给定的等待时间内此信号量有可用的所有许可，并且当前线程未被中断，则从此信号量获取给定数目的许可</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public boolean tryAcquire(int permits, long waitTime, TimeUnit unit) throws InterruptedException &#123;</span><br><span class="line">    long time = unit.toMillis(waitTime);</span><br><span class="line">    long current = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">    if (tryAcquire(permits)) &#123;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    time -= (System.currentTimeMillis() - current);</span><br><span class="line">    if (time &lt;= 0) &#123;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    current = System.currentTimeMillis();</span><br><span class="line">    RFuture&lt;RedissonLockEntry&gt; future = subscribe();</span><br><span class="line">    if (!await(future, time, TimeUnit.MILLISECONDS)) &#123;</span><br><span class="line">        return false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        time -= (System.currentTimeMillis() - current);</span><br><span class="line">        if (time &lt;= 0) &#123;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        while (true) &#123;</span><br><span class="line">            current = System.currentTimeMillis();</span><br><span class="line">            if (tryAcquire(permits)) &#123;</span><br><span class="line">                return true;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            time -= (System.currentTimeMillis() - current);</span><br><span class="line">            if (time &lt;= 0) &#123;</span><br><span class="line">                return false;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            // waiting for message</span><br><span class="line">            current = System.currentTimeMillis();</span><br><span class="line"></span><br><span class="line">            getEntry().getLatch().tryAcquire(permits, time, TimeUnit.MILLISECONDS);</span><br><span class="line"></span><br><span class="line">            time -= (System.currentTimeMillis() - current);</span><br><span class="line">            if (time &lt;= 0) &#123;</span><br><span class="line">                return false;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        unsubscribe(future);</span><br><span class="line">    &#125;</span><br><span class="line">//        return get(tryAcquireAsync(permits, waitTime, unit));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>其实await(future, time, TimeUnit.MILLISECONDS)是使用的CountDownLatch</p>
+<p>如果计数到达零，则返回 true；如果在计数到达零之前超过了等待时间，则返回 false</p>
+<p>当前是第一个请求，或者别的释放，那就再往下进入循环</p>
+<p>CountDownLatch.await()+Semaphore.tryAcquire()配合使用</p>
+<p>每一次等待时间后，都需要检查是否超过等待时间</p>
+<p>为什么需要引入CountDownLatch.await()呢？ 都使用Semaphore.tryAcquire()不行吗？这个需要再次深入挖掘了</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>分布式信号量，原理很明了，主要还是通过lua保障redis操作的原子性</p>
+<p>阅读redisson源码，发现里面的操作基本都是异步化，底层又是基于netty，大量使用了future模式，如果不知道future模式，会很绕，debug都会晕掉，所以在深入redisson之前，需要再对future模式温习一下</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/parsing-distributed-locks.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/parsing-distributed-locks.html" class="post-title-link" itemprop="url">剖析分布式锁</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-24 10:58:00" itemprop="dateCreated datePublished" datetime="2019-01-24T10:58:00+08:00">2019-01-24</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>我们不生产代码,我们是代码的搬运工</p>
+</blockquote>
+<p>前不久，阿里大牛虾总再次抛出了分布式锁的讨论，对照之前项目中实现的redis分布式锁总结一下</p>
+<blockquote>
+<p>天才是1%的灵感，加上99%的汗水；编程是1%的编码，加上99%的在Google&#x2F;StackOverflow&#x2F;Github上找代码<br>残酷的现实是，找来的代码可能深藏bug，而不知</p>
+</blockquote>
+<h1 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h1><p><img src="http://images.zhuxingsheng.com/201901231953_92.png"></p>
+<p>在多核多线程环境中，通过锁机制，在某一个时间点上，只能有一个线程进入临界区代码，从而保证临界区中操作数据的一致性</p>
+<h2 id="怎么样才是把好锁？"><a href="#怎么样才是把好锁？" class="headerlink" title="怎么样才是把好锁？"></a>怎么样才是把好锁？</h2><blockquote>
+<p>可以保证在分布式部署的应用集群中，同一个方法在同一时间只能被一台机器上的一个线程执行。<br>这把锁要是一把可重入锁（避免死锁）<br>支持阻塞和非阻塞：和 ReentrantLock 一样支持 lock 和 trylock 以及 tryLock(long timeOut)<br>这把锁最好是一把公平锁（根据业务需求考虑要不要这条）<br>有高可用的获取锁和释放锁功能<br>获取锁和释放锁的性能要好</p>
+</blockquote>
+<h2 id="分布式锁三要素"><a href="#分布式锁三要素" class="headerlink" title="分布式锁三要素"></a>分布式锁三要素</h2><ol>
+<li><p>外部存储</p>
+<p> 分布式锁是在分布式部署环境中给多个主机提供锁服务，需要另外的存储载体</p>
+</li>
+<li><p>全局唯一标识</p>
+<p>在多线程环境中，锁可以使一个对象引用，也可以是变量，都有唯一的标识来区分锁保护的不同资源；<br>在分布式环境下，也需要，比如对某一特定用户资源操作，业务+userId即可唯一标识</p>
+</li>
+<li><p>至少有两种状态，获取和释放</p>
+<p>锁至少需要两种状态：加锁（lock）和解锁（unlock）。<br>用状态区分当前尝试获取的锁是否已经被其他操作占用，<br>被占用只有等待锁释放后才能尝试获取锁并加锁，保护共享资源</p>
+</li>
+</ol>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>理论知识知道得再多，还得落地才行；只要遵从三要素，就能打造一把好锁，不要拘泥于某一种工具。</p>
+<p>网上有很多实现方式，主要是”外部存储“使用了不同的组件，比如数据库，redis,zk，由于这些组件各自特性的不同，实现复杂度各有不同</p>
+<p>这儿主要说下在实际工作中使用到的两种方式，数据库与redis</p>
+<h2 id="数据库"><a href="#数据库" class="headerlink" title="数据库"></a>数据库</h2><p>数据库，任何系统都需要的组件，常规手法，都是使用version来实现乐观锁</p>
+<h3 id="version"><a href="#version" class="headerlink" title="version"></a>version</h3><p><img src="http://images.zhuxingsheng.com/201901141730_591.png"></p>
+<p>比如A、B操作员同时读取一余额为1000元的账户，A操作员为该账户增加100元，B操作员同时为该账户扣除50元，A先提交，B后提交。最后实际账户余额为1000-50&#x3D;950元，但本该为1000+100-50&#x3D;1050。这就是典型的并发问题</p>
+<p>假设数据库中帐户信息表中有一个version字段，当前值为1；而当前帐户余额字段(balance)为1000元。假设操作员A先更新完，操作员B后更新。<br>a、操作员A此时将其读出(version&#x3D;1)，并从其帐户余额中增加100(1000+100&#x3D;1100)。<br>b、在操作员A操作的过程中，操作员B也读入此用户信息(version&#x3D;1)，并从其帐户余额中扣除50(1000-50&#x3D;950)。<br>c、操作员A完成了修改工作，将数据版本号加一(version&#x3D;2)，连同帐户增加后余额(balance&#x3D;1100)，提交至数据库更新，此时由于提交数据版本大于数据库记录当前版本，数据被更新，数据库记录version更新为2。<br>d、操作员B完成了操作，也将版本号加一(version&#x3D;2)试图向数据库提交数据(balance&#x3D;950)，但此时比对数据库记录版本时发现，操作员B提交的数据版本号为2，数据库记录当前版本也为2，不满足 “提交版本必须大于记录当前版本才能执行更新 “的乐观锁策略，因此，操作员B的提交被驳回。<br>这样，就避免了操作员B用基于version&#x3D;1的旧数据修改的结果覆盖操作员A的操作结果的可能。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">set balance=1100,version=version+1 where id=#&#123;id&#125; and version=#&#123;version&#125;;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>version简单，除了对业务数据表有侵入性，还有一些场景是胜任不了</p>
+<p>比如，在操作一个数量之前，需要确认一下能不能操作</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">int countLimit = select count from limit where id = $&#123;id&#125;;</span><br><span class="line"></span><br><span class="line">if(countlimit&gt;0)&#123;</span><br><span class="line">    set balance=1100,version=version+1 where id=#&#123;id&#125; and version=#&#123;version&#125;;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">update count;</span><br></pre></td></tr></table></figure>
+<p>这儿操作了多张表，此时就需要再配合事务，才能保证原子性</p>
+<h2 id="redis"><a href="#redis" class="headerlink" title="redis"></a>redis</h2><p>由于db性能的限制，而redis性能卓越，很多时候会选择redis实现方式</p>
+<p>怎么使用redis正确地实现分布式锁，需要了解两方面</p>
+<ol>
+<li>实现分布式锁时，使用到的redis命令</li>
+<li>网上示例可能都有毒</li>
+</ol>
+<h3 id="redis命令"><a href="#redis命令" class="headerlink" title="redis命令"></a>redis命令</h3><p><strong>setnx</strong> 命令（『SET if Not eXists』(如果不存在，则 SET)的简写）：<br>设置成功，返回 1<br>设置失败，返回 0<br>该命令是原子操作</p>
+<p><strong>getset</strong> 命令：<br>自动将key对应到value并且返回原来key对应的value。如果key存在但是对应的value不是字符串，就返回错误。<br> 返回值：返回之前的旧值，如果之前Key不存在将返回nil。<br>该命令是原子操作。</p>
+<p><strong>get</strong> 命令：<br>get <key> 获取key的值，如果存在，则返回；如果不存在，则返回nil；</p>
+<p><strong>del</strong> 命令：<br>del <key> 删除key及key对应的值，如果key不存在，程序忽略</p>
+<p><strong>SET</strong> 命令：<br>set key value [EX seconds] [PX milliseconds] [NX|XX]<br>将字符串值 value 关联到 key <br>如果 key 已经持有其他值， SET 就覆写旧值，无视类型。<br>对于某个原本带有生存时间（TTL）的键来说， 当 SET 命令成功在这个键上执行时， 这个键原有的 TTL 将被清除。</p>
+<p>可选参数从 Redis 2.6.12 版本开始，SET 命令的行为可以通过一系列参数来修改：</p>
+<p><strong>EX second</strong> ：设置键的过期时间为 second 秒。 SET key value EX second 效果等同于 SETEX key second value </p>
+<p><strong>PX millisecond</strong>：设置键的过期时间为 millisecond 毫秒。 SET key value PX millisecond 效果等同于 PSETEX key millisecond value </p>
+<p><strong>NX</strong> ：只在键不存在时，才对键进行设置操作。 SET key value NX 效果等同于 SETNX key value </p>
+<p><strong>XX</strong>：只在键已经存在时，才对键进行设置操作。</p>
+<h3 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h3><p>原来项目中使用分布式锁，整个逻辑：</p>
+<ol>
+<li>setnx(lockkey, 当前时间+过期超时时间)，如果返回 1，则获取锁成功；如果返回 0 则没有获取到锁，转向 2。</li>
+<li>get(lockkey) 获取值 oldExpireTime ，并将这个 value 值与当前的系统时间进行比较，如果小于当前系统时间，则认为这个锁已经超时，可以允许别的请求重新获取，转向 3。</li>
+<li>计算 newExpireTime &#x3D; 当前时间+过期超时时间，然后 getset(lockkey, newExpireTime) 会返回当前 lockkey 的值currentExpireTime。判断 currentExpireTime 与 oldExpireTime 是否相等，如果相等，说明当前 getset 设置成功，获取到了锁。如果不相等，说明这个锁又被别的请求获取走了，那么当前请求可以直接返回失败，或者继续重试。</li>
+<li>在获取到锁之后，当前线程可以开始自己的业务处理，当处理完毕后，比较自己的处理时间和对于锁设置的超时时间，如果小于锁设置的超时时间，则直接执行 delete 释放锁；如果大于锁设置的超时时间，则不需要再锁进行处理。</li>
+</ol>
+<p><strong>获取锁</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">private boolean acquireLock(Jedis j,String lock) throws Exception&#123;</span><br><span class="line">    int timeOut = timeoutSeconds*1000;</span><br><span class="line">    boolean acquired = false;</span><br><span class="line">    long start = System.currentTimeMillis();</span><br><span class="line">    int times = 0;</span><br><span class="line">    do &#123;</span><br><span class="line">        String value = String.valueOf(System.currentTimeMillis() + timeOut + 1);</span><br><span class="line">        // 第一个得到这个锁</span><br><span class="line">        if (j.setnx(lock, value) == 1) &#123;</span><br><span class="line">            logger.info(&quot;第一次获取全局锁:&#123;&#125; 成功&quot;, lock);</span><br><span class="line">            acquired = true;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">        // j.expire(lock, timeoutSeconds); 网络抖动，可能失败</span><br><span class="line">        String currentValue = j.get(lock);</span><br><span class="line"></span><br><span class="line">        // 小于时，可能是上次没有清除，自上次超时后没有别的线程操作过</span><br><span class="line">        if (currentValue != null &amp;&amp; Long.valueOf(currentValue) &lt; System.currentTimeMillis()) &#123;</span><br><span class="line">            // 这是同步操作，只会一个成功</span><br><span class="line">            String oldValue = j.getSet(lock, value);</span><br><span class="line">            // 别的线程没有赋上值，当前成功得到锁</span><br><span class="line">            if (oldValue != null &amp;&amp; oldValue.equals(currentValue)) &#123;</span><br><span class="line">                acquired = true;</span><br><span class="line">                logger.info(&quot;获取全局锁:&#123;&#125; 成功，尝试了&#123;&#125;次,经过了&#123;&#125;ms&quot;,lock,times,System.currentTimeMillis()-start);</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        times++;</span><br><span class="line">        Thread.sleep(100);</span><br><span class="line">    &#125; while (start + timeOut &gt; System.currentTimeMillis());</span><br><span class="line">    if(!acquired)&#123;</span><br><span class="line">        logger.info(&quot;获取全局锁:&#123;&#125; 失败，尝试了&#123;&#125;次&quot;,lock,times);</span><br><span class="line">    &#125;			</span><br><span class="line">    return acquired;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>解锁</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">private void releaseLock(Jedis j,String lock)&#123;</span><br><span class="line">    String currentValue = j.get(lock);</span><br><span class="line">    if(currentValue != null)&#123;</span><br><span class="line">        if(System.currentTimeMillis() &lt; Long.valueOf(currentValue) )&#123;</span><br><span class="line">            j.del(lock);</span><br><span class="line">            logger.info(&quot;释放锁&#123;&#125;&quot;,lock);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="示例缺陷"><a href="#示例缺陷" class="headerlink" title="示例缺陷"></a>示例缺陷</h4><p>特地从多年前的项目中把这段代码找出来，当年写完，心里还挺美</p>
+<p>网上有很多资料也是差不多样的，但事实并不那么完美，甚至是错误的</p>
+<h5 id="加锁"><a href="#加锁" class="headerlink" title="加锁"></a>加锁</h5><ul>
+<li><strong>使用jedis.setnx()和jedis.expire()组合实现加锁</strong></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Long result = jedis.setnx(lockKey, value); </span><br><span class="line">if (result == 1) &#123; </span><br><span class="line">    // 若在这里程序突然崩溃，则无法设置过期时间，将发生死锁 </span><br><span class="line">    jedis.expire(lockKey, expireTime); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这个问题很明显，setnx与expire不是同一个事务，不俱备原子性；程序崩溃或者网络抖动都会出现死锁问题</p>
+<ul>
+<li><p><strong>System.currentTimeMillis()</strong><br>这个需要各个client时间必须一致，一旦不一致，就可能加锁失败</p>
+</li>
+<li><p><strong>getSet()</strong><br>如果锁为了灵活性，会把timeout作为入参</p>
+</li>
+</ul>
+<p>当锁过期的时候，如果多个客户端同时执行jedis.getSet()方法，那么虽然最终只有一个客户端可以加锁，但是这个客户端的锁的过期时间可能被其他客户端覆盖</p>
+<h5 id="解锁"><a href="#解锁" class="headerlink" title="解锁"></a>解锁</h5><ul>
+<li>jedis.del()直接删除</li>
+</ul>
+<p>这种不先判断锁的拥有者而直接解锁的方式，会导致任何客户端都可以随时进行解锁，即使这把锁不是它的</p>
+<p>有种错误改进,增加参数传入requestId</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public static void releaseLock(Jedis jedis, String lockKey, String requestId) &#123; </span><br><span class="line">    // 判断加锁与解锁是不是同一个客户端 </span><br><span class="line">    if (requestId.equals(jedis.get(lockKey))) &#123; </span><br><span class="line">        // 若在此时，这把锁突然不是这个客户端的，则会误解锁 </span><br><span class="line">        jedis.del(lockKey);</span><br><span class="line">    &#125; </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><strong>还是原子性的问题</strong><br>如代码注释，问题在于如果调用jedis.del()方法的时候，这把锁已经不属于当前客户端的时候会解除他人加的锁。那么是否真的有这种场景？答案是肯定的，比如客户端A加锁，一段时间之后客户端A解锁，在执行jedis.del()之前，锁突然过期了，此时客户端B尝试加锁成功，然后客户端A再执行del()方法，则将客户端B的锁给解除了</p>
+<h4 id="缺陷总结"><a href="#缺陷总结" class="headerlink" title="缺陷总结"></a>缺陷总结</h4><p>心里认为本来很简单的事，代码大概：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Lock lock = DistributedReentrantLock.newLock(&quot;testlock11&quot;);//定义testlock11为key的锁，默认可重入锁</span><br><span class="line">if(lock.tryLock())&#123;</span><br><span class="line">    try&#123;</span><br><span class="line">     xxxxxx</span><br><span class="line">    &#125;finally&#123;</span><br><span class="line">      lock.unlock(); //释放testlock11为key的锁，释放需要放在finally里，防止出异常导致锁没有及时释放</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>为了提高性能，通过redis原子性接口SETNX:</p>
+<ol>
+<li>使用SETNX命令获取锁，若返回0（key已存在，锁已存在）则获取失败，反之获取成功</li>
+<li>为了防止获取锁后程序出现异常，导致其他线程&#x2F;进程调用SETNX命令总是返回0而进入死锁状态，需要为该key设置一个“合理”的过期时间释放锁</li>
+<li>使用DEL命令将锁数据删除</li>
+</ol>
+<p>结果为了弥补setnx()与expire()两个接口的原子性问题，引入了一堆问题，外强中干</p>
+<h4 id="缺陷修正"><a href="#缺陷修正" class="headerlink" title="缺陷修正"></a>缺陷修正</h4><h5 id="加锁-1"><a href="#加锁-1" class="headerlink" title="加锁"></a>加锁</h5><p>Redis 2.6.12版本后，增强了set()命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 尝试获取分布式锁</span><br><span class="line"> * @param jedis Redis客户端</span><br><span class="line"> * @param lockKey 锁</span><br><span class="line"> * @param requestId 请求标识</span><br><span class="line"> * @param expireTime 超期时间</span><br><span class="line"> * @return 是否获取成功</span><br><span class="line"> */</span><br><span class="line">public static boolean tryGetDistributedLock(Jedis jedis, String lockKey, String requestId, int expireTime) &#123;</span><br><span class="line">	String result = jedis.set(lockKey, requestId, &quot;NX&quot;, &quot;PX&quot;, expireTime);</span><br><span class="line">	if (LOCK_SUCCESS.equals(result)) &#123;</span><br><span class="line">		return true;</span><br><span class="line">	&#125;</span><br><span class="line">	return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>加锁就一行代码：jedis.set(String key, String value, String nxxx, String expx, int time)，<br>这个set()方法一共有五个入参：</p>
+<ol>
+<li>第一个为key，我们使用key来当锁，因为key是唯一的</li>
+<li>第二个为value，我们传的是requestId，通过给value赋值为requestId，就知道这把锁是哪个请求加的了，在解锁的时候就可以有依据。requestId可以使用UUID.randomUUID().toString()方法生成</li>
+<li>第三个为nxxx，这个参数我们填的是NX，意思是SET IF NOT EXIST，即当key不存在时，我们进行set操作；若key已经存在，则不做任何操作；</li>
+<li>第四个为expx，这个参数我们传的是PX，意思是我们要给这个key加一个过期的设置，具体时间由第五个参数决定</li>
+<li>第五个为time，与第四个参数相呼应，代表key的过期时间</li>
+</ol>
+<p><strong>高可用：</strong></p>
+<ol>
+<li>set()加入了NX参数，可以保证如果已有key存在，则不会调用成功，也就是只有一个客户端能持有锁，满足互斥性</li>
+<li>由于我们对锁设置了过期时间，即使锁的持有者后续发生崩溃而没有解锁，锁也会因为到了过期时间而自动解锁（即key被删除），不会发生死锁</li>
+<li>将value赋值为requestId，代表加锁的客户端请求标识，那么在解锁的时候就可以进行校验是否是同一个客户端，防止锁交叉</li>
+</ol>
+<h5 id="解锁-1"><a href="#解锁-1" class="headerlink" title="解锁"></a>解锁</h5><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 释放分布式锁</span><br><span class="line"> * @param jedis Redis客户端</span><br><span class="line"> * @param lockKey 锁</span><br><span class="line"> * @param requestId 请求标识</span><br><span class="line"> * @return 是否释放成功</span><br><span class="line"> */</span><br><span class="line">public static boolean releaseDistributedLock(Jedis jedis, String lockKey, String requestId) &#123;</span><br><span class="line"></span><br><span class="line">	String script = &quot;if redis.call(&#x27;get&#x27;, KEYS[1]) == ARGV[1] then return redis.call(&#x27;del&#x27;, KEYS[1]) else return 0 end&quot;;</span><br><span class="line">	Object result = jedis.eval(script, Collections.singletonList(lockKey), Collections.singletonList(requestId));</span><br><span class="line"></span><br><span class="line">	if (RELEASE_SUCCESS.equals(result)) &#123;</span><br><span class="line">		return true;</span><br><span class="line">	&#125;</span><br><span class="line">	return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先获取锁对应的value值，检查是否与requestId相等，如果相等则删除锁（解锁）</p>
+<p>使用eval()配置lua保证原子性</p>
+<blockquote>
+<p>在eval命令执行Lua代码的时候，Lua代码将被当成一个命令去执行，并且直到eval命令执行完成，Redis才会执行其他命令</p>
+</blockquote>
+<h3 id="有效时间"><a href="#有效时间" class="headerlink" title="有效时间"></a>有效时间</h3><p>为什么需要一个有效时间呢？主要就是防止死锁</p>
+<h4 id="疑难"><a href="#疑难" class="headerlink" title="疑难"></a>疑难</h4><ul>
+<li>执行业务代码操作共享资源的时间大于设置锁的过期时间？</li>
+</ul>
+<p>客户端需要设置接口访问超时,接口超时时间需要远远小于锁超时时间,比如锁自动释放的时间是10s,那么接口超时大概设置5-50ms</p>
+<p>【虽然能解决问题，但时间设置成了难点，微服务中多少接口，而且接口的timeout都是可配置的，不能每次调整接口timeout时，还是考虑一下锁的timeout】</p>
+<ul>
+<li>GC的STW</li>
+</ul>
+<p><img src="http://images.zhuxingsheng.com/201901171320_677.png"></p>
+<p>客户端1获得了锁，正准备处理共享资源的时候，发生了Full GC直到锁过期。这样，客户端2又获得了锁，开始处理共享资源。在客户端2处理的时候，客户端1 Full GC完成，也开始处理共享资源，这样就出现了2个客户端都在处理共享资源的情况</p>
+<h4 id="续命丸"><a href="#续命丸" class="headerlink" title="续命丸"></a>续命丸</h4><p>引入锁续约机制，也就是获取锁之后，释放锁之前，会定时进行锁续约，比如以3min间隔周期进行锁续约</p>
+<p>这样如果应用重启了，最多3min等待时间，不会因为时间太长导致的死锁问题，也不会因为时间太短导致被其他线程抢占的问题，也就是锁分布式锁不需要设置过期时间，过期时间对于这个锁来说是滑动的</p>
+<h3 id="Redission"><a href="#Redission" class="headerlink" title="Redission"></a>Redission</h3><p>虾总给了总结性阐述：</p>
+<blockquote>
+<p>首先启动Daemon线程，一直循环检测所有的分布式key，异步递延分布锁的过期时间，只要在处理业务逻辑，就递延分布锁过期时间3min。<br>每次添加分布式锁key，同时会生成一个uuid token，定义一个ConcurrentHashMap构造一个全局map维护所有的分布式key，上面Daemon线程会遍历这个map，每次解锁需要比对这个token，token一致才能解锁。<br>这样以来如果应用重启了，最多会有3min等待时间，不会导致时间太长导致的死锁问题，也不会因为时间太短导致的被其他线程抢占的问题，也就是锁分布式锁不需要设置过期时间，过期时间对于这个锁来说是滑动的</p>
+</blockquote>
+<p>跟随虾总思路，找到了一个开源组件：Redisson</p>
+<p>Redisson是一个在Redis的基础上实现的Java驻内存数据网格（In-Memory Data Grid）。它不仅提供了一系列的分布式的Java常用对象，还提供了许多分布式服务。</p>
+<p>相对于平时使用的jedis，redission进行比较高的抽象</p>
+<p>redission中的lock主要是RLock接口，继承的juc的Lock接口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">public interface RLock extends Lock, RExpirable, RLockAsync </span><br></pre></td></tr></table></figure>
+<p><img src="http://images.zhuxingsheng.com/201901221315_349.png"><br><img src="http://images.zhuxingsheng.com/201901221316_209.png"></p>
+<h4 id="Lock"><a href="#Lock" class="headerlink" title="Lock"></a>Lock</h4><p>先看lock(),有两种形式，一个不带leaseTime,一个带leaseTime</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">public void lock() ;</span><br><span class="line">public void lock(long leaseTime, TimeUnit unit) ;</span><br></pre></td></tr></table></figure>
+
+<p>边看源码，边解释</p>
+<p>两个方法共用了lockInterruptibly()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">public void lockInterruptibly(long leaseTime, TimeUnit unit) throws InterruptedException &#123;</span><br><span class="line">	long threadId = Thread.currentThread().getId();</span><br><span class="line">	Long ttl = tryAcquire(leaseTime, unit, threadId);</span><br><span class="line">	// lock acquired</span><br><span class="line">	if (ttl == null) &#123;</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	RFuture&lt;RedissonLockEntry&gt; future = subscribe(threadId);</span><br><span class="line">	commandExecutor.syncSubscription(future);</span><br><span class="line">	try &#123;</span><br><span class="line">		while (true) &#123;</span><br><span class="line">			ttl = tryAcquire(leaseTime, unit, threadId);</span><br><span class="line">			// lock acquired</span><br><span class="line">			if (ttl == null) &#123;</span><br><span class="line">				break;</span><br><span class="line">			&#125;</span><br><span class="line">			// waiting for message</span><br><span class="line">			if (ttl &gt;= 0) &#123;</span><br><span class="line">				getEntry(threadId).getLatch().tryAcquire(ttl, TimeUnit.MILLISECONDS);</span><br><span class="line">			&#125; else &#123;</span><br><span class="line">				getEntry(threadId).getLatch().acquire();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125; finally &#123;</span><br><span class="line">		unsubscribe(future, threadId);</span><br><span class="line">	&#125;</span><br><span class="line">//        get(lockAsync(leaseTime, unit));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>尝试获取锁tryAcquire</li>
+<li>获取失败，订阅此channel的消息（订阅的意义，在解锁时就会发现）</li>
+<li>进入循环，不停的尝试获取锁，其中使用了JUC的Semaphore</li>
+<li>一旦获取成功，则跳出循环</li>
+<li>取消订阅</li>
+</ol>
+<p><strong>尝试获取锁tryAcquire</strong>里面会用到两个核心方法tryAcquireAsync(),tryLockInnerAsync()</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">private &lt;T&gt; RFuture&lt;Long&gt; tryAcquireAsync(long leaseTime, TimeUnit unit, final long threadId) &#123;</span><br><span class="line">	if (leaseTime != -1) &#123;</span><br><span class="line">		return tryLockInnerAsync(leaseTime, unit, threadId, RedisCommands.EVAL_LONG);</span><br><span class="line">	&#125;</span><br><span class="line">	RFuture&lt;Long&gt; ttlRemainingFuture = tryLockInnerAsync(commandExecutor.getConnectionManager().getCfg().getLockWatchdogTimeout(), TimeUnit.MILLISECONDS, threadId, RedisCommands.EVAL_LONG);</span><br><span class="line">	ttlRemainingFuture.addListener(new FutureListener&lt;Long&gt;() &#123;</span><br><span class="line">		@Override</span><br><span class="line">		public void operationComplete(Future&lt;Long&gt; future) throws Exception &#123;</span><br><span class="line">			if (!future.isSuccess()) &#123;</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			Long ttlRemaining = future.getNow();</span><br><span class="line">			// lock acquired</span><br><span class="line">			if (ttlRemaining == null) &#123;</span><br><span class="line">				scheduleExpirationRenewal(threadId);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line">	return ttlRemainingFuture;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1.根据锁的持续时间不同，处理也不同</li>
+<li>2.没有设置持续时间，那就是阻塞型，一直等待<ul>
+<li>2.1.为了防止业务方法执行时间超过锁timeout,则定时续约scheduleExpirationRenewal()</li>
+</ul>
+</li>
+<li>3.设置了持续时间，则不需要进行续约</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">private void scheduleExpirationRenewal(final long threadId) &#123;</span><br><span class="line">	if (expirationRenewalMap.containsKey(getEntryName())) &#123;</span><br><span class="line">		return;</span><br><span class="line">	&#125;</span><br><span class="line">	Timeout task = commandExecutor.getConnectionManager().newTimeout(new TimerTask() &#123;</span><br><span class="line">		@Override</span><br><span class="line">		public void run(Timeout timeout) throws Exception &#123;</span><br><span class="line">			</span><br><span class="line">			RFuture&lt;Boolean&gt; future = renewExpirationAsync(threadId);</span><br><span class="line">			</span><br><span class="line">			future.addListener(new FutureListener&lt;Boolean&gt;() &#123;</span><br><span class="line">				@Override</span><br><span class="line">				public void operationComplete(Future&lt;Boolean&gt; future) throws Exception &#123;</span><br><span class="line">					expirationRenewalMap.remove(getEntryName());</span><br><span class="line">					if (!future.isSuccess()) &#123;</span><br><span class="line">						log.error(&quot;Can&#x27;t update lock &quot; + getName() + &quot; expiration&quot;, future.cause());</span><br><span class="line">						return;</span><br><span class="line">					&#125;</span><br><span class="line">					</span><br><span class="line">					if (future.getNow()) &#123;</span><br><span class="line">						// reschedule itself</span><br><span class="line">						scheduleExpirationRenewal(threadId);</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;);</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">	&#125;, internalLockLeaseTime / 3, TimeUnit.MILLISECONDS);</span><br><span class="line"></span><br><span class="line">	if (expirationRenewalMap.putIfAbsent(getEntryName(), new ExpirationEntry(threadId, task)) != null) &#123;</span><br><span class="line">		task.cancel();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">protected RFuture&lt;Boolean&gt; renewExpirationAsync(long threadId) &#123;</span><br><span class="line">	return commandExecutor.evalWriteAsync(getName(), LongCodec.INSTANCE, RedisCommands.EVAL_BOOLEAN,</span><br><span class="line">			&quot;if (redis.call(&#x27;hexists&#x27;, KEYS[1], ARGV[2]) == 1) then &quot; +</span><br><span class="line">				&quot;redis.call(&#x27;pexpire&#x27;, KEYS[1], ARGV[1]); &quot; +</span><br><span class="line">				&quot;return 1; &quot; +</span><br><span class="line">			&quot;end; &quot; +</span><br><span class="line">			&quot;return 0;&quot;,</span><br><span class="line">		Collections.&lt;Object&gt;singletonList(getName()), </span><br><span class="line">		internalLockLeaseTime, getLockName(threadId));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>以internalLockLeaseTime&#x2F;3间隔时间，定时续约</li>
+<li>如果当前client自身有并发时，通过putIfAbsent保证只有一个task</li>
+<li>续约：当lock存在时，使用pexpire设置过期时间</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;T&gt; RFuture&lt;T&gt; tryLockInnerAsync(long leaseTime, TimeUnit unit, long threadId, RedisStrictCommand&lt;T&gt; command) &#123;</span><br><span class="line">	internalLockLeaseTime = unit.toMillis(leaseTime);</span><br><span class="line"></span><br><span class="line">	return commandExecutor.evalWriteAsync(getName(), LongCodec.INSTANCE, command,</span><br><span class="line">			  &quot;if (redis.call(&#x27;exists&#x27;, KEYS[1]) == 0) then &quot; +</span><br><span class="line">				  &quot;redis.call(&#x27;hset&#x27;, KEYS[1], ARGV[2], 1); &quot; +</span><br><span class="line">				  &quot;redis.call(&#x27;pexpire&#x27;, KEYS[1], ARGV[1]); &quot; +</span><br><span class="line">				  &quot;return nil; &quot; +</span><br><span class="line">			  &quot;end; &quot; +</span><br><span class="line">			  &quot;if (redis.call(&#x27;hexists&#x27;, KEYS[1], ARGV[2]) == 1) then &quot; +</span><br><span class="line">				  &quot;redis.call(&#x27;hincrby&#x27;, KEYS[1], ARGV[2], 1); &quot; +</span><br><span class="line">				  &quot;redis.call(&#x27;pexpire&#x27;, KEYS[1], ARGV[1]); &quot; +</span><br><span class="line">				  &quot;return nil; &quot; +</span><br><span class="line">			  &quot;end; &quot; +</span><br><span class="line">			  &quot;return redis.call(&#x27;pttl&#x27;, KEYS[1]);&quot;,</span><br><span class="line">				Collections.&lt;Object&gt;singletonList(getName()), internalLockLeaseTime, getLockName(threadId));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">protected String getLockName(long threadId) &#123; </span><br><span class="line">    return id + &quot;:&quot; + threadId;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>1.lockname不存在<ul>
+<li>1.1.hset(lockname,uuid+threadid,1),value&#x3D;uuid+threadid，有uuid可以区分各个client，有threadid区分各个线程，这样锁就具备了可重入性</li>
+<li>1.2.pexpire设置过期时间，防止client挂掉，造成死锁</li>
+</ul>
+</li>
+<li>2.lockname存在<ul>
+<li>2.1.hexists(lockname,uuid+threadid),这样保证了是同一个锁在同一个client</li>
+<li>2.2.hincrby 再次进锁，计数器+1</li>
+<li>2.3.pexpire 再次设置超时</li>
+</ul>
+</li>
+<li>3.lockname存在，并且不在同一client<ul>
+<li>3.1.pttl 返回剩余有效时长</li>
+</ul>
+</li>
+</ul>
+<h4 id="unLock"><a href="#unLock" class="headerlink" title="unLock"></a>unLock</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public RFuture&lt;Void&gt; unlockAsync(final long threadId) &#123;</span><br><span class="line">	final RPromise&lt;Void&gt; result = new RedissonPromise&lt;Void&gt;();</span><br><span class="line">	RFuture&lt;Boolean&gt; future = unlockInnerAsync(threadId);</span><br><span class="line"></span><br><span class="line">	future.addListener(new FutureListener&lt;Boolean&gt;() &#123;</span><br><span class="line">		@Override</span><br><span class="line">		public void operationComplete(Future&lt;Boolean&gt; future) throws Exception &#123;</span><br><span class="line">			if (!future.isSuccess()) &#123;</span><br><span class="line">				cancelExpirationRenewal(threadId);</span><br><span class="line">				result.tryFailure(future.cause());</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			Boolean opStatus = future.getNow();</span><br><span class="line">			if (opStatus == null) &#123;</span><br><span class="line">				IllegalMonitorStateException cause = new IllegalMonitorStateException(&quot;attempt to unlock lock, not locked by current thread by node id: &quot;</span><br><span class="line">						+ id + &quot; thread-id: &quot; + threadId);</span><br><span class="line">				result.tryFailure(cause);</span><br><span class="line">				return;</span><br><span class="line">			&#125;</span><br><span class="line">			if (opStatus) &#123;</span><br><span class="line">				cancelExpirationRenewal(null);</span><br><span class="line">			&#125;</span><br><span class="line">			result.trySuccess(null);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;);</span><br><span class="line"></span><br><span class="line">	return result;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void cancelExpirationRenewal(Long threadId) &#123;</span><br><span class="line">	ExpirationEntry task = expirationRenewalMap.get(getEntryName());</span><br><span class="line">	if (task != null &amp;&amp; (threadId == null || task.getThreadId() == threadId)) &#123;</span><br><span class="line">		expirationRenewalMap.remove(getEntryName());</span><br><span class="line">		task.getTimeout().cancel();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>从方法名看，虽然对外好像是直接解锁，但内部是异步执行的</li>
+<li>unlockInnerAsync()进行解锁</li>
+<li>从expirationRenewalMap移除，并把task.cancel()</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">protected RFuture&lt;Boolean&gt; unlockInnerAsync(long threadId) &#123;</span><br><span class="line">	return commandExecutor.evalWriteAsync(getName(), LongCodec.INSTANCE, RedisCommands.EVAL_BOOLEAN,</span><br><span class="line">			&quot;if (redis.call(&#x27;exists&#x27;, KEYS[1]) == 0) then &quot; +</span><br><span class="line">				&quot;redis.call(&#x27;publish&#x27;, KEYS[2], ARGV[1]); &quot; +</span><br><span class="line">				&quot;return 1; &quot; +</span><br><span class="line">			&quot;end;&quot; +</span><br><span class="line">			&quot;if (redis.call(&#x27;hexists&#x27;, KEYS[1], ARGV[3]) == 0) then &quot; +</span><br><span class="line">				&quot;return nil;&quot; +</span><br><span class="line">			&quot;end; &quot; +</span><br><span class="line">			&quot;local counter = redis.call(&#x27;hincrby&#x27;, KEYS[1], ARGV[3], -1); &quot; +</span><br><span class="line">			&quot;if (counter &gt; 0) then &quot; +</span><br><span class="line">				&quot;redis.call(&#x27;pexpire&#x27;, KEYS[1], ARGV[2]); &quot; +</span><br><span class="line">				&quot;return 0; &quot; +</span><br><span class="line">			&quot;else &quot; +</span><br><span class="line">				&quot;redis.call(&#x27;del&#x27;, KEYS[1]); &quot; +</span><br><span class="line">				&quot;redis.call(&#x27;publish&#x27;, KEYS[2], ARGV[1]); &quot; +</span><br><span class="line">				&quot;return 1; &quot;+</span><br><span class="line">			&quot;end; &quot; +</span><br><span class="line">			&quot;return nil;&quot;,</span><br><span class="line">			Arrays.&lt;Object&gt;asList(getName(), getChannelName()), LockPubSub.unlockMessage, internalLockLeaseTime, getLockName(threadId));</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>lockname不存在，说明已经解锁，publish channelname unlockmessage；return 1</li>
+<li>lockname存在，但对于uuid+id不存在，说明不是加锁的client,return nil</li>
+<li>lockname存在，并且是当前加锁client</li>
+<li>对lockname uuid+id进行-1，如果counter&gt;0则走5，如果&#x3D;0 则走6</li>
+<li>counter&gt;0 说明锁重入了，计数器-1，并expire</li>
+<li>counter&#x3D;0 说明最终解锁，直接del key，并publish channelname unlockmessage;return 1</li>
+</ol>
+<h4 id="redission缺陷"><a href="#redission缺陷" class="headerlink" title="redission缺陷"></a>redission缺陷</h4><p>使用cluster时</p>
+<p>一个场景：A在向主机1请求到锁成功后，主机1宕机了。现在从机1a变成了主机。但是数据没有同步，从机1a是没有A的锁的。那么B又可以获得一个锁。这样就会造成数据错误。</p>
+<p>redlock主要思想就是做数据冗余。建立5台独立的集群，当我们发送一个数据的时候，要保证3台（n&#x2F;2+1）以上的机器接受成功才算成功，否则重试或报错</p>
+<p>redlock实现会更复杂，但从他的算法上看，有zk选举的味道。对于更高可用分布锁，可以借助zk本身特性去实现</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>对于锁，主要考虑<strong>性能与安全</strong>，即要保持锁的活跃性，又得保证锁的安全性</p>
+<p>分布式锁，除了以上两点，还要考虑实现时的三要素</p>
+<p>对于redission，对于锁部分的源码，还有很多的内容，很多的细节需要挖掘，此篇就不写了，太长。</p>
+<p>后面再结合JUC，写篇更详细的源码分析</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://wudashan.cn/2017/10/23/Redis-Distributed-Lock-Implement/">Redis分布式锁的正确实现方式</a></p>
+<p><a href="https://github.com/redisson/redisson">redission</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ioc-understanding.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/ioc-understanding.html" class="post-title-link" itemprop="url">IOC理解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-10 16:32:00" itemprop="dateCreated datePublished" datetime="2019-01-10T16:32:00+08:00">2019-01-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>成功就是简单道理的深刻理解与灵活运用</p>
+</blockquote>
+<p>前不久，阿里大牛虾总在群里抛出一个问题：“从深层次讲解一下如何理解IOC，IOC和DI是一回事吗？”</p>
+<p>这个问题真是让人平静而又不平静</p>
+<p>平静源于此问题就像问中国人怎么使用筷子，天天使用筷子，难道还不会使用筷子？</p>
+<p>但又不平静，你能写出一份详细的说明书，让一个不会使用筷子的人按此说明成功地使用上筷子吗？</p>
+<hr>
+<p>天天使用spring，是否还记得那些简单原理？现如今会写六种回字的你，还记得回的本意吗？</p>
+<blockquote>
+<p>那些曾经刻骨铭心的记忆,你有多久没有想起了</p>
+</blockquote>
+<hr>
+<h1 id="IOC"><a href="#IOC" class="headerlink" title="IOC"></a>IOC</h1><p>不管是平时交流，还是面试，当谈谈spring时，除了api使用，最主要还是要聊聊IOC</p>
+<p><strong>Ioc—Inversion of Control，即“控制反转”</strong></p>
+<p>从语文的角度解析一下，如果“控制”当成一个动作，那就需要完善主语与宾语，也就是“谁”控制了“谁”；</p>
+<p>“反转”：没有反转是什么情况，what反转，why反转，how反转</p>
+<p>分两种情况讨论，1、没有IOC容器，2、有IOC容器</p>
+<h2 id="没有IOC容器"><a href="#没有IOC容器" class="headerlink" title="没有IOC容器"></a>没有IOC容器</h2><h3 id="参与者"><a href="#参与者" class="headerlink" title="参与者"></a>参与者</h3><p>回答“谁”控制了“谁”中的两个“谁”</p>
+<p>抽象讲：某个对象A控制了另一个某对象B</p>
+<p>宏观讲 某个对象A可能就是应用程序，比如读取或者修改一个文件，那么此处的文件也就是某对象B了</p>
+<p>微观讲，objectA 操作了 objectB，比如给objectB的属性赋值</p>
+<p>从由内向外的角度 由两个参与者：某一对象（任意的对象类），以及对象外的各种资源（需要的其它对象、或者是对象需要的文件资源等等）</p>
+<h3 id="控制"><a href="#控制" class="headerlink" title="控制"></a>控制</h3><p>常规情况下的应用程序，如果要在A里面使用C，当然是直接去创建C的对象，也就是说，是在A类中主动去获取所需要的外部资源C</p>
+<p><img src="http://images.zhuxingsheng.com/201901101401_336.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A a = new AImpl(); </span><br><span class="line">C c = new CImpl(); </span><br><span class="line">a.setC(c);</span><br></pre></td></tr></table></figure>
+<p>当前类控制了一切：<strong>主动实例化、获取依赖、主动装配</strong></p>
+<p>这儿示例简单了点，一些项目会使用上Factory模式，让程序更面向接口，最小化变化，最大化地“开-闭”原则</p>
+<p><strong>但不管如何，还是会面临一些问题：</strong></p>
+<ol>
+<li>更换实现需要重新编译源代码</li>
+<li>依赖变更很难更换实现、难于测试</li>
+<li>耦合实例生产者和实例消费者</li>
+</ol>
+<h2 id="有IOC容器"><a href="#有IOC容器" class="headerlink" title="有IOC容器"></a>有IOC容器</h2><p>引入IOC容器</p>
+<h3 id="参与者-1"><a href="#参与者-1" class="headerlink" title="参与者"></a>参与者</h3><p>除了对象与对象外的资源，增加了IOC容器</p>
+<h3 id="控制-1"><a href="#控制-1" class="headerlink" title="控制"></a>控制</h3><p>引入IOC容器后，就不再是直接控制了，而是被动等待，等待IoC&#x2F;DI的容器获取一个C的实例，然后反向的注入到A类中</p>
+<p><img src="http://images.zhuxingsheng.com/201901101434_102.png"></p>
+<p>此时，对象不再主动去new,而IoC容器来创建这些对象，即由Ioc容器来控制对象的创建；</p>
+<p>再来看“谁”控制了“谁”?</p>
+<p>IoC 容器控制了对象；控制什么？主要控制了外部资源获取（不只是对象包括比如文件等）</p>
+<h3 id="反转"><a href="#反转" class="headerlink" title="反转"></a>反转</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A a = new AImpl(); </span><br><span class="line">C c = new CImpl(); </span><br><span class="line">a.setC(c);</span><br></pre></td></tr></table></figure>
+<p>还是看这段代码，包含了 <strong>主动实例化、获取依赖</strong>，<strong>主动装配</strong></p>
+<p>根据【控制】，IOC做到了<strong>主动实例化、获取依赖</strong>；而【反转】体现在了<strong>主动装配</strong>这一点</p>
+<p>传统应用程序是由我们自己在对象中主动控制去直接获取并set依赖对象，是为【正转】；</p>
+<p>而【反转】则是由容器来帮忙创建及注入依赖对象；</p>
+<p><strong>为何是反转？</strong></p>
+<p>因为由容器帮我们查找及注入依赖对象，对象只是被动的接受依赖对象，所以是反转；哪些方面反转了？依赖对象的获取、装配被反转了</p>
+<hr>
+<h2 id="IOC总结"><a href="#IOC总结" class="headerlink" title="IOC总结"></a>IOC总结</h2><p><strong>IoC很好的体现了面向对象设计法则之一—— 好莱坞法则：“别找我们，我们找你”</strong>；即由IoC容器帮对象找相应的依赖对象并注入，而不是由对象主动去找</p>
+<p><img src="http://images.zhuxingsheng.com/201901101541_849.png"></p>
+<p><em>传统关系转变成</em></p>
+<p><img src="http://images.zhuxingsheng.com/201901101541_386.png"></p>
+<p>IoC对编程带来的最大改变不是从代码上，而是从思想上，发生了“主从换位”的变化。应用程序原本是老大，要获取什么资源都是主动出击，但是在IoC思想中，应用程序就变成被动的了，被动的等待IoC容器来创建并注入它所需要的资源了</p>
+<p><strong>这么小小的一个改变其实是编程思想的一个大进步，这样就有效的分离了对象和它所需要的外部资源，使得它们松散耦合，有利于功能复用，更重要的是使得程序的整个体系结构变得非常灵活</strong></p>
+<h1 id="DI"><a href="#DI" class="headerlink" title="DI"></a>DI</h1><p><strong>DI—Dependency Injection，即“依赖注入”</strong>：组件之间依赖关系由容器在运行期决定，形象的说，即由容器动态的将某个依赖关系注入到组件之中。依赖注入的目的并非为软件系统带来更多功能，而是为了提升组件重用的频率，并为系统搭建一个灵活、可扩展的平台。</p>
+<p>通过依赖注入机制，我们只需要通过简单的配置，而无需任何代码就可指定目标需要的资源，完成自身的业务逻辑，而不需要关心具体的资源来自何处，由谁实现。　　</p>
+<p>理解DI的关键是：<strong>“谁依赖谁，为什么需要依赖，谁注入谁，注入了什么”</strong></p>
+<p>那我们来深入分析一下：</p>
+<ul>
+<li><strong>谁依赖于谁</strong>：当然是应用程序依赖于IoC容器；　　</li>
+<li><strong>为什么需要依赖</strong>：应用程序需要IoC容器来提供对象需要的外部资源；　　</li>
+<li><strong>谁注入谁</strong>：很明显是IoC容器注入应用程序某个对象，应用程序依赖的对象；　　</li>
+<li><strong>注入了什么</strong>：就是注入某个对象所需要的外部资源（包括对象、资源、常量数据）</li>
+</ul>
+<h1 id="IOC-VS-DI"><a href="#IOC-VS-DI" class="headerlink" title="IOC VS DI"></a>IOC VS DI</h1><p><strong>IoC和DI什么关系？</strong></p>
+<p>貌似是个仁者见仁的问题，有人认为两者是同一个东西，也有人认为是不同的概念；</p>
+<p>摘抄一些见解</p>
+<hr>
+<blockquote>
+<p>根据上面的讲述，应该能看出来，依赖注入和控制反转是对同一件事情的不同描述，从某个方面讲，就是它们描述的角度不同。依赖注入是从应用程序的角度在描述，可以把依赖注入描述完整点：应用程序依赖容器创建并注入它所需要的外部资源；而控制反转是从容器的角度在描述，描述完整点：容器控制应用程序，由容器反向的向应用程序注入应用程序所需要的外部资源。</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>DI仅是用一个单独的对象（装配器）来装配对象之间的依赖关系，一般有setter、构造、接口注入等，与IOC不是一回事，仅是IOC依赖管理层面的东西</p>
+</blockquote>
+<hr>
+<blockquote>
+<p>IOC是思想，DI是IOC的具体实现</p>
+</blockquote>
+<p>也可看看鼻祖Martin Fowler的表述</p>
+<blockquote>
+<p>As a result I think we need a more specific name for this pattern. Inversion of Control is too generic a term, and thus people find it confusing. As a result with a lot of discussion with various IoC advocates we settled on the name Dependency Injection.</p>
+</blockquote>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://www.martinfowler.com/articles/injection.html">Inversion of Control Containers and the Dependency Injection pattern</a><br><a href="https://jinnianshilongnian.iteye.com/blog/1413846">IOC是什么</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm---sort---cardinal-sort.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/algorithm---sort---cardinal-sort.html" class="post-title-link" itemprop="url">算法渣-排序-基数排序</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-03 17:38:00" itemprop="dateCreated datePublished" datetime="2019-01-03T17:38:00+08:00">2019-01-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法</p>
+</blockquote>
+<h1 id="线性排序"><a href="#线性排序" class="headerlink" title="线性排序"></a>线性排序</h1><p>常见的三种以线性时间运行的算法：计数排序、基数排序和桶排序；</p>
+<p>需要注意的是线性排序算法是非基于比较的排序算法，都有使用限制才能达到线性排序的效果</p>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>基数排序的发明可以追溯到1887年赫尔曼·何乐礼在打孔卡片制表机（Tabulation Machine）, 排序器每次只能看到一个列。它是基于元素值的每个位上的字符来排序的。 对于数字而言就是分别基于个位，十位， 百位或千位等等数字来排序。</p>
+<p>基数排序（Radix sort）是一种非比较型整数排序算法，其原理是将整数按位数切割成不同的数字，然后按每个位数分别比较。由于整数也可以表达字符串（比如名字或日期）和特定格式的浮点数，所以基数排序也不是只能使用于整数</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>原理是将整数按位数切割成不同的数字，然后按每个位数分别比较</p>
+<p>基数排序可以采用两种方式：</p>
+<p>LSD（Least Significant Digital）：从待排序元素的最右边开始计算（如果是数字类型，即从最低位个位开始）</p>
+<p>MSD（Most Significant Digital）：从待排序元素的最左边开始计算（如果是数字类型，即从最高位开始）</p>
+<p>基数排序又称为“桶子法”，从低位开始将待排序的数按照这一位的值放到相应的编号为0~9的桶中。</p>
+<p>等到低位排完得到一个子序列，再将这个序列按照次低位的大小进入相应的桶中，一直排到最高位为止，数组排序完成</p>
+<h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><p>通过基数排序对数组{53, 3, 542, 748, 14, 214, 154, 63, 616}，它的示意图如下：</p>
+<p><img src="http://images.zhuxingsheng.com/201901061108_876.png"></p>
+<p>在上图中，从最低位开始，依次进行排序。</p>
+<ol>
+<li>按照个位数进行排序。</li>
+<li>按照十位数进行排序。</li>
+<li>按照百位数进行排序。<br>排序后，数列就变成了一个有序序列</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/radixsort.gif"></p>
+<p>伪代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">Radix-Sort(A, d)</span><br><span class="line">// 每个在数组A[1...n] 中的元素都是d-位数的正整数</span><br><span class="line">// 位数是从右到左标记上1到d 的</span><br><span class="line">//A[]-- 初始的待排序的数组</span><br><span class="line"></span><br><span class="line">   // 创建一个for 循环，从1 到d</span><br><span class="line">   for j = 1 to d do</span><br><span class="line">       int count[10] = &#123;0&#125;;</span><br><span class="line">       // 将键的计数放在数组count[] 中</span><br><span class="line">       // 键key - 是在位数j 上的数字</span><br><span class="line">       for i = 0 to n do</span><br><span class="line">          count[key of(A[i]) in pass j]++</span><br><span class="line">       for k = 1 to 10 do</span><br><span class="line">          count[k] = count[k] + count[k-1]</span><br><span class="line"> </span><br><span class="line">      // 创建一个结果数组，通过从count[k] 中检查A[i] 中的新位置</span><br><span class="line">      for i = n-1 downto 0 do</span><br><span class="line">          result[ count[key of(A[i])] ] = A[j]</span><br><span class="line">          count[key of(A[i])]--</span><br><span class="line"> </span><br><span class="line">     //现在主数组A[] 包含了根据现在位数位置排好序的数字</span><br><span class="line">     for i=0 to n do</span><br><span class="line">         A[i] = result[i]</span><br><span class="line"> </span><br><span class="line">   end for(j)</span><br><span class="line">end func </span><br></pre></td></tr></table></figure>
+
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>使用桶排序，把各位上的数分别桶排序，再依次输出</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">private static void radixSort(int []array)&#123;</span><br><span class="line">	//取最大值，好计算位数</span><br><span class="line">	int max = Integer.MIN_VALUE;</span><br><span class="line">	for (int a:array) &#123;</span><br><span class="line">		if(a&gt; max) &#123;</span><br><span class="line">			max = a;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	//(0~9)10个桶</span><br><span class="line">	int [][]buckets = new int[10][];</span><br><span class="line"></span><br><span class="line">	//初始化桶</span><br><span class="line">	for(int b=0;b&lt;10;b++) &#123;</span><br><span class="line">		buckets[b] = new int[array.length];</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//每个桶的元素数量</span><br><span class="line">	int [] index = new int[10];</span><br><span class="line">	//按每一位数排序</span><br><span class="line">	for (int radix = 1;max/radix&gt;0;radix*=10)&#123;</span><br><span class="line">		//把元素放到各自的桶内</span><br><span class="line">		for (int a:array) &#123;</span><br><span class="line">			//得到每位数</span><br><span class="line">			int per = a/radix%10;</span><br><span class="line">			buckets[per][index[per]] = a;</span><br><span class="line">			index[per]++;</span><br><span class="line">		&#125;</span><br><span class="line">		//各个桶的数据依次放回数组</span><br><span class="line">		int j = 0;</span><br><span class="line">		for (int b=0;b&lt;10;b++) &#123;</span><br><span class="line">			//去掉桶中别的元素</span><br><span class="line">			for (int i = 0;i&lt;index[b];i++)&#123;</span><br><span class="line">				array[j++] = buckets[b][i];</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		System.err.println(&quot;按第&quot;+radix+&quot;位,排序：&quot; + Arrays.toString(array));</span><br><span class="line">		//清空计数器</span><br><span class="line">		index = new int[10];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对数组{53, 3, 542, 748, 14, 214, 154, 63, 616}进行基数排序</p>
+<p>通过程序可以看出每位数排序的结果</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">按第1位,排序：[542, 53, 3, 63, 14, 214, 154, 616, 748]</span><br><span class="line">按第10位,排序：[3, 14, 214, 616, 542, 748, 53, 154, 63]</span><br><span class="line">按第100位,排序：[3, 14, 53, 63, 154, 214, 542, 616, 748]</span><br></pre></td></tr></table></figure>
+<p>百倍排序完，整个数组也就排序好了</p>
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><h2 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h2><p>假设在基数排序中，r为基数，d为位数。则基数排序的时间复杂度为O(d(n+r))。</p>
+<h2 id="空间复杂度"><a href="#空间复杂度" class="headerlink" title="空间复杂度"></a>空间复杂度</h2><p>在基数排序过程中，对于任何位数上的基数进行“装桶”操作时，都需要n+r个临时空间</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm-slag-sorting-bucket-sorting.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/algorithm-slag-sorting-bucket-sorting.html" class="post-title-link" itemprop="url">算法渣-排序-桶排序</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-02 17:37:00" itemprop="dateCreated datePublished" datetime="2019-01-02T17:37:00+08:00">2019-01-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法</p>
+</blockquote>
+<h1 id="线性排序"><a href="#线性排序" class="headerlink" title="线性排序"></a>线性排序</h1><p>常见的三种以线性时间运行的算法：计数排序、基数排序和桶排序；网上教程不少，但三者经常混淆，称桶排序但实质可能是计数排序，为了保证原味性，主要参考《算法导论》</p>
+<p>需要注意的是线性排序算法是非基于比较的排序算法，都有使用限制才能达到线性排序的效果</p>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>桶排序 (Bucket sort)或所谓的箱排序，是一个排序算法，工作的原理是将数组分到有限数量的桶子里。每个桶子再个别排序（有可能再使用别的排序算法或是以递归方式继续使用桶排序进行排序）。桶排序是鸽巢排序的一种归纳结果。当要被排序的数组内的数值是均匀分配的时候，桶排序使用线性时间（Θ（n））</p>
+<h1 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h1><p>桶排序的思想：其实就是先分配再收集的这个一个过程</p>
+<p><strong>假设输入是一个随机过程产生的[0,1)区间上均匀分布的实数</strong></p>
+<p>把区间划分成n个大小相同的子区间，或称为桶。然后将n个输入元素分布的各个桶中去。先对各个桶中的数进行排序，然后按次序把各桶中的数据列出来即可</p>
+<p>     （因为输入元素均匀而独立的分布在区间 [0,1)上，所以不会出现很多数落在一个桶中的情况）</p>
+<p>在桶排序算法中，假设输入的是一个含n个元素的数组A，且每个元素满足0≤A[i]&lt;1。另外，还需要一个辅助数组B[0…n-1]来存放链表（桶），并假设可以用某种机制来维护这些表</p>
+<p><img src="http://images.zhuxingsheng.com/201901051839_984.png"></p>
+<p>【刚开始按照示例图的方式理解了桶排序，桶分10个，以十分位为桶号放入各个桶，也算是桶排序一种实现方式，但还是狭隘了】</p>
+<hr>
+<p>在实际应用时，其实并不然必须元素范围为[0,1)，整数，小数都是可以的，只要分布均匀就能最大发挥桶排序优势</p>
+<p>优质的桶排序需要考虑几个因素：</p>
+<ol>
+<li>桶的数量：桶越多，占用空间越大 </li>
+<li>区间跨度：桶与桶之间的跨度</li>
+<li>桶内元素的排序</li>
+</ol>
+<p>一般区间跨度：</p>
+<p>除了最后一个桶只包含一个最大值之外，其余各桶之间的区间跨度&#x3D;(最大值-最小值)&#x2F;(桶数量-1)</p>
+<p><img src="http://images.zhuxingsheng.com/201901071302_404.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">//伪代码</span><br><span class="line">BUCKET_SORT(A)  </span><br><span class="line">n = length(A)   </span><br><span class="line">for i= 1 to n       </span><br><span class="line">    do insert A[i] into list B   </span><br><span class="line"> for i=0 to n-1       </span><br><span class="line">    do sort list B[i] with insertion sort</span><br><span class="line"> concatenate the list B[0]、B[1]，，，B[n-1] together in order</span><br></pre></td></tr></table></figure>
+
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">private static void bucketSort(double [] array)&#123;</span><br><span class="line">	int bucketNum = 10;//10个桶</span><br><span class="line">	double max = Double.MIN_VALUE;</span><br><span class="line">	double min = Double.MIN_VALUE;</span><br><span class="line">	for (double a:array) &#123;</span><br><span class="line">		if(a&gt; max) &#123;</span><br><span class="line">			max = a;</span><br><span class="line">		&#125;</span><br><span class="line">		if(a&lt;min) &#123;</span><br><span class="line">			min = a;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	//区间跨度</span><br><span class="line">	double span  = (max - min) / (bucketNum - 1);</span><br><span class="line">	double [][]buckets = new double[bucketNum][];</span><br><span class="line">	//初始化桶</span><br><span class="line">	for (int b = 0; b&lt;bucketNum;b++) &#123;</span><br><span class="line">		//以排序元素个数初始化每个桶，以防极端情况</span><br><span class="line">		buckets[b] = new double[array.length];</span><br><span class="line">	&#125;</span><br><span class="line">	//每个桶的元素数量</span><br><span class="line">	int [] index = new int[10];</span><br><span class="line">	for (int d = 0;d&lt;array.length;d++) &#123;</span><br><span class="line">		int bucket =  (int)((array[d] - min)/span);</span><br><span class="line">		buckets[bucket][index[bucket]] = array[d];</span><br><span class="line">		index[bucket]++;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	//每个桶排序，直接使用sort函数了</span><br><span class="line">	for(int b = 0; b&lt;10; b++) &#123;</span><br><span class="line">		Arrays.sort(buckets[b]);</span><br><span class="line">	&#125;</span><br><span class="line">	int j = 0;</span><br><span class="line">	for(int b = 0; b&lt;10; b++) &#123;</span><br><span class="line">		if(index[b] == 0) &#123;</span><br><span class="line">			continue;</span><br><span class="line">		&#125;</span><br><span class="line">		//这儿需要特殊处理一下，主要是因为每个桶初始化了array.length，</span><br><span class="line">		// 经过sort排序，比如第一个桶数组变成了[0.0,0.0,......0.002]</span><br><span class="line">		//需要剔掉数组中的0</span><br><span class="line">		for (int bi = array.length-index[b];bi&lt;array.length;bi++) &#123;</span><br><span class="line">			array[j++] = buckets[b][bi];</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><p><strong>时间复杂度：</strong></p>
+<p>假设有m个桶，则每个桶的元素为n&#x2F;m;</p>
+<p>当辅助函数为冒泡排序O(n^2)时,桶排序为 O(n)+mO((n&#x2F;m)2);</p>
+<p>当辅助函数为快速排序时O(nlgn)时,桶排序为 O(n)+m*O(n&#x2F;m log(n&#x2F;m))</p>
+<p><strong>空间复杂度：</strong>　</p>
+<p>O(M+N)  </p>
+<p>通常桶越多，执行效率越快，即省时间，但是桶越多，空间消耗就越大，是一种通过空间换时间的方式</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/marketing-warfare.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/marketing-warfare.html" class="post-title-link" itemprop="url">Marketing Warfare</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-01-01 18:48:00" itemprop="dateCreated datePublished" datetime="2019-01-01T18:48:00+08:00">2019-01-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-01-21 20:18:04" itemprop="dateModified" datetime="2024-01-21T20:18:04+08:00">2024-01-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/readbook/" itemprop="url" rel="index"><span itemprop="name">读书</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><img src="http://images.zhuxingsheng.com/201901011715_54.png"></p>
+<p>之前这本书翻译为《营销战》，现在又翻译成《商战》了</p>
+<p>结合当前商业动态，此书可能会回答你心中的一些问题</p>
+<blockquote>
+<p>为什么哈罗单车融资成功了，可ofo压金都成了问题？<br>为什么在阿里绝对的市场占有率之机，拼多多诞生了并还在持续增长？<br>当年的当当图书，京东快递如何抢占了客户<br>真的是打江山容易，守江山难吗？<br>战略与战术到底哪一个更重要？</p>
+</blockquote>
+<h1 id="商业即战争"><a href="#商业即战争" class="headerlink" title="商业即战争"></a>商业即战争</h1><p>战争属于商业竞争的范畴，同样也是人类利益和活动的冲突</p>
+<h2 id="商业需要新理念"><a href="#商业需要新理念" class="headerlink" title="商业需要新理念"></a>商业需要新理念</h2><p><strong>明确清晰的定义是重要的开始，定义就是角度，也见深度</strong></p>
+<ol>
+<li>商业活动必须满足消费者的需要和需求</li>
+<li>人类通过交换过程满足需要和需求的活动</li>
+<li>引导商品和服务从生产者流向消费者的一系列经济活动</li>
+<li>通过预测顾客或客户需求，并引导满足需求的商品和服务从生产者流向顾客或客户，从而实现组织目标的各种活动</li>
+<li>确定客户需求、根据组织生产能力将需求概念化、将概念同组织的适当能力相联系、根据先前确定的客户需求，使随后的生产概念化、将此概念同客户相联系</li>
+</ol>
+<h1 id="兵力原则"><a href="#兵力原则" class="headerlink" title="兵力原则"></a>兵力原则</h1><p>基本原则：兵力优势。无论何时，都应该首先尽力做到这一点</p>
+<p>用兵之法，十则围之，五则攻之，倍则战之，敌则能分之，少则能逃之，不若则能避之。故小敌之坚，大敌之擒也</p>
+<p>兵力原则是最基本的战争原则，其本质就是以多打少：大鱼吃小鱼，大公司击败小公司</p>
+<h1 id="战地性质"><a href="#战地性质" class="headerlink" title="战地性质"></a>战地性质</h1><p>商战在心智中打响，它无时无刻不存在于你自己和潜在顾客的心智中。</p>
+<p>心智即战场，一个复杂且难以理解的阵地</p>
+<h1 id="战略形式"><a href="#战略形式" class="headerlink" title="战略形式"></a>战略形式</h1><p><img src="http://images.zhuxingsheng.com/201901011724_689.png"></p>
+<h2 id="防御战"><a href="#防御战" class="headerlink" title="防御战"></a>防御战</h2><h3 id="原则"><a href="#原则" class="headerlink" title="原则"></a>原则</h3><ol>
+<li><p>只有市场领导者才能打防御战</p>
+</li>
+<li><p>最佳的防御就是勇于自我攻击</p>
+</li>
+<li><p>强大进攻必须及时封杀</p>
+</li>
+</ol>
+<h2 id="进攻战"><a href="#进攻战" class="headerlink" title="进攻战"></a>进攻战</h2><p>领导者应进行防御战，而非攻击战</p>
+<p>进攻战适用于行业第二或第三的公司，公司要足够强大才能向领导者发起持续进攻</p>
+<h3 id="原则-1"><a href="#原则-1" class="headerlink" title="原则"></a>原则</h3><ol>
+<li>领导者的强势地位是主要的考虑因素</li>
+<li>找到领导者强势中的弱势，并聚而攻之</li>
+<li>尽可能在狭长地带发起攻击</li>
+</ol>
+<h2 id="侧翼战"><a href="#侧翼战" class="headerlink" title="侧翼战"></a>侧翼战</h2><p>侧翼战是最具有创新性的战略形式</p>
+<h3 id="原则-2"><a href="#原则-2" class="headerlink" title="原则"></a>原则</h3><ol>
+<li><p>最佳的侧翼战是在无争地带展开</p>
+</li>
+<li><p>战术奇袭是作战计划中最重要的一环</p>
+</li>
+<li><p>追击与进攻同等重要</p>
+</li>
+</ol>
+<h2 id="游击战"><a href="#游击战" class="headerlink" title="游击战"></a>游击战</h2><p>敌进我退，敌驻我拢，敌疲我打，敌退我追</p>
+<h3 id="原则-3"><a href="#原则-3" class="headerlink" title="原则"></a>原则</h3><ol>
+<li><p>找到一块小得足以守得住的阵地</p>
+</li>
+<li><p>无论多么成功，都不能效仿领导者</p>
+</li>
+<li><p>一旦有变，随时准备撤退</p>
+</li>
+</ol>
+<h3 id="VS侧翼战"><a href="#VS侧翼战" class="headerlink" title="VS侧翼战"></a>VS侧翼战</h3><table>
+<thead>
+<tr>
+<th></th>
+<th>侧翼战</th>
+<th>游击战</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1、</td>
+<td>深思熟虑，创意</td>
+<td>同样想法应用细分市场</td>
+</tr>
+<tr>
+<td>2、</td>
+<td>近距离领导者</td>
+<td>远离领导者</td>
+</tr>
+<tr>
+<td>3、</td>
+<td>夺取蚕食领导者市场份额</td>
+<td>区域市场</td>
+</tr>
+</tbody></table>
+<h1 id="战略与战术"><a href="#战略与战术" class="headerlink" title="战略与战术"></a>战略与战术</h1><p>“战术驱动战略”，这是战争研究得出的最重要思想之一。</p>
+<p>战略服从战术就像形式服从内容一样，战略应该服从战术。战术结果的取得，是战略的最终目标和唯一目的。</p>
+<p>伟大的战略目标是使一切工作在一定的战术层面上顺利进行，而不是其他什么目的</p>
+<p>巴顿说：“人们不应该先制订计划，然后让形势适应计划，而应该让计划适应当前的形势。我认为，胜败取决于最高指挥部是否拥有这种能力。”</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>可以尝试性的给开篇的问题给个答案，不一定对，毕竟不是专业人士，也非局中之人</p>
+<p>当年共享单车红遍南北，貌似市场被ofo，魔拜一统天下；而一些品牌却玩起了游击战，突袭攫取他们放弃的三四线城市，并快速追击，以致当领导者出现疲态时，主动进攻，一举进入了一线城市</p>
+<p><strong>一个品牌无法支撑两个不同的概念</strong>。低价劳斯莱斯会损害其高价的定位，而且很多时候，低价产品无法热销，因为没有人愿意购买廉价的劳斯莱斯。</p>
+<p>所以阿里有了淘宝，也要搞天猫；但不可能一统所以市场，拼多多抓住了被忽略，或者说是阿里主动放弃的领地，提出社交电商，打了一个漂亮的侧翼战</p>
+<p>淘宝火及一时，可为什么选择京东购物？淘宝品种很全，但物流不够快，京东发现了客户痛点，找到了淘宝领导者强势中的弱势，以“隔日达”为口号，快速占领了用户心智</p>
+<p>战略重要，还是战术重要的呢？ 好似道与术的取舍一样。人们总认为道更重要。与IT行业的架构一样</p>
+<p>但康威定律如是说：设计系统的组织，其产生的设计等同于组织之内、组织之间的沟通结构。也就是架构偏向于组织结构，如果架构异于组织结构，那可能再完美的架构也无法落地。无法落地的架构是好架构吗？</p>
+<p>一个伟大的战略必须要以当前环境的战术能力为前提，不能实现，能算是好战略吗？</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/tree-overview.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/tree-overview.html" class="post-title-link" itemprop="url">树概述</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-12 11:10:00" itemprop="dateCreated datePublished" datetime="2018-12-12T11:10:00+08:00">2018-12-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>树的类型不少，此篇简要对树进行描述，脑中有个整体概念，细节分篇再研究</p>
+<h1 id="树"><a href="#树" class="headerlink" title="树"></a>树</h1><p>树（Tree）是n（n&gt;&#x3D;0）个结点的有限集。</p>
+<p>在任意一棵非空树中：</p>
+<p>（1）有且仅有一个特定的称为根（Root）的结点；</p>
+<p>（2）当n&gt;1时，其余结点可分为m（m&gt;0）个<strong>互不相交</strong>的有限集T1，T2，…，Tn，其中每个集合本身又是一棵树，并称为根的子树（SubTree）</p>
+<p><img src="http://images.zhuxingsheng.com/201812151214_284.png"></p>
+<h2 id="术语"><a href="#术语" class="headerlink" title="术语"></a>术语</h2><p><img src="http://images.zhuxingsheng.com/201812152132_367.png"></p>
+<p><img src="http://images.zhuxingsheng.com/201812152130_389.png"></p>
+<ol>
+<li>结点：如上图，每一个圈圈我们就称为树的一个结点</li>
+<li><strong>度</strong>: 结点拥有的子树数称为结点的度-(Degree)，树的度取树内各结点的度的最大值</li>
+<li>叶结点(Leaf)或终端结点: 度为0的结点</li>
+<li>内部结点: 度不为0的结点称为分支结点或非终端结点，除根结点外，分支结点也称为内部结点。5. 结点间的关系：结点的子树的根称为结点的孩子(Child)，相应的，该结点称为孩子的双亲(Parent)，同一双亲的孩子之间互称为兄弟(Sibling)。结点的祖先是从根到该结点所经分支上的所有结点</li>
+<li><strong>深度</strong>：树中结点的最大层次称为树的深度(Depth)或高度</li>
+<li>结点的层次(Level): 从根开始定一起，根为第一层，根的孩子为第二层。其双亲在同一层的结点互为堂兄弟</li>
+<li>有序树: 如果将树中结点的各子树看成从左至右是有次序的，不能互换的，则称该树为有序树, 否则为无序树</li>
+<li>森林(Forest): 是 m(m&gt;&#x3D;0)棵互不相交的树的集合。对树中每个结点而言，其子树的集合即为森林</li>
+</ol>
+<h1 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h1><p>二叉树(Binary Tree)是n(n&gt;&#x3D;0)个结点的有限集合。该集合可能是空的（空二叉树），也可能由<br>一个根结点和该根结点的左子树和右子树组成。左右子树不相交，而且都是二叉树</p>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ol>
+<li>每个结点最多有两棵字树，即每个结点的度和树的度不大于2。</li>
+<li>结点的左子树和右子树是有顺序的，不能颠倒。</li>
+<li>即使结点只有一棵子树，也是有顺序的</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812162204_751.png"></p>
+<h1 id="满二叉树"><a href="#满二叉树" class="headerlink" title="满二叉树"></a>满二叉树</h1><p>除最后一层无任何子节点外，每一层上的所有结点都有两个子结点。也可以这样理解，除叶子结点外的所有结点均有两个子结点。节点数达到最大值，所有叶子结点必须在同一层上</p>
+<h1 id="完全二叉树"><a href="#完全二叉树" class="headerlink" title="完全二叉树"></a>完全二叉树</h1><p>若设二叉树的深度为h，除第 h 层外，其它各层 (1～(h-1)层) 的结点数都达到最大个数，第h层所有的结点都连续集中在最左边，这就是完全二叉树</p>
+<p><img src="http://images.zhuxingsheng.com/201812162209_255.png"></p>
+<p>之前讲过的<a href="http://zhuxingsheng.com/blog/algorithmic-slag-sort-heap-sort.html">《堆排序》</a> 就是依赖完全二叉树结构</p>
+<h1 id="二叉查找树"><a href="#二叉查找树" class="headerlink" title="二叉查找树"></a>二叉查找树</h1><p>二叉查找树(Binary Search Tree)，又被称为二叉搜索树</p>
+<p>（1）若任意节点的左子树不空，则左子树上所有结点的值均小于它的根结点的值；</p>
+<p>（2） 若任意节点的右子树不空，则右子树上所有结点的值均大于它的根结点的值；</p>
+<p>（3） 任意节点的左、右子树也分别为二叉查找树；</p>
+<p>（4） 没有键值相等的节点</p>
+<p><img src="http://images.zhuxingsheng.com/201812162227_296.png"></p>
+<h2 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h2><p><img src="http://images.zhuxingsheng.com/201812162234_109.png"></p>
+<p>复杂度分析：它和二分查找一样，插入和查找的时间复杂度均为O(logn)，<strong>但是在最坏的情况下仍然会有O(n)的时间复杂度</strong>。原因在于插入和删除元素的时候，树没有保持平衡</p>
+<h1 id="平衡二叉树"><a href="#平衡二叉树" class="headerlink" title="平衡二叉树"></a>平衡二叉树</h1><p>平衡二叉搜索树，又被称为AVL树</p>
+<p>由于普通的二叉查找树会容易失去”平衡“，极端情况下，**二叉查找树会退化成线性的链表，导致插入和查找的复杂度下降到 O(n) **，所以，这也是平衡二叉树设计的初衷。</p>
+<p><strong>具有以下性质</strong>：</p>
+<ol>
+<li>要么是棵空树，要么其根节点左右子树的深度之差的绝对值不超过1；</li>
+<li>其左右子树也都是平衡二叉树；</li>
+<li>二叉树节点的平衡因子定义为该节点的左子树的深度减去右子树的深度。则平衡二叉树的所有节点的平衡因子只可能是-1,0,1</li>
+</ol>
+<h1 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a>红黑树</h1><p>红黑树是一种自平衡二叉查找树，是在计算机科学中用到的一种数据结构，典型的用途是实现关联数组。它是在1972年由Rudolf Bayer发明的，他称之为”对称二叉B树”，它现代的名字是在 Leo J. Guibas 和 Robert Sedgewick 于1978年写的一篇论文中获得的。它是复杂的，但它的操作有着良好的最坏情况运行时间，并且在实践中是高效的: 它可以在O(log n)时间内做查找，插入和删除，这里的n是树中元素的数目</p>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ol>
+<li>每个节点要么是红色，要么是黑色。</li>
+<li>根节点永远是黑色的。</li>
+<li>所有的叶节点都是空节点（即 null），并且是黑色的。</li>
+<li>每个红色节点的两个子节点都是黑色。（从每个叶子到根的路径上不会有两个连续的红色节点）</li>
+<li>从任一节点到其子树中每个叶子节点的路径都包含相同数量的黑色节点。</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812171908_816.png"></p>
+<h2 id="为什么需要红黑树"><a href="#为什么需要红黑树" class="headerlink" title="为什么需要红黑树"></a>为什么需要红黑树</h2><p>平衡二叉树的插入&#x2F;删除操作带来的旋转操作可能会达到logn次</p>
+<p>红黑树的插入操作最多进行两次旋转、删除操作最多进行三次旋转</p>
+<h1 id="B树"><a href="#B树" class="headerlink" title="B树"></a>B树</h1><p>B树是一种平衡的多路查找树，结点最大的孩子数目称为B树的阶（Order），是为磁盘存储而专门设计的一类平衡搜索树</p>
+<p>b-tree分为用“阶”的定义和用“度”的定义，度和阶都是描述子节点的数量的</p>
+<h2 id="特性-1"><a href="#特性-1" class="headerlink" title="特性"></a>特性</h2><ol>
+<li>定义任意非叶子结点最多只有M个儿子；且M&gt;2；</li>
+<li>根结点的儿子数为[2, M]；</li>
+<li>除根结点以外的非叶子结点的儿子数为[M&#x2F;2, M]；</li>
+<li>每个结点存放至少M&#x2F;2-1（取上整）和至多M-1个关键字；（至少2个关键字）</li>
+<li>非叶子结点的关键字个数&#x3D;指向儿子的指针个数-1；</li>
+<li>非叶子结点的关键字：K[1], K[2], …, K[M-1]；且K[i] &lt; K[i+1]；</li>
+<li>非叶子结点的指针：P[1], P[2], …, P[M]；其中P[1]指向关键字小于K[1]的子树，P[M]指向关键字大于K[M-1]的子树，其它P[i]指向关键字属于(K[i-1], K[i])的子树；</li>
+<li>所有叶子结点位于同一层；</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812191737_211.png" alt="逻辑结构图"></p>
+<p>这是B树存储在硬盘的逻辑结构图。</p>
+<p>其中根节点中17，35在称为关键字(key) ，实际中往往附带更多复杂类型数据。</p>
+<p>可以看出一个节点包含 keys  ChildNotePointer  2部分信息</p>
+<h2 id="为什么需要B树"><a href="#为什么需要B树" class="headerlink" title="为什么需要B树"></a>为什么需要B树</h2><ol>
+<li>当数据量大的时候，树的高度会比较高，数据量大的时候，查询会比较慢</li>
+<li>树每个节点只存储一个记录，可能导致一次查询有很多次磁盘IO</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812201422_279.png"></p>
+<p>这是个典型的b树结构，初始因子为1000，高度仅为3的b树，就可以存储1002001000的数据了</p>
+<p>假设要查询最后一个数据:</p>
+<ul>
+<li>从硬盘加载根节点搜索，IO一次。</li>
+<li>根据根节点的指针信息，去加载第二层的节点， IO一次。</li>
+<li>重复2，IO一次。<br>IO只用了3次，就查询了需要的数据，所以说B树效率是非常高的。</li>
+</ul>
+<p>B树的节点，在硬盘里表现为：柱面里的页(page)或盘块(block)，如果把索引持久化到内存，只需要一次就够了</p>
+<h1 id="B-树"><a href="#B-树" class="headerlink" title="B+树"></a>B+树</h1><p>B+树是B-树的变体，也是一种多路搜索树：</p>
+<ol>
+<li>其定义基本与B-树相同</li>
+<li>非叶子结点的子树指针与关键字个数相同（B树中是k-1个元素）</li>
+<li>非叶子结点的子树指针P[i]，指向关键字值属于[K[i], K[i+1])的子树（B-树是开区间）；</li>
+<li>为所有叶子结点增加一个链指针</li>
+<li>所有关键字都在叶子结点出现</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812201434_241.png"></p>
+<p>B+的搜索与B-树也基本相同，区别是B+树只有达到叶子结点才命中（B-树可以在非叶子结点命中），其性能也等价于在关键字全集做一次二分查找</p>
+<p>B树：有序数组+平衡多叉树</p>
+<p>B+树：有序数组链表+平衡多叉树</p>
+<p>B+树的关键字全部存放在叶子节点中，非叶子节点用来做索引，而叶子节点中有一个指针指向一下个叶子节点。做这个优化的目的是为了提高区间访问的性能。而正是这个特性决定了B+树更适合用来存储外部数据</p>
+<h2 id="为什么需要B-树"><a href="#为什么需要B-树" class="headerlink" title="为什么需要B+树"></a>为什么需要B+树</h2><ol>
+<li>b+树的中间节点不保存数据，所以磁盘页能容纳更多节点元素，更“矮胖”；</li>
+<li>b+树查询必须查找到叶子节点，b树只要匹配到即可不用管元素位置，因此b+树查找更稳定（并不慢）；</li>
+<li>对于范围查找来说，b+树只需遍历叶子节点链表即可，b树却需要重复地中序遍历</li>
+</ol>
+<h1 id="B-树-1"><a href="#B-树-1" class="headerlink" title="B*树"></a>B*树</h1><p>B*树是对B+树进行的又一次的升级。在B+树的非根和非叶子结点再增加指向兄弟的指针</p>
+<p><img src="http://images.zhuxingsheng.com/201812201548_306.png"></p>
+<p>在B+树基础上，为非叶子结点也增加链表指针，将结点的最低利用率从1&#x2F;2提高到2&#x2F;3；</p>
+<p>在这比如说当你进行插入节点的时候，它首先是放到兄弟节点里面。如果兄弟节点满了的话，进行分裂的时候从兄弟节点和这个节点各取出1&#x2F;3，放入新建的节点当中，这样也就实现了空间利用率从1&#x2F;2到1&#x2F;3。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><strong>B树</strong>：二叉树，每个结点只存储一个关键字，等于则命中，小于走左结点，大于走右结点</p>
+<p><strong>B-树</strong>：多路搜索树，每个结点存储M&#x2F;2到M个关键字，非叶子结点存储指向关键字范围的子结点；<br>所有关键字在整颗树中出现，且只出现一次，非叶子结点可以命中；</p>
+<p><strong>B+树</strong>：在B-树基础上，为叶子结点增加链表指针，所有关键字都在叶子结点中出现，非叶子结点作为叶子结点的索引；B+树总是到叶子结点才命中；</p>
+<p><strong>B*树</strong>：在B+树基础上，为非叶子结点也增加链表指针，将结点的最低利用率从1&#x2F;2提高到2&#x2F;3；</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://blog.csdn.net/acs713/article/details/6880375">B-树学习笔记</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/easy-to-understand-index.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/easy-to-understand-index.html" class="post-title-link" itemprop="url">深入浅出索引</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-09 15:50:00" itemprop="dateCreated datePublished" datetime="2018-12-09T15:50:00+08:00">2018-12-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>索引，一种强大的存在；不管是什么行业，数据都是根基，终将落盘固化，提供各方检索查询，之前整理了一篇<a href="http://www.zhuxingsheng.com/blog/understanding-spring-transactions-in-depth.html">《深入浅出spring事务》</a>，你可以推脱不使用事务，但索引是不可或缺的必备知识点</p>
+<p>知识点比较多，有些会分篇细化，整体会从以下几方面整理</p>
+<ol>
+<li>索引是什么,人人都在讲，但他的定义到底是什么？</li>
+<li>索引作用，创建表时，都要考虑索引，能带什么好处？</li>
+<li>索引负作用，索引那么好，为什么不在每个字段上都加上索引？</li>
+<li>索引实现原理，那么多数据结构，索引为什么非要使用B+Tree？</li>
+<li>索引应用，加了索引也不一定能发挥作用，使用时注意哪些？</li>
+</ol>
+<h1 id="索引是什么"><a href="#索引是什么" class="headerlink" title="索引是什么"></a>索引是什么</h1><p>MySQL官方对索引的定义为：<strong>索引（Index）是帮助MySQL高效获取数据的数据结构</strong>。</p>
+<p>数据库查询是数据库的最主要功能之一。我们都希望查询数据的速度能尽可能的快，因此数据库系统的设计者会从查询算法的角度进行优化。</p>
+<p>最基本的查询算法当然是顺序查找（linear search），这种复杂度为O(n)的算法在数据量很大时显然是糟糕的，好在计算机科学的发展提供了很多更优秀的查找算法</p>
+<p>例如二分查找（binary search）、二叉树查找（binary tree search）等。</p>
+<p>如果稍微分析一下会发现，每种查找算法都只能应用于特定的数据结构之上</p>
+<p>例如二分查找要求被检索数据有序，而二叉树查找只能应用于二叉查找树上，但是数据本身的组织结构不可能完全满足各种数据结构（例如，理论上不可能同时将两列都按顺序进行组织）</p>
+<p>所以，在数据之外，<strong>数据库系统还维护着满足特定查找算法的数据结构</strong>，这些数据结构以某种方式引用（指向）数据，这样就可以在这些数据结构上实现高级查找算法。<strong>这种数据结构，就是索引</strong></p>
+<h1 id="索引意义"><a href="#索引意义" class="headerlink" title="索引意义"></a>索引意义</h1><p>通过索引定义，作用基本已经明确，再细化一下</p>
+<h2 id="作用"><a href="#作用" class="headerlink" title="作用"></a>作用</h2><ol>
+<li>大大加快数据的检索速度;   </li>
+<li>创建唯一性索引，保证数据库表中每一行数据的唯一性;   </li>
+<li>加速表和表之间的连接;   </li>
+<li>在使用分组和排序子句进行数据检索时，可以显著减少查询中分组和排序的时间</li>
+</ol>
+<h2 id="反作用"><a href="#反作用" class="headerlink" title="反作用"></a>反作用</h2><p>索引有这么多的好处，哪是不是每一列都给建上索引相当好呢？</p>
+<p>过犹不及</p>
+<ol>
+<li>索引需要占用数据表以外的物理存储空间</li>
+<li>创建索引和维护索引要花费一定的时间</li>
+<li>当对表进行更新操作时，索引需要被重建，这样降低了数据的维护速度</li>
+</ol>
+<h1 id="索引分类"><a href="#索引分类" class="headerlink" title="索引分类"></a>索引分类</h1><p>分类有两种角度：</p>
+<ul>
+<li><p>1.<strong>物理存储</strong></p>
+<ul>
+<li>1.1 聚簇索引(Clustered Index)：将数据存储与索引放到了一块，找到索引也就找到了数据，一个表只能有一个聚集索引</li>
+<li>1.2 非聚簇索引(Non- Clustered Index)：将数据存储于索引分开结构，搜索索引，然后通过索引找到磁盘相应数据</li>
+</ul>
+</li>
+<li><p>2.<strong>逻辑功能</strong></p>
+<ul>
+<li>2.1.主键索引：它是一种特殊的唯一索引，不允许有空值  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">primary key (id)</span><br></pre></td></tr></table></figure></li>
+<li>2.2. 普通索引：这是最基本的索引，它没有任何限制</li>
+</ul>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create index idx_name on user(name(20)); </span><br></pre></td></tr></table></figure>
+<ul>
+<li>2.3. 唯一索引：它与前面的普通索引类似，不同的就是：索引列的值必须唯一，但允许有空值</li>
+</ul>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">CREATE UNIQUE INDEX idx_email ON user(email);</span><br></pre></td></tr></table></figure>
+<ul>
+<li>2.4. 组合索引</li>
+</ul>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INDEX name (last_name,first_name)</span><br></pre></td></tr></table></figure></li>
+</ul>
+<p>Innodb使用的是聚簇索引，MyISam使用的是非聚簇索引</p>
+<p>Innodb中的主键索引是一种聚簇索引，非聚簇索引都是辅助索引，像复合索引、前缀索引、唯一索引</p>
+<p>在Innodb中，Mysql中的数据是按照主键的顺序来存放的。那么聚簇索引就是按照每张表的主键来构造一颗B+树，叶子节点存放的就是整张表的行数据。由于表里的数据只能按照一颗B+树排序，因此一张表只能有一个聚簇索引</p>
+<p>在Innodb中，聚簇索引默认就是主键索引</p>
+<h1 id="索引实现"><a href="#索引实现" class="headerlink" title="索引实现"></a>索引实现</h1><p>一般来说，索引本身也很大，不可能全部存储在内存中，因此索引往往以索引文件的形式存储的磁盘上。这样的话，索引查找过程中就要产生磁盘I&#x2F;O消耗，相对于内存存取，I&#x2F;O存取的消耗要高几个数量级，所以评价一个数据结构作为索引的优劣最重要的指标就是在查找过程中磁盘I&#x2F;O操作次数的渐进复杂度。换句话说，<strong>索引的结构组织要尽量减少查找过程中磁盘I&#x2F;O的存取次数</strong></p>
+<h2 id="存储原理"><a href="#存储原理" class="headerlink" title="存储原理"></a>存储原理</h2><p>在了解索引的数据结构之前了解一下硬件存储原理，毕竟一切都是基于硬件</p>
+<p>计算机存储设备一般分为两种：内存储器(main memory)和外存储器(external memory) </p>
+<ul>
+<li>内存存取速度快，但容量小，价格昂贵，而且不能长期保存数据(在不通电情况下数据会消失)。</li>
+<li>外存储器—磁盘是一种直接存取的存储设备(DASD)。它是以存取时间变化不大为特征的。可以直接存取任何字符组，且容量大、速度较其它外存设备更快。</li>
+</ul>
+<h3 id="磁盘结构"><a href="#磁盘结构" class="headerlink" title="磁盘结构"></a>磁盘结构</h3><p><img src="http://images.zhuxingsheng.com/201812112142_200.png" alt="磁盘结构"></p>
+<p>如上图，磁盘由盘片构成,每个盘片有两面，又称为盘面(Surface)，这些盘面覆盖有磁性材料。</p>
+<p>盘片中央有一个可以旋转的主轴(spindle)，他使得盘片以固定的旋转速率旋转，通常是5400转每分钟(Revolution Per Minute,RPM)或者是7200RPM</p>
+<p>磁盘包含一个多个这样的盘片并封装在一个密封的容器内。</p>
+<p>上图左，展示了一个典型的磁盘表面结构。每个表面是由一组成为磁道(track)的同心圆组成的，每个磁道被划分为了一组扇区(sector).每个扇区包含相等数量的数据位，通常是（512）子节。</p>
+<p>扇区之间由一些间隔(gap)隔开,不存储数据。</p>
+<h3 id="磁盘读写"><a href="#磁盘读写" class="headerlink" title="磁盘读写"></a>磁盘读写</h3><p><img src="http://images.zhuxingsheng.com/201812112201_603.png"></p>
+<p>如上图，磁盘用读&#x2F;写头来读写存储在磁性表面的位，而读写头连接到一个传动臂的一端</p>
+<p>磁盘上数据必须用一个三维地址唯一标示：<strong>柱面号、盘面号、块号(磁道上的盘块)</strong></p>
+<p>读&#x2F;写磁盘上某一指定数据需要下面3个步骤：</p>
+<ol>
+<li>首先移动臂根据柱面号使磁头移动到所需要的柱面上，这一过程被称为定位或查找 。</li>
+<li>所有磁头都定位到第10盘面的10条磁道上(磁头都是双向的)。这时根据盘面号来确定指定盘面上的磁道。</li>
+<li>盘面确定以后，盘片开始旋转，将指定块号的磁道段移动至磁头下</li>
+</ol>
+<p>经过上面三个步骤，指定数据的存储位置就被找到。这时就可以开始读&#x2F;写操作了。<br>访问某一具体信息，由3部分时间组成：</p>
+<ul>
+<li><strong>查找时间(seek time) Ts</strong>: 完成上述步骤(1)所需要的时间。这部分时间代价最高，最大可达到0.1s左右。</li>
+<li><strong>等待时间(latency time) Tl</strong>: 完成上述步骤(3)所需要的时间。由于盘片绕主轴旋转速度很快，一般为7200转&#x2F;分(电脑硬盘的性能指标之一, 家用的普通硬盘的转速一般有5400rpm(笔记本)、7200rpm几种)。因此一般旋转一圈大约0.0083s。</li>
+<li><strong>传输时间(transmission time) Tt</strong>: 数据通过系统总线传送到内存的时间，一般传输一个字节(byte)大概0.02us&#x3D;2*10^(-8)s</li>
+</ul>
+<p>磁盘读取数据是以盘块(block)为基本单位的。位于同一盘块中的所有数据都能被一次性全部读取出来。而磁盘IO代价主要花费在查找时间Ts上</p>
+<p><strong>因此我们应该尽量将相关信息存放在同一盘块，同一磁道中。或者至少放在同一柱面或相邻柱面上，以求在读&#x2F;写信息时尽量减少磁头来回移动的次数，避免过多的查找时间Ts</strong></p>
+<p>在大规模数据存储方面，大量数据存储在外存磁盘中，而在外存磁盘中读取&#x2F;写入块(block)中某数据时，首先需要定位到磁盘中的某块，如何有效地查找磁盘中的数据，需要一种合理高效的外存数据结构</p>
+<h3 id="局部性原理与磁盘预读"><a href="#局部性原理与磁盘预读" class="headerlink" title="局部性原理与磁盘预读"></a>局部性原理与磁盘预读</h3><p>由于存储介质的特性，磁盘本身存取就比主存慢很多，再加上机械运动耗费，磁盘的存取速度往往是主存的几百分分之一，因此为了提高效率，要尽量减少磁盘I&#x2F;O。为了达到这个目的，磁盘往往不是严格按需读取，而是每次都会预读，即使只需要一个字节，磁盘也会从这个位置开始，顺序向后读取一定长度的数据放入内存。</p>
+<p>这样做的理论依据是计算机科学中著名的局部性原理：</p>
+<p><strong>当一个数据被用到时，其附近的数据也通常会马上被使用</strong>。</p>
+<p>程序运行期间所需要的数据通常比较集中。</p>
+<p>由于磁盘顺序读取的效率很高（不需要寻道时间，只需很少的旋转时间），因此对于具有局部性的程序来说，预读可以提高I&#x2F;O效率。</p>
+<p>预读的长度一般为页（page）的整倍数</p>
+<p>页是计算机管理存储器的逻辑块，硬件及操作系统往往将主存和磁盘存储区分割为连续的大小相等的块，每个存储块称为一页（在许多操作系统中，页得大小通常为4k），主存和磁盘以页为单位交换数据。</p>
+<p>当程序要读取的数据不在主存中时，会触发一个缺页异常，此时系统会向磁盘发出读盘信号，磁盘会找到数据的起始位置并向后连续读取一页或几页载入内存中，然后异常返回，程序继续运行</p>
+<h2 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h2><p>根据索引定义，索引就是一种数据结构，来看下此数据结构是什么样的，能在当前硬件条件下，高效地查找磁盘数据,这种数据结构需要满足两个条件：</p>
+<ol>
+<li><strong>快速</strong>，快速查找到数据</li>
+<li><strong>局部性原理</strong>，满足局部性原理，减小IO次数，减小硬件磁头移动</li>
+</ol>
+<p>根据之前<a href="http://www.zhuxingsheng.com/tags/algorithm/">温习的各种算法</a>，可以找一种适合的查找算法与数据结构吗？</p>
+<ul>
+<li><p>1.<strong>顺序查找</strong>：这种复杂度为O(n)的算法在数据量很大时显然是糟糕的</p>
+</li>
+<li><p>2.<strong>数组+二分查找</strong>：效率是O(logn),但是数组的插入元素以及删除元素的效率很低</p>
+</li>
+<li><p>3.<strong>hash</strong>:检索效率非常高，索引的检索可以一次定位,在<a href="http://www.zhuxingsheng.com/blog/hashmap-source-code-analysis.html">Hashmap源码解析</a>中有过详细分析</p>
+<ul>
+<li>3.1<strong>Hash 索引仅仅能满足”&#x3D;”,”IN”和”&lt;&#x3D;&gt;”查询，不能使用范围查询</strong></li>
+</ul>
+<p>  由于 Hash 索引比较的是进行 Hash 运算之后的 Hash值，<br>  所以它只能用于等值的过滤，不能用于基于范围的过滤，因为经过相应的 Hash 算法处理之后的 Hash 值的大小关系，并不能保证和Hash运算前完全一样</p>
+<ul>
+<li>3.2<strong>Hash 索引无法被用来避免数据的排序操作</strong></li>
+</ul>
+<p>  由于 Hash 索引中存放的是经过 Hash 计算之后的 Hash 值，而且Hash值的大小关系并不一定和 Hash 运算前的键值完全一样，所以数据库无法利用索引的数据来避免任何排序运算</p>
+<ul>
+<li>3.3<strong>Hash索引不能利用部分索引键查询</strong></li>
+</ul>
+<p>  对于组合索引，Hash 索引在计算 Hash 值的时候是组合索引键合并后再一起计算 Hash 值，而不是单独计算 Hash 值，所以通过组合索引的前面一个或几个索引键进行查询的时候，Hash 索引也无法被利用</p>
+<ul>
+<li>3.4<strong>Hash索引在任何时候都不能避免表扫描</strong></li>
+</ul>
+<p>  Hash 索引是将索引键通过 Hash 运算之后，将 Hash运算结果的 Hash 值和所对应的行指针信息存放于一个 Hash 表中，由于不同索引键存在相同 Hash 值，所以即使取满足某个 Hash 键值的数据的记录条数，也无法从 Hash 索引中直接完成查询，还是要通过访问表中的实际数据进行相应的比较，并得到相应的结果</p>
+<ul>
+<li>3.5<strong>Hash索引遇到大量Hash值相等的情况后性能并不一定就会比B-Tree索引高</strong></li>
+</ul>
+<p>  对于选择性比较低的索引键，如果创建 Hash 索引，那么将会存在大量记录指针信息存于同一个 Hash 值相关联。这样要定位某一条记录时就会非常麻烦，会浪费多次表数据的访问，而造成整体性能低下</p>
+</li>
+</ul>
+<p>在mysql中，只有memory引擎显式支持哈希索引，这也是memory引擎表的默认索引类型，memory也支持btree，值得一提的是，memory引擎是支持非唯一哈希索引的。在数据库世界里是比较与众不同，如果多个列的哈希值相同，索引会以链表的方式存放多个记录指针到同一个哈希条目中</p>
+<h3 id="B树"><a href="#B树" class="headerlink" title="B树"></a>B树</h3><p>为磁盘存储而专门设计的一类平衡搜索树，细节可以阅读<a href="http://www.zhuxingsheng.com/blog/tree-overview.html">《树概述》</a></p>
+<p>先从B-Tree分析，根据B-Tree的定义，可知检索一次最多需要访问h个节点。数据库系统的设计者巧妙利用了磁盘预读原理，将一个节点的大小设为等于一个页，这样每个节点只需要一次I&#x2F;O就可以完全载入。为了达到这个目的，在实际实现B-Tree还需要使用如下技巧：</p>
+<p><strong>每次新建节点时，直接申请一个页的空间，这样就保证一个节点物理上也存储在一个页里，加之计算机存储分配都是按页对齐的，就实现了一个node只需一次I&#x2F;O</strong></p>
+<p>B-Tree中一次检索最多需要h-1次I&#x2F;O（根节点常驻内存），渐进复杂度为<br><img src="http://images.zhuxingsheng.com/201812241839_290.png"></p>
+<p>一般实际应用中，出度d是非常大的数字，通常超过100，因此h非常小（通常不超过3）。</p>
+<p>综上所述，用B-Tree作为索引结构效率是非常高的</p>
+<h2 id="mysql实现"><a href="#mysql实现" class="headerlink" title="mysql实现"></a>mysql实现</h2><p>在MySQL中，索引属于存储引擎级别的概念，不同存储引擎对索引的实现方式是不同的，主要讨论MyISAM和InnoDB两个存储引擎的索引实现方式。</p>
+<h3 id="MyISAM索引实现"><a href="#MyISAM索引实现" class="headerlink" title="MyISAM索引实现"></a>MyISAM索引实现</h3><p>MyISAM引擎使用B+Tree作为索引结构，叶节点的data域存放的是数据记录的地址。下图是MyISAM索引的原理图：</p>
+<p><img src="http://images.zhuxingsheng.com/201812241720_116.png"></p>
+<p>这里设表一共有三列，假设我们以Col1为主键，上图是一个MyISAM表的主索引（Primary key）示意。可以看出MyISAM的索引文件仅仅保存数据记录的地址。在MyISAM中，主索引和辅助索引（Secondary key）在结构上没有任何区别，只是主索引要求key是唯一的，而辅助索引的key可以重复。如果我们在Col2上建立一个辅助索引，则此索引的结构如下图所示：</p>
+<p><img src="http://images.zhuxingsheng.com/201812241736_490.png"></p>
+<p>同样也是一颗B+Tree，data域保存数据记录的地址。因此，MyISAM中索引检索的算法为首先按照B+Tree搜索算法搜索索引，如果指定的Key存在，则取出其data域的值，然后以data域的值为地址，读取相应数据记录。</p>
+<p>MyISAM的索引方式也叫做“非聚集”的，之所以这么称呼是为了与InnoDB的聚集索引区分</p>
+<h3 id="InnoDB索引实现"><a href="#InnoDB索引实现" class="headerlink" title="InnoDB索引实现"></a>InnoDB索引实现</h3><p>虽然InnoDB也使用B+Tree作为索引结构，但具体实现方式却与MyISAM截然不同</p>
+<p><strong>第一个重大区别是InnoDB的数据文件本身就是索引文件</strong>,MyISAM索引文件和数据文件是分离的，索引文件仅保存数据记录的地址。</p>
+<p>而在InnoDB中，表数据文件本身就是按B+Tree组织的一个索引结构，这棵树的叶节点data域保存了完整的数据记录。这个索引的key是数据表的主键，因此InnoDB表数据文件本身就是主索引</p>
+<p><img src="http://images.zhuxingsheng.com/201812241722_688.png"></p>
+<p>这里以英文字符的ASCII码作为比较准则。聚集索引这种实现方式使得按主键的搜索十分高效，但是辅助索引搜索需要检索两遍索引：首先检索辅助索引获得主键，然后用主键到主索引中检索获得记录</p>
+<p><strong>主键索引是聚集索引还是非聚集索引？</strong></p>
+<p>在Innodb下主键索引是聚集索引，在Myisam下主键索引是非聚集索引</p>
+<p><img src="http://images.zhuxingsheng.com/201812241728_883.png"></p>
+<h3 id="MyisAM索引-VS-InnoDB索引"><a href="#MyisAM索引-VS-InnoDB索引" class="headerlink" title="MyisAM索引 VS InnoDB索引"></a>MyisAM索引 VS InnoDB索引</h3><ol>
+<li>MyisAM支持全文索引（FULLTEXT）、压缩索引，InnoDB不支持；</li>
+<li>InnoDB支持事务，MyisAM不支持；</li>
+<li>MyisAM顺序储存数据，索引叶子节点保存对应数据行地址，辅助索引很主键索引相差无几；InnoDB主键节点同时保存数据行，其他辅助索引保存的是主键索引的值；</li>
+<li>MyisAM键值分离，索引载入内存（key_buffer_size），数据缓存依赖操作系统；InnoDB键值一起保存，索引与数据一起载入InnoDB缓冲池；MyisAM主键（唯一）索引按升序来存储存储，InnoDB则不一定</li>
+<li>MyisAM索引的基数值（Cardinality，show index 命令可以看见）是精确的，InnoDB则是估计值。这里涉及到信息统计的知识，MyisAM统计信息是保存磁盘中，在alter表或Analyze table操作更新此信息，而InnoDB则是在表第一次打开的时候估计值保存在缓存区内；</li>
+<li>MyisAM处理字符串索引时用增量保存的方式，如第一个索引是‘preform’，第二个是‘preformence’，则第二个保存是‘7，ance’，这个明显的好处是缩短索引，但是缺陷就是不支持倒序提取索引，必须顺序遍历获取索引</li>
+</ol>
+<h1 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h1><h2 id="查询过程"><a href="#查询过程" class="headerlink" title="查询过程"></a>查询过程</h2><p>在收到一个查询的时候，Mysql的架构中的各个组件是如此工作的：</p>
+<p><img src="http://images.zhuxingsheng.com/201812241735_44.png"></p>
+<p>客户端同数据库服务层建立TCP连接，连接管理模块会建立连接，并请求一个连接线程。如果连接池中有空闲的连接线程，则分配给这个连接，如果没有，在没有超过最大连接数的情况下，创建新的连接线程负责这个客户端。</p>
+<p>在真正的操作之前，还需要调用用户模块进行授权检查，来验证用户是否有权限。通过后，方才提供服务，连接线程开始接收并处理来自客户端的SQL语句。</p>
+<p>连接线程接收到SQL语句之后，将语句交给SQL语句解析模块进行语法分析和语义分析。</p>
+<p>如果是一个查询语句，则可以先看查询缓存中是否有结果，如果有结果可以直接返回给客户端。</p>
+<p>如果查询缓存中没有结果，就需要真的查询数据库引擎层了，于是发给SQL优化器，进行查询的优化。如果是表变更，则分别交给insert, update, delete, create，alter处理模块进行处理。</p>
+<p>接下来就是请求数据库引擎层，打开表，如果需要的话获取相应的锁。</p>
+<p>接下来的处理过程就到了数据库引擎层，例如InnoDB。</p>
+<p>在数据库引擎层，要先查询缓存页中有没有相应的数据，如果有则可以直接返回，如果没有就要从磁盘上去读取。</p>
+<p>当在磁盘中找到相应的数据之后，则会加载到缓存中来，从而使得后面的查询更加高效，由于内存有限，多采用变通的LRU表来管理缓存页，保证缓存的都是经常访问的数据。</p>
+<p>获取数据后返回给客户端，关闭连接，释放连接线程，过程结束。</p>
+<h2 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h2><p>先来一张带主键的表，如下所示，pId是主键</p>
+<table>
+<thead>
+<tr>
+<th>pId</th>
+<th>name</th>
+<th>birthday</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>5</td>
+<td>zhangsan</td>
+<td>2016-10-02</td>
+</tr>
+<tr>
+<td>8</td>
+<td>lisi</td>
+<td>2015-10-04</td>
+</tr>
+<tr>
+<td>11</td>
+<td>wangwu</td>
+<td>2016-09-02</td>
+</tr>
+<tr>
+<td>13</td>
+<td>zhaoliu</td>
+<td>2015-10-07</td>
+</tr>
+</tbody></table>
+<p><img src="http://images.zhuxingsheng.com/201812241753_517.png"></p>
+<p>如上图所示，分为上下两个部分，上半部分是由主键形成的B+树，下半部分就是磁盘上真实的数据！那么，当我们， 执行下面的语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from table where pId=&#x27;11&#x27;</span><br></pre></td></tr></table></figure>
+<p>查询过程：</p>
+<p><img src="http://images.zhuxingsheng.com/201812241753_935.png"></p>
+<p>如上图所示，从根开始，经过3次查找，就可以找到真实数据。如果不使用索引，那就要在磁盘上，进行逐行扫描，直到找到数据位置。显然，使用索引速度会快。但是在写入数据的时候，需要维护这颗B+树的结构，因此写入性能会下降！</p>
+<p><strong>再创建一个非聚簇索引</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create index index_name on table(name);</span><br></pre></td></tr></table></figure>
+
+<p>结构图如下所示</p>
+<p><img src="http://images.zhuxingsheng.com/201812241755_844.png"></p>
+<p>会根据你的索引字段生成一颗新的B+树。因此， 我们每加一个索引，就会增加表的体积， 占用磁盘存储空间。然而，注意看叶子节点，非聚簇索引的叶子节点并不是真实数据，它的叶子节点依然是索引节点，存放的是该索引字段的值以及对应的主键索引(聚簇索引)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select * from table where name=&#x27;lisi&#x27;</span><br></pre></td></tr></table></figure>
+<p>查询过程：</p>
+<p><img src="http://images.zhuxingsheng.com/201812241759_166.png"></p>
+<p>通过上图红线可以看出，先从非聚簇索引树开始查找，然后找到聚簇索引后。根据聚簇索引，在聚簇索引的B+树上，找到完整的数据！</p>
+<p><strong>什么情况不去聚簇索引树上查询呢？</strong></p>
+<p>还记得我们的非聚簇索引树上存着该索引字段的值么。如果，此时我们执行下面的语句</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">select name from table where name=&#x27;lisi&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>查询过程</p>
+<p><img src="http://images.zhuxingsheng.com/201812241801_130.png"></p>
+<p>如上图红线所示，如果在非聚簇索引树上找到了想要的值，就不会去聚簇索引树上查询</p>
+<p><strong>再创建一个非聚簇索引</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">create index index_birthday on table(birthday);</span><br></pre></td></tr></table></figure>
+<p><img src="http://images.zhuxingsheng.com/201812241827_500.png"></p>
+<p>多加一个索引，就会多生成一颗非聚簇索引树。因此，很多文章才说，索引不能乱加。因为，有几个索引，就有几颗非聚簇索引树！你在做插入操作的时候，需要同时维护这几颗树的变化！因此，如果索引太多，插入性能就会下降</p>
+<h1 id="最左原则"><a href="#最左原则" class="headerlink" title="最左原则"></a>最左原则</h1><p><strong>最左原则，并不是指 SQL 语句的 where 顺序要和联合索引一致</strong></p>
+<p>当b+树的数据项是复合的数据结构，比如(name,age,sex)的时候，b+数是按照从左到右的顺序来建立搜索树的，</p>
+<p>比如当(张三,20,F)这样的数据来检索的时候，b+树会优先比较name来确定下一步的所搜方向</p>
+<p>如果name相同再依次比较age和sex，最后得到检索的数据；</p>
+<p>但当(20,F)这样的没有name的数据来的时候，b+树就不知道下一步该查哪个节点，因为建立搜索树的时候name就是第一个比较因子，必须要先根据name来搜索才能知道下一步去哪里查询</p>
+<p>比如当(张三,F)这样的数据来检索时，b+树可以用name来指定搜索方向，但下一个字段age的缺失，所以只能把名字等于张三的数据都找到，然后再匹配性别是F的数据了</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://www.zhihu.com/question/36996520">mysql索引最左匹配原则的理解?</a></p>
+<p><a href="http://blog.codinglabs.org/articles/theory-of-mysql-index.html">MySQL索引背后的数据结构及算法原理</a></p>
+<p><a href="https://www.cnblogs.com/kxdblog/p/4893735.html">B树、B-树、B+树、B*树【转】,mysql索引</a></p>
+<p><a href="http://www.cnblogs.com/linhaifeng/articles/7274563.html">索引原理与慢查询优化</a></p>
+<p><a href="http://www.cnblogs.com/rjzheng/p/9915754.html">MySQL(Innodb)索引的原理</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/blog/page/11/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/11/">11</a><span class="page-number current">12</span><a class="page-number" href="/blog/page/13/">13</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/16/">16</a><a class="extend next" rel="next" href="/blog/page/13/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

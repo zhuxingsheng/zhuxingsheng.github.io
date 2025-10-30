@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="最近连续做了两个新项目，借着新项目的机会，重新审视一下之前一些实践方法，进而寻求一下背后的理论支撑 新项目开始，首先一个就是会新建一个project，那么这个project怎么分层，怎么创建module，怎么分包呢？ 经典分层以传统方式，经典的MVC分层，就controller,service,model  找来一张servlet时代的经典处理流程，虽然技术手段日益更新，但处理流程是一样的  抽象">
+<meta property="og:type" content="article">
+<meta property="og:title" content="分层架构">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/layered-architecture.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="最近连续做了两个新项目，借着新项目的机会，重新审视一下之前一些实践方法，进而寻求一下背后的理论支撑 新项目开始，首先一个就是会新建一个project，那么这个project怎么分层，怎么创建module，怎么分包呢？ 经典分层以传统方式，经典的MVC分层，就controller,service,model  找来一张servlet时代的经典处理流程，虽然技术手段日益更新，但处理流程是一样的  抽象">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/202003011454_718.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/202003011457_184.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/202003011615_287.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/202003011923_765.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/202003011957_646.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/202003012105_928.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/202003012245_568.png">
+<meta property="article:published_time" content="2020-03-02T09:44:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.471Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/202003011454_718.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/layered-architecture.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>分层架构 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/layered-architecture.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          分层架构
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-03-02 17:44:00" itemprop="dateCreated datePublished" datetime="2020-03-02T17:44:00+08:00">2020-03-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近连续做了两个新项目，借着新项目的机会，重新审视一下之前一些实践方法，进而寻求一下背后的理论支撑</p>
+<p>新项目开始，首先一个就是会新建一个project，那么这个project怎么分层，怎么创建module，怎么分包呢？</p>
+<h1 id="经典分层"><a href="#经典分层" class="headerlink" title="经典分层"></a>经典分层</h1><p>以传统方式，经典的MVC分层，就controller,service,model</p>
+<p><img src="http://images.zhuxingsheng.com/202003011454_718.png"></p>
+<p>找来一张servlet时代的经典处理流程，虽然技术手段日益更新，但处理流程是一样的</p>
+<p><img src="http://images.zhuxingsheng.com/202003011457_184.png"></p>
+<p>抽象一下，经典的分层就是：</p>
+<p><img src="http://images.zhuxingsheng.com/202003011615_287.png"></p>
+<p>现在大多数系统都是这种分层结构。JavaBean里面只有简单的get和set方法，被很多人鄙视的“贫血模型”；业务逻辑变得复杂时，service会变得很臃肿，出现很多的“上帝类”</p>
+<p>回想一下，我们的所有的代码都写在ServiceImpl里面，前几行代码是做validation的事，接下来几行是做convert的事，然后是几行业务处理逻辑的代码，穿插着，我们需要通过RPC或者DAO获取更多的数据，拿到数据后，又是几行convert的代码，在接上一段业务逻辑代码，然后还要落库，发消息…等等</p>
+<p>这也是事务脚本开发方式，横行于世。数据与行为被分离。</p>
+<p>简单业务这样开发是合适的，但业务一复杂起来，需求频繁变更后，就没人能理解任何一段代码,业务逻辑和技术细节糅杂在一起，业务领域模型没法清晰表达出来,开发人员只知道怎么处理了数据，但背后的业务语义完全不知道</p>
+<p>其实呢？还有很多的包，如config,common,core等等，<br>如果使用了一些中间件，如rabbitmq，还会相应创建上对应的包，简单点可能就被放在了service包下</p>
+<p>从有了maven之，module概念更加显现化</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;modules&gt;</span><br><span class="line">    &lt;module&gt;service&lt;/module&gt;</span><br><span class="line">	&lt;module&gt;common&lt;/module&gt;</span><br><span class="line">	&lt;module&gt;core&lt;/module&gt;</span><br><span class="line">	&lt;module&gt;test&lt;/module&gt;</span><br><span class="line">&lt;/modules&gt;</span><br></pre></td></tr></table></figure>
+
+<p>我们的那么多包有了更加明确的地方放置，不再是直接放置在工程目录下</p>
+<p>由于上面的这些问题 ，我们似乎可以指出经典的三层架构的弱点：</p>
+<ul>
+<li>架构被过分简化，如果解决方案中包含发送邮件通知，代码应该放置在哪些层？</li>
+<li>它虽然提出了业务逻辑隔离，但没有明确的架构元素指导我们如何隔离</li>
+</ul>
+<hr>
+<h1 id="DDD"><a href="#DDD" class="headerlink" title="DDD"></a>DDD</h1><p>虽然技术日新月异，但大多仅仅是技术，带了实现的便利性，但对于业务层次，更多的还是经验。随着业务的复杂性提升，系统的腐化速度和复杂性呈指数上升。</p>
+<p>DDD带了很多的认知的改变，最大的好处是将业务语义显现化，不再是分离数据与行为，而是通过领域对象将领域概念清晰的显性化表达出来</p>
+<p>当然这世间并没有银弹，但至少能给我们带来一种改进经典分层的理论支撑</p>
+<p>DDD中带来了Repository概念，以及基础设施层，再结合【DIP原则】，可以把三层结构变成</p>
+<p><img src="http://images.zhuxingsheng.com/202003011923_765.png"></p>
+<hr>
+<p>再细看一下Controller，这一层，做些什么呢？</p>
+<p>轻业务逻辑，参数校验，异常兜底。通常这种接口可以轻易更换接口类型，所以业务逻辑必须要轻，甚至不做具体逻辑</p>
+<p>但在现实中，有些更极端，在servlet时代，还做下HttpRequest转换成DTO,传入service，现在有了springmvc，struts2框架的转换，不需要转换了，那么controller成了一个透传层，直接调用service</p>
+<p>这儿有两个问题，既然controller是透传，那有必要存在吗？ controller调用的service，这个service指的服务是什么呢？</p>
+<p>第一controller显然有必要存在，不再于业务，而在于技术实现。不管是http,rpc都得有个请求入口。像thrift可能会比其他的一些rpc框架例如dubbo会多出一层,作用和controller层类似</p>
+<p><img src="http://images.zhuxingsheng.com/202003011957_646.png"></p>
+<p>Tservice与controller的作用是一样的</p>
+<p>第二service服务指的是什么？领域服务吗？如果一个复杂的业务，那么会跨越多个领域，自然需要多个领域服务。如果放在controller里面，也就是在controller里面去编排领域服务，如果切换到thrift，那Tservice就得重复</p>
+<p>因此，此时需要另一个service，在DDD中就是应用服务</p>
+<p><img src="http://images.zhuxingsheng.com/202003012105_928.png"></p>
+<p>应用服务算是领域服务的facade，应用层是高层抽象的概念，但表达的是业务的含义，领域层是底层实现的概念，表达的是业务的细节</p>
+<hr>
+<p><img src="http://images.zhuxingsheng.com/202003012245_568.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;modules&gt;</span><br><span class="line">        &lt;module&gt;controller&lt;/module&gt;</span><br><span class="line">        &lt;module&gt;application&lt;/module&gt;</span><br><span class="line">        &lt;module&gt;domain&lt;/module&gt;</span><br><span class="line">        &lt;module&gt;infrastructure&lt;/module&gt;</span><br><span class="line">        &lt;module&gt;start&lt;/module&gt;</span><br><span class="line">&lt;/modules&gt;</span><br></pre></td></tr></table></figure>
+
+<p>controller模块：restfull风格的少不了这层</p>
+<p>application模块：类似以前的service包</p>
+<p>domain模块：如果是事务脚本方式，domain模块就没有了</p>
+<p>infrastructure模块：基础模块，类似之前的dao包，但这里面都是实现类，而像repository接口则在domain模块，还需要对应的convertor</p>
+<p>模块里面各个包，可能需要按实践情况而定了，后面再从项目中抽取个archetype，使用maven直接生成</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/lsp-of-solid.html" rel="prev" title="SOLID之LSP">
+      <i class="fa fa-chevron-left"></i> SOLID之LSP
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/solid-isp.html" rel="next" title="SOLID之ISP">
+      SOLID之ISP <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%8F%E5%85%B8%E5%88%86%E5%B1%82"><span class="nav-number">1.</span> <span class="nav-text">经典分层</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DDD"><span class="nav-number">2.</span> <span class="nav-text">DDD</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

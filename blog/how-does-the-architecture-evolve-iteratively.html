@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="最近看完了一本大佬很早就推荐的书：《演进式架构》  现在看已经算是一本很老的书了，里面的很多概念对架构师来讲已经算是耳熟能详了。 如果你没有一些常识性思考，那还是可以看看的，如果没有时间，我通过这篇读书笔记梳理了书中的核心知识点，结合最近的一些新书观点，方便你快速获取这些知识。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="架构如何迭代演进">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/how-does-the-architecture-evolve-iteratively.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="最近看完了一本大佬很早就推荐的书：《演进式架构》  现在看已经算是一本很老的书了，里面的很多概念对架构师来讲已经算是耳熟能详了。 如果你没有一些常识性思考，那还是可以看看的，如果没有时间，我通过这篇读书笔记梳理了书中的核心知识点，结合最近的一些新书观点，方便你快速获取这些知识。">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20220225211857_1645795137.jpg">
+<meta property="article:published_time" content="2022-03-01T15:53:00.000Z">
+<meta property="article:modified_time" content="2022-11-08T07:15:29.743Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="架构">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20220225211857_1645795137.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/how-does-the-architecture-evolve-iteratively.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>架构如何迭代演进 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/how-does-the-architecture-evolve-iteratively.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          架构如何迭代演进
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-03-01 23:53:00" itemprop="dateCreated datePublished" datetime="2022-03-01T23:53:00+08:00">2022-03-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近看完了一本大佬很早就推荐的书：《演进式架构》</p>
+<p><img src="http://images.zhuxingsheng.com/20220225211857_1645795137.jpg"></p>
+<p>现在看已经算是一本很老的书了，里面的很多概念对架构师来讲已经算是耳熟能详了。</p>
+<p>如果你没有一些常识性思考，那还是可以看看的，如果没有时间，我通过这篇读书笔记梳理了书中的核心知识点，结合最近的一些新书观点，方便你快速获取这些知识。</p>
+<span id="more"></span>
+
+<h3 id="演进式架构"><a href="#演进式架构" class="headerlink" title="演进式架构"></a>演进式架构</h3><h4 id="架构的定义"><a href="#架构的定义" class="headerlink" title="架构的定义"></a>架构的定义</h4><p>每一本讲架构的书籍，基本都要先阐述一下，然而很书籍都给出了相同的答案，那就是Ralph Johnson的定义：</p>
+<p>“架构是那些重要的东西…………无论它具体是什么”</p>
+<p>这本书也没有例外。想了解最新架构及架构师解读，可以阅读最新的一本书籍<a href="http://www.zhuxingsheng.com/blog/architecture-and-architect-3.html">《软件架构》读书笔记</a></p>
+<h4 id="何为演进式架构"><a href="#何为演进式架构" class="headerlink" title="何为演进式架构"></a>何为演进式架构</h4><p>架构的第一定律是：架构中的一切都是权衡</p>
+<p>架构师在很多方面和骑独轮车的人一样，不断地平稳以适应环境变化。</p>
+<p>然而架构师无论怎么努力，软件依然出现两个突出的问题：</p>
+<p>架构构建完成后，会出现退化叫架构比特衰减，我们也称为<strong>架构腐化</strong>。</p>
+<p>软件组成部分随着时间推移变得<strong>愈发脆弱和难以变更</strong>。</p>
+<p>如何应对，演进式架构应运而生：<strong>演进式架构支持跨多个维度的引导性增量变量</strong>，主要由三方面构成：<strong>增量变更</strong>、<strong>适应度函数</strong>、<strong>适当的耦合</strong>。</p>
+<h4 id="增量变更"><a href="#增量变更" class="headerlink" title="增量变更"></a>增量变更</h4><p>增量变量描述了软件架构的两个方面：如何增量地构建软件和如何部署软件</p>
+<h4 id="引导性变更"><a href="#引导性变更" class="headerlink" title="引导性变更"></a>引导性变更</h4><p>一旦架构师选择了重要的架构特征，他们会把变更引导进入思想史，以保护这些重要特征。</p>
+<p>何为架构特征：在《软件架构》有详细描述，可看上面提到的读书笔记。</p>
+<p>怎么保护这些架构特征，引入“适应度函数”，该函数是一种目标函数，用于计算潜在的解决方案与既定目标的差距。在演化计算中，适应度函数决定一个算法是否在持续提升。</p>
+<p>适应度函数的隐喻涵盖多种机制，包括度量、测试和其他检验工具。为某些架构特征提供了客观的完整性评估。也体现了系统架构特征的保护机制。</p>
+<h4 id="多个维度"><a href="#多个维度" class="headerlink" title="多个维度"></a>多个维度</h4><p>软件架构师往往关注技术架构，但那只是软件项目的维度之一。</p>
+<p>除了技术，还有可审计性、数据、安全性、性能以及伸缩性等关键特征。我们强调架构整体的重要性，技术架构耦合以及数据耦合都影响架构演进，耦合不仅仅是项目的结构元素，甚至团队结构对架构都有着影响，所以才有了<a href="http://www.zhuxingsheng.com/blog/conway-law-and-inverse-conway-law.html">康威定律与逆康威定律</a>。</p>
+<h4 id="适当的耦合"><a href="#适当的耦合" class="headerlink" title="适当的耦合"></a>适当的耦合</h4><p>很多架构师认为耦合是必然之恶，但如果不依赖其他组件（并与其耦合）又很难构建复杂的软件。因此不能有<a href="http://www.zhuxingsheng.com/blog/coupling-inevitability.html">耦合创伤应激障碍</a>，对耦合有条件反射式恐惧。要客观看待耦合，并且要以最小的开销和成本最大程度地获益。</p>
+<p>谈到耦合，必谈模块化。平台不同，代码复用机制也不同，但它们都支持将相关代码组成模块。模块化描述了相关代码的逻辑分组。可以以不同的物理方式封装模块。组件就是模块的物理封装。<strong>模块意味着逻辑分组，而组件意味着物理划分</strong>。</p>
+<p>拆分组件有助于一些工程实践，例如构建和部署。库是一类组件，它往往和调用代码在相同的内存地址内运行，通过编程语言的函数调用机制进行通信。别一类组件被称为“服务”，如微服务，运行期依赖。</p>
+<p>所有模块化机制都有助于代码复用，在任何级别尝试复用代码都是明智的选择，无论单一的函数，还是封装好的业务平台。</p>
+<p>量子是物理实体相互作用时所涉及的最小单位。架构量子则是具有高功能内聚并可以独立部署的组件，它包括了支持系统正常工作的所有结构性元素。</p>
+<p>如现在火热的DDD中，其中限界上下文的概念，所有领域相关内容在该领域同可见，但不对其他限界上下文可见。</p>
+<p>构建演进式架构的关键之一在于决定自然组件的粒度以及它们之间的耦合，以此来适应那些通过软件架构支持的能力。</p>
+<p>架构师一直在与耦合斗争，架构一直在演进，最原始的大泥球架构进化到单体分层架构再到微服务架构。</p>
+<p>在重建昂贵的架构之前，提升现有架构的模块程度能让架构师获益。如果已经没有可以提升的地方了，那么这便是开始重建更加复杂的架构好时机。</p>
+<h4 id="实践演进式架构"><a href="#实践演进式架构" class="headerlink" title="实践演进式架构"></a>实践演进式架构</h4><p>从何开始实践？不仅实践演进式架构，其实实践其他任何架构都有一些通用策略：</p>
+<p>1、容易实现的目标：将风险降至了最低，但可能牺牲价值。</p>
+<p>2、最高价值优先：原因一：选择价值最高的部分表明决心。原因二：能明确演进式架构的长远价值。原因三：用最有价值的部分来审查此架构方法，能够为是否继续提供可行的数据。</p>
+<p>构建可演进的架构会耗费额外的时间和精力，但好处是公司可以应对市场的重大变化，而不需要大量返工。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>简而言之，《演进式架构》提供了一种架构迭代的指导方法，就如同重构代码一样。</p>
+<p>首先要有目标，以终为始，知道架构最终形态。也就是引导性变更。</p>
+<p>其次需要模块化，提升扩展性，这是演进式架构的基础，寻找最合适的组件粒度，对于大泥球架构，整体应用就是架构量子，没法迭代式增量变更。</p>
+<p>最后要有适应度函数，才能保障演进的正确与成功。就如同重构，得有UT的保障，不然谁敢重构，并且知道演进的效果。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/how-much-is-my-line-of-code-worth.html" rel="prev" title="我的一行代码值多少钱">
+      <i class="fa fa-chevron-left"></i> 我的一行代码值多少钱
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/12-elements-of-transforming-monomer-architecture-into-micro-service-architecture.html" rel="next" title="单体架构转为微服务架构的12个要素">
+      单体架构转为微服务架构的12个要素 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%BC%94%E8%BF%9B%E5%BC%8F%E6%9E%B6%E6%9E%84"><span class="nav-number">1.</span> <span class="nav-text">演进式架构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E7%9A%84%E5%AE%9A%E4%B9%89"><span class="nav-number">1.1.</span> <span class="nav-text">架构的定义</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%95%E4%B8%BA%E6%BC%94%E8%BF%9B%E5%BC%8F%E6%9E%B6%E6%9E%84"><span class="nav-number">1.2.</span> <span class="nav-text">何为演进式架构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A2%9E%E9%87%8F%E5%8F%98%E6%9B%B4"><span class="nav-number">1.3.</span> <span class="nav-text">增量变更</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%95%E5%AF%BC%E6%80%A7%E5%8F%98%E6%9B%B4"><span class="nav-number">1.4.</span> <span class="nav-text">引导性变更</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E4%B8%AA%E7%BB%B4%E5%BA%A6"><span class="nav-number">1.5.</span> <span class="nav-text">多个维度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%82%E5%BD%93%E7%9A%84%E8%80%A6%E5%90%88"><span class="nav-number">1.6.</span> <span class="nav-text">适当的耦合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5%E6%BC%94%E8%BF%9B%E5%BC%8F%E6%9E%B6%E6%9E%84"><span class="nav-number">1.7.</span> <span class="nav-text">实践演进式架构</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

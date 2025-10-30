@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="之前对SOLID做了一个总结 《SOLID》总结  这些原则是前辈们经过无数实践提炼出来的，百炼成刚，那是不是成了放之四海皆准的道理呢？某种程度上讲，还真就是准的，常被人耳提面命写的代码要遵守这些原则，想想code review时，是不是代码常常对比这些原则，被人指出没有遵循哪个原则 总结篇中画了这幅图，SOLID也的确是我们达到高内聚低耦合很重要的手段  12345678910&#x2F;&#x2F;读取配置文件和">
+<meta property="og:type" content="article">
+<meta property="og:title" content="应对变化">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/coping-with-change.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="之前对SOLID做了一个总结 《SOLID》总结  这些原则是前辈们经过无数实践提炼出来的，百炼成刚，那是不是成了放之四海皆准的道理呢？某种程度上讲，还真就是准的，常被人耳提面命写的代码要遵守这些原则，想想code review时，是不是代码常常对比这些原则，被人指出没有遵循哪个原则 总结篇中画了这幅图，SOLID也的确是我们达到高内聚低耦合很重要的手段  12345678910&#x2F;&#x2F;读取配置文件和">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210607091720_1623028640.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210626153434_1624692874.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210710131914_1625894354.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210710142455_1625898295.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210710144641_1625899601.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210710150216_1625900536.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210710161923_1625905163.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210710201844_1625919524.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210711204704_1626007624.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210711204806_1626007686.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210711204913_1626007753.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20210711204945_1626007785.jpg">
+<meta property="article:published_time" content="2021-07-11T13:37:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.470Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="SOLID">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20210607091720_1623028640.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/coping-with-change.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>应对变化 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/coping-with-change.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          应对变化
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-07-11 21:37:00" itemprop="dateCreated datePublished" datetime="2021-07-11T21:37:00+08:00">2021-07-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>之前对SOLID做了一个总结 <a href="http://www.zhuxingsheng.com/blog/solid-summary.html">《SOLID》总结</a> </p>
+<p>这些原则是前辈们经过无数实践提炼出来的，百炼成刚，那是不是成了放之四海皆准的道理呢？某种程度上讲，还真就是准的，常被人耳提面命写的代码要遵守这些原则，想想code review时，是不是代码常常对比这些原则，被人指出没有遵循哪个原则</p>
+<p>总结篇中画了这幅图，SOLID也的确是我们达到高内聚低耦合很重要的手段</p>
+<p><img src="http://images.zhuxingsheng.com/20210607091720_1623028640.jpg"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//读取配置文件和计算</span><br><span class="line">class Computer&#123;</span><br><span class="line">    public int add() throws NumberFormatException, IOException &#123;</span><br><span class="line">        File file = new File(&quot;D:/data.txt&quot;);</span><br><span class="line">        BufferedReader br = new BufferedReader(new FileReader(file));</span><br><span class="line">        int a = Integer.valueOf(br.readLine());</span><br><span class="line">        int b = Integer.valueOf(br.readLine());</span><br><span class="line">        return a+b;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这是一段被用来演示SRP的反例，从示例代码中看出，这个方法职责的确不单一，引起它变化的至少有两个地方：一是数据不一定从配置文件读取、二是计算方式可能会变</p>
+<p>在code review时，不管是自己还是别人，的确让人觉得不够完美</p>
+<p>因此，我们会花一番功夫，来让方法达到SOLID的要求，可如果此方法从系统上线运行几个月，甚至几年都无需变动，那我们花费的这些时间也只是自我感动，毕竟我们最终目标是给客户交付带来价值的系统，以最快的速度给公司带来效益</p>
+<p>这其实是成本的问题，没错，程序员要有技术追求，但也得考虑成本</p>
+<p>可总不能为了成本，忽略一切吧，那怎么处理呢，我们要达到“高内聚、低耦合”，SOLID是重要路径，但又不能不计成本地进行SOLID，更不能为了SOLID而SOLID</p>
+<p>所以不能走两个极端，既不能坐视不管，也不能一味求全，在这两层之间应该还有一片灰色地带</p>
+<p><img src="http://images.zhuxingsheng.com/20210626153434_1624692874.jpg"></p>
+<hr>
+<p>这灰色地带是什么样的？怎么做才能不去穷举变化疲惫应对，而当真正变化来临时又能轻松应对？大佬提供了思路，不能以这些原则去应对软件变化，应该以无法为有法，以无限为有限。以实际需求变化来帮助我们识别变化，管理变化。这思路就是袁英杰提出的正交设计，有四大策略</p>
+<h2 id="四大策略"><a href="#四大策略" class="headerlink" title="四大策略"></a>四大策略</h2><h3 id="策略一：消除重复"><a href="#策略一：消除重复" class="headerlink" title="策略一：消除重复"></a>策略一：消除重复</h3><p>重复代码，不管接手老项目还是住持新项目，都特别重视重复代码的比率，为什么呢？</p>
+<ol>
+<li>重复代码增加维护成本，变动同一个逻辑会遗漏修改</li>
+<li>重复代码说明团队沟通不畅，团员间没有交流或者没有必要的code review</li>
+</ol>
+<p>这只是实践带来的观察，那么从理论角度说说消除重复的重要性</p>
+<p>“重复”极度违背高内聚、低耦合原则，从而会大幅提升软件的长期维护成本;而我们所求的高内聚是指关联紧密的事物放在一起，两段完全相同的代码关联最为紧密，重复就意味着低内聚</p>
+<p>更糟糕的是，<strong>本质重复的代码</strong>，都在表达同一项知识。如果他们表达（即依赖）的知识发生了变化，这些重复代码都需要修改，因而重复代码也意味着高耦合</p>
+<p><img src="http://images.zhuxingsheng.com/20210710131914_1625894354.jpg" alt="重复意味着耦合"></p>
+<p>当完全重复的代码进行消除，会让系统更加高内聚、低耦合</p>
+<p>小到代码块，大到模块也一样，如果两个模块之间部分重复，那么这两个模块都至少存在两个变化原因或两重职责；站在系统的角度看，它们之间有重复部分，也有差异部分，那这两个模块都存在两个变化原因</p>
+<p><img src="http://images.zhuxingsheng.com/20210710142455_1625898295.jpg"></p>
+<p>对于这一类型重复，比较典型的情况有两种：实现重复和客户重复</p>
+<p><img src="http://images.zhuxingsheng.com/20210710144641_1625899601.jpg" alt="实现型重复"></p>
+<p><img src="http://images.zhuxingsheng.com/20210710150216_1625900536.jpg" alt="客户型重复"></p>
+<p>这个策略非常明确，极具操作性，消除重复后，明显提高系统内聚性，降低耦合性，在消除重复过程中，也提高了系统的可重用性，而且对于客户重复，还提高了扩展性</p>
+<h3 id="策略二：分离不同的变化方向"><a href="#策略二：分离不同的变化方向" class="headerlink" title="策略二：分离不同的变化方向"></a>策略二：分离不同的变化方向</h3><p>对于策略一使用时机，可以随时进行，重复也容易判定。除重复代码外，另一个驱动系统朝向高内聚方向演进的信号是：我们经常需要因为同一类原因，修改某个模块。而这个模块的其它部分却保持不变</p>
+<p>分离不同变化方向，目标在于提高内聚度。因为多个变化方向，意味着一个模块存在多重职责。将不同的变化方向进行分离，也意味着各个变化职责的单一化</p>
+<p><img src="http://images.zhuxingsheng.com/20210710161923_1625905163.jpg" alt="分离变化方向"></p>
+<p>对于变化方向分离，也得到了另外一个我们追求的目标：可扩展性</p>
+<p>策略二相对策略一，最重要的就是时机，不然就会回到我们文章开头时的窘境：早了，过度设计；晚了，则被再次愚弄</p>
+<p>当你发现需求导致一个变化方向出现时，将其从原有的设计中分离出去。此时时机刚刚好，不早不晚；Uncle Bob也曾给出答案：被第一颗子弹击中时，也就是当第一个变化方向出现时</p>
+<p>这个世界里，本质上只存在三个数字：0，1，和N。</p>
+<p>0意味着当一个需求还没有出现时，我们就不应该在系统中编写一行针对它的代码。</p>
+<p>1意味着某种需求已经出现，我们只需要使用最简单的手段来实现它，无需考虑任何变化。</p>
+<p>N则意味着，需求开始在某个方向开始变化，其次数可能是2，3，…N。但不管最终的次数是多少，你总应该在由1变为2时就需要解决此方向的变化。随后，无论最终N为何值，你都可以稳坐钓鱼台，通过一个个扩展来满足需求</p>
+<p>如果我们足够细心，会发现策略消除重复和分离不同变化方向是两个高度相似和关联的策略:</p>
+<p>它们都是关注于如何对原有模块进行拆分，以提高系统的内聚性。(虽然同时也往往伴随着耦合度的降低，但这些耦合度的降低都发生在别处，并未触及该如何定义API以降低客户与API之间耦合度)。</p>
+<p>另外，如果两个模块有部分代码是重复的，往往意味着不同变化方向。</p>
+<p>尽管如此，我们依然需要两个不同的策略。这是因为：变化方向，并不总是以重复代码的形式出现的（其典型症状是散弹式修改，或者if-else、switch-case、模式匹配）；尽管其背后往往存在一个以重复代码形式表现的等价形式（这也是为何copy-paste-modify如此流行的原因）。</p>
+<h3 id="策略三：缩小依赖范围"><a href="#策略三：缩小依赖范围" class="headerlink" title="策略三：缩小依赖范围"></a>策略三：缩小依赖范围</h3><p>前面两个策略解决了软件单元如何划分问题，现在需要关注合的问题：模块之间的粘合点API的定义</p>
+<p><img src="http://images.zhuxingsheng.com/20210710201844_1625919524.jpg"></p>
+<ul>
+<li>首先，客户和实现模块的数量，会对耦合度产生重大的影响。它们数量越多，意味着 API 变更的成本越高，越需要花更大的精力来仔细斟酌。</li>
+<li>其次，对于影响面大的API（也意味着耦合度高），需要使用更加弹性的API定义框架，以有利于向前兼容性。</li>
+</ul>
+<p>因此缩小依赖范围，就是要精简API</p>
+<ol>
+<li>API包含尽可能小的知识。因为任何一项知识的变化都会导致双方变化</li>
+<li>API也要高内聚，不应强迫API的客户依赖不需要的东西</li>
+</ol>
+<h3 id="策略四：向稳定的方向依赖"><a href="#策略四：向稳定的方向依赖" class="headerlink" title="策略四：向稳定的方向依赖"></a>策略四：向稳定的方向依赖</h3><p>虽然缩小依赖范围，但终究还是要有依赖范围，还是必然存在耦合点。降低耦合度已到尽头。</p>
+<p>耦合最大的问题在于：耦合点的变化，会导致依赖方跟着变化。这儿意味着如果耦合点不变，那依赖方也不会变化。换句话说，耦合点越稳定，依赖方受耦合变化影响的概率就越低</p>
+<p>因此得出第四个策略：向稳定的方向依赖</p>
+<p>耦合点也就是API，什么样的API更侧向于稳定？站在What，而不是 How 的角度；即站在需求的角度，而不是实现方式的角度定义API；也就是站在客户的角度，思考用户的本质需要，由此来定义API，而不是站在技术实现的方便程度角度来思考API定义</p>
+<h2 id="SOLID"><a href="#SOLID" class="headerlink" title="SOLID"></a>SOLID</h2><p>一个好的面向对象设计，自然是符合高内聚，低耦合原则的对象划分和协作方式。</p>
+<p>单一职责和开放封闭，更多的在强调类划分时的高内聚；而里氏替换，依赖倒置，接口隔离则更多的强调类与类之间协作接口（即API）定义的低耦合</p>
+<p>单一职责，通过对变化原因的识别，将一个承担多重职责的类，不断分割为更小的，只具备单一变化原因的类。而单一变化原因指的是：一个变化，会引起整个类都发生变化。只有关联极其紧密的情况，才会导致这样的局面。因而，单一职责和高内聚某种程度是同义词。</p>
+<p>但单一职责原则本身，并没有明确指示我们该如何判定一个类属于单一职责的，以及如何达到单一职责的状态。而策略消除重复，分离不同变化方向，正是让类达到单一职责的策略与途径</p>
+<p>开放封闭原则，正是通过将不同变化方向进行分离，从而达到对于已经出现的变化方向，对于修改是封闭的，对于扩展是开放的</p>
+<p><img src="http://images.zhuxingsheng.com/20210711204704_1626007624.jpg"></p>
+<p>里氏替换原则强调的是，一个子类不应该破坏其父类与客户之间的契约。唯有如此，才能保证：客户与其父类所暴露的接口（即API）所产生的依赖关系是稳定的。子类只应该成为隐藏在API背后的某种具体实现方式。</p>
+<p><img src="http://images.zhuxingsheng.com/20210711204806_1626007686.jpg"></p>
+<p>依赖倒置原则则强调：为了让依赖关系是稳定的，不应该由实现侧根据自己的技术实现方式定义接口，然后强迫上层（即客户）依赖这种不稳定的API定义，而是应该站在上层（即客户）的角度去定义API（正所谓依赖倒置）</p>
+<p>但是，虽然接口由上层定义，但最终接口的实现却依然由下层完成，因此依赖倒置描述为：上层不依赖下层，下层也不依赖上层，双方共同依赖于抽象。</p>
+<p><img src="http://images.zhuxingsheng.com/20210711204913_1626007753.jpg"></p>
+<p>最后，接口隔离原则强调的是：不应该强迫客户依赖它不需要的东西。显然，这是缩小依赖范围策略在面向对象范式下的产物</p>
+<p><img src="http://images.zhuxingsheng.com/20210711204945_1626007785.jpg"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>尽管理论上讲，任意复杂的系统都可以被放入同一个函数里。但随着软件越来复杂，即便是智商最为发达的程序员也发现，单一过程的复杂度已经超出他的掌控极限。这逼迫人们必须对大问题进行分解，分而治之，这也是必须模块化的原因</p>
+<p>模块化主要是两方面：</p>
+<ol>
+<li>软件模块该如何划分？（怎么分）</li>
+<li>模块间API该如何定义？（怎么合）</li>
+</ol>
+<p>本文四个策略，前两个指导怎么高内聚，也就是怎么分；后两个指导耦合方式，怎么合</p>
+<p>重要的是使用各个策略的使用时机，变化驱动识别变化、重构变化</p>
+<p>变化导致的修改有两类：</p>
+<ul>
+<li>一个变化导致多处修改（重复）；</li>
+<li>多个变化导致一处修改（多个变化方向）；</li>
+</ul>
+<p>由此得到前两个策略：消除重复；分离不同变化方向。</p>
+<p>除此之外，我们要努力消除变化发生时不必要的修改，也有两种方式：</p>
+<ul>
+<li>不依赖不必要的依赖；</li>
+<li>不依赖不稳定的依赖；</li>
+</ul>
+<p>这就是后面两个策略：缩小依赖范围，向着稳定的方向依赖。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><p><a href="https://www.jianshu.com/p/d127b8afc8cb">变化驱动：正交设计</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SOLID/" rel="tag"># SOLID</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/solid-summary.html" rel="prev" title="SOLID总结">
+      <i class="fa fa-chevron-left"></i> SOLID总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/how-are-apis-designed.html" rel="next" title="API如何设计">
+      API如何设计 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E5%A4%A7%E7%AD%96%E7%95%A5"><span class="nav-number">1.</span> <span class="nav-text">四大策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%96%E7%95%A5%E4%B8%80%EF%BC%9A%E6%B6%88%E9%99%A4%E9%87%8D%E5%A4%8D"><span class="nav-number">1.1.</span> <span class="nav-text">策略一：消除重复</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%96%E7%95%A5%E4%BA%8C%EF%BC%9A%E5%88%86%E7%A6%BB%E4%B8%8D%E5%90%8C%E7%9A%84%E5%8F%98%E5%8C%96%E6%96%B9%E5%90%91"><span class="nav-number">1.2.</span> <span class="nav-text">策略二：分离不同的变化方向</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%96%E7%95%A5%E4%B8%89%EF%BC%9A%E7%BC%A9%E5%B0%8F%E4%BE%9D%E8%B5%96%E8%8C%83%E5%9B%B4"><span class="nav-number">1.3.</span> <span class="nav-text">策略三：缩小依赖范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AD%96%E7%95%A5%E5%9B%9B%EF%BC%9A%E5%90%91%E7%A8%B3%E5%AE%9A%E7%9A%84%E6%96%B9%E5%90%91%E4%BE%9D%E8%B5%96"><span class="nav-number">1.4.</span> <span class="nav-text">策略四：向稳定的方向依赖</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SOLID"><span class="nav-number">2.</span> <span class="nav-text">SOLID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法  定义堆排序（英语：Heapsort）是指利用堆这种数据结构所设计的一种排序算法。堆是一个近似完全二叉树的结构，并同时满足堆积的性质：即子结点的键值或索引总是小于（或者大于）它的父节点。 堆堆是一棵顺序存储的完全二叉树  其中每个结点的关键字都不大于其孩子结点的关键字，这样的堆称为小根堆。 其中每个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="算法渣-排序-堆排序">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/algorithm-slag-sort-heap-sort.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法  定义堆排序（英语：Heapsort）是指利用堆这种数据结构所设计的一种排序算法。堆是一个近似完全二叉树的结构，并同时满足堆积的性质：即子结点的键值或索引总是小于（或者大于）它的父节点。 堆堆是一棵顺序存储的完全二叉树  其中每个结点的关键字都不大于其孩子结点的关键字，这样的堆称为小根堆。 其中每个">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811261838_620.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811261841_9.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811261842_548.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811261854_356.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811261913_616.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811261914_286.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811271259_152.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811271306_820.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811271314_604.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811271316_305.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811271319_374.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811271320_482.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811271321_268.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811271322_612.png">
+<meta property="article:published_time" content="2018-12-03T05:01:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.013Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201811261838_620.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/algorithm-slag-sort-heap-sort.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>算法渣-排序-堆排序 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm-slag-sort-heap-sort.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          算法渣-排序-堆排序
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-03 13:01:00" itemprop="dateCreated datePublished" datetime="2018-12-03T13:01:00+08:00">2018-12-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法</p>
+</blockquote>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>堆排序（英语：Heapsort）是指利用堆这种数据结构所设计的一种排序算法。堆是一个近似完全二叉树的结构，并同时满足堆积的性质：即子结点的键值或索引总是小于（或者大于）它的父节点。</p>
+<h2 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h2><p>堆是一棵顺序存储的完全二叉树</p>
+<p><img src="http://images.zhuxingsheng.com/201811261838_620.png"></p>
+<p>其中每个结点的关键字都不大于其孩子结点的关键字，这样的堆称为<strong>小根堆</strong>。</p>
+<p>其中每个结点的关键字都不小于其孩子结点的关键字，这样的堆称为<strong>大根堆</strong>。</p>
+<p>举例来说，对于n个元素的序列{R0, R1, … , Rn}当且仅当满足下列关系之一时，称之为堆：</p>
+<p>(1) Ri &lt;&#x3D; R2i+1 且 Ri &lt;&#x3D; R2i+2 (小根堆)</p>
+<p>(2) Ri &gt;&#x3D; R2i+1 且 Ri &gt;&#x3D; R2i+2 (大根堆)</p>
+<p>其中i&#x3D;1,2,…,n&#x2F;2向下取整; </p>
+<p><img src="http://images.zhuxingsheng.com/201811261841_9.png"></p>
+<p>同时，我们对堆中的结点按层进行编号，将这种逻辑结构映射到数组中就是下面这个样子</p>
+<p><img src="http://images.zhuxingsheng.com/201811261842_548.png"></p>
+<h3 id="完全二叉树"><a href="#完全二叉树" class="headerlink" title="完全二叉树"></a>完全二叉树</h3><p>完全二叉树的定义是建立在<strong>满二叉树</strong>定义的基础上的，而满二叉树又是建立在<strong>二叉树</strong>的基础上的。</p>
+<h4 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h4><p>二叉树是树的特殊一种，具有如下特点：</p>
+<ol>
+<li>每个结点最多有两颗子树，结点的度最大为2。</li>
+<li>左子树和右子树是有顺序的，次序不能颠倒。</li>
+<li>即使某结点只有一个子树，也要区分左右子树。</li>
+</ol>
+<h4 id="满二叉树"><a href="#满二叉树" class="headerlink" title="满二叉树"></a>满二叉树</h4><p>所有的分支结点都存在左子树和右子树，并且所有的叶子结点都在同一层上，这样就是满二叉树。就是完美圆满的意思，关键在于树的平衡</p>
+<p><img src="http://images.zhuxingsheng.com/201811261854_356.png"></p>
+<p>根据满二叉树的定义，得到其特点为：</p>
+<ol>
+<li>叶子只能出现在最下一层。</li>
+<li>非叶子结点度一定是2.</li>
+<li>在同样深度的二叉树中，满二叉树的结点个数最多，叶子树最多。</li>
+</ol>
+<h4 id="完全二叉树-1"><a href="#完全二叉树-1" class="headerlink" title="完全二叉树"></a>完全二叉树</h4><p>对于一个树高为h的二叉树，如果其第0层至第h-1层的节点都满。如果最下面一层节点不满，则所有的节点在左边的连续排列，空位都在右边。这样的二叉树就是一棵完全二叉树</p>
+<p><img src="http://images.zhuxingsheng.com/201811261913_616.png"></p>
+<p>在上图中，树1，按层次编号5结点没有左子树，有右子树，10结点缺失。树2由于3结点没有字数，是的6,7位置空挡了。树3中结点5没有子树。</p>
+<p><img src="http://images.zhuxingsheng.com/201811261914_286.png" alt="完全二叉树"></p>
+<p>上图就是一个完全二叉树</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>利用堆顶记录的是最大(以大顶堆为例)关键字这一特性，每一轮取堆顶元素放入有序区，就类似选择排序每一轮选择一个最大值放入有序区，可以把堆排序看成是选择排序的改进。</p>
+<ol>
+<li><p>将初始待排序关键字序列(R0,R1,R2….Rn)构建成大顶堆，此堆为初始的无序区；</p>
+</li>
+<li><p>将堆顶元素R[0]与最后一个元素R[n]交换，此时得到新的无序区(R0,R1,R2,……Rn-1)和新的有序区(Rn)；</p>
+</li>
+<li><p>由于交换后新的堆顶R[0]可能违反堆的性质，因此需要对当前无序区(R0,R1,R2,……Rn-1)调整为新堆</p>
+</li>
+</ol>
+<p>不断重复此2、3步骤直到有序区的元素个数为n-1，则整个排序过程完成</p>
+<h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><ol>
+<li>由一个无序序列建成一个堆</li>
+<li>输出堆顶元素之后，调整剩余元素成为一个新的堆</li>
+</ol>
+<h3 id="1-构造堆"><a href="#1-构造堆" class="headerlink" title="1.构造堆"></a>1.构造堆</h3><p>构造初始堆,将给定无序序列构造成一个大顶堆（一般升序采用大顶堆，降序采用小顶堆)</p>
+<p><strong>数组是一个无序结构</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271259_152.png"></p>
+<p>因为(n&#x2F;2-1)~0的节点才有子节点，n&#x3D;5,(n&#x2F;2-1) &#x3D; 1  即1 0节点才有子节点</p>
+<p>所以将1 0节点从下到上，从右到左的与它自己的子节点比较并调整最终形成大顶堆</p>
+<p><strong>1. 节点1和它的子节点3 4的元素进行比较，最大者作为父节点</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271306_820.png"></p>
+<p><strong>2. 将节点0和它的子节点1 2的元素进行比较，最大者为父节点</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271314_604.png"></p>
+<p><strong>3. 交换导致了子根[4,5,6]结构混乱，继续调整，[4,5,6]中6最大，交换4和6</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271316_305.png"></p>
+<p><strong>构造完成</strong>将一个无需序列构造成了一个大顶堆</p>
+<h3 id="2-调整堆"><a href="#2-调整堆" class="headerlink" title="2. 调整堆"></a>2. 调整堆</h3><p>将堆顶元素与末尾元素进行交换，使末尾元素最大。然后继续调整堆，再将堆顶元素与末尾元素交换，得到第二大元素。如此反复进行交换、重建、交换。</p>
+<p><strong>1. 将堆顶元素9和末尾元素4进行交换</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271319_374.png"></p>
+<p><strong>2. 重新调整结构，使其继续满足堆定义</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271320_482.png"></p>
+<p><strong>3. 再将堆顶元素8与末尾元素5进行交换，得到第二大元素8</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271321_268.png"></p>
+<p><strong>4. 继续进行调整，交换，如此反复进行，最终使得整个序列有序</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271322_612.png"></p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"> /**</span><br><span class="line"> *</span><br><span class="line"> * a.将无需序列构建成一个堆，根据升序降序需求选择大顶堆或小顶堆;</span><br><span class="line"></span><br><span class="line"> 　b.将堆顶元素与末尾元素交换，将最大元素&quot;沉&quot;到数组末端;</span><br><span class="line"></span><br><span class="line"> 　c.重新调整结构，使其满足堆定义，然后继续交换堆顶元素与当前末尾元素，反复执行调整+交换步骤，直到整个序列有序。</span><br><span class="line"></span><br><span class="line"> * 整个排序过程，就是构造堆的过程</span><br><span class="line"> *</span><br><span class="line"> * 这儿写得利于理解一点，把最后一步改掉，循环从数组中把第一位取出来放到新数组，剩余的再去构造堆</span><br><span class="line"> * @param array</span><br><span class="line"> */</span><br><span class="line">static void heapSort(int []array) &#123;</span><br><span class="line">    //原始数组</span><br><span class="line">    int [] oriental = Arrays.copyOf(array,array.length);</span><br><span class="line">    //最终排序好的数组</span><br><span class="line">    int [] result = new int[array.length];</span><br><span class="line"></span><br><span class="line">    int length = array.length;</span><br><span class="line">    for ( int i = 0;i&lt; length;i++) &#123;</span><br><span class="line">        //1.构造堆</span><br><span class="line">        buildHeap(array);</span><br><span class="line">        //构建完array[0]就是最大的元素,取出来放到排序好的数组</span><br><span class="line">        result[i] = array[0];</span><br><span class="line">        //[0]取走之后，一个新数组，再去构造堆</span><br><span class="line">        array = Arrays.copyOfRange(array, 1,length-i);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(&quot;finish:&quot;+ Arrays.toString(result));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 构造椎</span><br><span class="line"> * @param array</span><br><span class="line"> */</span><br><span class="line">static void buildHeap(int []array) &#123;</span><br><span class="line">    //(n/2-1)~0的节点才有子节点</span><br><span class="line">    for (int i= array.length/2 -1 ;i&gt;=0;i--) &#123;</span><br><span class="line">//            System.out.println(&quot;i:&quot;+i);</span><br><span class="line">//            System.out.println(&quot;start:&quot;+ Arrays.toString(array));</span><br><span class="line">        int k = i;</span><br><span class="line">        for (int left = k * 2 + 1; left &lt; array.length; left = k * 2 + 1) &#123;</span><br><span class="line">           // System.out.println(&quot;build:&quot;+ Arrays.toString(array));</span><br><span class="line">            int max = left;</span><br><span class="line">            int right = left + 1;</span><br><span class="line">            //有右节点</span><br><span class="line">            if (right &lt; array.length) &#123;</span><br><span class="line">                if (array[right] &gt; array[left]) &#123;</span><br><span class="line">                    max = right;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            //max是left子节点,那就交换左子节点与k</span><br><span class="line">            if (array[max] &gt; array[k]) &#123;</span><br><span class="line">                swap(array, max, k);</span><br><span class="line">                // 下面就是非常关键的一步了</span><br><span class="line">                // 如果子节点更换了，那么，以子节点为根的子树会不会受到影响呢？</span><br><span class="line">                // 所以，循环对子节点所在的树继续进行判断</span><br><span class="line">                k = left;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    //System.out.println(&quot;  end:&quot;+ Arrays.toString(array));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>详细代码：<br><a href="https://github.com/zhuxingsheng/javastudy/tree/master/src/main/java/com/jack/algorithms/sort">https://github.com/zhuxingsheng/javastudy/tree/master/src/main/java/com/jack/algorithms/sort</a></p>
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><table>
+<thead>
+<tr>
+<th>Best</th>
+<th>Average</th>
+<th>Worst</th>
+<th>Memory</th>
+<th align="center">Stable</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>n log(n)</td>
+<td>n log(n)</td>
+<td>n log(n)</td>
+<td>1</td>
+<td align="center">No</td>
+</tr>
+</tbody></table>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://www.cnblogs.com/chengxiao/p/6129630.html">图解排序算法(三)之堆排序</a></p>
+<p><a href="https://www.cnblogs.com/MOBIN/p/5374217.html">图解堆排序</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/algorithm/" rel="tag"># 算法</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/algorithm---sort---select.html" rel="prev" title="算法渣-排序-选择">
+      <i class="fa fa-chevron-left"></i> 算法渣-排序-选择
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/algorithm---sort---merge-sort.html" rel="next" title="算法渣-排序-归并排序">
+      算法渣-排序-归并排序 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">定义</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86"><span class="nav-number">1.1.</span> <span class="nav-text">堆</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E5%85%A8%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">1.1.1.</span> <span class="nav-text">完全二叉树</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">二叉树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BB%A1%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">满二叉树</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%8C%E5%85%A8%E4%BA%8C%E5%8F%89%E6%A0%91-1"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">完全二叉树</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%BC%94%E7%A4%BA"><span class="nav-number">1.3.</span> <span class="nav-text">演示</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%9E%84%E9%80%A0%E5%A0%86"><span class="nav-number">1.3.1.</span> <span class="nav-text">1.构造堆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%B0%83%E6%95%B4%E5%A0%86"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 调整堆</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">实现</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">3.</span> <span class="nav-text">复杂度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">4.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

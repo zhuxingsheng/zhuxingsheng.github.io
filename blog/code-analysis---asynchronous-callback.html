@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="天下皆知美之为美，斯恶已;此专栏本想取名代码之美，但有傍名之嫌，也给别误解，所以就叫代码小析吧，看到一段好代码，思路清奇，奇巧淫技，拿出来鉴赏一番  之前是计划one week one  alogrithm,结果算法是个短板，不仅要理解，还得再写出代码，特别烧脑，所以中间穿插一下，换换脑子 之前有类似一篇《仅且仅创建一次对象》 最近看到一个段子： 老板有毛病吧，写完排序就叫我走人，我还嫌你这9K">
+<meta property="og:type" content="article">
+<meta property="og:title" content="代码小析 - 异步回调">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/code-analysis---asynchronous-callback.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="天下皆知美之为美，斯恶已;此专栏本想取名代码之美，但有傍名之嫌，也给别误解，所以就叫代码小析吧，看到一段好代码，思路清奇，奇巧淫技，拿出来鉴赏一番  之前是计划one week one  alogrithm,结果算法是个短板，不仅要理解，还得再写出代码，特别烧脑，所以中间穿插一下，换换脑子 之前有类似一篇《仅且仅创建一次对象》 最近看到一个段子： 老板有毛病吧，写完排序就叫我走人，我还嫌你这9K">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201811151323_83.png">
+<meta property="article:published_time" content="2018-11-18T03:04:36.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.017Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201811151323_83.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/code-analysis---asynchronous-callback.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>代码小析 - 异步回调 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/code-analysis---asynchronous-callback.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          代码小析 - 异步回调
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-18 11:04:36" itemprop="dateCreated datePublished" datetime="2018-11-18T11:04:36+08:00">2018-11-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <blockquote>
+<p>天下皆知美之为美，斯恶已;此专栏本想取名代码之美，但有傍名之嫌，也给别误解，所以就叫代码小析吧，看到一段好代码，思路清奇，奇巧淫技，拿出来鉴赏一番</p>
+</blockquote>
+<p>之前是计划one week one  alogrithm,结果算法是个短板，不仅要理解，还得再写出代码，特别烧脑，所以中间穿插一下，换换脑子</p>
+<p>之前有类似一篇<a href="https://mp.weixin.qq.com/s/pZafR1O3fzMsepx731U6QQ">《仅且仅创建一次对象》</a></p>
+<p>最近看到一个段子：</p>
+<p>老板有毛病吧，写完排序就叫我走人，我还嫌你这9K工资低了呢<br><img src="http://images.zhuxingsheng.com/201811151323_83.png"></p>
+<p>感觉能想到这思路的也算清奇，哈哈！</p>
+<h1 id="回调"><a href="#回调" class="headerlink" title="回调"></a>回调</h1><p>if you call me, i will call back</p>
+<p>回调分类：同步回调，异步回调</p>
+<h1 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h1><p>建立TCP连接是很耗时的，所以在创建Socket Channel时，可以通过异步回调方式解决</p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 异步取得channel</span><br><span class="line"> * @param index</span><br><span class="line"> * @param callback</span><br><span class="line"> */</span><br><span class="line">public void asynGetChannel(int index,final Callback callback) &#123;</span><br><span class="line">    // 1. 随机获取一条channel</span><br><span class="line">    final int pos = ThreadLocalRandom.current().nextInt(MAX_CONNECTIONS);</span><br><span class="line">    Channel target = channels[pos];</span><br><span class="line"></span><br><span class="line">    // 2. 如果获取到了连接，直接返回</span><br><span class="line">    if (target != null &amp;&amp; target.isActive()) &#123;</span><br><span class="line">        logger.info(&quot;direct success &quot;+index);</span><br><span class="line">        callback.onSuccess(target);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    synchronized (locks[pos]) &#123;</span><br><span class="line">        target = channels[pos];</span><br><span class="line">        // 2. 如果获取到了连接，直接返回</span><br><span class="line">        if (target != null &amp;&amp; target.isActive()) &#123;</span><br><span class="line">            callback.onSuccess(target);</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 3.如果连接正在创建中，则加入queue</span><br><span class="line">        if (target instanceof EmptyChannel) &#123;</span><br><span class="line">            boolean result = jobs.offer(callback);</span><br><span class="line">            if (result) &#123;</span><br><span class="line">                return;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                throw new RuntimeException(&quot;Can&#x27;t connet to target server and the waiting queue is full&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 4. 连接尚未创建</span><br><span class="line">        channels[pos] = new EmptyChannel();</span><br><span class="line"></span><br><span class="line">       Connector.connect(host, port, new Callback() &#123;</span><br><span class="line">           @Override</span><br><span class="line">           public void onSuccess(Channel channel) &#123;</span><br><span class="line">               logger.info(index + &quot; ------------connect success---------&quot;+pos + &quot; channel:&quot; +channels[pos].getClass().getName());</span><br><span class="line">               List&lt;Callback&gt; tmpJobs;//建立一个tempJobs，快速释放锁</span><br><span class="line">               synchronized (locks[pos]) &#123;</span><br><span class="line">                   // 设置channels，拷贝jobs队列，释放锁</span><br><span class="line">                   channels[pos] = channel;</span><br><span class="line">                   tmpJobs = drainJobs();</span><br><span class="line">               &#125;</span><br><span class="line">               for(Callback pendingCallback : tmpJobs) &#123;</span><br><span class="line">                   try &#123;</span><br><span class="line">                       if(pendingCallback != callback) &#123;</span><br><span class="line">                           pendingCallback.onSuccess(channel);</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125; catch (Exception e) &#123;</span><br><span class="line">                       logger.error(&quot;call connectionCallback fail&quot;, e);</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           @Override</span><br><span class="line">           public void onError(Throwable e) &#123;</span><br><span class="line">               List&lt;Callback&gt; tmpJobs;//建立一个tempJobs，快速释放锁</span><br><span class="line">               synchronized (locks[pos]) &#123;</span><br><span class="line">                   // 设置channels，拷贝jobs队列，释放锁</span><br><span class="line">                   channels[pos] = null;</span><br><span class="line">                   tmpJobs = drainJobs();</span><br><span class="line">               &#125;</span><br><span class="line">               for(Callback pendingCallback : tmpJobs) &#123;</span><br><span class="line">                   try &#123;</span><br><span class="line">                       if(pendingCallback != callback) &#123;</span><br><span class="line">                           pendingCallback.onError(e);</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125; catch (Exception x) &#123;</span><br><span class="line">                       logger.error(&quot;call connectionCallback fail&quot;, x);</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>完整的代码:<a href="https://github.com/zhuxingsheng/javastudy">https://github.com/zhuxingsheng/javastudy</a></p>
+<h1 id="亮点"><a href="#亮点" class="headerlink" title="亮点"></a>亮点</h1><p>思路很简单，亮点就在于job队列，连接在没有建立成功时，会先建立一个EmptyChannel，有些类似lazy load中的影子对象放到队列中，不造成阻塞，当channel建立完成后，回调</p>
+<h1 id="VS-Future模式"><a href="#VS-Future模式" class="headerlink" title="VS Future模式"></a>VS Future模式</h1><p>异步回调的套路与Future模式特别类似</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Future future = doTask1();</span><br><span class="line">doTask2();</span><br><span class="line">doTask3();</span><br><span class="line">Result result = future.get();</span><br></pre></td></tr></table></figure>
+<p>Future 模式中，一个任务的启动和获取结果分成了两部分，启动执行是异步的，调用后立马返回，调用者可以继续做其他的任务，而等到其他任务做完，再获取Future的结果，此时调用 get 时是同步的，也就是说如果 doTask1 如果还没有做完，等它做完。</p>
+<p>看出最大区别，异步回调不需要返回值，准确说调用者不用太关心返回值，甚至不需要关心真正执行情况，而future模式就不一样了，调用者是一定要拿到返回值的</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://blog.51cto.com/13616847/2073737">同步调用，异步回调和 Future 模式</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/algorithm-overview.html" rel="prev" title="算法概要">
+      <i class="fa fa-chevron-left"></i> 算法概要
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/algorithm---sorting---bubbling.html" rel="next" title="算法渣-排序-冒泡">
+      算法渣-排序-冒泡 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9B%9E%E8%B0%83"><span class="nav-number">1.</span> <span class="nav-text">回调</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9C%BA%E6%99%AF"><span class="nav-number">2.</span> <span class="nav-text">场景</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%AE%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">亮点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#VS-Future%E6%A8%A1%E5%BC%8F"><span class="nav-number">5.</span> <span class="nav-text">VS Future模式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">参考</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

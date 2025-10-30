@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="通过《zookeeper知识结构1》了解了zookeeper是什么？为什么使用zookeeper? 以及zookeeper内部数据结构，选举机制 zab定义ZAB全称ZooKeeper Atomic Broadcast protocol ZooKeeper原子广播协议，实现了主备模式下的系统架构，保持集群中各个副本之间的数据同步(数据最新，一致性)  原子广播在具体深入zab之前，先搞明白原子广播">
+<meta property="og:type" content="article">
+<meta property="og:title" content="zookeeper知识结构2-zab协议">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/zookeeper-knowledge-structure-2-zab-protocol.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="通过《zookeeper知识结构1》了解了zookeeper是什么？为什么使用zookeeper? 以及zookeeper内部数据结构，选举机制 zab定义ZAB全称ZooKeeper Atomic Broadcast protocol ZooKeeper原子广播协议，实现了主备模式下的系统架构，保持集群中各个副本之间的数据同步(数据最新，一致性)  原子广播在具体深入zab之前，先搞明白原子广播">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904021755_419.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904021901_696.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904021911_461.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904021918_734.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904031256_336.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904031751_747.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904040941_489.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904041307_497.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201903281845_163.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904041325_224.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904040941_489.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904041912_11.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904041934_12.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201903271732_437.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201903271646_456.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904091257_850.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201904091834_884.png">
+<meta property="article:published_time" content="2019-03-25T03:40:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.013Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="zookeeper">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201904021755_419.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/zookeeper-knowledge-structure-2-zab-protocol.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>zookeeper知识结构2-zab协议 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/zookeeper-knowledge-structure-2-zab-protocol.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          zookeeper知识结构2-zab协议
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2019-03-25 11:40:00" itemprop="dateCreated datePublished" datetime="2019-03-25T11:40:00+08:00">2019-03-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>通过<a href="http://www.zhuxingsheng.com/blog/zookeeper-knowledge-structure.html">《zookeeper知识结构1》</a>了解了zookeeper是什么？为什么使用zookeeper? 以及zookeeper内部数据结构，选举机制</p>
+<h1 id="zab定义"><a href="#zab定义" class="headerlink" title="zab定义"></a>zab定义</h1><p>ZAB全称ZooKeeper Atomic Broadcast protocol</p>
+<p>ZooKeeper原子广播协议，实现了主备模式下的系统架构，保持集群中各个副本之间的数据同步(数据最新，一致性)</p>
+<hr>
+<h1 id="原子广播"><a href="#原子广播" class="headerlink" title="原子广播"></a>原子广播</h1><p>在具体深入zab之前，先搞明白原子广播</p>
+<p>原子性好理解，不管是事务的ACID，还是多线程中，都有这个概念；广播也好理解，像系统中常引入消息队列进行消息广播</p>
+<p>但两者合在一起，有点犯晕了，广播怎么需要原子性？哪部分操作不可分割呢？</p>
+<blockquote>
+<p>所有事务请求的处理结果在整个集群中所有机器上的应用情况是一致的,也就是说,要么整个集群所有机器都成功应用了某一个事务, 要么就都没应用.</p>
+</blockquote>
+<p>按照上面的解释，原子性体现在所有机器事务一致性,要么都接受广播，要么都不接受；为了更深入理解，从头开始深入一下这个机制的大致流程</p>
+<p>在分布式中，这个机制有很多具体实现，比如2PC,3PC，paxos等等</p>
+<h2 id="副本"><a href="#副本" class="headerlink" title="副本"></a>副本</h2><p>在这个机制介绍前，需要先介绍下分布式中的副本(Replication)</p>
+<p>副本简直是处理故障恢复的的万能钥匙</p>
+<p>数据副本的收益：</p>
+<ol>
+<li>提升系统可用性，需要挂更多的节点才会导致数据丢失</li>
+<li>提升系统性能，多个副本可以同时处理或者交给更快的机器处理</li>
+</ol>
+<p>分布式系统采用副本可以获得可扩展性，高性能，可用性，容错性</p>
+<ol>
+<li>害怕数据不可用，采用副本吧，多副本能确保数据由于故障丢失的概率大大降低；</li>
+<li>计算太慢，采用副本吧，将计算散布到多台机器上；</li>
+<li>I&#x2F;O太慢，采用副本吧，将数据cache到local机器上，可以极大的提升吞吐</li>
+</ol>
+<p><strong>正常多副本，可以从任何副本请求数据</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201904021755_419.png"></p>
+<h2 id="数据同步"><a href="#数据同步" class="headerlink" title="数据同步"></a>数据同步</h2><p>为了多个副本上的数据同步，一般会加一个dispatche,client请求到dispatche上，dispatche会对请求进行排序，并<strong>按同样的顺序分发</strong>到各个副本，保持各副本数据一致</p>
+<p><img src="http://images.zhuxingsheng.com/201904021901_696.png"></p>
+<p>此时，dispatche成了系统中的单点，不具备高可用，所以会部署多个dispatch</p>
+<p><img src="http://images.zhuxingsheng.com/201904021911_461.png"></p>
+<p>每个dispatche相互通信，并且每个dispatche都可以分发到各个副本；此时就会出现上图中的并发更新一致性问题，类似于<a href="https://mp.weixin.qq.com/s/SH-JVdcTmwUPoax1lo0-cw">《深入浅出事务》</a>中的第二类更新丢失</p>
+<p>在并发操作时，应用本身对于数据的先后都是可以接受的，但在各个副本中的数据必须保持一致，也就是下图中的结果都是可以的</p>
+<p><img src="http://images.zhuxingsheng.com/201904021918_734.png"></p>
+<p>也就是讲，各个dispatche得以相同的顺序进行更新副本</p>
+<h3 id="顺序同步"><a href="#顺序同步" class="headerlink" title="顺序同步"></a>顺序同步</h3><p>解决并发更新不一致问题，思路就是对请求操作进行排序，按顺序执行</p>
+<p><img src="http://images.zhuxingsheng.com/201904031256_336.png"></p>
+<p>数据更新的过程如下：</p>
+<ol>
+<li>客户发送操作请求到任意一个节点的分发器上</li>
+<li>分发器接收到请求后，将请求广播到其他节点上的分发器，并且这些分发器之间会对所有的并发请求进行排序。最终每个节点的分发器上都会有一份完全一样的请求列表。这个功能通常称作<strong>原子广播（Atomic Broadcast）</strong> 或者 <strong>全局排序广播（Total Order Broadcast)</strong></li>
+<li>分发器将列表中的操作请求按照顺序送给本节点的数据副本</li>
+</ol>
+<p>在这个模型中，原子广播的逻辑和业务逻辑是分开的。这么做的好处是非常明显的，业务逻辑的实现不再受分布式需求的限制，原子广播的逻辑则不需要考虑业务逻辑的具体需求。独立的原子广播的逻辑可以被重用到很多的分布式的应用上</p>
+<h2 id="原型"><a href="#原型" class="headerlink" title="原型"></a>原型</h2><p>根据上面的推导，得出一个最简单的原型</p>
+<p><img src="http://images.zhuxingsheng.com/201904031751_747.png"></p>
+<p>dispatche增加一个队列，也可以把它设计成日志文件（顺序追加的文件）或者管道等等，当有请求时，会按顺序存储到队列，但<strong>这个队列中的每个位置只能存储一次数据，存储后不能进行更改</strong></p>
+<h3 id="请求操作"><a href="#请求操作" class="headerlink" title="请求操作"></a>请求操作</h3><p><img src="http://images.zhuxingsheng.com/201904040941_489.png"></p>
+<ol>
+<li>收到客户端的数据存储请求后，选择一个存储位置。发送数据储存指令给其他的分发器，同时将数据存储到自己的存储队列中</li>
+<li>当收到其他分发器发送的存储指令后，将数据存储到自己的存储队列。如果该位置已经存储了数据，则返回失败</li>
+</ol>
+<ul>
+<li>数据存储指令的内容:<strong>[存储位置，数据]</strong></li>
+<li>存储位置的选择:<strong>选择最小的空存储位</strong></li>
+</ul>
+<h3 id="并发更新"><a href="#并发更新" class="headerlink" title="并发更新"></a>并发更新</h3><p><img src="http://images.zhuxingsheng.com/201904041307_497.png"></p>
+<p>当两个client分别发到不同到dispatche上请求，两个dispatche相互同步时，出现了不一致，<strong>违背了各个队列的每个位置只能存储一次元素，不能更改的原则</strong></p>
+<h3 id="锁"><a href="#锁" class="headerlink" title="锁"></a>锁</h3><p>对于并发问题，首先想到就是加锁，对于分布式系统怎么加锁呢？</p>
+<p>2PC提供了好的思路</p>
+<p><img src="http://images.zhuxingsheng.com/201903281845_163.png"></p>
+<p>借鉴一下2pc，加锁过程如下：</p>
+<p><strong>第一步：加锁</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201904041325_224.png"></p>
+<ol>
+<li>接受到请求，选择本地队列位置，并加锁</li>
+<li>发送加锁指令到别的dispatche2，dipatche2进行相同位置加锁，并回返lock ack</li>
+</ol>
+<ul>
+<li>加锁指令：<strong>[位置]</strong></li>
+</ul>
+<p><strong>第二步：更新</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201904040941_489.png"></p>
+<ol>
+<li>收到所有dispatche都返回lock ack</li>
+<li>数据写入队列位置上，并发送存储指令给所有disptache</li>
+<li>dispatche收到存储指令，把数据写入队列相应位置</li>
+</ol>
+<h4 id="死锁"><a href="#死锁" class="headerlink" title="死锁"></a>死锁</h4><p>并发考虑的两个问题：安全性与活跃性</p>
+<p><img src="http://images.zhuxingsheng.com/201904041912_11.png"></p>
+<p>dispatche1与dispatche2分别接收到请求，在第一步加锁时，先给自己队列加锁，再发送加锁指令给其它dispatche</p>
+<p>此时，就出现死锁：如dispathe1对自身队列位置1加锁，再发送指令给disptache2的队列位置1加锁，但disptache2的队列位置1被自己锁住了，反之disptache1队列位置1也一样，此时双方进入死锁，永远阻塞</p>
+<h4 id="优先级锁"><a href="#优先级锁" class="headerlink" title="优先级锁"></a>优先级锁</h4><p>有一种策略，就是给锁增加一个优化级</p>
+<ul>
+<li>每个锁请求都有一个优先级，优先级高的锁请求可以撤销优先级低的锁。</li>
+<li>如果一个存储指令的锁被撤销了，就不能被执行</li>
+</ul>
+<p><img src="http://images.zhuxingsheng.com/201904041934_12.png"></p>
+<p>如图所示，两个dispatche分别接收到请求，p1 p2是各自锁的优先级，p1高于p2</p>
+<ol>
+<li>dispatch1接收请求后，自己队列加锁；收到dispatch2的加锁请求，但p2优先级低于p1，所以被阻塞</li>
+<li>dispatche2自身加锁后，收到dispatche1的加锁请求，由于p1高于p2，dispatche2撤销p2操作，p1成功加锁</li>
+<li>dispatche1成功在所有dispatche上加锁</li>
+</ol>
+<p><strong>优先级：</strong></p>
+<ol>
+<li>有先后次序,优先级不能相等</li>
+<li>不可重复</li>
+</ol>
+<p>比如以dispatche的id作为优先级值，dispatcheId是不同的，也能区分优先级，但这样会出现不平衡，以id大的优先级高，那永远id为大的优先获取锁，加锁成功处理请求</p>
+<p>为了更好的均衡各个客户的请求处理，可以采用下面的优先级定义：<strong>[数值，dispatcheID]</strong></p>
+<p>数值可以由各个dispatche指定，比如所有disptache都原子累加，这样可以保证每个dispathe的均衡，当数值相等时，再比较dispatcheId</p>
+<h3 id="节点故障"><a href="#节点故障" class="headerlink" title="节点故障"></a>节点故障</h3><p>故障可能发生在每个阶段，一是加锁阶段，二是数据更新阶段；再细节大概有三种情况：</p>
+<ol>
+<li>加锁成功，但没有写入数据</li>
+<li>部分节点写入了数据</li>
+<li>故障dispatche已经写入数据，但没有同步到别的dispatche</li>
+</ol>
+<h4 id="加锁成功，没有写入数据"><a href="#加锁成功，没有写入数据" class="headerlink" title="加锁成功，没有写入数据"></a>加锁成功，没有写入数据</h4><p>这个很好解决，通过优先级锁，另的节点发起一个更高优先级操作就可以覆盖先前的记录</p>
+<h4 id="部分节点写入数据"><a href="#部分节点写入数据" class="headerlink" title="部分节点写入数据"></a>部分节点写入数据</h4><p>解决这个问题，需要加强一下更新操作，之前的更新操作，发送<strong>存储指令</strong>给各个节点，就结束了</p>
+<p>现在不单单发送指令，还需要再广播</p>
+<p>也就是节点接受到存储指令，如果节点已经有数据写入，则与数据一起返回；这样当所有节点返回加锁成功后，检查是否有数据返回，如果有数据返回，则将数据放入存储指令，发送给所有节点</p>
+<h4 id="没有同步别的dispatche"><a href="#没有同步别的dispatche" class="headerlink" title="没有同步别的dispatche"></a>没有同步别的dispatche</h4><p>需要增加一个“预存储队列”，预写入机制</p>
+<p>当dispatche1发生故障时，其它的dispatche的预存储队列中已经存入了数据。其它节点接管dispatche1时，会先重发预存储队列中的数据到所有dispatche</p>
+<p>预写入过程可以保证：如果数据被写入了任意的存储队列，那么所有节点的预存储队列都有这个数据</p>
+<h3 id="多数派"><a href="#多数派" class="headerlink" title="多数派"></a>多数派</h3><p>上面的广播机制中，加锁以及预写入都需要所有节点返回成功。如果任意一个节点有故障都会失败。在复杂网络环境下，整个系统很脆弱，不能高可用</p>
+<p>因此可以改进为半数以上节点成功回复就可以</p>
+<p>大多数派机制下，会带来一些更复杂的中间状态，整个过程：</p>
+<ol>
+<li>发送加锁指令</li>
+<li>收到加锁指令后，检查指定存储位置是否已经加锁，如没有，则返回加锁成功；如被加锁，则比较锁优先级，如果优先级更高，就撤销原有锁，重新加锁返回成功；如果已经预写入数据，则将数据一并返回</li>
+<li>当超过半数节点返回加锁成功后，检查是否有数据返回。如果有数据返回，则将优先级最高的数据存入预存储指令。如果没有数据返回，则将自己的数据写入预存储指令。发送预存储指令给所有dispatche,并写入自己的预存储队列</li>
+<li>收到预存储指令，将数据写入预存储队列。如果预存储锁被撤销，则返回失败</li>
+<li>当超过半数返回预存储成功，刚发送存储指令给所有dispatche，并写入自己的存储队列</li>
+<li>当收到存储队列，将数据写入自己存储队列中</li>
+</ol>
+<h1 id="ZAB详细"><a href="#ZAB详细" class="headerlink" title="ZAB详细"></a>ZAB详细</h1><p>有了上面的原型，理解其它的具体协议就会轻松很多，在具体实现时，都会看到原型中的概念</p>
+<p>ZAB协议是为分布式协调服务 Zookeeper 专门设计的一种支持 <strong>崩溃恢复</strong> 和 <strong>原子广播</strong> 协议</p>
+<p>ZAB协议定义了选举（election）、发现（discovery）、同步（sync）、广播(Broadcast)四个阶段</p>
+<p><img src="http://images.zhuxingsheng.com/201903271732_437.png"></p>
+<h2 id="原型抽象"><a href="#原型抽象" class="headerlink" title="原型抽象"></a>原型抽象</h2><p>根据上面的原型，结合zk的源码，梳理一下源码中对应原型的抽象</p>
+<h3 id="投票对象"><a href="#投票对象" class="headerlink" title="投票对象"></a>投票对象</h3><p>这个对象对应着原型中的存储指令，优先级加锁指令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public Vote(long id, long zxid) &#123;</span><br><span class="line">    this.id = id;</span><br><span class="line">    this.zxid = zxid;</span><br><span class="line">    this.electionEpoch = -1;</span><br><span class="line">    this.peerEpoch = -1;</span><br><span class="line">    this.state = ServerState.LOOKING;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>id：被推举的Leader的SID</p>
+<p>zxid：被推举的Leader事务ID</p>
+<p><img src="http://images.zhuxingsheng.com/201903271646_456.png"></p>
+<p>为了保证事务的顺序一致性，zookeeper 采用了递增的事 务 id 号（zxid）来标识事务。</p>
+<p>所有的提议（proposal）都在被提出的时候加上了 zxid。</p>
+<p>实现中 zxid 是一个 64 位的数字</p>
+<p>它高32 位是 epoch（ZAB 协议通过 epoch 编号来区分 Leader 周期变化的策略）用来标识 leader关系是否改变，每次一个 leader 被选出来，它都会有一个新的epoch&#x3D;（原来的 epoch+1），标识当前属于那个 leader 的统治时期。</p>
+<p>低 32 位用于递增计数</p>
+<p>可以想象为中国古代的年号，例如万历十五年，万历是epoch，十五年是id</p>
+<p>electionEpoch：逻辑时钟，用来判断多个投票是否在同一轮选举周期中，该值在服务端是一个自增序列，每次进入新一轮的投票后，都会对该值进行加1操作</p>
+<p>peerEpoch：被推举的Leader的epoch</p>
+<p>electionEpoch和peerEpoch的区别在于，electionEpoch记录的选举的轮次，而peerEpoch则指的是当前leader的任期</p>
+<p>state：当前服务器的状态</p>
+<h2 id="FastLeaderElection"><a href="#FastLeaderElection" class="headerlink" title="FastLeaderElection"></a>FastLeaderElection</h2><p>zk默认的选举算法，为什么需要选举可以参照《zookeeper知识结构1》</p>
+<h3 id="术语"><a href="#术语" class="headerlink" title="术语"></a>术语</h3><ul>
+<li>外部投票：特指其他服务器发来的投票。</li>
+<li>内部投票：服务器自身当前的投票。</li>
+<li>选举轮次：Zookeeper服务器Leader选举的轮次，即logicalclock</li>
+<li>PK：对内部投票和外部投票进行对比来确定是否需要变更内部投票</li>
+</ul>
+<blockquote>
+<p>electionEpoch和logicalclock的区别在于，electionEpoch指的是发出server的logicalclock，而logicalclock则指的是当前Server所处的选举的轮次</p>
+</blockquote>
+<p><img src="http://images.zhuxingsheng.com/201904091257_850.png"></p>
+<h3 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h3><ul>
+<li>sendqueue：选票发送队列，用于保存待发送的选票。</li>
+<li>recvqueue：选票接收队列，用于保存接收到的外部投票。</li>
+<li>WorkerReceiver：选票接收器。其会不断地从QuorumCnxManager中获取其他服务器发来的选举消息，并将其转换成一个选票，然后保存到recvqueue中，在选票接收过程中，如果发现该外部选票的选举轮次小于当前服务器的，那么忽略该外部投票，同时立即发送自己的内部投票。</li>
+<li>WorkerSender：选票发送器，不断地从sendqueue中获取待发送的选票，并将其传递到底层QuorumCnxManager中</li>
+</ul>
+<h3 id="QuorumCnxManager"><a href="#QuorumCnxManager" class="headerlink" title="QuorumCnxManager"></a>QuorumCnxManager</h3><p>ClientCnxn是ZooKeeper客户端中用于处理网络I&#x2F;O的一个管理器</p>
+<p>在Leader选举的过程中也有类似的角色，那就是QuorumCnxManager——每台服务器启动的时候都会启动一个QuorumCnxManager，负责各台服务器之间的底层Leader选举过程中的网络通信</p>
+<p>QuorumCnxManager这个类内部维护了一系列的队列，用于保存接收到的、待发送的消息，以及消息的发送器。</p>
+<p>除接收队列以外，这里提到的所有队列都有一个共同点——按SID分组形成队列集合，我们以发送队列为例来说明这个分组的概念。</p>
+<p>假设集群中除自身外还有4台机器，那么当前服务器就会为这4台服务器分别创建一个发送队列，互不干扰。</p>
+<ul>
+<li>queueSendMap：消息发送队列，用于保存那些待发送的消息。queueSendMap是一个Map，按照SID进行分组，分别为集群中的每台机器分配了一个单独队列，从而保证各台机器之间的消息发送互不影响。</li>
+<li>senderWorkerMap：发送器集合。每个SendWorker消息发送器，都对应一台远程ZooKeeper服务器，负责消息的发送。同样，在sendWorkerMap中，也按照SID进行了分组。</li>
+<li>lastMessageSent：最近发送过的消息。在这个集合中，为每个SID保留最近发送过的一个消息</li>
+</ul>
+<blockquote>
+<p>在SendWorker的具体实现中，有一个细节需要我们注意一下：一旦ZooKeeper发现针对当前远程服务器的消息发送队列为空，那么这个时候就需要从lastMessageSent中取出一个最近发送过的消息来进行再次发送。这个细节的处理主要为了解决这样一类分布式问题：接收方在消息接收前，或者是在接收到消息后服务器挂掉了，导致消息尚未被正确处理。那么如此重复发送是否会导致其他问题呢？当然，这里可以放心的一点是，ZooKeeper能够保证接收方在处理消息的时候，会对重复消息进行正确的处理</p>
+</blockquote>
+<p>lastMessageSent接近原型中的预存储队列</p>
+<h3 id="选票过程"><a href="#选票过程" class="headerlink" title="选票过程"></a>选票过程</h3><p><img src="http://images.zhuxingsheng.com/201904091834_884.png"></p>
+<ul>
+<li>1.自增选举轮次。Zookeeper规定所有有效的投票都必须在同一轮次中，在开始新一轮投票时，会首先对logicalclock进行自增操作。</li>
+<li>2.初始化选票。在开始进行新一轮投票之前，每个服务器都会初始化自身的选票，并且在初始化阶段，每台服务器都会将自己推举为Leader</li>
+<li>3.发送初始化选票。完成选票的初始化后，服务器就会发起第一次投票。Zookeeper会将刚刚初始化好的选票放入sendqueue中，由发送器WorkerSender负责发送出去。</li>
+<li>4.接收外部投票。每台服务器会不断地从recvqueue队列中获取外部选票。如果服务器发现无法获取到任何外部投票，那么就会立即确认自己是否和集群中其他服务器保持着有效的连接，如果没有连接，则马上建立连接，如果已经建立了连接，则再次发送自己当前的内部投票</li>
+<li>5.判断选举轮次。在发送完初始化选票之后，接着开始处理外部投票。在处理外部投票时，会根据选举轮次来进行不同的处理。<ul>
+<li>5.1.外部投票的选举轮次大于内部投票。若服务器自身的选举轮次落后于该外部投票对应服务器的选举轮次，那么就会立即更新自己的选举轮次(logicalclock)，并且清空所有已经收到的投票，然后使用初始化的投票来进行PK以确定是否变更内部投票。最终再将内部投票发送出去。</li>
+<li>5.2.外部投票的选举轮次小于内部投票。若服务器接收的外选票的选举轮次落后于自身的选举轮次，那么Zookeeper就会直接忽略该外部投票，不做任何处理，并返回步骤4。</li>
+<li>5.3.外部投票的选举轮次等于内部投票。此时可以开始进行选票PK</li>
+</ul>
+</li>
+<li>6.选票PK。在进行选票PK时，符合任意一个条件就需要变更投票<ul>
+<li>6.1.若外部投票中推举的Leader服务器的选举轮次大于内部投票，那么需要变更投票。</li>
+<li>6.2.若选举轮次一致，那么就对比两者的ZXID，若外部投票的ZXID大，那么需要变更投票。</li>
+<li>6.3.若两者的ZXID一致，那么就对比两者的SID，若外部投票的SID大，那么就需要变更投票。</li>
+</ul>
+</li>
+<li>7.变更投票。经过PK后，若确定了外部投票优于内部投票，那么就变更投票，即使用外部投票的选票信息来覆盖内部投票，变更完成后，再次将这个变更后的内部投票发送出去。</li>
+<li>8.选票归档。无论是否变更了投票，都会将刚刚收到的那份外部投票放入选票集合recvset中进行归档。recvset用于记录当前服务器在本轮次的Leader选举中收到的所有外部投票（按照服务队的SID区别，如{(1, vote1), (2, vote2)…}）。</li>
+<li>9.统计投票。完成选票归档后，就可以开始统计投票，统计投票是为了统计集群中是否已经有过半的服务器认可了当前的内部投票，如果确定已经有过半服务器认可了该投票，则终止投票。否则返回步骤4</li>
+<li>10.更新服务器状态。若已经确定可以终止投票，那么就开始更新服务器状态，服务器首选判断当前被过半服务器认可的投票所对应的Leader服务器是否是自己，若是自己，则将自己的服务器状态更新为LEADING，若不是，则根据具体情况来确定自己是FOLLOWING或是OBSERVING。</li>
+</ul>
+<p>以上10个步骤就是FastLeaderElection的核心，其中步骤4-9会经过几轮循环，直到有Leader选举产生。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>通过对原子广播原型的理解，更容易理解zab，对于paxos也一样</p>
+<p>当然zab还有很多的细节，还能再深入，挖出很多知识点。但只看理论终归有些空洞，下一篇实践一下，详述zk版本分布式锁</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://blog.csdn.net/en_joker/article/details/79400289">Leader选举</a></p>
+<p><a href="https://blog.csdn.net/lpstudy/article/details/83685997">分布式系统</a></p>
+<p><a href="https://mp.weixin.qq.com/s/IjULLfI5QjhKXVa_91no4A">由浅入深理解Paxos协议</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/zookeeper/" rel="tag"># zookeeper</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/zookeeper-knowledge-structure.html" rel="prev" title="zookeeper知识结构">
+      <i class="fa fa-chevron-left"></i> zookeeper知识结构
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/technicians,-please-stay-away-from-technology.html" rel="next" title="技术人请远离技术">
+      技术人请远离技术 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#zab%E5%AE%9A%E4%B9%89"><span class="nav-number">1.</span> <span class="nav-text">zab定义</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E5%B9%BF%E6%92%AD"><span class="nav-number">2.</span> <span class="nav-text">原子广播</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%AF%E6%9C%AC"><span class="nav-number">2.1.</span> <span class="nav-text">副本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%90%8C%E6%AD%A5"><span class="nav-number">2.2.</span> <span class="nav-text">数据同步</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A1%BA%E5%BA%8F%E5%90%8C%E6%AD%A5"><span class="nav-number">2.2.1.</span> <span class="nav-text">顺序同步</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%9E%8B"><span class="nav-number">2.3.</span> <span class="nav-text">原型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E6%93%8D%E4%BD%9C"><span class="nav-number">2.3.1.</span> <span class="nav-text">请求操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B6%E5%8F%91%E6%9B%B4%E6%96%B0"><span class="nav-number">2.3.2.</span> <span class="nav-text">并发更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%81"><span class="nav-number">2.3.3.</span> <span class="nav-text">锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%AD%BB%E9%94%81"><span class="nav-number">2.3.3.1.</span> <span class="nav-text">死锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E5%85%88%E7%BA%A7%E9%94%81"><span class="nav-number">2.3.3.2.</span> <span class="nav-text">优先级锁</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E6%95%85%E9%9A%9C"><span class="nav-number">2.3.4.</span> <span class="nav-text">节点故障</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A0%E9%94%81%E6%88%90%E5%8A%9F%EF%BC%8C%E6%B2%A1%E6%9C%89%E5%86%99%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">2.3.4.1.</span> <span class="nav-text">加锁成功，没有写入数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%83%A8%E5%88%86%E8%8A%82%E7%82%B9%E5%86%99%E5%85%A5%E6%95%B0%E6%8D%AE"><span class="nav-number">2.3.4.2.</span> <span class="nav-text">部分节点写入数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B2%A1%E6%9C%89%E5%90%8C%E6%AD%A5%E5%88%AB%E7%9A%84dispatche"><span class="nav-number">2.3.4.3.</span> <span class="nav-text">没有同步别的dispatche</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E6%95%B0%E6%B4%BE"><span class="nav-number">2.3.5.</span> <span class="nav-text">多数派</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ZAB%E8%AF%A6%E7%BB%86"><span class="nav-number">3.</span> <span class="nav-text">ZAB详细</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%9E%8B%E6%8A%BD%E8%B1%A1"><span class="nav-number">3.1.</span> <span class="nav-text">原型抽象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8A%95%E7%A5%A8%E5%AF%B9%E8%B1%A1"><span class="nav-number">3.1.1.</span> <span class="nav-text">投票对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FastLeaderElection"><span class="nav-number">3.2.</span> <span class="nav-text">FastLeaderElection</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AF%E8%AF%AD"><span class="nav-number">3.2.1.</span> <span class="nav-text">术语</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%98%9F%E5%88%97"><span class="nav-number">3.2.2.</span> <span class="nav-text">队列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#QuorumCnxManager"><span class="nav-number">3.2.3.</span> <span class="nav-text">QuorumCnxManager</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%89%E7%A5%A8%E8%BF%87%E7%A8%8B"><span class="nav-number">3.2.4.</span> <span class="nav-text">选票过程</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

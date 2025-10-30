@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="一个简简单单的基础数据结构，却发展成了形形色色的消息队列中间件。世界就是如此奇妙。  如上图，一个简单的队列数据结构，由生产者往里插入内容，由消费者从里面获取内容进行消费，就构建出一个简单的消息队列模型。 消息模型有两种： 1、点对点模型：也叫消息队列模型。多个消费者共同消费同一个队列，效率高 2、发布&#x2F;订阅模型：发送方也称之为发布者(Publisher)，接受方称为订阅者(Subscr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Kafka基础术语">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/basic-terms-of-kafka.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="一个简简单单的基础数据结构，却发展成了形形色色的消息队列中间件。世界就是如此奇妙。  如上图，一个简单的队列数据结构，由生产者往里插入内容，由消费者从里面获取内容进行消费，就构建出一个简单的消息队列模型。 消息模型有两种： 1、点对点模型：也叫消息队列模型。多个消费者共同消费同一个队列，效率高 2、发布&#x2F;订阅模型：发送方也称之为发布者(Publisher)，接受方称为订阅者(Subscr">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20230102213501_1672666501.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20230117001514_1673885714.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20230102213918_1672666758.jpg">
+<meta property="article:published_time" content="2023-02-05T02:40:00.000Z">
+<meta property="article:modified_time" content="2023-02-05T02:41:16.027Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="kafka">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20230102213501_1672666501.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/basic-terms-of-kafka.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>Kafka基础术语 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/basic-terms-of-kafka.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Kafka基础术语
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-02-05 10:40:00 / Modified: 10:41:16" itemprop="dateCreated datePublished" datetime="2023-02-05T10:40:00+08:00">2023-02-05</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一个简简单单的基础数据结构，却发展成了形形色色的消息队列中间件。世界就是如此奇妙。</p>
+<p><img src="http://images.zhuxingsheng.com/20230102213501_1672666501.jpg"></p>
+<p>如上图，一个简单的队列数据结构，由生产者往里插入内容，由消费者从里面获取内容进行消费，就构建出一个简单的消息队列模型。</p>
+<p>消息模型有两种：</p>
+<p>1、点对点模型：也叫消息队列模型。多个消费者共同消费同一个队列，效率高</p>
+<p>2、发布&#x2F;订阅模型：发送方也称之为发布者(Publisher)，接受方称为订阅者(Subscriber)。与点对点模型不同的是，这个模型可能存在多个发布者向相同的主题发送消息，而订阅者也可能存在多个，它们都能接收到相同主题的消息。</p>
+<p><img src="http://images.zhuxingsheng.com/20230117001514_1673885714.jpg"></p>
+<p>一个简单的Kafka架构图：</p>
+<p><img src="http://images.zhuxingsheng.com/20230102213918_1672666758.jpg"></p>
+<span id="more"></span>
+
+<h1 id="生产者：Producer"><a href="#生产者：Producer" class="headerlink" title="生产者：Producer"></a>生产者：Producer</h1><p>向主题发布新消息的应用程序。</p>
+<h1 id="Broker"><a href="#Broker" class="headerlink" title="Broker"></a>Broker</h1><p>负责接收和处理客户端发送过来的请求，以及对消息进行持久化。一个Kafka集群由多个Broker组成。</p>
+<h1 id="消费者：Consumer"><a href="#消费者：Consumer" class="headerlink" title="消费者：Consumer"></a>消费者：Consumer</h1><p>从主题订阅新消息的应用程序。</p>
+<p>消息队列一般有两种实现方式</p>
+<p>(1)Push(推模式) </p>
+<p>(2)Pull(拉模式)</p>
+<p>那么 Kafka Consumer 究竟采用哪种方式进行消费的呢?其实 Kafka Consumer 采用的是主动拉取 Broker数据进行消费的即 Pull 模式。这两种方式各有优劣，我们来分析一下：</p>
+<p>1)、为什么不采用Push模式?如果是选择 Push 模式最大缺点就是 Broker 不清楚 Consumer 的消费速度，且推送速率是 Broker 进行控制的， 这样很容易造成消息堆积，如果 Consumer 中执行的任务操作是比较耗时的，那么 Consumer 就会处理的很慢， 严重情况可能会导致系统 Crash。</p>
+<p>2)、为什么采用Pull模式?如果选择 Pull 模式，这时 Consumer 可以根据自己的情况和状态来拉取数据, 也可以进行延迟处理。但是 Pull 模式也有不足，Kafka 又是如何解决这一问题?如果 Kafka Broker 没有消息，这时每次 Consumer 拉取的都是空数据, 可能会一直循环返回空数据。 针对这个问题，Consumer 在每次调用 Poll() 消费数据的时候，顺带一个 timeout 参数，当返回空数据的时候，会在 Long Polling 中进行阻塞，等待 timeout 再去消费，直到数据到达。</p>
+<h1 id="主题：Topic"><a href="#主题：Topic" class="headerlink" title="主题：Topic"></a>主题：Topic</h1><p>主题是承载消息的逻辑容器，在实际使用中多用来区分具体的业务。</p>
+<h1 id="分区：Partition"><a href="#分区：Partition" class="headerlink" title="分区：Partition"></a>分区：Partition</h1><p>一个有序不变的消息序列。每个主题下可以有多个分区。</p>
+<p>分区的主要原因，为了实现系统的高伸缩性(Scalability)。不同的分区能够被放置到不同节点的机器上，而数据的读写操作也都是针对分区这个粒度而进行的，这样每个节点的机器都能独立地执行各自分区的读写请求处理。</p>
+<p>分区策略：决定生产者将消息发送到哪个分区的算法。</p>
+<p>1、轮询策略，Round-robin策略，即顺序分配。</p>
+<p>2、随机策略，Randomness策略。所谓随机就是随意地将消息放置在做任意一个分区上。</p>
+<p>3、Key-ordering策略。</p>
+<h1 id="消费者组：Consumer-Group"><a href="#消费者组：Consumer-Group" class="headerlink" title="消费者组：Consumer Group"></a>消费者组：Consumer Group</h1><p>指的是多个消费者实例共同组成一个组来消费一组主题。这组主题中的每个分区都只会被组内的一个消费者实例消费，其他消费者实例不能消费它。</p>
+<p>为什么要引入消费者组？主要是为了提升消费者端的吞吐量。多个消费者实例同时消费，加速整个消费端的吞吐量(TPS)。</p>
+<p><strong>Kafka 仅仅使用 Consumer Group 这一种机制，却同时实现了传统消息引擎系统的两大模型</strong>：如果所有实例都属于同一个 Group，那么它实现的就是消息队列模型；如果所有实例分别属于不同的 Group，那么它实现的就是发布 &#x2F; 订阅模型。</p>
+<p>Kafka Consumer Group 特点如下:</p>
+<p>1、 每个 Consumer Group 有一个或者多个 Consumer</p>
+<p>2、每个 Consumer Group 拥有一个公共且唯一的 Group ID</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring.kafka.consumer.group-id</span><br></pre></td></tr></table></figure>
+
+<p>3、Consumer Group 在消费 Topic 的时候，Topic 的每个 Partition 只能分配给组内的某个 Consumer，只要被任何 Consumer 消费一次, 那么这条数据就可以认为被当前 Consumer Group 消费成功</p>
+<p>最理想的情况是Consumer实例的数量应该等于该Group订阅主题的分区总数。例如：Consumer Group 订阅了 3个主题，分别是A、B、C，它们的分区数依次是1、2、3，那么通常情况下，为该Group 设置6个Consumer实例是比较理想的情形。</p>
+<p>如果设置小于或大于6的实例可以吗？当然可以，如果你有3个实例，那么平均下来每个实例大约消费2个分区（6&#x2F;3&#x3D;2）;如果你设置了9个实例，那么很遗憾，有3个实例（9-6&#x3D;3）将不会被分配任何分区，它们永远处于空闲状态</p>
+<h1 id="副本机制-Replication"><a href="#副本机制-Replication" class="headerlink" title="副本机制(Replication)"></a>副本机制(Replication)</h1><p>也称之为备份机制，通常是指分布式系统在多台网络互联的机器上保存有相同的数据拷贝。副本机制的好处：</p>
+<p>1、提供数据冗余。即使系统部分组件失效，系统依然能够继续运转，因而增加了整体可用性以及数据持久性。</p>
+<p>2、提供高伸缩性。支持横向扩展，能够通过增加机器的方式来提升读性能，进而提高读操作吞吐量。</p>
+<p>3、改善数据局部性。允许将数据放入与用户地埋位置相近的地方，从而降低系统延时。</p>
+<p>Kafka副本，本质就是一个只能追加写消息的提交日志。根据Kafka副本机制的定义，同一个分区下的所有副本保存有相同的消息序列，这些副本分散保存在不同的Broker上，从而能够对抗部分Broker宕机带来的数据不可用。</p>
+<p>1、在Kakfa中，副本分成两类：领导者副本(Leader Replica)和追随者副本(Follower Replica)。每个分区在创建时都要选举一个副本，称为领导者副本，其余的副本自动称为追随者副本。</p>
+<p>2、在Kafka中，追随者副本是不对外提供服务的。任何一个追随者副本都不能响应消费者和生产者的读写请求。所有的请求都必须由领导者副本来处理，或者说，所有读写请求都必须发往领导者副本所在的Broker,由该Broker负责处理。追随者副本不处理我客户端请求，它唯一的任务就是从领导者副本异步拉取消息，并写入到自己的提交日志中，从而实现与领导者副本的同步。</p>
+<p>3、当领导者副本挂掉了，或者说领导者副本所在的Borker宕机时，Kafka依托于ZK提供的监控功能能够实时感知到，并立即开启新一轮的领导者选举，从追随者副本中选一个作为新的领导者。老Leader副本重启回来后，只能作为追随者副本加入到集群中。</p>
+<p>为什么Kafka的追随者副本没有任何作用，它既不能像MySQL那样帮助领导者副本“抗读”，也不能实现将某些副本放到离客户近的地方来改善数据局部性。</p>
+<p>1、方便实现“Read-your-writes”。当你使用生产者API向Kafka成功写入消息后，马上使用消费者API去读取刚才生产的消息。</p>
+<p>2、方便实现单调读“Monotonic Reads”。就是对于一个消费者用户而言，在多次消费消息时，它不会看到某条消息一会儿存在一会儿不存在。</p>
+<h1 id="重平衡：Rebalance"><a href="#重平衡：Rebalance" class="headerlink" title="重平衡：Rebalance"></a>重平衡：Rebalance</h1><p>消费者组内某个消费者实例持掉后，其他消费者实例自动重新分配订阅主题分区的过程。</p>
+<p><a href="https://lotabout.me/2018/kafka-introduction/">Kafka 入门介绍</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/kafka/" rel="tag"># kafka</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/the-architects-self-rescue.html" rel="prev" title="架构师的自我拯救">
+      <i class="fa fa-chevron-left"></i> 架构师的自我拯救
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/orthogonal-design-in-the-eyes-of-architects.html" rel="next" title="架构师眼中的正交设计">
+      架构师眼中的正交设计 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E8%80%85%EF%BC%9AProducer"><span class="nav-number">1.</span> <span class="nav-text">生产者：Producer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Broker"><span class="nav-number">2.</span> <span class="nav-text">Broker</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E8%80%85%EF%BC%9AConsumer"><span class="nav-number">3.</span> <span class="nav-text">消费者：Consumer</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BB%E9%A2%98%EF%BC%9ATopic"><span class="nav-number">4.</span> <span class="nav-text">主题：Topic</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%86%E5%8C%BA%EF%BC%9APartition"><span class="nav-number">5.</span> <span class="nav-text">分区：Partition</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B6%88%E8%B4%B9%E8%80%85%E7%BB%84%EF%BC%9AConsumer-Group"><span class="nav-number">6.</span> <span class="nav-text">消费者组：Consumer Group</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%AF%E6%9C%AC%E6%9C%BA%E5%88%B6-Replication"><span class="nav-number">7.</span> <span class="nav-text">副本机制(Replication)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%87%8D%E5%B9%B3%E8%A1%A1%EF%BC%9ARebalance"><span class="nav-number">8.</span> <span class="nav-text">重平衡：Rebalance</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

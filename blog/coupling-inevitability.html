@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="最近学到一个词“耦合创伤应激障碍”，讲的是程序员对耦合条件反射式恐惧，对于这个新词，我再重新理解一篇 对于一名程序员，从入行开始，就听到前辈们对“高内聚低耦合”的谆谆教诲，所以对于低耦合的意识深入骨髓。知行合一，看看是怎么践行的，打开任何一个项目工程，可以看到，每一个service都有一个interface和impl，代码看起来整整齐齐，所有变化点都考虑到了，但其实没有降低问题复杂度，只是自己看着">
+<meta property="og:type" content="article">
+<meta property="og:title" content="耦合必然性">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/coupling-inevitability.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="最近学到一个词“耦合创伤应激障碍”，讲的是程序员对耦合条件反射式恐惧，对于这个新词，我再重新理解一篇 对于一名程序员，从入行开始，就听到前辈们对“高内聚低耦合”的谆谆教诲，所以对于低耦合的意识深入骨髓。知行合一，看看是怎么践行的，打开任何一个项目工程，可以看到，每一个service都有一个interface和impl，代码看起来整整齐齐，所有变化点都考虑到了，但其实没有降低问题复杂度，只是自己看着">
+<meta property="og:locale">
+<meta property="article:published_time" content="2021-08-15T12:39:00.000Z">
+<meta property="article:modified_time" content="2021-09-29T07:24:30.560Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="SOLID">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/coupling-inevitability.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>耦合必然性 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/coupling-inevitability.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          耦合必然性
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-08-15 20:39:00" itemprop="dateCreated datePublished" datetime="2021-08-15T20:39:00+08:00">2021-08-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>最近学到一个词“耦合创伤应激障碍”，讲的是程序员对耦合条件反射式恐惧，对于这个新词，我再重新理解一篇</p>
+<p>对于一名程序员，从入行开始，就听到前辈们对“高内聚低耦合”的谆谆教诲，所以对于低耦合的意识深入骨髓。知行合一，看看是怎么践行的，打开任何一个项目工程，可以看到，每一个service都有一个interface和impl，代码看起来整整齐齐，所有变化点都考虑到了，但其实没有降低问题复杂度，只是自己看着舒服</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/solid-summary.html">《SOLID总结》</a>中提到过面向接口编程中接口到底是什么含义，并不是所有实现类都得需要一个接口，才是面向接口编程</p>
+<p>而现在实践中对实现依赖心理恐惧，成了一种行业通病，见不得对实现的依赖，这是典型的耦合创伤应激障碍，像“猴子实验”</p>
+<blockquote>
+<p>五只猴子被关进笼子里，笼子一角挂着一串香蕉，如果有猴子试图摘取香蕉，就会被开水泼到。猴子们吃了几次苦头之后，就再也不想摘香蕉了。<br>此时用一只新猴子替换老猴子，新猴子看到有香蕉刚想去摘，就被老猴子们拉住一顿暴打。新猴子挨了几次打之后，也不再去摘香蕉了。<br>此时再换进一只新猴子，它也看到香蕉想去摘，也被老猴子们一顿暴打，下手最狠的恰恰是那一只没被开水烫到过的。<br>最后老猴子们都被换干净了，仍然没有猴子去碰那串香蕉，因为它们知道——碰香蕉意味着被打，而为什么会被打，没有猴子知道。</p>
+</blockquote>
+<p>当参与一个新项目，不再创建interface时，肯定会变成那只被打的“猴子”</p>
+<p>然而现实并不是这样的，真的加个interface就减少耦合了吗？耦合少得了吗？比如，需要使用支付宝或微信支付，那么这就是<strong>业务需求</strong>，与支付宝和微信就必然会耦合，才能<strong>达到业务要求</strong>。不管怎么组织代码结构，是明显直接调用，还是隐晦地抛出支付事件，终将需要调用支付宝微信的支付接口；再比如现在很多应用需要推送消息，短信、邮件亦或微信，那么与支付类似，不管如何，必将调用第三方接口才能实现这些功能，这也就是耦合的必然性</p>
+<p>代码大致是这样的：</p>
+<p>先来一个接口：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">package com.zhuxingsheng.infrastructure.port</span><br><span class="line"></span><br><span class="line">public interface AlipayService &#123;</span><br><span class="line">    </span><br><span class="line">    public PayResult pay(AliInfo aliInfo,decimal payAmount);</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>再来对接口的具体实现，调用支付宝SDK</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package com.zhuxingsheng.infrastructure.apapter</span><br><span class="line">public class AlipayServiceImpl implements AlipayService &#123;</span><br><span class="line">    </span><br><span class="line">    public PayResult pay(AliInfo aliInfo,decimal payAmount) &#123;</span><br><span class="line">        AlipaySdk.pay();</span><br><span class="line">        return result;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>微信支付代码结构类似，对于这些代码味道是不是相当熟悉，有service必有interface和impl，但看看接口的意义在哪儿？</p>
+<p>机智的你，肯定发现这样不对，我们需要的应该是在线支付能力，而支付宝支付或微信支付只是具体的实现而已，也就是与支付宝和微信耦合其实不是必然的，必然的是在线支付能力</p>
+<p>这儿其实有两种演变过程：</p>
+<p>第一种：先实现了支付宝支付功能，当再实现微信支付时，此时发现要抽象出在线支付接口，策略模式</p>
+<p>第二种：从业务需求用户故事：作为用户需要完成订单线上支付，完成订单的全流程</p>
+<p>第一种从技术入手，而第二种从最原始的业务入手，这两种演变虽然第二种方是大道，可技术人却喜欢第一种，这也就回到篇首所说，代码看起来整整齐齐，却没有简化问题，甚至只因为技术风格的强统一，带来了业务语义的更加隐晦</p>
+<p>技术其实是解决业务的工具，需要从业务本源着手，挖掘业务背后隐藏的业务能力，构建出对应的技术模型，达到模型即代码的统一，也就知道了必然性耦合，怎么降低耦合</p>
+<p>所以再看上面的接口，package com.zhuxingsheng.infrastructure.port，是在基础设施层，只是技术上单纯的一个接口，在<a href="http://www.zhuxingsheng.com/tags/DDD/">《DDD》</a>专栏中，提到过的接口在领域层，实现在基础设施层，因为maven模块循环依赖或者DIP的需要，所以必需要把接口放在领域层，从业务角度分析，线上支付能力是构建模型的必要能力，是领域模型必不可少的部分，需要在线支付能力，也是业务必然性耦合的体现，应该在领域层</p>
+<p>可从代码形式上看，你是不是觉得不管是对业务的深刻理解，还是单纯技术抽象，不都是一个接口吗？无非是叫接口还是叫业务能力而已吗？</p>
+<p>再看一个接口</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">package com.zhuxingsheng.infrastructure.port</span><br><span class="line"></span><br><span class="line">public interface UserService &#123;</span><br><span class="line">    </span><br><span class="line">    public User getUser(long userId);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>从命名就知道，获取用户信息，不管是业务系统自身处理用户信息，还是从用户中心式外部服务获取用户信息，这是整个系统的基本能力，而不会再需要去抽象一个深奥的业务能力，当业务需求故事阐述用户下订单业务行为时，业务方已然抽象了整个用户体系，只有研究用户上下文子域问题时，才去深入用户领域模型，但从当前业务上下文看，业务系统与这些基础服务是深度绑定，并在系统架构初始已经确定了整体架构</p>
+<p>因此在业务系统中去定义一个userservice接口，是没啥意义的，除非系统大动，否则是不会变动的</p>
+<p>延伸一下，此时领域层如何依赖基础设施层呢？怎么DIP呢？有没有丝毫感受到分层有问题呢。对此下会分解</p>
+<p>总结一下，我们需要正确看待耦合必然性，不是从技术实现的角度去硬生抽象，而需要从业务角度，挖掘出业务真正耦合的能力，坦然接受这样的耦合，清晰化表达业务语义</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SOLID/" rel="tag"># SOLID</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/dealing-with-complexity.html" rel="prev" title="应对复杂性">
+      <i class="fa fa-chevron-left"></i> 应对复杂性
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/what-is-zhongtai.html" rel="next" title="中台是什么">
+      中台是什么 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

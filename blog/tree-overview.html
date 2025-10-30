@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="树的类型不少，此篇简要对树进行描述，脑中有个整体概念，细节分篇再研究 树树（Tree）是n（n&gt;&#x3D;0）个结点的有限集。 在任意一棵非空树中： （1）有且仅有一个特定的称为根（Root）的结点； （2）当n&gt;1时，其余结点可分为m（m&gt;0）个互不相交的有限集T1，T2，…，Tn，其中每个集合本身又是一棵树，并称为根的子树（SubTree）  术语   结点：如上图，每一个">
+<meta property="og:type" content="article">
+<meta property="og:title" content="树概述">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/tree-overview.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="树的类型不少，此篇简要对树进行描述，脑中有个整体概念，细节分篇再研究 树树（Tree）是n（n&gt;&#x3D;0）个结点的有限集。 在任意一棵非空树中： （1）有且仅有一个特定的称为根（Root）的结点； （2）当n&gt;1时，其余结点可分为m（m&gt;0）个互不相交的有限集T1，T2，…，Tn，其中每个集合本身又是一棵树，并称为根的子树（SubTree）  术语   结点：如上图，每一个">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812151214_284.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812152132_367.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812152130_389.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812162204_751.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812162209_255.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812162227_296.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812162234_109.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812171908_816.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812191737_211.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812201422_279.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812201434_241.png">
+<meta property="og:image" content="http://images.zhuxingsheng.com/201812201548_306.png">
+<meta property="article:published_time" content="2018-12-12T03:10:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.013Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DataStructure">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/201812151214_284.png">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/tree-overview.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>树概述 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/tree-overview.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          树概述
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-12 11:10:00" itemprop="dateCreated datePublished" datetime="2018-12-12T11:10:00+08:00">2018-12-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>树的类型不少，此篇简要对树进行描述，脑中有个整体概念，细节分篇再研究</p>
+<h1 id="树"><a href="#树" class="headerlink" title="树"></a>树</h1><p>树（Tree）是n（n&gt;&#x3D;0）个结点的有限集。</p>
+<p>在任意一棵非空树中：</p>
+<p>（1）有且仅有一个特定的称为根（Root）的结点；</p>
+<p>（2）当n&gt;1时，其余结点可分为m（m&gt;0）个<strong>互不相交</strong>的有限集T1，T2，…，Tn，其中每个集合本身又是一棵树，并称为根的子树（SubTree）</p>
+<p><img src="http://images.zhuxingsheng.com/201812151214_284.png"></p>
+<h2 id="术语"><a href="#术语" class="headerlink" title="术语"></a>术语</h2><p><img src="http://images.zhuxingsheng.com/201812152132_367.png"></p>
+<p><img src="http://images.zhuxingsheng.com/201812152130_389.png"></p>
+<ol>
+<li>结点：如上图，每一个圈圈我们就称为树的一个结点</li>
+<li><strong>度</strong>: 结点拥有的子树数称为结点的度-(Degree)，树的度取树内各结点的度的最大值</li>
+<li>叶结点(Leaf)或终端结点: 度为0的结点</li>
+<li>内部结点: 度不为0的结点称为分支结点或非终端结点，除根结点外，分支结点也称为内部结点。5. 结点间的关系：结点的子树的根称为结点的孩子(Child)，相应的，该结点称为孩子的双亲(Parent)，同一双亲的孩子之间互称为兄弟(Sibling)。结点的祖先是从根到该结点所经分支上的所有结点</li>
+<li><strong>深度</strong>：树中结点的最大层次称为树的深度(Depth)或高度</li>
+<li>结点的层次(Level): 从根开始定一起，根为第一层，根的孩子为第二层。其双亲在同一层的结点互为堂兄弟</li>
+<li>有序树: 如果将树中结点的各子树看成从左至右是有次序的，不能互换的，则称该树为有序树, 否则为无序树</li>
+<li>森林(Forest): 是 m(m&gt;&#x3D;0)棵互不相交的树的集合。对树中每个结点而言，其子树的集合即为森林</li>
+</ol>
+<h1 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h1><p>二叉树(Binary Tree)是n(n&gt;&#x3D;0)个结点的有限集合。该集合可能是空的（空二叉树），也可能由<br>一个根结点和该根结点的左子树和右子树组成。左右子树不相交，而且都是二叉树</p>
+<h2 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h2><ol>
+<li>每个结点最多有两棵字树，即每个结点的度和树的度不大于2。</li>
+<li>结点的左子树和右子树是有顺序的，不能颠倒。</li>
+<li>即使结点只有一棵子树，也是有顺序的</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812162204_751.png"></p>
+<h1 id="满二叉树"><a href="#满二叉树" class="headerlink" title="满二叉树"></a>满二叉树</h1><p>除最后一层无任何子节点外，每一层上的所有结点都有两个子结点。也可以这样理解，除叶子结点外的所有结点均有两个子结点。节点数达到最大值，所有叶子结点必须在同一层上</p>
+<h1 id="完全二叉树"><a href="#完全二叉树" class="headerlink" title="完全二叉树"></a>完全二叉树</h1><p>若设二叉树的深度为h，除第 h 层外，其它各层 (1～(h-1)层) 的结点数都达到最大个数，第h层所有的结点都连续集中在最左边，这就是完全二叉树</p>
+<p><img src="http://images.zhuxingsheng.com/201812162209_255.png"></p>
+<p>之前讲过的<a href="http://zhuxingsheng.com/blog/algorithmic-slag-sort-heap-sort.html">《堆排序》</a> 就是依赖完全二叉树结构</p>
+<h1 id="二叉查找树"><a href="#二叉查找树" class="headerlink" title="二叉查找树"></a>二叉查找树</h1><p>二叉查找树(Binary Search Tree)，又被称为二叉搜索树</p>
+<p>（1）若任意节点的左子树不空，则左子树上所有结点的值均小于它的根结点的值；</p>
+<p>（2） 若任意节点的右子树不空，则右子树上所有结点的值均大于它的根结点的值；</p>
+<p>（3） 任意节点的左、右子树也分别为二叉查找树；</p>
+<p>（4） 没有键值相等的节点</p>
+<p><img src="http://images.zhuxingsheng.com/201812162227_296.png"></p>
+<h2 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h2><p><img src="http://images.zhuxingsheng.com/201812162234_109.png"></p>
+<p>复杂度分析：它和二分查找一样，插入和查找的时间复杂度均为O(logn)，<strong>但是在最坏的情况下仍然会有O(n)的时间复杂度</strong>。原因在于插入和删除元素的时候，树没有保持平衡</p>
+<h1 id="平衡二叉树"><a href="#平衡二叉树" class="headerlink" title="平衡二叉树"></a>平衡二叉树</h1><p>平衡二叉搜索树，又被称为AVL树</p>
+<p>由于普通的二叉查找树会容易失去”平衡“，极端情况下，**二叉查找树会退化成线性的链表，导致插入和查找的复杂度下降到 O(n) **，所以，这也是平衡二叉树设计的初衷。</p>
+<p><strong>具有以下性质</strong>：</p>
+<ol>
+<li>要么是棵空树，要么其根节点左右子树的深度之差的绝对值不超过1；</li>
+<li>其左右子树也都是平衡二叉树；</li>
+<li>二叉树节点的平衡因子定义为该节点的左子树的深度减去右子树的深度。则平衡二叉树的所有节点的平衡因子只可能是-1,0,1</li>
+</ol>
+<h1 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a>红黑树</h1><p>红黑树是一种自平衡二叉查找树，是在计算机科学中用到的一种数据结构，典型的用途是实现关联数组。它是在1972年由Rudolf Bayer发明的，他称之为”对称二叉B树”，它现代的名字是在 Leo J. Guibas 和 Robert Sedgewick 于1978年写的一篇论文中获得的。它是复杂的，但它的操作有着良好的最坏情况运行时间，并且在实践中是高效的: 它可以在O(log n)时间内做查找，插入和删除，这里的n是树中元素的数目</p>
+<h2 id="特性"><a href="#特性" class="headerlink" title="特性"></a>特性</h2><ol>
+<li>每个节点要么是红色，要么是黑色。</li>
+<li>根节点永远是黑色的。</li>
+<li>所有的叶节点都是空节点（即 null），并且是黑色的。</li>
+<li>每个红色节点的两个子节点都是黑色。（从每个叶子到根的路径上不会有两个连续的红色节点）</li>
+<li>从任一节点到其子树中每个叶子节点的路径都包含相同数量的黑色节点。</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812171908_816.png"></p>
+<h2 id="为什么需要红黑树"><a href="#为什么需要红黑树" class="headerlink" title="为什么需要红黑树"></a>为什么需要红黑树</h2><p>平衡二叉树的插入&#x2F;删除操作带来的旋转操作可能会达到logn次</p>
+<p>红黑树的插入操作最多进行两次旋转、删除操作最多进行三次旋转</p>
+<h1 id="B树"><a href="#B树" class="headerlink" title="B树"></a>B树</h1><p>B树是一种平衡的多路查找树，结点最大的孩子数目称为B树的阶（Order），是为磁盘存储而专门设计的一类平衡搜索树</p>
+<p>b-tree分为用“阶”的定义和用“度”的定义，度和阶都是描述子节点的数量的</p>
+<h2 id="特性-1"><a href="#特性-1" class="headerlink" title="特性"></a>特性</h2><ol>
+<li>定义任意非叶子结点最多只有M个儿子；且M&gt;2；</li>
+<li>根结点的儿子数为[2, M]；</li>
+<li>除根结点以外的非叶子结点的儿子数为[M&#x2F;2, M]；</li>
+<li>每个结点存放至少M&#x2F;2-1（取上整）和至多M-1个关键字；（至少2个关键字）</li>
+<li>非叶子结点的关键字个数&#x3D;指向儿子的指针个数-1；</li>
+<li>非叶子结点的关键字：K[1], K[2], …, K[M-1]；且K[i] &lt; K[i+1]；</li>
+<li>非叶子结点的指针：P[1], P[2], …, P[M]；其中P[1]指向关键字小于K[1]的子树，P[M]指向关键字大于K[M-1]的子树，其它P[i]指向关键字属于(K[i-1], K[i])的子树；</li>
+<li>所有叶子结点位于同一层；</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812191737_211.png" alt="逻辑结构图"></p>
+<p>这是B树存储在硬盘的逻辑结构图。</p>
+<p>其中根节点中17，35在称为关键字(key) ，实际中往往附带更多复杂类型数据。</p>
+<p>可以看出一个节点包含 keys  ChildNotePointer  2部分信息</p>
+<h2 id="为什么需要B树"><a href="#为什么需要B树" class="headerlink" title="为什么需要B树"></a>为什么需要B树</h2><ol>
+<li>当数据量大的时候，树的高度会比较高，数据量大的时候，查询会比较慢</li>
+<li>树每个节点只存储一个记录，可能导致一次查询有很多次磁盘IO</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812201422_279.png"></p>
+<p>这是个典型的b树结构，初始因子为1000，高度仅为3的b树，就可以存储1002001000的数据了</p>
+<p>假设要查询最后一个数据:</p>
+<ul>
+<li>从硬盘加载根节点搜索，IO一次。</li>
+<li>根据根节点的指针信息，去加载第二层的节点， IO一次。</li>
+<li>重复2，IO一次。<br>IO只用了3次，就查询了需要的数据，所以说B树效率是非常高的。</li>
+</ul>
+<p>B树的节点，在硬盘里表现为：柱面里的页(page)或盘块(block)，如果把索引持久化到内存，只需要一次就够了</p>
+<h1 id="B-树"><a href="#B-树" class="headerlink" title="B+树"></a>B+树</h1><p>B+树是B-树的变体，也是一种多路搜索树：</p>
+<ol>
+<li>其定义基本与B-树相同</li>
+<li>非叶子结点的子树指针与关键字个数相同（B树中是k-1个元素）</li>
+<li>非叶子结点的子树指针P[i]，指向关键字值属于[K[i], K[i+1])的子树（B-树是开区间）；</li>
+<li>为所有叶子结点增加一个链指针</li>
+<li>所有关键字都在叶子结点出现</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812201434_241.png"></p>
+<p>B+的搜索与B-树也基本相同，区别是B+树只有达到叶子结点才命中（B-树可以在非叶子结点命中），其性能也等价于在关键字全集做一次二分查找</p>
+<p>B树：有序数组+平衡多叉树</p>
+<p>B+树：有序数组链表+平衡多叉树</p>
+<p>B+树的关键字全部存放在叶子节点中，非叶子节点用来做索引，而叶子节点中有一个指针指向一下个叶子节点。做这个优化的目的是为了提高区间访问的性能。而正是这个特性决定了B+树更适合用来存储外部数据</p>
+<h2 id="为什么需要B-树"><a href="#为什么需要B-树" class="headerlink" title="为什么需要B+树"></a>为什么需要B+树</h2><ol>
+<li>b+树的中间节点不保存数据，所以磁盘页能容纳更多节点元素，更“矮胖”；</li>
+<li>b+树查询必须查找到叶子节点，b树只要匹配到即可不用管元素位置，因此b+树查找更稳定（并不慢）；</li>
+<li>对于范围查找来说，b+树只需遍历叶子节点链表即可，b树却需要重复地中序遍历</li>
+</ol>
+<h1 id="B-树-1"><a href="#B-树-1" class="headerlink" title="B*树"></a>B*树</h1><p>B*树是对B+树进行的又一次的升级。在B+树的非根和非叶子结点再增加指向兄弟的指针</p>
+<p><img src="http://images.zhuxingsheng.com/201812201548_306.png"></p>
+<p>在B+树基础上，为非叶子结点也增加链表指针，将结点的最低利用率从1&#x2F;2提高到2&#x2F;3；</p>
+<p>在这比如说当你进行插入节点的时候，它首先是放到兄弟节点里面。如果兄弟节点满了的话，进行分裂的时候从兄弟节点和这个节点各取出1&#x2F;3，放入新建的节点当中，这样也就实现了空间利用率从1&#x2F;2到1&#x2F;3。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p><strong>B树</strong>：二叉树，每个结点只存储一个关键字，等于则命中，小于走左结点，大于走右结点</p>
+<p><strong>B-树</strong>：多路搜索树，每个结点存储M&#x2F;2到M个关键字，非叶子结点存储指向关键字范围的子结点；<br>所有关键字在整颗树中出现，且只出现一次，非叶子结点可以命中；</p>
+<p><strong>B+树</strong>：在B-树基础上，为叶子结点增加链表指针，所有关键字都在叶子结点中出现，非叶子结点作为叶子结点的索引；B+树总是到叶子结点才命中；</p>
+<p><strong>B*树</strong>：在B+树基础上，为非叶子结点也增加链表指针，将结点的最低利用率从1&#x2F;2提高到2&#x2F;3；</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://blog.csdn.net/acs713/article/details/6880375">B-树学习笔记</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DataStructure/" rel="tag"># DataStructure</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/easy-to-understand-index.html" rel="prev" title="深入浅出索引">
+      <i class="fa fa-chevron-left"></i> 深入浅出索引
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/marketing-warfare.html" rel="next" title="Marketing Warfare">
+      Marketing Warfare <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%91"><span class="nav-number">1.</span> <span class="nav-text">树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AF%E8%AF%AD"><span class="nav-number">1.1.</span> <span class="nav-text">术语</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">2.</span> <span class="nav-text">二叉树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E7%82%B9"><span class="nav-number">2.1.</span> <span class="nav-text">特点</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%BB%A1%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">3.</span> <span class="nav-text">满二叉树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%8C%E5%85%A8%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">4.</span> <span class="nav-text">完全二叉树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8C%E5%8F%89%E6%9F%A5%E6%89%BE%E6%A0%91"><span class="nav-number">5.</span> <span class="nav-text">二叉查找树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E5%BA%A6"><span class="nav-number">5.1.</span> <span class="nav-text">复杂度</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E4%BA%8C%E5%8F%89%E6%A0%91"><span class="nav-number">6.</span> <span class="nav-text">平衡二叉树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%A2%E9%BB%91%E6%A0%91"><span class="nav-number">7.</span> <span class="nav-text">红黑树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E6%80%A7"><span class="nav-number">7.1.</span> <span class="nav-text">特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E7%BA%A2%E9%BB%91%E6%A0%91"><span class="nav-number">7.2.</span> <span class="nav-text">为什么需要红黑树</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#B%E6%A0%91"><span class="nav-number">8.</span> <span class="nav-text">B树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E6%80%A7-1"><span class="nav-number">8.1.</span> <span class="nav-text">特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81B%E6%A0%91"><span class="nav-number">8.2.</span> <span class="nav-text">为什么需要B树</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#B-%E6%A0%91"><span class="nav-number">9.</span> <span class="nav-text">B+树</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81B-%E6%A0%91"><span class="nav-number">9.1.</span> <span class="nav-text">为什么需要B+树</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#B-%E6%A0%91-1"><span class="nav-number">10.</span> <span class="nav-text">B*树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">11.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">12.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

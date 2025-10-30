@@ -1,0 +1,1578 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="彪悍的人生需要书写">
+<meta property="og:type" content="website">
+<meta property="og:title" content="码农戏码">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/page/13/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="彪悍的人生需要书写">
+<meta property="og:locale">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/page/13/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm---recursive-algorithm.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/algorithm---recursive-algorithm.html" class="post-title-link" itemprop="url">算法渣-递归算法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-09 11:09:00" itemprop="dateCreated datePublished" datetime="2018-12-09T11:09:00+08:00">2018-12-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>之前的排序算法 <a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-fast.html">《快速排序》</a> 与 <a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sort-merge-sort.html">《归并排序》</a> 都使用了递归手法，如果不能理解递归，那分治思想类算法实现就难以理解</p>
+<h1 id="递归"><a href="#递归" class="headerlink" title="递归"></a>递归</h1><p>To iterate is human,to recurse divine. — L. Peter Deutsch</p>
+<p>迭代的是人，递归的是神</p>
+<h1 id="递归思想"><a href="#递归思想" class="headerlink" title="递归思想"></a>递归思想</h1><p>递归的基本思想是<strong>把规模大的问题转化为规模小的相似的子问题来解决</strong>。在函数实现时，因为解决大问题的方法和解决小问题的方法往往是同一个方法，所以就产生了函数调用它自身的情况。另外这个解决问题的函数必须有明显的结束条件，这样就不会产生无限递归的情况了。</p>
+<p><strong>递归中的“递”就是入栈，递进；“归”就是出栈，回归</strong></p>
+<p><strong>规模大转化为规模小是核心思想</strong>，但递归并非是只做这步转化，而是把规模大的问题分解为规模小的子问题和可以在子问题解决的基础上剩余的可以自行解决的部分。而后者就是<strong>归的精髓所在</strong>，是在实际解决问题的过程</p>
+<blockquote>
+<p>为什么我老是有递归没有真的在解决问题的感觉？</p>
+</blockquote>
+<blockquote>
+<p>因为递是描述问题，归是解决问题。而我的大脑容易被递占据，只往远方去了，连尽头都没走到，何谈回的来</p>
+</blockquote>
+<h2 id="递归就是有去（递去）有回（归来）"><a href="#递归就是有去（递去）有回（归来）" class="headerlink" title="递归就是有去（递去）有回（归来）"></a>递归就是有去（递去）有回（归来）</h2><ul>
+<li>为什么可以”有去“？</li>
+</ul>
+<p>这要求递归的问题需要是可以用同样的解题思路来回答除了规模大小不同其他完全一样的问题</p>
+<ul>
+<li>为什么可以”有回“？</li>
+</ul>
+<p>这要求这些问题不断从大到小，从近及远的过程中，会有一个终点，一个临界点，一个baseline，一个你到了那个点就不用再往更小，更远的地方走下去的点，然后从那个点开始，原路返回到原点</p>
+<h1 id="递归三要素"><a href="#递归三要素" class="headerlink" title="递归三要素"></a>递归三要素</h1><p>用程序表达出来，确定了三个要素：<strong>递 + 结束条件 + 归</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function recursion(大规模)&#123;</span><br><span class="line">    if (end_condition)    &#123;</span><br><span class="line">        end;     </span><br><span class="line">    &#125; else &#123;     //先将问题全部描述展开，再由尽头“返回”依次解决每步中剩余部分的问题</span><br><span class="line">        recursion(小规模);     //go;</span><br><span class="line">        solve;                //back;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>另一种递归情况，比如递归遍历的二叉树的先序</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function recursion(大规模)&#123;</span><br><span class="line">    if (end_condition)&#123;</span><br><span class="line">        end;     </span><br><span class="line">    &#125;else&#123;     //在将问题转换为子问题描述的每一步，都解决该步中剩余部分的问题。</span><br><span class="line">        solve;                //back;</span><br><span class="line">        recursion(小规模);     //go;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="示例"><a href="#示例" class="headerlink" title="示例"></a>示例</h1><h2 id="阶乘"><a href="#阶乘" class="headerlink" title="阶乘"></a>阶乘</h2><p>求一个数的阶乘是练习简单而典型的例子，阶乘的递推公式为：factorial(n)&#x3D;n*factorial(n-1)，其中n为非负整数,且0!&#x3D;1,1!&#x3D;1</p>
+<p>我们根据递推公式可以轻松的写出其递归函数：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public static long factorial(int n) throws Exception &#123;</span><br><span class="line">    if (n &lt; 0)</span><br><span class="line">        throw new Exception(&quot;参数不能为负！&quot;);</span><br><span class="line">    else if (n == 1 || n == 0)</span><br><span class="line">        return 1;</span><br><span class="line">    else</span><br><span class="line">        return n * factorial(n - 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在求解6的阶乘时，递归过程:</p>
+<p><img src="http://images.zhuxingsheng.com/201812091046_163.png"></p>
+<h2 id="斐波那契数列"><a href="#斐波那契数列" class="headerlink" title="斐波那契数列"></a>斐波那契数列</h2><p>斐波那契数列的递推公式:Fib(n)&#x3D;Fib(n-1)+Fib(n-2)，指的是如下所示的数列：</p>
+<p>1、1、2、3、5、8、13、21…..</p>
+<p>按照其递推公式写出的递归函数如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">public static int fib(int n) throws Exception &#123;</span><br><span class="line">    if (n &lt; 0)</span><br><span class="line">        throw new Exception(&quot;参数不能为负！&quot;);</span><br><span class="line">    else if (n == 0 || n == 1)</span><br><span class="line">        return n;</span><br><span class="line">    else</span><br><span class="line">        return fib(n - 1) + fib(n - 2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://images.zhuxingsheng.com/201812091132_2.png"></p>
+<h1 id="VS迭代"><a href="#VS迭代" class="headerlink" title="VS迭代"></a>VS迭代</h1><p>递归算法与迭代算法的设计思路区别在于：<strong>函数或算法是否具备收敛性</strong>，当且仅当一个算法存在预期的收敛效果时，采用递归算法才是可行的，否则，就不能使用递归算法</p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://blog.csdn.net/StruggleShu/article/details/51051140">怎么更好地终极理解递归算法</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm---sort---merge-sort.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/algorithm---sort---merge-sort.html" class="post-title-link" itemprop="url">算法渣-排序-归并排序</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-08 10:35:00" itemprop="dateCreated datePublished" datetime="2018-12-08T10:35:00+08:00">2018-12-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法</p>
+</blockquote>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>归并排序（MERGE-SORT）是建立在归并操作上的一种有效的排序算法,该算法是采用分治法（Divide and Conquer）的一个非常典型的应用。将已有序的子序列合并，得到完全有序的序列；即先使每个子序列有序，再使子序列段间有序。若将两个有序表合并成一个有序表，称为二路归并。</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>归并排序(Merge Sort)就是利用归并思想对数列进行排序。根据具体的实现，归并排序包括”<strong>从上往下</strong>“和”<strong>从下往上</strong>“2种方式</p>
+<p><strong>从上往下的归并排序：</strong></p>
+<ol>
+<li>分解 – 将当前区间一分为二，即求分裂点 mid &#x3D; (low + high)&#x2F;2</li>
+<li>求解 – 递归地对两个子区间a[low…mid] 和 a[mid+1…high]进行归并排序。递归的终结条件是子区间长度为1</li>
+<li>合并 – 将已排序的两个子区间a[low…mid]和 a[mid+1…high]归并为一个有序的区间a[low…high]</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812081004_402.png"></p>
+<p> <strong>从下往上的归并排序：</strong></p>
+<ol>
+<li>将待排序的数列分成若干个长度为1的子数列，然后将这些数列两两合并；</li>
+<li>得到若干个长度为2的有序数列，再将这些数列两两合并；得到若干个长度为4的有序数列，再将它们两两合并；</li>
+<li>直接合并成一个数列为止。这样就得到了我们想要的排序结果。</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201812081624_753.png"></p>
+<h3 id="归并步骤"><a href="#归并步骤" class="headerlink" title="归并步骤"></a>归并步骤</h3><ul>
+<li>第一步：申请空间，使其大小为两个已经排序序列之和，该空间用来存放合并后的序列</li>
+<li>第二步：设定两个指针，最初位置分别为两个已经排序序列的起始位置</li>
+<li>第三步：比较两个指针所指向的元素，选择相对小的元素放入到合并空间，并移动指针到下一位置</li>
+<li>重复步骤3直到某一指针超出序列尾，将另一序列剩下的所有元素直接复制到合并序列尾</li>
+</ul>
+<p>比如合并，要将[4,5,7,8]和[1,2,3,6]两个已经有序的子序列，合并为最终序列[1,2,3,4,5,6,7,8]，来看下实现步骤</p>
+<p><img src="http://images.zhuxingsheng.com/201812082218_207.png"></p>
+<p><img src="http://images.zhuxingsheng.com/201812082218_695.png"></p>
+<h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><p><img src="http://images.zhuxingsheng.com/mergesort.gif" alt="image"></p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 归并排序</span><br><span class="line"> * @param array</span><br><span class="line"> * @param left</span><br><span class="line"> * @param right</span><br><span class="line"> */</span><br><span class="line">private static void mergeSort(int []array,int left,int right)&#123;</span><br><span class="line">    if(left &lt; right) &#123;</span><br><span class="line">        //分解</span><br><span class="line">        int mid = (left + right) / 2;</span><br><span class="line">        mergeSort(array,left,mid);</span><br><span class="line">        mergeSort(array,mid + 1,right);</span><br><span class="line">        //合并</span><br><span class="line">        merge(array,left,mid,right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">static void merge(int []array,int left,int mid,int right) &#123;</span><br><span class="line">    System.out.println(&quot;merge-&gt;left:&quot;+left+&quot; mid:&quot;+mid+&quot; rgiht:&quot;+right);</span><br><span class="line">    int i = left;</span><br><span class="line">    int j = mid +1;</span><br><span class="line">    int tmp[] = new int[right-left+1];//构建tmp数组</span><br><span class="line">    int t = 0;//tmp数组索引</span><br><span class="line">    //填充tmp数组</span><br><span class="line">    for (;i&lt;=mid &amp;&amp; j&lt;=right;) &#123;</span><br><span class="line">        if(array[i] &lt; array[j]) &#123;</span><br><span class="line">            tmp[t++] = array[i++];</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            tmp[t++] = array[j++];</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    while (i&lt;=mid) &#123;</span><br><span class="line">        tmp[t++] = array[i++];</span><br><span class="line">    &#125;</span><br><span class="line">    while (j&lt;=right) &#123;</span><br><span class="line">        tmp[t++] = array[j++];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //再把tmp复制到array</span><br><span class="line">    t = 0;</span><br><span class="line">    while (left&lt;=right) &#123;</span><br><span class="line">        array[left++] = tmp[t++];</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(&quot;  tmp:&quot;+ Arrays.toString(tmp));</span><br><span class="line">    System.out.println(&quot;merge:&quot;+ Arrays.toString(array));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><p>归并排序的时间复杂度是O(N*lgN)</p>
+<p>假设被排序的数列中有N个数。遍历一趟的时间复杂度是O(N)，需要遍历多少次呢？</p>
+<p>归并排序的形式就是一棵二叉树，它需要遍历的次数就是二叉树的深度，而根据完全二叉树的可以得出它的时间复杂度是O(N*lgN)</p>
+<table>
+<thead>
+<tr>
+<th>Best</th>
+<th>Average</th>
+<th>Worst</th>
+<th>Memory</th>
+<th align="center">Stable</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>n log(n)</td>
+<td>n log(n)</td>
+<td>n log(n)</td>
+<td>n</td>
+<td align="center">Yes</td>
+</tr>
+</tbody></table>
+<h1 id="VS-快速排序"><a href="#VS-快速排序" class="headerlink" title="VS 快速排序"></a>VS 快速排序</h1><p>归并排序（MergeSort）和<a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-fast.html">快速排序(QuickSort)</a>都是用了分治算法思想。</p>
+<p>所谓分治算法，顾名思义，就是分而治之，就是将原问题分割成同等结构的子问题，之后将子问题逐一解决后，原问题也就得到了解决。</p>
+<p>同时，归并排序（MergeSort）和<a href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-fast.html">快速排序(QuickSort)</a>也代表了两类分治算法的思想。</p>
+<p>对于归并排序，我们对于待处理序列怎么分的问题上并没有太多关注，仅仅是简单地一刀切，将整个序列分成近乎均匀的两份，然后将子序列进行同样处理。但是，我们更多的关注点在于怎么把分开的部分合起来，也就是merge的过程。</p>
+<p>对于快速排序来说，我们则是花了很大的功夫放在了怎么分这个问题上，我们设定了枢轴（标定点），然后通过partition的过程将这个枢轴放在合适的位置，这样我们就不用特别关心合起来的过程，只需要一步一步地递归下去即可。</p>
+<p>归并排序是由下向上的，先处理子数组然后再合并。而快速排序正好相反，它的过程是由上向下的，先分出两个子区间，再对子区间进行排序。归并排序是稳定的时间复杂度为 O(n)O(n)，但它是非原地算法，在进行子数组合并的时候，我们需要临时申请一个数组来暂时存放排好序的数据。因为这个临时空间是可以重复利用的，因此归并排序的空间复杂度为 O(n)，最多需要存放 n 个数据；<br>而快排则是原地排序算法</p>
+<p><img src="http://images.zhuxingsheng.com/201812081122_255.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm-slag-sort-heap-sort.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/algorithm-slag-sort-heap-sort.html" class="post-title-link" itemprop="url">算法渣-排序-堆排序</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-03 13:01:00" itemprop="dateCreated datePublished" datetime="2018-12-03T13:01:00+08:00">2018-12-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法</p>
+</blockquote>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>堆排序（英语：Heapsort）是指利用堆这种数据结构所设计的一种排序算法。堆是一个近似完全二叉树的结构，并同时满足堆积的性质：即子结点的键值或索引总是小于（或者大于）它的父节点。</p>
+<h2 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h2><p>堆是一棵顺序存储的完全二叉树</p>
+<p><img src="http://images.zhuxingsheng.com/201811261838_620.png"></p>
+<p>其中每个结点的关键字都不大于其孩子结点的关键字，这样的堆称为<strong>小根堆</strong>。</p>
+<p>其中每个结点的关键字都不小于其孩子结点的关键字，这样的堆称为<strong>大根堆</strong>。</p>
+<p>举例来说，对于n个元素的序列{R0, R1, … , Rn}当且仅当满足下列关系之一时，称之为堆：</p>
+<p>(1) Ri &lt;&#x3D; R2i+1 且 Ri &lt;&#x3D; R2i+2 (小根堆)</p>
+<p>(2) Ri &gt;&#x3D; R2i+1 且 Ri &gt;&#x3D; R2i+2 (大根堆)</p>
+<p>其中i&#x3D;1,2,…,n&#x2F;2向下取整; </p>
+<p><img src="http://images.zhuxingsheng.com/201811261841_9.png"></p>
+<p>同时，我们对堆中的结点按层进行编号，将这种逻辑结构映射到数组中就是下面这个样子</p>
+<p><img src="http://images.zhuxingsheng.com/201811261842_548.png"></p>
+<h3 id="完全二叉树"><a href="#完全二叉树" class="headerlink" title="完全二叉树"></a>完全二叉树</h3><p>完全二叉树的定义是建立在<strong>满二叉树</strong>定义的基础上的，而满二叉树又是建立在<strong>二叉树</strong>的基础上的。</p>
+<h4 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h4><p>二叉树是树的特殊一种，具有如下特点：</p>
+<ol>
+<li>每个结点最多有两颗子树，结点的度最大为2。</li>
+<li>左子树和右子树是有顺序的，次序不能颠倒。</li>
+<li>即使某结点只有一个子树，也要区分左右子树。</li>
+</ol>
+<h4 id="满二叉树"><a href="#满二叉树" class="headerlink" title="满二叉树"></a>满二叉树</h4><p>所有的分支结点都存在左子树和右子树，并且所有的叶子结点都在同一层上，这样就是满二叉树。就是完美圆满的意思，关键在于树的平衡</p>
+<p><img src="http://images.zhuxingsheng.com/201811261854_356.png"></p>
+<p>根据满二叉树的定义，得到其特点为：</p>
+<ol>
+<li>叶子只能出现在最下一层。</li>
+<li>非叶子结点度一定是2.</li>
+<li>在同样深度的二叉树中，满二叉树的结点个数最多，叶子树最多。</li>
+</ol>
+<h4 id="完全二叉树-1"><a href="#完全二叉树-1" class="headerlink" title="完全二叉树"></a>完全二叉树</h4><p>对于一个树高为h的二叉树，如果其第0层至第h-1层的节点都满。如果最下面一层节点不满，则所有的节点在左边的连续排列，空位都在右边。这样的二叉树就是一棵完全二叉树</p>
+<p><img src="http://images.zhuxingsheng.com/201811261913_616.png"></p>
+<p>在上图中，树1，按层次编号5结点没有左子树，有右子树，10结点缺失。树2由于3结点没有字数，是的6,7位置空挡了。树3中结点5没有子树。</p>
+<p><img src="http://images.zhuxingsheng.com/201811261914_286.png" alt="完全二叉树"></p>
+<p>上图就是一个完全二叉树</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>利用堆顶记录的是最大(以大顶堆为例)关键字这一特性，每一轮取堆顶元素放入有序区，就类似选择排序每一轮选择一个最大值放入有序区，可以把堆排序看成是选择排序的改进。</p>
+<ol>
+<li><p>将初始待排序关键字序列(R0,R1,R2….Rn)构建成大顶堆，此堆为初始的无序区；</p>
+</li>
+<li><p>将堆顶元素R[0]与最后一个元素R[n]交换，此时得到新的无序区(R0,R1,R2,……Rn-1)和新的有序区(Rn)；</p>
+</li>
+<li><p>由于交换后新的堆顶R[0]可能违反堆的性质，因此需要对当前无序区(R0,R1,R2,……Rn-1)调整为新堆</p>
+</li>
+</ol>
+<p>不断重复此2、3步骤直到有序区的元素个数为n-1，则整个排序过程完成</p>
+<h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><ol>
+<li>由一个无序序列建成一个堆</li>
+<li>输出堆顶元素之后，调整剩余元素成为一个新的堆</li>
+</ol>
+<h3 id="1-构造堆"><a href="#1-构造堆" class="headerlink" title="1.构造堆"></a>1.构造堆</h3><p>构造初始堆,将给定无序序列构造成一个大顶堆（一般升序采用大顶堆，降序采用小顶堆)</p>
+<p><strong>数组是一个无序结构</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271259_152.png"></p>
+<p>因为(n&#x2F;2-1)~0的节点才有子节点，n&#x3D;5,(n&#x2F;2-1) &#x3D; 1  即1 0节点才有子节点</p>
+<p>所以将1 0节点从下到上，从右到左的与它自己的子节点比较并调整最终形成大顶堆</p>
+<p><strong>1. 节点1和它的子节点3 4的元素进行比较，最大者作为父节点</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271306_820.png"></p>
+<p><strong>2. 将节点0和它的子节点1 2的元素进行比较，最大者为父节点</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271314_604.png"></p>
+<p><strong>3. 交换导致了子根[4,5,6]结构混乱，继续调整，[4,5,6]中6最大，交换4和6</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271316_305.png"></p>
+<p><strong>构造完成</strong>将一个无需序列构造成了一个大顶堆</p>
+<h3 id="2-调整堆"><a href="#2-调整堆" class="headerlink" title="2. 调整堆"></a>2. 调整堆</h3><p>将堆顶元素与末尾元素进行交换，使末尾元素最大。然后继续调整堆，再将堆顶元素与末尾元素交换，得到第二大元素。如此反复进行交换、重建、交换。</p>
+<p><strong>1. 将堆顶元素9和末尾元素4进行交换</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271319_374.png"></p>
+<p><strong>2. 重新调整结构，使其继续满足堆定义</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271320_482.png"></p>
+<p><strong>3. 再将堆顶元素8与末尾元素5进行交换，得到第二大元素8</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271321_268.png"></p>
+<p><strong>4. 继续进行调整，交换，如此反复进行，最终使得整个序列有序</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811271322_612.png"></p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"> /**</span><br><span class="line"> *</span><br><span class="line"> * a.将无需序列构建成一个堆，根据升序降序需求选择大顶堆或小顶堆;</span><br><span class="line"></span><br><span class="line"> 　b.将堆顶元素与末尾元素交换，将最大元素&quot;沉&quot;到数组末端;</span><br><span class="line"></span><br><span class="line"> 　c.重新调整结构，使其满足堆定义，然后继续交换堆顶元素与当前末尾元素，反复执行调整+交换步骤，直到整个序列有序。</span><br><span class="line"></span><br><span class="line"> * 整个排序过程，就是构造堆的过程</span><br><span class="line"> *</span><br><span class="line"> * 这儿写得利于理解一点，把最后一步改掉，循环从数组中把第一位取出来放到新数组，剩余的再去构造堆</span><br><span class="line"> * @param array</span><br><span class="line"> */</span><br><span class="line">static void heapSort(int []array) &#123;</span><br><span class="line">    //原始数组</span><br><span class="line">    int [] oriental = Arrays.copyOf(array,array.length);</span><br><span class="line">    //最终排序好的数组</span><br><span class="line">    int [] result = new int[array.length];</span><br><span class="line"></span><br><span class="line">    int length = array.length;</span><br><span class="line">    for ( int i = 0;i&lt; length;i++) &#123;</span><br><span class="line">        //1.构造堆</span><br><span class="line">        buildHeap(array);</span><br><span class="line">        //构建完array[0]就是最大的元素,取出来放到排序好的数组</span><br><span class="line">        result[i] = array[0];</span><br><span class="line">        //[0]取走之后，一个新数组，再去构造堆</span><br><span class="line">        array = Arrays.copyOfRange(array, 1,length-i);</span><br><span class="line">    &#125;</span><br><span class="line">    System.out.println(&quot;finish:&quot;+ Arrays.toString(result));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 构造椎</span><br><span class="line"> * @param array</span><br><span class="line"> */</span><br><span class="line">static void buildHeap(int []array) &#123;</span><br><span class="line">    //(n/2-1)~0的节点才有子节点</span><br><span class="line">    for (int i= array.length/2 -1 ;i&gt;=0;i--) &#123;</span><br><span class="line">//            System.out.println(&quot;i:&quot;+i);</span><br><span class="line">//            System.out.println(&quot;start:&quot;+ Arrays.toString(array));</span><br><span class="line">        int k = i;</span><br><span class="line">        for (int left = k * 2 + 1; left &lt; array.length; left = k * 2 + 1) &#123;</span><br><span class="line">           // System.out.println(&quot;build:&quot;+ Arrays.toString(array));</span><br><span class="line">            int max = left;</span><br><span class="line">            int right = left + 1;</span><br><span class="line">            //有右节点</span><br><span class="line">            if (right &lt; array.length) &#123;</span><br><span class="line">                if (array[right] &gt; array[left]) &#123;</span><br><span class="line">                    max = right;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            //max是left子节点,那就交换左子节点与k</span><br><span class="line">            if (array[max] &gt; array[k]) &#123;</span><br><span class="line">                swap(array, max, k);</span><br><span class="line">                // 下面就是非常关键的一步了</span><br><span class="line">                // 如果子节点更换了，那么，以子节点为根的子树会不会受到影响呢？</span><br><span class="line">                // 所以，循环对子节点所在的树继续进行判断</span><br><span class="line">                k = left;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    //System.out.println(&quot;  end:&quot;+ Arrays.toString(array));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>详细代码：<br><a href="https://github.com/zhuxingsheng/javastudy/tree/master/src/main/java/com/jack/algorithms/sort">https://github.com/zhuxingsheng/javastudy/tree/master/src/main/java/com/jack/algorithms/sort</a></p>
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><table>
+<thead>
+<tr>
+<th>Best</th>
+<th>Average</th>
+<th>Worst</th>
+<th>Memory</th>
+<th align="center">Stable</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>n log(n)</td>
+<td>n log(n)</td>
+<td>n log(n)</td>
+<td>1</td>
+<td align="center">No</td>
+</tr>
+</tbody></table>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://www.cnblogs.com/chengxiao/p/6129630.html">图解排序算法(三)之堆排序</a></p>
+<p><a href="https://www.cnblogs.com/MOBIN/p/5374217.html">图解堆排序</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm---sort---select.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/algorithm---sort---select.html" class="post-title-link" itemprop="url">算法渣-排序-选择</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-03 13:01:00" itemprop="dateCreated datePublished" datetime="2018-12-03T13:01:00+08:00">2018-12-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法</p>
+</blockquote>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>选择排序（Selection sort）是一种简单直观的排序算法。它的工作原理是每一次从待排序的数据元素中选出最小（或最大）的一个元素，存放在序列的起始位置，然后，再从剩余未排序元素中继续寻找最小（大）元素，然后放到已排序序列的末尾。以此类推，直到全部待排序的数据元素排完。 选择排序是不稳定的排序方法。</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>n个记录的文件的直接选择排序可经过n-1趟直接选择排序得到有序结果：</p>
+<ol>
+<li>初始状态：无序区为R[1..n]，有序区为空</li>
+<li>第1趟排序<br>在无序区R[1..n]中选出关键字最小的记录R[k]，将它与无序区的第1个记录R[1]交换，使R[1..1]和R[2..n]分别变为记录个数增加1个的新有序区和记录个数减少1个的新无序区。<br>……</li>
+<li>第i趟排序<br>第i趟排序开始时，当前有序区和无序区分别为R[1..i-1]和R(i..n）。该趟排序从当前无序区中选出关键字最小的记录 R[k]，将它与无序区的第1个记录R交换，使R[1..i]和R分别变为记录个数增加1个的新有序区和记录个数减少1个的新无序区。</li>
+</ol>
+<h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><p><img src="http://images.zhuxingsheng.com/selectsort.gif" alt="image"></p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">static void selectSort(int []array) &#123;</span><br><span class="line">    for (int i=0;i&lt;array.length-1;i++) &#123;</span><br><span class="line">        int min  = i;</span><br><span class="line">        for (int j = i+1;j&lt;array.length;j++)&#123;</span><br><span class="line">            if(array[min] &gt; array[j]) &#123;</span><br><span class="line">                min = j;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if( min != i) &#123;</span><br><span class="line">            int tmp = array[i];</span><br><span class="line">            array[i] = array[min];</span><br><span class="line">            array[min] = tmp;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><p>比较次数：T &#x3D; （n-1)）+ （n -2）+（n - 3）…. + 1; T &#x3D; [n*(n-1) ] &#x2F; 2；</p>
+<p>交换次数：</p>
+<p>最好的情况全部元素已经有序，则交换次数为0；</p>
+<p>最差的情况，全部元素逆序，就要交换 n-1 次；</p>
+<p><strong>空间复杂度</strong></p>
+<p>最优的情况下（已经有顺序）复杂度为：O(0) </p>
+<p>最差的情况下（全部元素都要重新排序）复杂度为：O(n );</p>
+<p>平均的时间复杂度：O(1)</p>
+<p>Best| Average| Worst|Memory|Stable<br> — | —   | —  |——| :–: |—<br>n²   |  n²   |	n²	| 1 |	No</p>
+<h1 id="VS-插入排序"><a href="#VS-插入排序" class="headerlink" title="VS 插入排序"></a>VS 插入排序</h1><p>插入排序特别的相似</p>
+<p><strong>复杂度一样</strong>，但是插入排序和读入（初始）的数据有关，最优情况只有O(n)；而选择排序不论如何，永远都是O(n^2)</p>
+<p>插入排序是边读边排，每当读入一个新的数时，目前的数组一定是排好序的。而选择排序不同，它必须是读完所有的数据之后才能开始排序的。</p>
+<p>那么选择排序的缺点就是，万一数据量很大，比方说一百万个，光读就慢了，还要排序，那就更慢了。如果这两个耗时的步骤可以并行一起做的话，显然插入排序肯定就会快一些。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm---sorting---hill.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/algorithm---sorting---hill.html" class="post-title-link" itemprop="url">算法渣-排序-希尔</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-12-03 13:00:00" itemprop="dateCreated datePublished" datetime="2018-12-03T13:00:00+08:00">2018-12-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法</p>
+</blockquote>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>希尔排序是希尔（Donald Shell）于1959年提出的一种排序算法。希尔排序也是一种插入排序，它是简单插入排序经过改进之后的一个更高效的版本，也称为缩小增量排序，同时该算法是冲破O(n2）的第一批算法之一</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>直接插入排序很循规蹈矩，不管数组分布是怎么样的，依然一步一步的对元素进行比较，移动，插入，比如[5,4,3,2,1,0]这种倒序序列，数组末端的0要回到首位置很是费劲，比较和移动元素均需n-1次</p>
+<p><strong>是否能够减少这样的移位呢？不希望是一步一步的移动，而是大步大步的移动</strong>。</p>
+<p>希尔排序是把记录按下标的一定<strong>增量分组</strong>，对每组使用直接插入排序算法排序；随着增量逐渐减少，每组包含的关键词越来越多，当增量减至1时，整个文件恰被分成一组，算法便终止</p>
+<p>初始时,有一个大小为 10 的无序序列</p>
+<p>在第一趟排序中,我们不妨设 gap1 &#x3D; N &#x2F; 2 &#x3D; 5,即相隔距离为 5 的元素组成一组,可以分为 5 组</p>
+<p>接下来,按照直接插入排序的方法对每个组进行排序</p>
+<p>在第二趟排序中,我们把上次的 gap 缩小一半,即 gap2 &#x3D; gap1 &#x2F; 2 &#x3D; 2 (取整数)。这样每相隔距离为 2 的元素组成一组,可以分为 2 组</p>
+<p>按照直接插入排序的方法对每个组进行排序</p>
+<p>在第三趟排序中,再次把 gap 缩小一半,即gap3 &#x3D; gap2 &#x2F; 2 &#x3D; 1。 这样相隔距离为 1 的元素组成一组,即只有一组</p>
+<p>按照直接插入排序的方法对每个组进行排序。此时,排序已经结束</p>
+<h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><ul>
+<li><strong>1.增量N&#x2F;2&#x3D;4分组</strong></li>
+</ul>
+<p><img src="http://images.zhuxingsheng.com/201811201857_91.png"></p>
+<p><strong>{35, 14}, {33, 19}, {42, 27} , {10, 44}</strong></p>
+<p>排序完：</p>
+<p><img src="http://images.zhuxingsheng.com/201811201902_31.png"></p>
+<ul>
+<li><strong>2.增量N&#x2F;2&#x2F;2&#x3D;2分组</strong></li>
+</ul>
+<p><img src="http://images.zhuxingsheng.com/201811201903_440.png"></p>
+<p><strong>{14, 27, 35, 42}, {19, 10, 33, 44}</strong></p>
+<p>排序完：</p>
+<p><img src="http://images.zhuxingsheng.com/201811201906_636.png"></p>
+<ul>
+<li><strong>3.增量N&#x2F;2&#x2F;2&#x2F;2&#x3D;1分组排序</strong></li>
+</ul>
+<p><img src="http://images.zhuxingsheng.com/201811201926_160.png"></p>
+<p>也可以通过动画更清晰了解整个排序过程</p>
+<p>动画：<a href="http://www.zhuxingsheng.com/tools/sort/sort.html">http://www.zhuxingsheng.com/tools/sort/sort.html</a></p>
+<p><strong>分组排序后，他们的索引还是保留在原始索引中</strong>，来两个更加直观的动画演示</p>
+<p><img src="http://images.zhuxingsheng.com/shellsort0.gif" alt="image"></p>
+<p><img src="http://images.zhuxingsheng.com/shellsort1.gif" alt="image"></p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">static void shellSort(int []array) &#123;</span><br><span class="line">        //以length/2为增量</span><br><span class="line">        for (int gap=array.length/2;gap&gt;0;gap= gap/2) &#123;</span><br><span class="line">            //以gap分组，进行排序</span><br><span class="line">           for(int i = gap;i&lt;array.length;i++)&#123;</span><br><span class="line">               int tmp = array[i];</span><br><span class="line">               int j = i - gap;</span><br><span class="line">               //相对直接插入，步长从1变成了gap</span><br><span class="line">               while ( j&gt;=0 &amp;&amp; tmp&lt;array[j] ) &#123;</span><br><span class="line">                   array[j+gap] = array[j];</span><br><span class="line">                   j=j-gap;</span><br><span class="line">               &#125;</span><br><span class="line">               array[j+gap] = tmp;</span><br><span class="line">           &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><p>希尔排序的时间复杂度与增量(即，步长gap)的选取有关</p>
+<p>{1,2,4,8,…}这种序列并不是很好的增量序列，使用这个增量序列的时间复杂度（最坏情形）是O(n²)</p>
+<p>Hibbard提出了另一个增量序列{1,3,7，…,2^k-1}，这种序列的时间复杂度(最坏情形)为O(n^1.5)</p>
+<p>Sedgewick提出了几种增量序列，其最坏情形运行时间为O（n^1.3）,其中最好的一个序列是{1,5,19,41,109,…}</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">9×4^i−9×2i+1  和 4^i−3×2^i+1  这两个算式</span><br></pre></td></tr></table></figure>
+<p>其中， i&#x3D;0,1,2,⋯ 时，第一个式子计算出的值分别为1，19，109，……； i&#x3D;2,3,⋯ 时，第二个式子算出的值分别为5，41，……</p>
+<p>Best| Average| Worst|Memory|Stable<br> — | —| —|——| :–: |—<br>n log(n)	|depends on gap sequenc|	n²	| 1 |	No</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/microservice-timeout-and-retry.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/microservice-timeout-and-retry.html" class="post-title-link" itemprop="url">微服务超时与重试</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-29 10:36:00" itemprop="dateCreated datePublished" datetime="2018-11-29T10:36:00+08:00">2018-11-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-29 15:24:30" itemprop="dateModified" datetime="2021-09-29T15:24:30+08:00">2021-09-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>其实不只在微服务中，在平常网络请求，或者与第三方系统进行交互都需要设置超时时间</p>
+<p><strong>为什么需要超时与重试？</strong> 总体上讲，肯定是为了增加系统可靠性，具体表现在两个方面</p>
+<ol>
+<li>系统自我保护：<br>快速失败，在业务最大允许等待时间内未收到返回数据，主动放弃等待，释放占用资源，避免请求不断累积带来的客户端雪崩效应</li>
+<li>成功率：服务处理超时原因有很多，但常见的超时都是短暂的，主要是GC，或者有网络抖动等。这些短时间影响服务端状态的情况而造成请求成功率下降，需要补救措施。简单的补救有超时重试操作：当前请求超时后，将会重试到非当前服务器，降低重试超时的机率</li>
+</ol>
+<p>这一篇将由浅入深探索timeout机制，以及在微服务下的实践</p>
+<h1 id="超时"><a href="#超时" class="headerlink" title="超时"></a>超时</h1><p>经常被提起的两种超时：connection timeout、socket timeout</p>
+<p>通过最底层的Socket,ServerSocket演示一下这两种超时的表现，nio框架都会有对应的配置选项</p>
+<h2 id="connectionTimeout"><a href="#connectionTimeout" class="headerlink" title="connectionTimeout"></a>connectionTimeout</h2><p><strong>建立连接超时时间</strong></p>
+<p>客户端,随便写个IP，设置一个timeout</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Socket socket = new Socket();</span><br><span class="line">socket.connect(new InetSocketAddress(&quot;10.0.0.1&quot;,8080),20000);</span><br></pre></td></tr></table></figure>
+
+<p>在timeout时间到时，就会抛出connect timed out异常</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; java.net.SocketTimeoutException: connect timed out</span><br><span class="line">	at java.net.DualStackPlainSocketImpl.waitForConnect(Native Method)</span><br><span class="line">	at java.net.DualStackPlainSocketImpl.socketConnect(DualStackPlainSocketImpl.java:85)</span><br><span class="line">	at java.net.AbstractPlainSocketImpl.doConnect(AbstractPlainSocketImpl.java:350)</span><br><span class="line">	at java.net.AbstractPlainSocketImpl.connectToAddress(AbstractPlainSocketImpl.java:206)</span><br><span class="line">	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:188)</span><br><span class="line">	at java.net.PlainSocketImpl.connect(PlainSocketImpl.java:172)</span><br><span class="line">	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)</span><br><span class="line">	at java.net.Socket.connect(Socket.java:589)</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="socketTimeout"><a href="#socketTimeout" class="headerlink" title="socketTimeout"></a>socketTimeout</h2><blockquote>
+<p>Enable&#x2F;disable SO_TIMEOUT with the specified timeout, in milliseconds. With this option set to a non-zero timeout, a read() call on the InputStream associated with this Socket will block for only this amount of time. If the timeout expires, a java.net.SocketTimeoutException is raised, though the Socket is still valid. The option must be enabled prior to entering the blocking operation to have effect. The timeout must be &gt; 0. A timeout of zero is interpreted as an infinite timeout.</p>
+</blockquote>
+<p>服务端，只要让客户端能连接上就行，不发送数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ServerSocket serverSocket = new ServerSocket(8080);</span><br><span class="line">while ( true) &#123;</span><br><span class="line">    Socket socket = serverSocket.accept();</span><br><span class="line">    new Thread(new P(socket)).start();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>客户端，进行读数据</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">Socket socket = new Socket();</span><br><span class="line">socket.connect(new InetSocketAddress(&quot;localhost&quot;,8080),20000);</span><br><span class="line">socket.setSoTimeout(3000);</span><br></pre></td></tr></table></figure>
+
+<p>3s后，就抛出Read timed out</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">java.net.SocketTimeoutException: Read timed out</span><br><span class="line">	at java.net.SocketInputStream.socketRead0(Native Method)</span><br><span class="line">	at java.net.SocketInputStream.socketRead(SocketInputStream.java:116)</span><br><span class="line">	at java.net.SocketInputStream.read(SocketInputStream.java:170)</span><br><span class="line">	at java.net.SocketInputStream.read(SocketInputStream.java:141)</span><br><span class="line">	at java.net.SocketInputStream.read(SocketInputStream.java:223)</span><br></pre></td></tr></table></figure>
+
+<h2 id="nio"><a href="#nio" class="headerlink" title="nio"></a>nio</h2><p>对NIO，看网上一些示例基本没有关注到这一点，所以值得思考，难道是nio不需要关注timeout?</p>
+<p>客户端对服务器的连接:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Selector selector = Selector.open();</span><br><span class="line">InetSocketAddress isa = new InetSocketAddress(host, port);</span><br><span class="line">// 调用open静态方法创建连接到指定主机的SocketChannel</span><br><span class="line">SocketChannel sc = SocketChannel.open(isa);</span><br></pre></td></tr></table></figure>
+
+<p><strong>在调用SocketChannel.open()方法时,如果连接不上服务器,那么此方法就会长时间阻塞</strong>,为了解决这个问题,我们可以在调用open()方法前,启动一个定时器,这个定时器会在指定的时间内检查是否已连接成功,这个指定的时间也就是我们希望设置的连接超时时间,当检查已连接上服务器时,提示用户已连接成功;若没有连接上,可在代码中抛出SocketTimeoutException,并提示用户连接超时</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">public void connect()&#123;</span><br><span class="line">	try&#123;</span><br><span class="line">		selector = Selector.open();</span><br><span class="line">		InetSocketAddress isa = new InetSocketAddress(host, port);</span><br><span class="line">		//10秒连接超时</span><br><span class="line">		new Timer().schedule(tt, 10000);</span><br><span class="line">		// 调用open静态方法创建连接到指定主机的SocketChannel</span><br><span class="line">		sc = SocketChannel.open(isa);</span><br><span class="line">		// 设置该sc以非阻塞方式工作</span><br><span class="line">		sc.configureBlocking(false);</span><br><span class="line">		// 将Socketchannel对象注册到指定Selector</span><br><span class="line">		sc.register(selector, SelectionKey.OP_READ);</span><br><span class="line">		Message msg = new Message();</span><br><span class="line">		msg.what = 0;</span><br><span class="line">		msg.obj = sc;</span><br><span class="line">		handler.sendMessage(msg); // 连接成功</span><br><span class="line">		new Thread(new NIOReceiveThread(selector, handler)).start();</span><br><span class="line">	&#125;catch (IOException e)	&#123;</span><br><span class="line">		e.printStackTrace();</span><br><span class="line">		handler.sendEmptyMessage(-1); // IO异常</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">TimerTask tt = new TimerTask()&#123;</span><br><span class="line">	@Override</span><br><span class="line">	public void run()&#123;</span><br><span class="line">		if (sc == null || !sc.isConnected())&#123;</span><br><span class="line">			try&#123;</span><br><span class="line">				throw new SocketTimeoutException(&quot;连接超时&quot;);</span><br><span class="line">			&#125;catch (SocketTimeoutException e)&#123;</span><br><span class="line">				e.printStackTrace();</span><br><span class="line">				handler.sendEmptyMessage(-6); // 连接超时</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>在stackoverflow上有人回答了Read timeout for an NIO SocketChannel?</p>
+<blockquote>
+<ol>
+<li>You are using a Selector, in which case you have a select timeout which you can play with, and if it goes off (select(timeout) returns zero) you close all the registered channels, or</li>
+<li>You are using blocking mode, in which case you might think you should be able to call Socket.setSoTimeout() on the underlying socket (SocketChannel.socket()), and trap the SocketTimeoutException that is thrown when the timeout expires during read(), but you can’t, because it isn’t supported for sockets originating as channels, or</li>
+<li>You are using non-blocking mode without a Selector, in which case you need to change to case (1).</li>
+</ol>
+</blockquote>
+<h2 id="netty"><a href="#netty" class="headerlink" title="netty"></a>netty</h2><p>netty业界公认的高成熟nio产品，也是大多数微服务底层使用的通信框架，内部细节值得挖一挖处理方式，篇幅有限，另开篇深挖</p>
+<p>先看在微服务产品中的使用</p>
+<h3 id="connectionTimeout-1"><a href="#connectionTimeout-1" class="headerlink" title="connectionTimeout"></a>connectionTimeout</h3><p>这种场景很简单，在使用netty时,对应的配置选项</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Bootstrap b = new Bootstrap();</span><br><span class="line">b.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000)</span><br></pre></td></tr></table></figure>
+
+<h3 id="socketTimeout-1"><a href="#socketTimeout-1" class="headerlink" title="socketTimeout"></a>socketTimeout</h3><p>这种场景各个框架在处理里，手法不尽相同，各有特色</p>
+<h4 id="motan"><a href="#motan" class="headerlink" title="motan"></a>motan</h4><p>Motan是一套高性能、易于使用的分布式远程服务调用(RPC)框架，新浪微博开源。</p>
+<p>之前解读过motan源码，《motan客户端解析》，《motan服务端解析》</p>
+<p><strong>NettyChannel.request</strong>：</p>
+<ol>
+<li>获取此method的配置timeout</li>
+<li>在write时，awaitUninterruptibly</li>
+<li>超时就抛出timeoutException</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">public Response request(Request request) throws TransportException &#123;</span><br><span class="line">    int timeout = nettyClient.getUrl().getMethodParameter(request.getMethodName(), request.getParamtersDesc(),</span><br><span class="line">            URLParamType.requestTimeout.getName(), URLParamType.requestTimeout.getIntValue());</span><br><span class="line">	if (timeout &lt;= 0) &#123;</span><br><span class="line">           throw new MotanFrameworkException(&quot;NettyClient init Error: timeout(&quot; + timeout + &quot;) &lt;= 0 is forbid.&quot;,</span><br><span class="line">                   MotanErrorMsgConstant.FRAMEWORK_INIT_ERROR);</span><br><span class="line">       &#125;</span><br><span class="line">	NettyResponseFuture response = new NettyResponseFuture(request, timeout, this.nettyClient);</span><br><span class="line">	this.nettyClient.registerCallback(request.getRequestId(), response);</span><br><span class="line"></span><br><span class="line">	ChannelFuture writeFuture = this.channel.write(request);</span><br><span class="line"></span><br><span class="line">	boolean result = writeFuture.awaitUninterruptibly(timeout, TimeUnit.MILLISECONDS);</span><br><span class="line"></span><br><span class="line">	if (result &amp;&amp; writeFuture.isSuccess()) &#123;</span><br><span class="line">		response.addListener(new FutureListener() &#123;</span><br><span class="line">			@Override</span><br><span class="line">			public void operationComplete(Future future) throws Exception &#123;</span><br><span class="line">				if (future.isSuccess() || (future.isDone() &amp;&amp; ExceptionUtil.isBizException(future.getException()))) &#123;</span><br><span class="line">					// 成功的调用 </span><br><span class="line">					nettyClient.resetErrorCount();</span><br><span class="line">				&#125; else &#123;</span><br><span class="line">					// 失败的调用 </span><br><span class="line">					nettyClient.incrErrorCount();</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;);</span><br><span class="line">		return response;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	writeFuture.cancel();</span><br><span class="line">	response = this.nettyClient.removeCallback(request.getRequestId());</span><br><span class="line"></span><br><span class="line">	if (response != null) &#123;</span><br><span class="line">		response.cancel();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	// 失败的调用 </span><br><span class="line">	nettyClient.incrErrorCount();</span><br><span class="line"></span><br><span class="line">	if (writeFuture.getCause() != null) &#123;</span><br><span class="line">		throw new MotanServiceException(&quot;NettyChannel send request to server Error: url=&quot;</span><br><span class="line">				+ nettyClient.getUrl().getUri() + &quot; local=&quot; + localAddress + &quot; &quot;</span><br><span class="line">				+ MotanFrameworkUtil.toString(request), writeFuture.getCause());</span><br><span class="line">	&#125; else &#123;</span><br><span class="line">		throw new MotanServiceException(&quot;NettyChannel send request to server Timeout: url=&quot;</span><br><span class="line">				+ nettyClient.getUrl().getUri() + &quot; local=&quot; + localAddress + &quot; &quot;</span><br><span class="line">				+ MotanFrameworkUtil.toString(request));</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>注意到其中的<strong>NettyResponseFuture</strong>，看名字就明白是个Future模式，在<a href="http://www.zhuxingsheng.com/blog/code-parsing---asynchronous-callback.html">《代码小析 - 异步回调》</a>中有分析过</p>
+<p><strong>接收到服务端返回</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">NettyResponseFuture responseFuture = NettyClient.this.removeCallback(response.getRequestId());</span><br><span class="line">if (responseFuture == null) &#123;</span><br><span class="line">	LoggerUtil.warn(</span><br><span class="line">			&quot;NettyClient has response from server, but resonseFuture not exist,  requestId=&#123;&#125;&quot;,</span><br><span class="line">			response.getRequestId());</span><br><span class="line">	return null;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (response.getException() != null) &#123;</span><br><span class="line">	responseFuture.onFailure(response);</span><br><span class="line">&#125; else &#123;</span><br><span class="line">	responseFuture.onSuccess(response);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>获取真实结果NettyResponseFuture.getValue()</strong></p>
+<p>通过long waitTime &#x3D; timeout - (System.currentTimeMillis() - createTime);计算一下真正的wait时间</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">public Object getValue() &#123;</span><br><span class="line">	synchronized (lock) &#123;</span><br><span class="line">		if (!isDoing()) &#123;</span><br><span class="line">			return getValueOrThrowable();</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		if (timeout &lt;= 0) &#123;</span><br><span class="line">			try &#123;</span><br><span class="line">				lock.wait();</span><br><span class="line">			&#125; catch (Exception e) &#123;</span><br><span class="line">				cancel(new MotanServiceException(&quot;NettyResponseFuture getValue InterruptedException : &quot;</span><br><span class="line">						+ MotanFrameworkUtil.toString(request) + &quot; cost=&quot;</span><br><span class="line">						+ (System.currentTimeMillis() - createTime), e));</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			// don&#x27;t need to notifylisteners, because onSuccess or</span><br><span class="line">			// onFailure or cancel method already call notifylisteners</span><br><span class="line">			return getValueOrThrowable();</span><br><span class="line">		&#125; else &#123;</span><br><span class="line">			long waitTime = timeout - (System.currentTimeMillis() - createTime);</span><br><span class="line"></span><br><span class="line">			if (waitTime &gt; 0) &#123;</span><br><span class="line">				for (;;) &#123;</span><br><span class="line">					try &#123;</span><br><span class="line">						lock.wait(waitTime);</span><br><span class="line">					&#125; catch (InterruptedException e) &#123;</span><br><span class="line">					&#125;</span><br><span class="line"></span><br><span class="line">					if (!isDoing()) &#123;</span><br><span class="line">						break;</span><br><span class="line">					&#125; else &#123;</span><br><span class="line">						waitTime = timeout - (System.currentTimeMillis() - createTime);</span><br><span class="line">						if (waitTime &lt;= 0) &#123;</span><br><span class="line">							break;</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line"></span><br><span class="line">			if (isDoing()) &#123;</span><br><span class="line">				timeoutSoCancel();</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">		return getValueOrThrowable();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="totalTimeout"><a href="#totalTimeout" class="headerlink" title="totalTimeout"></a>totalTimeout</h4><p>有了timeout基本已经满足需求，但这儿再提一个totalTimeout，为什么需要一个总超时时间</p>
+<blockquote>
+<p>比如客户端希望服务端在60ms内返回，由于成功率要求必须加一次重试，但是设置超时时间30ms重试一次会很浪费（绝大部分重试很快，但预留了30ms则压缩了初次调用的时间）。设置40ms重试一次就可能出现整体耗时大于60ms。所以希望可以配置整体超时时间为60ms，单次40ms加重试一次，这样既充分利用看重试机会也不会导致整体超过60ms</p>
+</blockquote>
+<p>一次服务调用的正常请求的最长时间为：timeout * failovertimes + success_invocation_time</p>
+<p>比如某个服务的timeout为100ms，failovertimes为1，正常调用的平均耗时为10ms，那么它的上游在重试情况下的耗时就是：乐观估计100 * 1+10&#x3D;110ms；悲观估计100 * 1+100&#x3D;200ms</p>
+<p><strong>为了保证总体超时时间，只能把单次超时时间压缩，使得某些情况下可能不需求重试的场景也进行了重试</strong></p>
+<p>对比一下，设置totalTimeout与不设置的情况：</p>
+<ol>
+<li>某服务通常能在20ms返回，但是因为某些意外（比如gc），连续两次都要40ms</li>
+</ol>
+<ul>
+<li>只能设置单次timeout的情况下，timeout&#x3D;30ms，failovertimes&#x3D;1<br>因此对于client来说，它看到的调用耗时就是：30ms（超时） + 30ms（超时） &#x3D; 60ms</li>
+<li>分开设置首次超时和总体超时的情况下，timeout&#x3D;40ms，total_timeout&#x3D;60ms，failovertimes&#x3D;1<br>因此对于client来说，它看到的调用耗时就是：40ms（超时）+ （60ms-40ms）（超时） &#x3D; 60ms</li>
+</ul>
+<ol start="2">
+<li>某服务通常能在20ms返回，但是因为某些意外（比如gc），这次需要35ms才能返回。</li>
+</ol>
+<ul>
+<li>只能设置单次timeout的情况下，timeout&#x3D;30ms，failovertimes&#x3D;1。<br>因此对于client来说，它看到的调用耗时就是：30ms（超时） + 20ms &#x3D; 50ms</li>
+<li>分开设置首次超时和总体超时的情况下，timeout&#x3D;40ms，total_timeout&#x3D;60ms，failovertimes&#x3D;1。<br>因此对于client来说，它看到的调用耗时就是：35ms（正常返回） &#x3D; 35ms</li>
+</ul>
+<h1 id="重试"><a href="#重试" class="headerlink" title="重试"></a>重试</h1><p>因某个服务实例短暂状态不佳而造成的超时，使用重试处理可以让请求转向其他服务实例的做法可以很好改善非集中式问题的成功率。</p>
+<p>但如果超时重试只做简单的重试策略：有超时便重试，这样可能会导致服务端的崩溃。</p>
+<p>例如：当前基础组件（如db）压力过大而造成超时，如果一律重试的话，会导致服务端集群实际接受请求量翻倍，这会使得基础组件压力无减反增，可能会导致其最终崩溃</p>
+<h2 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h2><ul>
+<li>思路简单，配置重试次数，出现非业务异常就重试，达到次数上限或者中途成功结束</li>
+<li>重试限流,重试造成雪崩的可能性，所以重试需要控制流量</li>
+</ul>
+<h3 id="motan-1"><a href="#motan-1" class="headerlink" title="motan"></a>motan</h3><p>之前解读过motan源码，<a href="http://www.zhuxingsheng.com/blog/motan-client.html">《motan客户端解析》</a>，motan的failover就是这么处理的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">// 先使用method的配置</span><br><span class="line">int tryCount =</span><br><span class="line">        refUrl.getMethodParameter(request.getMethodName(), request.getParamtersDesc(), URLParamType.retries.getName(),</span><br><span class="line">                URLParamType.retries.getIntValue());</span><br><span class="line">// 如果有问题，则设置为不重试</span><br><span class="line">if (tryCount &lt; 0) &#123;</span><br><span class="line">    tryCount = 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">for (int i = 0; i &lt;= tryCount; i++) &#123;</span><br><span class="line">    Referer&lt;T&gt; refer = referers.get(i % referers.size());</span><br><span class="line">    try &#123;</span><br><span class="line">        request.setRetries(i);</span><br><span class="line">        return refer.call(request);</span><br><span class="line">    &#125; catch (RuntimeException e) &#123;</span><br><span class="line">        // 对于业务异常，直接抛出</span><br><span class="line">        if (ExceptionUtil.isBizException(e)) &#123;</span><br><span class="line">            throw e;</span><br><span class="line">        &#125; else if (i &gt;= tryCount) &#123;</span><br><span class="line">            throw e;</span><br><span class="line">        &#125;</span><br><span class="line">        LoggerUtil.warn(String.format(&quot;FailoverHaStrategy Call false for request:%s error=%s&quot;, request, e.getMessage()));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="超时重试"><a href="#超时重试" class="headerlink" title="超时重试"></a>超时重试</h3><p>但像我司框架就没有这样处理，只关注超时重试，因为超时重试主要是解决因偶尔短暂状态不佳而对成功率造成的影响，所以把重点放在处理短暂处于超时状态超时请求，对于长时间处于较大量的超时状态时，将选择不进行重试fail fast </p>
+<h3 id="限流"><a href="#限流" class="headerlink" title="限流"></a>限流</h3><p>主要是防止重试次数过多，引起系统雪崩，有必要进行一下限流</p>
+<p>在<a href="http://www.zhuxingsheng.com/blog/micro-service-fuse-mechanism.html">《微服务-熔断机制》</a>中提到过限流算法，细节可参考<a href="http://www.zhuxingsheng.com/blog/counter-algorithm.html">《计数器算法》</a></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p><a href="https://stackoverflow.com/questions/17340970/read-timeout-for-an-nio-socketchannel">Read timeout for an NIO SocketChannel?</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm---sort---insert.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/algorithm---sort---insert.html" class="post-title-link" itemprop="url">算法渣-排序-插入</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-28 11:37:00" itemprop="dateCreated datePublished" datetime="2018-11-28T11:37:00+08:00">2018-11-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法</p>
+</blockquote>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>插入排序的基本操作就是将一个数据插入到已经排好序的有序数据中，从而得到一个新的、个数加一的有序数据，算法适用于少量数据的排序</p>
+<p>它的基本思想是：每步将一个待排序的记录，按其关键码值的大小插入前面已经排序的文件中适当位置上，直到全部插入完为止</p>
+<p><strong>联想打扑克牌时理顺手中牌的时候，你从左往右依次检查你的牌，并将其和前面的牌进行比较，然后将其插入正确的位置</strong></p>
+<p><img src="http://images.zhuxingsheng.com/201811231745_617.png"></p>
+<p>理解起来，比<a href="https://mp.weixin.qq.com/s/sMy6dlvdrNAGMfEFk36eLQ">《快速排序》</a>容易多了</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><ol>
+<li>设置监视哨r[0]，将待插入记录的值赋值给r[0]；</li>
+<li>设置开始查找的位置j；</li>
+<li>在数组中进行搜索，搜索中将第j个记录后移，直至r[0].key≥r[j].key为止；</li>
+<li>将r[0]插入r[j+1]的位置上。</li>
+</ol>
+<h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><p><img src="http://images.zhuxingsheng.com/insertsort.gif" alt="插入排序"></p>
+<p>也可以通过动画更清晰了解整个排序过程</p>
+<p>动画：<a href="http://www.zhuxingsheng.com/tools/sort/sort.html">http://www.zhuxingsheng.com/tools/sort/sort.html</a></p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>插入排序包括：直接插入排序，二分插入排序（又称折半插入排序），链表插入排序，希尔排序（又称缩小增量排序）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">static void insertSort1(int []sorts) &#123;</span><br><span class="line">    for(int i = 1;i&lt;sorts.length;i++) &#123;</span><br><span class="line">        int tmp = sorts[i];//哨兵</span><br><span class="line">        int j= i-1;</span><br><span class="line">        while(j &gt;=0 &amp;&amp; tmp &lt; sorts[j]) &#123;</span><br><span class="line">            sorts[j+1] = sorts[j];//比tmp大的全部往右移动</span><br><span class="line">            j--;</span><br><span class="line">        &#125;</span><br><span class="line">        //别的移完位置，把哨兵放到正确的位置</span><br><span class="line">        sorts[++j] = tmp;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><p>当问题规模为n时</p>
+<p><strong>最好情况</strong>（原本就是有序的）</p>
+<p>比较次数：Cmin&#x3D;n-1</p>
+<p>移动次数：Mmin&#x3D;0</p>
+<p><strong>最差情况</strong>（逆序）</p>
+<p>比较次数：Cmax&#x3D;2+3+4+……+n&#x3D;(n+2)n&#x2F;2</p>
+<p>移动次数：Mmax&#x3D;1+2+3+……+n-1&#x3D;n*n&#x2F;2</p>
+<p>Best| Average| Worst|Memory|Stable<br> — | —| —|——| :–: |—<br>n	|n^2|	n^2	| 1 |	Yes</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-fast.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/algorithmic-slag-sorting-fast.html" class="post-title-link" itemprop="url">算法渣-排序-快速</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-28 11:36:00" itemprop="dateCreated datePublished" datetime="2018-11-28T11:36:00+08:00">2018-11-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2025-02-24 10:25:53" itemprop="dateModified" datetime="2025-02-24T10:25:53+08:00">2025-02-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法</p>
+</blockquote>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>快速排序（Quicksort）是对冒泡排序的一种改进</p>
+<p>快速排序由C. A. R. Hoare在1962年提出。</p>
+<p>它的基本思想是：通过一趟排序将要排序的数据分割成独立的两部分，其中一部分的所有数据都比另外一部分的所有数据都要小，然后再按此方法对这两部分数据分别进行快速排序，整个排序过程可以递归进行，以此达到整个数据变成有序序列</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>设要排序的数组是A[0]……A[N-1]，首先任意选取一个数据（通常选用数组的第一个数）作为关键数据，然后将所有比它小的数都放到它前面，所有比它大的数都放到它后面，这个过程称为一趟快速排序。值得注意的是，快速排序不是一种稳定的排序算法，也就是说，多个相同的值的相对位置也许会在算法结束时产生变动</p>
+<p>一趟快速排序的算法是：</p>
+<ol>
+<li>设置两个变量i、j，排序开始的时候：i&#x3D;0，j&#x3D;N-1；</li>
+<li>以第一个数组元素作为关键数据，赋值给key，即key&#x3D;A[0]；</li>
+<li>从j开始向前搜索，即由后开始向前搜索(j–)，找到第一个小于key的值A[j]，将A[j]和A[i]互换；</li>
+<li>从i开始向后搜索，即由前开始向后搜索(i++)，找到第一个大于key的A[i]，将A[i]和A[j]互换；</li>
+<li>重复第3、4步，直到i&#x3D;j； (3,4步中，没找到符合条件的值，即3中A[j]不小于key,4中A[i]不大于key的时候改变j、i的值，使得j&#x3D;j-1，i&#x3D;i+1，直至找到为止。找到符合条件的值，进行交换的时候i， j指针位置不变。另外，i&#x3D;&#x3D;j这一过程一定正好是i+或j-完成的时候，此时令循环结束）。</li>
+</ol>
+<h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><p>上面的定义，算法都是很学术的表达，看得有点晕了，看一个示例：</p>
+<p>对数组[2,10,8,22,34,5,12,28,21,11]进行快速排序</p>
+<p><img src="http://images.zhuxingsheng.com/201811052311_329.png" alt="快速排序"></p>
+<p>也可以通过动画更清晰了解整个排序过程</p>
+<p>动画：<a href="http://www.zhuxingsheng.com/tools/sort/sort.html">http://www.zhuxingsheng.com/tools/sort/sort.html</a></p>
+<h1 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h1><p>快速排序有好些实现手法，<strong>左右指针法、挖坑法、前后指针(快慢指针)法</strong></p>
+<h2 id="左右指针法"><a href="#左右指针法" class="headerlink" title="左右指针法"></a>左右指针法</h2><p>算法过程与上面的演示图差不多</p>
+<ol>
+<li>先从数列中取出一个数作为中轴基数。 </li>
+<li>分区过程，将比这个数大的数全放到它的右边，小于或等于它的数全放到它的左边。 </li>
+<li>再对左右区间重复第二步，直到各区间只有一个数</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 分治法,从小到大排序</span><br><span class="line"> * @param array</span><br><span class="line"> */</span><br><span class="line">public static int partition(int []array,int start,int end) &#123;</span><br><span class="line"></span><br><span class="line">    //取一位做为基数</span><br><span class="line">    int pivot = array[end];//这儿取最后一位作为基数了</span><br><span class="line"></span><br><span class="line">    int left = start;</span><br><span class="line">    int right = end-1;//从倒数第二位开始比较</span><br><span class="line"></span><br><span class="line">    //从两头向中间搜索,从小到大排序</span><br><span class="line">    while (left &lt; right) &#123;</span><br><span class="line">        //从left端开始搜索</span><br><span class="line">        while(left &lt; right &amp;&amp; array[left] &lt;= pivot) &#123;</span><br><span class="line">            left ++;</span><br><span class="line">        &#125;</span><br><span class="line">        //从right端开始搜索</span><br><span class="line">        while (left &lt; right &amp;&amp; array[right] &gt;= pivot) &#123;</span><br><span class="line">            right -- ;</span><br><span class="line">        &#125;</span><br><span class="line">        //两数交换,大的放到右边，小的放到左边</span><br><span class="line">        if(left &lt; right) &#123;</span><br><span class="line">            swap(array,left,right);</span><br><span class="line">            left++;</span><br><span class="line">            right--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    //</span><br><span class="line">    if(left != end &amp;&amp; array[left] &gt; array[end] ) &#123;</span><br><span class="line">        swap(array,left,end);</span><br><span class="line">        return left;</span><br><span class="line">    &#125;</span><br><span class="line">    //right == left</span><br><span class="line">    return left+1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 分治法,从小到大排序</span><br><span class="line"> * @param array</span><br><span class="line"> * @param start</span><br><span class="line"> * @param end</span><br><span class="line"> */</span><br><span class="line">private static void quicSort(int []array,int start,int end)&#123;</span><br><span class="line">    if( start &lt; end )&#123;</span><br><span class="line">        int partition = partition(array,start,end);</span><br><span class="line">        print(array);</span><br><span class="line">        quicSort(array,start,partition-1);</span><br><span class="line">        quicSort(array,partition+1,end);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="挖坑法"><a href="#挖坑法" class="headerlink" title="挖坑法"></a>挖坑法</h2><p>挖坑填坑，也可以叫拆东墙补西墙</p>
+<p>先演示一番,对[22,12,28,21,14]进行排序</p>
+<table>
+<thead>
+<tr>
+<th>index:</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>data:</td>
+<td>22</td>
+<td>12</td>
+<td>28</td>
+<td>21</td>
+<td>14</td>
+</tr>
+</tbody></table>
+<p><strong>第一步:挖最右边的数为坑</strong></p>
+<p>坑: pit&#x3D;array[right]&#x3D;14;左索引: left&#x3D;0,右索引: right&#x3D;3, </p>
+<table>
+<thead>
+<tr>
+<th>index:</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>data:</td>
+<td>22</td>
+<td>12</td>
+<td>28</td>
+<td>21</td>
+<td>X</td>
+</tr>
+</tbody></table>
+<p>从left开始搜索，寻找比坑大的数，发现array[left&#x3D;0]&gt;14,那就用left&#x3D;0 填 right&#x3D;4的坑</p>
+<p>array[right&#x3D;4]&#x3D;array[left&#x3D;0];left++;</p>
+<p>此时数组：</p>
+<table>
+<thead>
+<tr>
+<th>index:</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>data:</td>
+<td>X</td>
+<td>12</td>
+<td>28</td>
+<td>21</td>
+<td>22</td>
+</tr>
+</tbody></table>
+<p>left&#x3D;1,right&#x3D;3</p>
+<p><strong>第二步:</strong> 从right端开始找比pit小的数，发现array[1] &lt; 14,那就用right&#x3D;1 填 left&#x3D;0的坑</p>
+<p>array[left&#x3D;0]&#x3D; array[right&#x3D;1];</p>
+<p>此时数组：</p>
+<table>
+<thead>
+<tr>
+<th>index:</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>data:</td>
+<td>12</td>
+<td>X</td>
+<td>28</td>
+<td>21</td>
+<td>22</td>
+</tr>
+</tbody></table>
+<p>left&#x3D;1,right&#x3D;0; left&gt;right,那此回合结束,用pit填回坑array[left&#x3D;1]</p>
+<p>结束时：</p>
+<table>
+<thead>
+<tr>
+<th>index:</th>
+<th>0</th>
+<th>1</th>
+<th>2</th>
+<th>3</th>
+<th>4</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>data:</td>
+<td>12</td>
+<td>14</td>
+<td>28</td>
+<td>21</td>
+<td>22</td>
+</tr>
+</tbody></table>
+<p>发现14左都是小于它的数，右边都是大于它的数</p>
+<p>以14为分界，两边数组进行递归下去，就行了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">int partion(int arr[], int begin, int end)</span><br><span class="line">&#123;</span><br><span class="line">    int pit = arr[end];//挖最右数，留一个坑</span><br><span class="line">    int left = begin;</span><br><span class="line">    int right = end;</span><br><span class="line"></span><br><span class="line">    while (left &lt; right)</span><br><span class="line">    &#123;</span><br><span class="line">        //从最左开始搜索比坑大的数</span><br><span class="line">        while (left &lt; right &amp;&amp; arr[left] &lt;= pit)</span><br><span class="line">            left++;</span><br><span class="line">        if (left&lt;right) &#123;</span><br><span class="line">            arr[right] = arr[left];//拿left去填坑，left成为新坑</span><br><span class="line">        &#125;</span><br><span class="line">        while (left &lt; right &amp;&amp; arr[right] &gt;= pit)</span><br><span class="line">            right--;</span><br><span class="line">        if (left &lt; right) &#123;</span><br><span class="line">            arr[left] = arr[right];//right去填left坑，left成为新坑</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    arr[left] = pit;//用key填坑</span><br><span class="line">    return left;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void QuickSort(int arr[], int left, int right)</span><br><span class="line">&#123;</span><br><span class="line">    if (left &lt; right)</span><br><span class="line">    &#123;</span><br><span class="line">        int mid = partion(arr, left, right);</span><br><span class="line">        print(arr);</span><br><span class="line">        QuickSort(arr, left, mid - 1);</span><br><span class="line">        QuickSort(arr, mid + 1, right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="前后指针法"><a href="#前后指针法" class="headerlink" title="前后指针法"></a>前后指针法</h2><p>大体思路：</p>
+<ol>
+<li>定义两个指针，一前一后，cur（前）指向起始位置，prev（后）指向cur的前一个位置；选择数组最后一个元素作为key（right）</li>
+<li>cur找比key小的数，prev在cur没有找到的情况下，一直不动（即保证prev一直指向比key大的数）；直到cur找到比key小的数（+ +prev &amp;&amp; prev !&#x3D; cur时）然后++cur,prev仍然不动</li>
+<li>直到cur走到right前一个位置，终止循环。最后++prev，交换prev和right的值。返回中间位置prev。最后再继续递归</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201811101906_691.png" alt="前后指针法"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">int partion(int arr[], int left, int right)</span><br><span class="line">&#123;</span><br><span class="line">    int key = arr[right];//取最后一位为key</span><br><span class="line"></span><br><span class="line">    int cur = left;//当前指针</span><br><span class="line">    int prev = left - 1;//前一个指针</span><br><span class="line"></span><br><span class="line">    while (cur &lt; right)</span><br><span class="line">    &#123;</span><br><span class="line">        if(arr[cur] &lt; key &amp;&amp; ++prev != cur)&#123;//发现比key小的数</span><br><span class="line">            swap(arr,cur,prev);</span><br><span class="line">        &#125;</span><br><span class="line">        cur++;</span><br><span class="line">    &#125;</span><br><span class="line">    //最后++prev交换</span><br><span class="line">    swap(arr,++prev,cur);</span><br><span class="line">    return prev;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void QuickSort(int arr[], int left, int right)</span><br><span class="line">&#123;</span><br><span class="line">    if (left &lt; right)</span><br><span class="line">    &#123;</span><br><span class="line">        int mid = partion(arr, left, right);</span><br><span class="line">        print(arr);</span><br><span class="line">        QuickSort(arr, left, mid - 1);</span><br><span class="line">        QuickSort(arr, mid + 1, right);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="分治"><a href="#分治" class="headerlink" title="分治"></a>分治</h2><p>以上几个方法，不管怎样的思路，都是寻找一个标准数,让它成为一个分界，大于所有左边的数，小于所有右边的数，进行分而治之</p>
+<h1 id="复杂度"><a href="#复杂度" class="headerlink" title="复杂度"></a>复杂度</h1><p>最好情况：最在最好的情况下，每次的划分都会恰好从中间将序列划分开来，那么只需要lgn次划分即可划分完成，是一个标准的分治算法Cn&#x3D;2Cn&#x2F;2+N，每一次划分都需要比较N次。时间复杂度O(nlogn)</p>
+<p>最坏情况：在最坏的情况下，即序列已经排好序的情况下，每次划分都恰好把数组划分成了0，n两部分，那么需要n次划分，但是比较的次数则变成了n, n-1, n-2,….1, 所以整个比较次数约为n(n-1)&#x2F;2~n2&#x2F;2</p>
+<p>比较和移动次数最少时间复杂度表示为O(nlogn);</p>
+<p>比较和移动次数最多的时间复杂度表示为O(n^2);</p>
+<p>使用的辅助存储空间最少为logn，最多为n^2；是不稳定的排序；</p>
+<p>Best| Average| Worst|Memory|Stable<br> — | —| —|——| :–: |—<br>nlog(n)	|nlog(n)|	n^2	| log(n) |	No</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm---sorting---bubbling.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/algorithm---sorting---bubbling.html" class="post-title-link" itemprop="url">算法渣-排序-冒泡</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-22 12:47:00" itemprop="dateCreated datePublished" datetime="2018-11-22T12:47:00+08:00">2018-11-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>没有一身好内功，招式再多都是空;算法绝对是防身必备，面试时更是不可或缺；跟着算法渣一起从零学算法</p>
+</blockquote>
+<h1 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h1><p>冒泡排序（Bubble Sort），是一种计算机科学领域的较简单的排序算法。</p>
+<p>这个算法的名字由来是因为越大的元素会经由交换慢慢“浮”到数列的顶端（升序或降序排列），就如同碳酸饮料中二氧化碳的气泡最终会上浮到顶端一样，故名“冒泡排序”</p>
+<h2 id="算法"><a href="#算法" class="headerlink" title="算法"></a>算法</h2><p>它重复地走访过要排序的元素列，<strong>依次比较两个相邻的元素</strong>，如果他们的顺序（如从大到小、首字母从A到Z）错误就把他们交换过来。走访元素的工作是重复地进行直到没有相邻元素需要交换，也就是说该元素已经排序完成。</p>
+<h2 id="演示"><a href="#演示" class="headerlink" title="演示"></a>演示</h2><p>对数组[5,6,3,1,8,7,2,4]进行冒泡排序</p>
+<p><img src="http://images.zhuxingsheng.com/BubbleSort.gif" alt="BubbleSort"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 传统写法</span><br><span class="line"> * @param sorts</span><br><span class="line"> */</span><br><span class="line">private static void bubbleSort(int [] sorts)&#123;</span><br><span class="line">    for (int i=0;i&lt;sorts.length-1;i++) &#123;</span><br><span class="line">        for (int j= 0;j&lt;sorts.length-1-i;j++) &#123;</span><br><span class="line">            if(sorts[j] &lt; sorts[j+1]) &#123;</span><br><span class="line">                swap(sorts,j,j+1);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">private static void swap(int []sorts,int i,int j)&#123;</span><br><span class="line">        int tmp = sorts[i];</span><br><span class="line">        sorts[i] = sorts[j];</span><br><span class="line">        sorts[j] = tmp;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="改进"><a href="#改进" class="headerlink" title="改进"></a>改进</h1><h2 id="有序"><a href="#有序" class="headerlink" title="有序"></a>有序</h2><p>如果一个数组本身就是有序的，或者部分已经有序</p>
+<p>比如:[8,7,6,5,4,3,<strong>1,2</strong>]</p>
+<p>假如现在有一个长度10000的数组，前1000无序，后9000有序并且大于前1000数据。用上面这种方法，数据交换次数在1000之内，但是剩下9000的数据虽然没有交换，但是每次循环都会进行比较。剩下9000数据已经有序了，我们不要对它们去进行判断浪费不必要的时间</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 如果部分已经排序,设置一个flag,有序就跳出循环</span><br><span class="line"> * @param sorts</span><br><span class="line"> */</span><br><span class="line">private static void bubbleSort1(int [] sorts)&#123;</span><br><span class="line">    for (int i=0;i&lt;sorts.length-1;i++) &#123;</span><br><span class="line">        boolean flag = false;</span><br><span class="line">        for (int j= 0;j&lt;sorts.length-1-i;j++) &#123;</span><br><span class="line">            if(sorts[j] &lt; sorts[j+1]) &#123;</span><br><span class="line">                swap(sorts,j,j+1);</span><br><span class="line">                flag = true;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if(!flag) &#123;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="鸡尾酒排序"><a href="#鸡尾酒排序" class="headerlink" title="鸡尾酒排序"></a>鸡尾酒排序</h2><p>鸡尾酒排序等于是冒泡排序的轻微变形。不同的地方在于<strong>从低到高然后从高到低</strong>，而冒泡排序则仅从低到高去比较序列里的每个元素。他可以得到比冒泡排序稍微好一点的效能，原因是冒泡排序只从一个方向进行比对(由低到高)，每次循环只移动一个项目。</p>
+<h3 id="算法-1"><a href="#算法-1" class="headerlink" title="算法"></a>算法</h3><p><img src="http://images.zhuxingsheng.com/BubbleSort-jiwei.gif" alt="排序过程"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 鸡尾酒排序，定向冒泡排序</span><br><span class="line"> * @param sorts</span><br><span class="line"> */</span><br><span class="line">private static void bubbleSort2(int [] sorts)&#123;</span><br><span class="line">    int i = 0;</span><br><span class="line">    int j = sorts.length-1;</span><br><span class="line">    while (i &lt;= j) &#123;</span><br><span class="line">        for(int s = i;s&lt;j;s++) &#123;//从左往右</span><br><span class="line">            if(sorts[s] &lt; sorts[s+1]) &#123;</span><br><span class="line">                swap(sorts, s, s + 1);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        System.out.println(JSON.toJSONString(sorts));</span><br><span class="line">        for(int e = j;e&gt;i;e--) &#123;//从右往左</span><br><span class="line">            if(sorts[e] &gt; sorts[e-1]) &#123;</span><br><span class="line">                swap(sorts, e, e - 1);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        j--;i++;</span><br><span class="line">        System.out.println(JSON.toJSONString(sorts));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>总体上，鸡尾酒排序可以获得比冒泡排序稍好的性能。但是完全逆序时，鸡尾酒排序与冒泡排序的效率都非常差</p>
+<h1 id="时间复杂度"><a href="#时间复杂度" class="headerlink" title="时间复杂度"></a>时间复杂度</h1><ol>
+<li><p>如果我们的数据正序，只需要走一趟即可完成排序。所需的比较次数C和记录移动次数M均达到最小值，即：Cmin&#x3D;n-1;Mmin&#x3D;0;所以，冒泡排序最好的时间复杂度为O(n)。</p>
+</li>
+<li><p>如果很不幸我们的数据是反序的，则需要进行n-1趟排序。每趟排序要进行n-i次比较(1≤i≤n-1)，且每次比较都必须移动记录三次来达到交换记录位置。在这种情况下，比较和移动次数均达到最大值：</p>
+</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/201810311120_280.png"></p>
+<p>Best| Average| Worst|Memory|Stable<br> — | —| —|——| :–: |—<br>n |  n^2 |n^2| 1 | Stable</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/code-analysis---asynchronous-callback.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/code-analysis---asynchronous-callback.html" class="post-title-link" itemprop="url">代码小析 - 异步回调</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-18 11:04:36" itemprop="dateCreated datePublished" datetime="2018-11-18T11:04:36+08:00">2018-11-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>天下皆知美之为美，斯恶已;此专栏本想取名代码之美，但有傍名之嫌，也给别误解，所以就叫代码小析吧，看到一段好代码，思路清奇，奇巧淫技，拿出来鉴赏一番</p>
+</blockquote>
+<p>之前是计划one week one  alogrithm,结果算法是个短板，不仅要理解，还得再写出代码，特别烧脑，所以中间穿插一下，换换脑子</p>
+<p>之前有类似一篇<a href="https://mp.weixin.qq.com/s/pZafR1O3fzMsepx731U6QQ">《仅且仅创建一次对象》</a></p>
+<p>最近看到一个段子：</p>
+<p>老板有毛病吧，写完排序就叫我走人，我还嫌你这9K工资低了呢<br><img src="http://images.zhuxingsheng.com/201811151323_83.png"></p>
+<p>感觉能想到这思路的也算清奇，哈哈！</p>
+<h1 id="回调"><a href="#回调" class="headerlink" title="回调"></a>回调</h1><p>if you call me, i will call back</p>
+<p>回调分类：同步回调，异步回调</p>
+<h1 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h1><p>建立TCP连接是很耗时的，所以在创建Socket Channel时，可以通过异步回调方式解决</p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 异步取得channel</span><br><span class="line"> * @param index</span><br><span class="line"> * @param callback</span><br><span class="line"> */</span><br><span class="line">public void asynGetChannel(int index,final Callback callback) &#123;</span><br><span class="line">    // 1. 随机获取一条channel</span><br><span class="line">    final int pos = ThreadLocalRandom.current().nextInt(MAX_CONNECTIONS);</span><br><span class="line">    Channel target = channels[pos];</span><br><span class="line"></span><br><span class="line">    // 2. 如果获取到了连接，直接返回</span><br><span class="line">    if (target != null &amp;&amp; target.isActive()) &#123;</span><br><span class="line">        logger.info(&quot;direct success &quot;+index);</span><br><span class="line">        callback.onSuccess(target);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    synchronized (locks[pos]) &#123;</span><br><span class="line">        target = channels[pos];</span><br><span class="line">        // 2. 如果获取到了连接，直接返回</span><br><span class="line">        if (target != null &amp;&amp; target.isActive()) &#123;</span><br><span class="line">            callback.onSuccess(target);</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 3.如果连接正在创建中，则加入queue</span><br><span class="line">        if (target instanceof EmptyChannel) &#123;</span><br><span class="line">            boolean result = jobs.offer(callback);</span><br><span class="line">            if (result) &#123;</span><br><span class="line">                return;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                throw new RuntimeException(&quot;Can&#x27;t connet to target server and the waiting queue is full&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 4. 连接尚未创建</span><br><span class="line">        channels[pos] = new EmptyChannel();</span><br><span class="line"></span><br><span class="line">       Connector.connect(host, port, new Callback() &#123;</span><br><span class="line">           @Override</span><br><span class="line">           public void onSuccess(Channel channel) &#123;</span><br><span class="line">               logger.info(index + &quot; ------------connect success---------&quot;+pos + &quot; channel:&quot; +channels[pos].getClass().getName());</span><br><span class="line">               List&lt;Callback&gt; tmpJobs;//建立一个tempJobs，快速释放锁</span><br><span class="line">               synchronized (locks[pos]) &#123;</span><br><span class="line">                   // 设置channels，拷贝jobs队列，释放锁</span><br><span class="line">                   channels[pos] = channel;</span><br><span class="line">                   tmpJobs = drainJobs();</span><br><span class="line">               &#125;</span><br><span class="line">               for(Callback pendingCallback : tmpJobs) &#123;</span><br><span class="line">                   try &#123;</span><br><span class="line">                       if(pendingCallback != callback) &#123;</span><br><span class="line">                           pendingCallback.onSuccess(channel);</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125; catch (Exception e) &#123;</span><br><span class="line">                       logger.error(&quot;call connectionCallback fail&quot;, e);</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           @Override</span><br><span class="line">           public void onError(Throwable e) &#123;</span><br><span class="line">               List&lt;Callback&gt; tmpJobs;//建立一个tempJobs，快速释放锁</span><br><span class="line">               synchronized (locks[pos]) &#123;</span><br><span class="line">                   // 设置channels，拷贝jobs队列，释放锁</span><br><span class="line">                   channels[pos] = null;</span><br><span class="line">                   tmpJobs = drainJobs();</span><br><span class="line">               &#125;</span><br><span class="line">               for(Callback pendingCallback : tmpJobs) &#123;</span><br><span class="line">                   try &#123;</span><br><span class="line">                       if(pendingCallback != callback) &#123;</span><br><span class="line">                           pendingCallback.onError(e);</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125; catch (Exception x) &#123;</span><br><span class="line">                       logger.error(&quot;call connectionCallback fail&quot;, x);</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>完整的代码:<a href="https://github.com/zhuxingsheng/javastudy">https://github.com/zhuxingsheng/javastudy</a></p>
+<h1 id="亮点"><a href="#亮点" class="headerlink" title="亮点"></a>亮点</h1><p>思路很简单，亮点就在于job队列，连接在没有建立成功时，会先建立一个EmptyChannel，有些类似lazy load中的影子对象放到队列中，不造成阻塞，当channel建立完成后，回调</p>
+<h1 id="VS-Future模式"><a href="#VS-Future模式" class="headerlink" title="VS Future模式"></a>VS Future模式</h1><p>异步回调的套路与Future模式特别类似</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Future future = doTask1();</span><br><span class="line">doTask2();</span><br><span class="line">doTask3();</span><br><span class="line">Result result = future.get();</span><br></pre></td></tr></table></figure>
+<p>Future 模式中，一个任务的启动和获取结果分成了两部分，启动执行是异步的，调用后立马返回，调用者可以继续做其他的任务，而等到其他任务做完，再获取Future的结果，此时调用 get 时是同步的，也就是说如果 doTask1 如果还没有做完，等它做完。</p>
+<p>看出最大区别，异步回调不需要返回值，准确说调用者不用太关心返回值，甚至不需要关心真正执行情况，而future模式就不一样了，调用者是一定要拿到返回值的</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://blog.51cto.com/13616847/2073737">同步调用，异步回调和 Future 模式</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/blog/page/12/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/12/">12</a><span class="page-number current">13</span><a class="page-number" href="/blog/page/14/">14</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/16/">16</a><a class="extend next" rel="next" href="/blog/page/14/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

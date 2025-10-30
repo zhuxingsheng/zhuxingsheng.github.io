@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="彪悍的人生需要书写">
+<meta property="og:type" content="website">
+<meta property="og:title" content="码农戏码">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/page/5/index.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="彪悍的人生需要书写">
+<meta property="og:locale">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD,DDD分层,SOLID,DIP,DDD依赖,领域驱动开，binding,微服务，Istio,service mesh,dapr,架构,DDD ACL,motain源码,spring源码,游戏开发,源码分析,java互联网">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/page/5/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : true,
+    isPost : false,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content index posts-expand">
+            
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/lod-of-solid.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/lod-of-solid.html" class="post-title-link" itemprop="url">SOLID之LOD</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-04-10 21:11:00 / Modified: 21:19:09" itemprop="dateCreated datePublished" datetime="2022-04-10T21:11:00+08:00">2022-04-10</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>迪米特法则 Law of Demeter</p>
+<h1 id="LOD"><a href="#LOD" class="headerlink" title="LOD"></a>LOD</h1><blockquote>
+<p>最早出现于 1987年，由美国东北大学的伊恩·霍兰德（Ian Holland）提出。也叫做“最少知识原则”。</p>
+</blockquote>
+<blockquote>
+<p>Each unit should have only limited knowledge about other units: only units “closely” related to the current unit. Or: Each unit should only talk to its friends; Don’t talk to strangers.</p>
+</blockquote>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/lod-of-solid.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/what's-your-best-career-advice.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/what's-your-best-career-advice.html" class="post-title-link" itemprop="url">你最好的一条职业建议是什么？</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2022-04-10 21:10:58 / Modified: 21:25:48" itemprop="dateCreated datePublished" datetime="2022-04-10T21:10:58+08:00">2022-04-10</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Twitter上有人发了一个推，说他之前问过一个问题：“你最好的一条职业建议是什么？”，他得到了1300多个答案，最后他整理了12条最好的建议。<br>🔗 twitter、com&#x2F;chrishlad&#x2F;status&#x2F;1502650707274608644</p>
+<p>1、 尽可能为别人减少不确定性</p>
+<ul>
+<li>Uber解决了打车的不确定性</li>
+<li>亚马逊解决了送包裹的不确定性</li>
+<li>你也可以通过及时更新项目进展来帮老板解决不确定性</li>
+</ul>
+<p>2、 公司比职位更重要</p>
+<p>3、 一旦接受了一个任务，无论多小或者多么不起眼，要把它做的特别好，超出别人的预期。这样你就能建立起一个良好的声誉，让别人知道你总能高质量的完成工作。当你建立了这种声誉，你就能得到更多的机会，更大的知名度，以及更大的成功。</p>
+<p>4、 如果我不能信任你，你再聪明都没用。</p>
+<p>5、 在你的职业生涯中，陪你走到最后的只有你自己。不是你的公司，不是你的经理，不是你的团队，只有你自己。<br>在做你所有职业生涯的决定时，优先考虑你自己。</p>
+<p>6、 影响你职业生涯的三件事：</p>
+<ul>
+<li>你做什么？（工作）</li>
+<li>你为谁工作？（客户）</li>
+<li>和你一起工作的人是谁？（团队）</li>
+</ul>
+<p>如果你热爱你的工作、客户和团队，你会非常非常幸运。</p>
+<p>7、 和一个聪明的能激励你走向伟大的人结婚。</p>
+<p>8、 要么能学东西，要么能赚钱。<br>否则果断离职，去找一个这两者至少占一样的工作。</p>
+<p>9、 如果一个问题你不问，那么答案一定是“不”。</p>
+<p>10、 选择你的老板。<br>你有权选择谁当你的老板，而在找工作的过程中很多人没有考虑到这一点。<br>一个优秀的老板可以为你的职业发展提供极大的助力。</p>
+<p>11、 学会阐明你所做的事情的商业价值，而不仅仅是你的工作头衔或者项目。<br>不好的例子：“我是一个数据科学家。我创建了3个自服务数据应用”<br>更好的例子：“我帮助管理层发现了一个可以节约2300万美元成本的机会”</p>
+<p>12、 “职业”，本质是一个营销名词，是由那些经营特定类别的梦想的人卖给你的，而他们在贩卖这个梦想时赚了很多钱。<br>赚钱，承担风险，有冒险精神。<br>但不要让“职业”来限制自己</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/test-double-of-testability-series.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/test-double-of-testability-series.html" class="post-title-link" itemprop="url">可测试性系列之测试替身Test Double</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-04-06 18:49:00" itemprop="dateCreated datePublished" datetime="2022-04-06T18:49:00+08:00">2022-04-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-04-10 21:19:38" itemprop="dateModified" datetime="2022-04-10T21:19:38+08:00">2022-04-10</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在做程序测试时，常会用到测试替身来协助我们快速完成测试。</p>
+<p><img src="http://images.zhuxingsheng.com/20220405181931_1649153971.jpg"></p>
+<p>有时候被测试系统(system under test(SUT))很难测试，因为在测试环境下依赖的组件不能正常使用。如外部系统。</p>
+<p>当在一个不能使用真实依赖组件(depended-on component(DOC))的地方写test时，我们可以使用<a href="http://xunitpatterns.com/Test%20Double.html">Test Double</a>。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/test-double-of-testability-series.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/bad-taste-and-clean-code-series.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/bad-taste-and-clean-code-series.html" class="post-title-link" itemprop="url">Clean Code系列之坏味道及重构</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-04-06 18:48:00" itemprop="dateCreated datePublished" datetime="2022-04-06T18:48:00+08:00">2022-04-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>几乎在每个团队，都至少有一份代码规范，或者代码的check list。然也就仅仅是一份清单。</p>
+<p>每次团队复盘时，都会有一条，我们要写好代码，然“好代码”是什么样子，什么标准，全取决于各人的水平。</p>
+<p>每个程序员也都知道code review的重要性，然排期很紧张，难得做一次。宁可花时间追查问题，也不做防御性准备。</p>
+<p>这些现象，是不是特别平常，虽然很想改变，但又是无力感呢。</p>
+<p><strong>程序员对代码的追求态度决定了职业生涯的高度，代码的质量决定了生活质量。</strong></p>
+<p>为什么会有上面提到的现象，大概有这两方面的原因：</p>
+<p><em>1、每个人对“好代码”的观念不一样</em></p>
+<p><em>2、对于“坏味道”缺乏明确的表象判断，也就很难提出明确的改进措施</em></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/bad-taste-and-clean-code-series.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ddd-layered-parameter-conversion-of-clean-code-series.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/ddd-layered-parameter-conversion-of-clean-code-series.html" class="post-title-link" itemprop="url">Clean Code系列之DDD分层参数转换</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-03-31 20:13:00" itemprop="dateCreated datePublished" datetime="2022-03-31T20:13:00+08:00">2022-03-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>先看一段简单的代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">package com.zhuxingsheng.adapter</span><br><span class="line"></span><br><span class="line">@PostMapping(&quot;/login&quot;)</span><br><span class="line">public LoginResponse login(LoginRequest loginRequest) &#123;</span><br><span class="line"></span><br><span class="line">    return loginService.login(loginReqeust);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从代码中，可以明显看出这是一段处理登陆请求的方法。在大多数项目中，这种代码很常见。</p>
+<p>它有什么坏味道呢？</p>
+<p><strong>分层穿透了，LoginRequest类本应该属于入口层，结果穿透到了service层。</strong></p>
+<p>细细追究，需要明确的问题：</p>
+<p>1、LoginRequest到底属于哪一层，是resource层，还是service层？</p>
+<p>2、没有达到DDD防腐层的意义，resource是隔离外部与核心业务的，但却变成了透传。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/ddd-layered-parameter-conversion-of-clean-code-series.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/three-underlying-cognition-of-code-and-excellence.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/three-underlying-cognition-of-code-and-excellence.html" class="post-title-link" itemprop="url">码而优则仕的3个底层认知</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-03-20 16:16:00" itemprop="dateCreated datePublished" datetime="2022-03-20T16:16:00+08:00">2022-03-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-03-31 20:22:29" itemprop="dateModified" datetime="2022-03-31T20:22:29+08:00">2022-03-31</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>“学而优则仕”的传统文化渗透在各行各业。</p>
+<p>那么”码而优则仕”则是这种文化的延伸，自然而然的结果。</p>
+<p>当然很多程序员对做管理不感兴趣，想很纯粹的研究技术，成为一名技术专家。人各有志，但客观讲，技术专家与技术管理相比较，成为技术专家比技术管理难度大得多，只有做到在一个区域，一个行业屈指可数的顶尖专家，才有更加广阔的前景。尤其在国内的环境大多数都是业务型公司，技术本身没有直接价值，没有太高的壁垒，有太多能取代你位置的人。</p>
+<p>当然，技术管理也有难度，尤其对于程序员群体。但只要做到一个团队内的最佳，则拿到了敲门砖，随时准备幸运之神的降临。跨越技术纯粹性的舒适性，技术管理之路就开启了。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/three-underlying-cognition-of-code-and-excellence.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/caching-is-a-face-project.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/caching-is-a-face-project.html" class="post-title-link" itemprop="url">缓存是个面子工程</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-03-18 12:39:00" itemprop="dateCreated datePublished" datetime="2022-03-18T12:39:00+08:00">2022-03-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>使用缓存来加速应用程序的访问速度，是几乎所有高性能系统都会采用的方法。</p>
+<p>但缓存真的那么好吗？架构师在构建高性能系统时，是不是必须增加缓存组件？缓存是不是多多益善？</p>
+<p>《一代宗师》里本山大叔说过这样的一段话：</p>
+<p>“一门里，有人当面子，就得有人当里子。面子不能沾一点儿灰尘。流了血，里子得收着，收不住，漏到了面子上，就是毁派灭门的大事。”</p>
+<p><img src="http://images.zhuxingsheng.com/20220220214216_1645364536.jpg"></p>
+<p>如果缓存是里面的角色，那么绝对是面子。</p>
+<p>虽然缓存带来了性能的提升，但给系统带来的多少复杂性。缓存穿透，缓存击穿，缓存雪崩，缓存污染这些问题不绝于耳。这些问题不是操作系统兜着，就是程序员。所以缓存是24K纯金的面子。人人都好面子，还得有个能轻松应对的里子。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/caching-is-a-face-project.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/12-elements-of-transforming-monomer-architecture-into-micro-service-architecture.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/12-elements-of-transforming-monomer-architecture-into-micro-service-architecture.html" class="post-title-link" itemprop="url">单体架构转为微服务架构的12个要素</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-03-10 12:38:00" itemprop="dateCreated datePublished" datetime="2022-03-10T12:38:00+08:00">2022-03-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-03-18 12:39:08" itemprop="dateModified" datetime="2022-03-18T12:39:08+08:00">2022-03-18</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>微服务架构已经很流行了，并且有大量文章描述相对单体架构，微服务架构带来的众多优点。</p>
+<p><strong>怎么从单体架构更优雅地转化为微服务架构呢？</strong></p>
+<p>有一种被实践证明有效的方法论：<a href="https://12factor.net/">The Twelve-Factor App</a></p>
+<p><img src="http://images.zhuxingsheng.com/20220309163009_1646814609.jpg"></p>
+<h2 id="1、Codebase"><a href="#1、Codebase" class="headerlink" title="1、Codebase"></a>1、Codebase</h2><blockquote>
+<p>一份基准代码，多份部署</p>
+</blockquote>
+<p><img src="http://images.zhuxingsheng.com/20220315214710_1647352030.jpg"></p>
+<p>尽管每个应用只对应一份基准代码，但可以同时存在多份部署。每份 部署 相当于运行了一个应用的实例。通常会有一个生产环境，一个或多个预发布环境。此外，每个开发人员都会在自己本地环境运行一个应用实例，这些都相当于一份部署</p>
+<h2 id="2、Dependencies"><a href="#2、Dependencies" class="headerlink" title="2、Dependencies"></a>2、Dependencies</h2><blockquote>
+<p>显式声明依赖关系</p>
+</blockquote>
+<p>12-Factor规则下的应用程序不会隐式依赖系统级的类库。 它一定通过依赖清单 ，确切地声明所有依赖项</p>
+<h2 id="3、配置"><a href="#3、配置" class="headerlink" title="3、配置"></a>3、配置</h2><blockquote>
+<p>在环境变量中存储配置</p>
+</blockquote>
+<p>通常，应用的配置在不同部署 (预发布、生产环境、开发环境等等)间会有很大差异。这其中包括：</p>
+<ul>
+<li>数据库，Memcached，以及其他 后端服务 的配置</li>
+<li>第三方服务的证书，如 Amazon S3、Twitter 等</li>
+<li>每份部署特有的配置，如域名等</li>
+</ul>
+<p>有些应用在代码中使用常量保存配置，这与12-Factor所要求的代码和配置严格分离显然大相径庭。配置文件在各部署间存在大幅差异，代码却完全一致。</p>
+<h2 id="4、后端服务"><a href="#4、后端服务" class="headerlink" title="4、后端服务"></a>4、后端服务</h2><blockquote>
+<p>把后端服务(backing services)当作附加资源</p>
+</blockquote>
+<p>后端服务是指程序运行所需要的通过网络调用的各种服务，如数据库（MySQL，CouchDB），消息&#x2F;队列系统（RabbitMQ，Beanstalkd），SMTP 邮件发送服务（Postfix），以及缓存系统（Memcached）。</p>
+<p><img src="http://images.zhuxingsheng.com/20220315221820_1647353900.jpg"></p>
+<p>每个不同的后端服务是一份 资源 。例如，一个 MySQL 数据库是一个资源，两个 MySQL 数据库（用来数据分区）就被当作是 2 个不同的资源。12-Factor 应用将这些数据库都视作 附加资源 ，这些资源和它们附属的部署保持松耦合。</p>
+<h2 id="5、构建，发布，运行"><a href="#5、构建，发布，运行" class="headerlink" title="5、构建，发布，运行"></a>5、构建，发布，运行</h2><p>基准代码 转化为一份部署(非开发环境)需要以下三个阶段：</p>
+<ul>
+<li>构建阶段 是指将代码仓库转化为可执行包的过程。构建时会使用指定版本的代码，获取和打包 依赖项，编译成二进制文件和资源文件。</li>
+<li>发布阶段 会将构建的结果和当前部署所需 配置 相结合，并能够立刻在运行环境中投入使用。</li>
+<li>运行阶段 （或者说“运行时”）是指针对选定的发布版本，在执行环境中启动一系列应用程序 进程。</li>
+</ul>
+<p><img src="http://images.zhuxingsheng.com/20220315221927_1647353967.jpg"></p>
+<p>12-factor 应用严格区分构建，发布，运行这三个步骤。 举例来说，直接修改处于运行状态的代码是非常不可取的做法，因为这些修改很难再同步回构建步骤。</p>
+<h2 id="6、进程"><a href="#6、进程" class="headerlink" title="6、进程"></a>6、进程</h2><blockquote>
+<p>以一个或多个无状态进程运行应用</p>
+</blockquote>
+<p>运行环境中，应用程序通常是以一个和多个进程运行的。</p>
+<p>12-Factor 应用的进程必须无状态且无共享。 任何需要持久化的数据都要存储在后端服务内，比如数据库。</p>
+<h2 id="7、端口绑定"><a href="#7、端口绑定" class="headerlink" title="7、端口绑定"></a>7、端口绑定</h2><blockquote>
+<p>通过端口绑定(Port binding)来提供服务</p>
+</blockquote>
+<p>互联网应用有时会运行于服务器的容器之中。例如 PHP 经常作为 Apache HTTPD 的一个模块来运行，正如 Java 运行于 Tomcat 。</p>
+<p>12-Factor 应用完全自我加载 而不依赖于任何网络服务器就可以创建一个面向网络的服务。互联网应用 通过端口绑定来提供服务 ，并监听发送至该端口的请求。</p>
+<h2 id="8、并发"><a href="#8、并发" class="headerlink" title="8、并发"></a>8、并发</h2><blockquote>
+<p>通过进程模型进行扩展</p>
+</blockquote>
+<p>任何计算机程序，一旦启动，就会生成一个或多个进程。互联网应用采用多种进程运行方式。例如，PHP 进程作为 Apache 的子进程存在，随请求按需启动。Java进程则采取了相反的方式，在程序启动之初 JVM 就提供了一个超级进程储备了大量的系统资源(CPU和内存)，并通过多线程实现内部的并发管理。上述2个例子中，进程是开发人员可以操作的最小单位。</p>
+<h2 id="9、易处理"><a href="#9、易处理" class="headerlink" title="9、易处理"></a>9、易处理</h2><blockquote>
+<p>快速启动和优雅终止可最大化健壮性</p>
+</blockquote>
+<p>应用程序的进程应该是一次性的，以便它们可以快速启动、停止和重新部署，而不会丢失数据。这有助于快速弹性扩展、代码和配置更改的快速部署以及生产部署的稳健性。</p>
+<h2 id="10、开发环境与线上环境等价"><a href="#10、开发环境与线上环境等价" class="headerlink" title="10、开发环境与线上环境等价"></a>10、开发环境与线上环境等价</h2><blockquote>
+<p>尽可能的保持开发，预发布，线上环境相同</p>
+</blockquote>
+<p>从以往经验来看，开发环境（即开发人员的本地 部署）和线上环境（外部用户访问的真实部署）之间存在着很多差异。这些差异表现在以下三个方面：</p>
+<ul>
+<li>时间差异： 开发人员正在编写的代码可能需要几天，几周，甚至几个月才会上线。</li>
+<li>人员差异： 开发人员编写代码，运维人员部署代码。</li>
+<li>工具差异： 开发人员或许使用 Nginx，SQLite，OS X，而线上环境使用 Apache，MySQL 以及 Linux。</li>
+</ul>
+<p>12-Factor 应用想要做到 持续部署 就必须缩小本地与线上差异。 再回头看上面所描述的三个差异:</p>
+<ul>
+<li>缩小时间差异：开发人员可以几小时，甚至几分钟就部署代码。</li>
+<li>缩小人员差异：开发人员不只要编写代码，更应该密切参与部署过程以及代码在线上的表现。</li>
+<li>缩小工具差异：尽量保证开发环境以及线上环境的一致性。</li>
+</ul>
+<h2 id="11、日志"><a href="#11、日志" class="headerlink" title="11、日志"></a>11、日志</h2><blockquote>
+<p>把日志当作事件流</p>
+</blockquote>
+<p>将日志流式传输到选定的位置，而不是将它们转储到日志文件中。日志可以定向到任何地方。例如，它们可以被定向到 NoSQL 中的数据库、另一个服务、存储库中的文件、日志索引和分析系统或数据仓库系统。</p>
+<h2 id="12、管理进程"><a href="#12、管理进程" class="headerlink" title="12、管理进程"></a>12、管理进程</h2><blockquote>
+<p>后台管理任务当作一次性进程运行</p>
+</blockquote>
+<p>将管理任务与应用程序的其余部分分开，以防止一次性任务导致正在运行的应用程序出现问题。容器使这很容易，因为可以启动容器只是为了运行任务然后将其关闭。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/how-does-the-architecture-evolve-iteratively.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/how-does-the-architecture-evolve-iteratively.html" class="post-title-link" itemprop="url">架构如何迭代演进</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-03-01 23:53:00" itemprop="dateCreated datePublished" datetime="2022-03-01T23:53:00+08:00">2022-03-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>最近看完了一本大佬很早就推荐的书：《演进式架构》</p>
+<p><img src="http://images.zhuxingsheng.com/20220225211857_1645795137.jpg"></p>
+<p>现在看已经算是一本很老的书了，里面的很多概念对架构师来讲已经算是耳熟能详了。</p>
+<p>如果你没有一些常识性思考，那还是可以看看的，如果没有时间，我通过这篇读书笔记梳理了书中的核心知识点，结合最近的一些新书观点，方便你快速获取这些知识。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/how-does-the-architecture-evolve-iteratively.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/how-much-is-my-line-of-code-worth.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/how-much-is-my-line-of-code-worth.html" class="post-title-link" itemprop="url">我的一行代码值多少钱</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-02-20 20:22:00" itemprop="dateCreated datePublished" datetime="2022-02-20T20:22:00+08:00">2022-02-20</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>在<a href="http://www.zhuxingsheng.com/blog/career-and-learning-of-soft-skills-notes.html">《程序员软技能》</a>中，提到过一种思维，要把自己当成一家企业，而就职公司是我们的客户。</p>
+<p>既然如此，我想需要考虑的最重要的事情应该是我给客户提供了什么产品，产品是什么价格？</p>
+<p>对于程序员来讲，提供的最根本产品自然是代码，我们现在需要考虑的事就是代码的价格，平均到基本单位，就是每一行代码值多少钱？</p>
+<p>当下市场，先考虑一下代码语言种类：</p>
+<p>使用java语言写的一行代码</p>
+<p>使用go语言写的一行代码</p>
+<p>使用python语言写一行代码</p>
+<p>亦或写一行sql</p>
+<p>甚至调试一个AI模型参数</p>
+<p>这些代码它们的价格肯定是不一样的。想到的第一个因素估计是写的人不一样。都写相同的语言代码，什么在决定价格？自然是写代码程序员的水平了。如同时期研究生相对本科生自然值钱些。</p>
+<p>即使都是出于同一人之手。那么是什么决定了价格？是因为牛逼吗？</p>
+<p>PHP是最好的语言？从高维度讲sql man与AI调试师没什么不同，那决定价格的最根本因素是什么？</p>
+<blockquote>
+<p>在市场上，决定价格的最重要因素是需求</p>
+</blockquote>
+<p>现在写一行VB语言会比java语言值钱吗？不是VB语言不好，终究是因为市场需求。当更先进更高阶的技术出现，更能满足市场需求时，价格自然上涨。这也是为什么苦逼程序员必须随着技术更迭不停地学习。甚至要预判技术趋势，提前投入精力学习。才能保障自己写的代码价值不被贬值。</p>
+<p>除了市场需求因素，程序员水平，还有什么因素呢？我们还需要考虑哪些问题？</p>
+<p>把需求换种说法，就是写的代码是否有用？</p>
+<p>从关注程序员自身来讲，可以考虑再深入点：</p>
+<p>1、我写的代码对别人有没有用呢？</p>
+<blockquote>
+<p>写个hello world，或者写了个微信，似乎都有用</p>
+</blockquote>
+<p>2、我写的代码对别人有用的话，有多大用处呢？如何做到最有用？</p>
+<blockquote>
+<p>hello world作用可以作教程，对小白编程基础培训，微信可以通讯、支付、摇一摇，似乎用处都不小。因此它们的作用不能从程序员侧考虑，而得从客户侧考虑。</p>
+</blockquote>
+<p>3、我写的代码对别人有用的话，对多少人有用？如何做到对更多人有用？</p>
+<blockquote>
+<p>hello world面对的人群是刚要入门编程人员，而微信是全民应用；要想对更多人有用，全民编程似乎不太可能</p>
+</blockquote>
+<p>4、我写的代码对别人有用的话，在多长时间段对别人有用呢？如何做到让这个时段更长些</p>
+<p>…</p>
+<p>除了上面的问题，还需要从客户侧考虑，不能只是埋头写一行行的代码，还得考虑客户的需求，这样又需要考虑一些问题：</p>
+<p>1、他们真正的需求是什么？最需要的是什么？</p>
+<p>需要程序员？需要35岁以下的程序员？</p>
+<p>2、我是那个能满足他们需求的人吗？</p>
+<p>在优化人员时，优化名单上会出现你的名字吗？</p>
+<p>3、如果我能，我有没有可能成为必需？</p>
+<p>4、如果我不能，我怎样才能？</p>
+<p>5、有必要一定由我去满足他们的需求吗？</p>
+<p>…</p>
+<p>这么多的问题，总结成一句话，行动指南：<strong>挑最需要的事情做</strong>，自然就成了最被需要的人。</p>
+<hr>
+<p>常听些大佬讲，要有商业sense，而一切商业模式的根本，怎么赚钱，赚什么钱，赚多少钱。</p>
+<p>在现如今充满物质喧嚣的大环境中，总包、副业刚需、内卷这些词时时充斥我们时，更应该考虑下商业底层逻辑。</p>
+<p>我想作为程序员，“我的一行代码值多少钱？”，这个问题是最基本的商业sense。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/blog/page/4/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/blog/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/16/">16</a><a class="extend next" rel="next" href="/blog/page/6/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+  </nav>
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="康威定律随着微服务架构兴起的步伐慢慢复苏，重新进入人们的视线，但他的威力远远不仅限于简单的指导如何拆分微服务，不管是整个团队的战力，还是架构方案能否顺利落地都起着重要的作用。 康威定律先回顾一下什么是康威定律：1968年，计算机系统研究院的梅尔康威在Datamation杂志上发表了一篇论文How Do Committees Invent? 这篇论文中有一句话被总结为康威定律：“设计系统的组织由于受">
+<meta property="og:type" content="article">
+<meta property="og:title" content="康威定律与逆康威定律">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/conway-law-and-inverse-conway-law.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="康威定律随着微服务架构兴起的步伐慢慢复苏，重新进入人们的视线，但他的威力远远不仅限于简单的指导如何拆分微服务，不管是整个团队的战力，还是架构方案能否顺利落地都起着重要的作用。 康威定律先回顾一下什么是康威定律：1968年，计算机系统研究院的梅尔康威在Datamation杂志上发表了一篇论文How Do Committees Invent? 这篇论文中有一句话被总结为康威定律：“设计系统的组织由于受">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211017194630_1634471190.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211017202415_1634473455.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211017194630_1634471190.jpg?imageMogr2/thumbnail/!50p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211017220412_1634479452.jpg?imageMogr2/thumbnail/!30p">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20211017220449_1634479489.jpg?imageMogr2/thumbnail/!50p">
+<meta property="article:published_time" content="2021-10-17T06:26:00.000Z">
+<meta property="article:modified_time" content="2022-08-13T13:35:43.309Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="架构">
+<meta property="article:tag" content="管理">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20211017194630_1634471190.jpg?imageMogr2/thumbnail/!50p">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/conway-law-and-inverse-conway-law.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>康威定律与逆康威定律 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/conway-law-and-inverse-conway-law.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          康威定律与逆康威定律
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-10-17 14:26:00" itemprop="dateCreated datePublished" datetime="2021-10-17T14:26:00+08:00">2021-10-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-08-13 21:35:43" itemprop="dateModified" datetime="2022-08-13T21:35:43+08:00">2022-08-13</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>康威定律随着微服务架构兴起的步伐慢慢复苏，重新进入人们的视线，但他的威力远远不仅限于简单的指导如何拆分微服务，不管是整个团队的战力，还是架构方案能否顺利落地都起着重要的作用。</p>
+<h1 id="康威定律"><a href="#康威定律" class="headerlink" title="康威定律"></a>康威定律</h1><p>先回顾一下什么是康威定律：1968年，计算机系统研究院的梅尔康威在Datamation杂志上发表了一篇论文How Do Committees Invent?</p>
+<p>这篇论文中有一句话被总结为康威定律：<strong>“设计系统的组织由于受到约束，这些设计往往是组织内部沟通结构的副本。”</strong></p>
+<p>下面先通过一次切身经历来阐述定律如何发挥威力，以及如何通过逆康威定律得到我们想要的架构方案</p>
+<p>起初我带领一支团队负责一个业务，先称它为APP1，经过一段时间，老板找我谈话，说：“APP1在你的带领下，运行得不错，应该承担更大的责任，后面APP2团队也由你负责”。</p>
+<p>经过一段时间的迭代，APP2需要一个配置服务，支撑差异化运营</p>
+<p>APP2架构师根据最新业务需求，提出了给APP2增加一个配置服务，对于APP2来讲，架构师都无需赘述，此架构方案无疑是合理的</p>
+<p>但从整体看APP1已经有配置服务</p>
+<p><img src="http://images.zhuxingsheng.com/20211017194630_1634471190.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>此时就有了两个方案：</p>
+<ol>
+<li>按架构师规划，APP2构建新的配置服务</li>
+<li>增强APP1的配置服务，让它同时支撑APP1和APP2</li>
+</ol>
+<p>怎么决择呢？</p>
+<p>从架构角度，方案一似乎更有优势，独立，两个APP之间也不会相互干扰，原先的配置服务也无需改动，相对去改造一个旧系统，构建新系统负担还小一些</p>
+<p>但从组织结构讲，组织效能角度也更高效，大局出发，也不需要两个相似的配置服务，组织结构与架构结构也更有同态性</p>
+<p><img src="http://images.zhuxingsheng.com/20211017202415_1634473455.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>此时，康威定律就发挥了至关重要的作用：<strong>“如果系统的架构和组织结构不一致，那么组织结构将成为赢家”</strong></p>
+<hr>
+<p>当我在计划着进一步整合两个团队时，事情发生了变化，老板又找我谈话了，“经过这段时间，发现你带两个团队有些吃力，这样吧，以后你就只负责APP2团队”</p>
+<p>随着业务的继续开展，发现了个问题，当APP2团队需求需要变更配置服务时，为难了</p>
+<p>APP1使用配置服务深度和广度都高于APP2，所以在划分时，配置服务归于APP1了，之前都是同一个大团队，资源协调很简单，内部沟通很容易</p>
+<p>此时怎么办？</p>
+<p>原先团队内部的沟通，需要跨团队沟通了，再简单的一次变更，都需要提前沟通，协调排期，制约了高效迭代交付能力</p>
+<p>所以APP2团队不得不剥离APP1的配置服务，另起炉灶，回到当初架构师的方案一</p>
+<p>这其实还是康威定律发挥着威力：<strong>组织内部的沟通路径（无论是否和正式汇报线一致）严重制约了组织所能设计的解决方案的类型</strong></p>
+<h1 id="逆康威定律"><a href="#逆康威定律" class="headerlink" title="逆康威定律"></a>逆康威定律</h1><p>这是ThoughtWorks技术总监James Lewis突发奇想地提出的，<strong>组织要根据他们想得到的软件架构来设计团队结构，而不是期望团队盲从一个被设计好的团队结构</strong>。</p>
+<p>其核心观点在于，<strong>将软件架构看作一个独立的概念，认为它可以被孤立设计，然后交由任何团队来实现，这从根本上就是错误的</strong></p>
+<p>我们把上面的示例，顺序倒置过来，就是逆康威定律。</p>
+<p>我详细阐述下：</p>
+<p>刚开始，APP1和APP2是两个独立完整的团队，都有各自的配置服务，也就是</p>
+<p><img src="http://images.zhuxingsheng.com/20211017194630_1634471190.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>虽然他们功能相似，但由于在两个团队里面，与组织结构和沟通路径都是匹配的</p>
+<p>从公司全局架构看，发现配置服务只需要一个就够了，推倒烟囱式架构，整合资源，配置服务中台化，这也是近些年各公司崇拜的中台文化</p>
+<p>怎么办呢？简单啊，提取共性，抽象整合呗。</p>
+<p>现实没那么轻松，如果两大APP团队，是支撑公司盈利的两大业务，营收压力也很大，基本上整合是句空话，看看有多少公司的BU都是各自为战，烟囱式系统一个比一个强悍，谁能动得了？</p>
+<p>此时怎么办？整合组织结构，让两个团队组合成更大的团队，拥有独立的架构团队，团队内部自己就会催生出整合的力量</p>
+<p>再看一个示例，假设有四个独立团队，每个都由前后端开发工程师组成，他们分别负责系统的不同部分，然后对DBA提出数据库变更请求。</p>
+<p><img src="http://images.zhuxingsheng.com/20211017220412_1634479452.jpg?imageMogr2/thumbnail/!30p"></p>
+<p>如果这四支团队独立的前端和后端开工程师推动了UI和应用层的前后端分离，而有一个共享的DBA团队，那么很可能会带来这样一个单一的共享数据库。</p>
+<p>因为康威定律的同态力会强烈地牵引软件架构“自然而然”地体现出当前的组织设计和沟通路径。</p>
+<p>当我们在使用微服务架构时，每个独立服务都需要有属于自己的数据存储。</p>
+<p><img src="http://images.zhuxingsheng.com/20211017220449_1634479489.jpg?imageMogr2/thumbnail/!50p"></p>
+<p>通过应用逆康威定律，可以在各个独立的客户端应用和API开发团队里面增加一名数据库开发人员，那架构结构自然就体现出来了。</p>
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>想想架构风格千千万万，为什么分层架构却是最流行的，也是最容易实践成功的，因为有独立的前端团队，后端团队，基础服务团队，对于业务数据流向，正好也是从UI发起，逻辑层处理，数据库存储，组织结构与架构结构是匹配的。这就是康威定律的威力。</p>
+<p>组织结构和团队间真实的沟通路径会直接影响所构建系统的架构。如果有四个小组合作开发一个编译器，那么你将得到一款具有四个步骤的编辑器。对于一家软件产品公司来说，组织结构预示着产品架构。</p>
+<p>过去很多组织结构调整的潜在目标都是为了减少员工或者围绕管理者和领导者的权势建立山头。可对于一家软件公司，势必慎重，必须要考虑架构，更可以应用逆康威定律：设计团队满足理想的软件架构</p>
+<p>简而言之，在设计软件架构或进行组织结构调整时，将康威定律纳入考虑因素之中，就能够受益于兼顾软件架构和团队设计的同态力。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%AE%A1%E7%90%86/" rel="tag"># 管理</a>
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/modeling-is-not-necessary.html" rel="prev" title="建模没必要">
+      <i class="fa fa-chevron-left"></i> 建模没必要
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/architecture-and-architect-3.html" rel="next" title="架构与架构师3">
+      架构与架构师3 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%B7%E5%A8%81%E5%AE%9A%E5%BE%8B"><span class="nav-number">1.</span> <span class="nav-text">康威定律</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%86%E5%BA%B7%E5%A8%81%E5%AE%9A%E5%BE%8B"><span class="nav-number">2.</span> <span class="nav-text">逆康威定律</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

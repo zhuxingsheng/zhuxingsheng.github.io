@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="正交设计，什么是正交设计，在之前的几篇文章中，《架构的本质是业务的正交分解》、《应用对变化》都有学习记录。 这两篇文章越看越感觉有道理： 1、系统应该被分解为“最小化核心系统 + 多个彼此正交的周边系统” 2、消除重复 3、分离关注点 4、管理依赖：最小化依赖、向稳定方向依赖 对于这四个策略的理解，感觉自己的认知层次还是太低了。更多的时候还是在作为编码原则。而非架构原则。 在《架构师的自我拯救》提">
+<meta property="og:type" content="article">
+<meta property="og:title" content="架构师眼中的正交设计">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/orthogonal-design-in-the-eyes-of-architects.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="正交设计，什么是正交设计，在之前的几篇文章中，《架构的本质是业务的正交分解》、《应用对变化》都有学习记录。 这两篇文章越看越感觉有道理： 1、系统应该被分解为“最小化核心系统 + 多个彼此正交的周边系统” 2、消除重复 3、分离关注点 4、管理依赖：最小化依赖、向稳定方向依赖 对于这四个策略的理解，感觉自己的认知层次还是太低了。更多的时候还是在作为编码原则。而非架构原则。 在《架构师的自我拯救》提">
+<meta property="og:locale">
+<meta property="article:published_time" content="2023-02-11T13:24:00.000Z">
+<meta property="article:modified_time" content="2023-02-11T13:24:34.861Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="架构">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/orthogonal-design-in-the-eyes-of-architects.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>架构师眼中的正交设计 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/orthogonal-design-in-the-eyes-of-architects.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          架构师眼中的正交设计
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2023-02-11 21:24:00 / Modified: 21:24:34" itemprop="dateCreated datePublished" datetime="2023-02-11T21:24:00+08:00">2023-02-11</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>正交设计，什么是正交设计，在之前的几篇文章中，<a href="http://www.zhuxingsheng.com/blog/the-essence-of-architecture-is-orthogonal-decomposition-of-services.html">《架构的本质是业务的正交分解》</a>、<a href="http://www.zhuxingsheng.com/blog/coping-with-change.html">《应用对变化》</a>都有学习记录。</p>
+<p>这两篇文章越看越感觉有道理：</p>
+<p><strong>1、系统应该被分解为“最小化核心系统 + 多个彼此正交的周边系统”</strong></p>
+<p><strong>2、消除重复</strong></p>
+<p><strong>3、分离关注点</strong></p>
+<p><strong>4、管理依赖：最小化依赖、向稳定方向依赖</strong></p>
+<p>对于这四个策略的理解，感觉自己的认知层次还是太低了。更多的时候还是在作为编码原则。而非架构原则。</p>
+<p>在《架构师的自我拯救》提出了技术人员的商业价值，包括两部分：快速试错和快速规模化。</p>
+<p>那么我们能在企业的竞争中做些什么，同时也自己创造增量价值呢？其实也被包含在这两方面。</p>
+<p>比如快速试错。为什么需要快速试错？为了验证商业想法是否能得到市场认同，从而获得商业价值。必然需要高速响应业务和技术的需求。</p>
+<p>这面临的挑战就是交付时间压力。市场不等人，竞争对手也不等人。</p>
+<p>除了战略层面的尝试方向对不对，如果有人承诺方向一定对，那自然不用试错，直接火力全开，饱和式攻击就行。</p>
+<p>绝大多数情况是没人担保的，只能尝试。对应到技术人员，挑战在于只是很小的一次尝试，不要把系统改得面目全非。</p>
+<p>对应到架构，就是我们系统的得符合“开闭原则”。能稳住核心系统的不变性，又能保持系统有序的增量。把大多数的尝试尽量封装到一个小的领域内。不会因为多次的业务尝试，导致系统随着时间变得混乱。</p>
+<p>想要做到这些，需要如下架构原则：</p>
+<p><strong>1、单一职责</strong>，把每个业务尝试封装到一个单一模块中。一旦尝试失败，就可以迅速把业务逻辑下线，避免影响整体的复杂性。</p>
+<p><strong>2、最小依赖</strong>，整体架构设计要保障大多数业务尝试可以在业务层完成。如果每个业务方的需求都会侵入到底层的逻辑，那么每次尝试都会变成跨模块，甚至跨团队合作，这种架构会大幅降低业务尝试的速度</p>
+<p><strong>3、最小暴露</strong>，相当于最小被依赖，在业务尝试期接口不对部门或企业外部暴露，包括API、数据共享、事件、消息等一切对外界造成影响的通信机制。尤其是输出，这样才能最小化它的爆炸半径。否则该业务尝试的数据模型会污染到其他业务，在尝试失败之后对其他业务的影响也会很难剥离。</p>
+<p>原则很简单，但怎么落地这些原则，最大的挑战来于短视疸。如互联网火热时，人员更替很频繁，导致技术人员的稳定性差，想要快速拿到结果就会设计短视。还有企业组织结构，像康威定律一样，组织间的利益争夺，造成组织内最优设计，但企业整体设计熵增。</p>
+<p>作为架构师，可以：</p>
+<p><strong>1、提升对封装能力重要性的认知</strong>。这是一个技术人员的基本功，从写代码的第一天就需要。只不过随着职业发展，从封装代码架构，到封装业务逻辑，最后到封装业务尝试。</p>
+<p><strong>2、建设复杂度控制机制</strong>。这里设计评审很关键。业务尝试也要有设计评审，而评审的一个固定环节就是逻辑、数据和接口的最小爆炸半径的设计。</p>
+<p><strong>3、推行最小必要架构原则</strong>。任何增加功能、引入复杂性的设计，都要做一个正式的评审，而简化的行为则不需要。</p>
+<hr>
+<p>当然，这些内容，是在郭东白架构课程里面看到的，他提出这是一个架构师提升企业架构设计对外部的适应能力。我理解这就是应对变化的能力。怎么能更好的应对变化，最佳原则就是“开闭原则”。而这些内容我更感觉是正交设计的另一种表述。这些原则与正交设计是一脉相承的。</p>
+<p>如果整个系统的各个功能模块是正交设计的，那自然能灵活应对变化。一个庞大系统无法适应变化时，主要是架构僵化以及各个模块之间的关系错综复杂，导致牵一发而动全身。不能改不敢改。</p>
+<p>应对变化时，不要饱和式攻击取胜，需要对阶段性精确目标最大投入取得成果。怎么才能做到不饱和式攻击，在架构层面就是要做到正交分解。</p>
+<hr>
+<p>总结一下：<strong>架构师主要职责就是为了抵制熵增</strong>。而抵制熵增不管从战术还是战略，正交设计都是一种很好的实践方式和指导原则。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9E%B6%E6%9E%84/" rel="tag"># 架构</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/basic-terms-of-kafka.html" rel="prev" title="Kafka基础术语">
+      <i class="fa fa-chevron-left"></i> Kafka基础术语
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/micro-service-is-not-a-silver-bullet-or-a-dud.html" rel="next" title="微服务不是银弹也不是哑弹">
+      微服务不是银弹也不是哑弹 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

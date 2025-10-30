@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="之前写了两篇《DDD开篇》与《DDD应对复杂》，是时候总结一下了 对于DDD的启蒙，不管是国内还是国外思维逻辑都是一样的。或者说如果你想写本关于DDD的书，大纲似乎是一样的 首先DDD是什么？给出定义，定义有些抽象，难以一次性接受，那就通过以往问题引出DDD，这时模型、复杂度、开发流程都是自然附带出的概念，再后面就是DDD的知识结构是什么，最后就是讲解一个实例，也有些会把实例穿插到各个篇章中 在D">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDD开篇总结">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/ddd-opening-summary.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="之前写了两篇《DDD开篇》与《DDD应对复杂》，是时候总结一下了 对于DDD的启蒙，不管是国内还是国外思维逻辑都是一样的。或者说如果你想写本关于DDD的书，大纲似乎是一样的 首先DDD是什么？给出定义，定义有些抽象，难以一次性接受，那就通过以往问题引出DDD，这时模型、复杂度、开发流程都是自然附带出的概念，再后面就是DDD的知识结构是什么，最后就是讲解一个实例，也有些会把实例穿插到各个篇章中 在D">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20201018163201_1603009921.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20201018175643_1603015003.jpg">
+<meta property="article:published_time" content="2020-10-19T05:39:00.000Z">
+<meta property="article:modified_time" content="2021-11-07T13:29:17.017Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="DDD">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20201018163201_1603009921.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/ddd-opening-summary.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>DDD开篇总结 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/ddd-opening-summary.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DDD开篇总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-10-19 13:39:00" itemprop="dateCreated datePublished" datetime="2020-10-19T13:39:00+08:00">2020-10-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>之前写了两篇<a href="http://www.zhuxingsheng.com/blog/ddd-opening.html">《DDD开篇》</a>与<a href="http://www.zhuxingsheng.com/blog/ddd-copes-with-complexity.html">《DDD应对复杂》</a>，是时候总结一下了</p>
+<p>对于DDD的启蒙，不管是国内还是国外思维逻辑都是一样的。或者说如果你想写本关于DDD的书，大纲似乎是一样的</p>
+<p>首先DDD是什么？给出定义，定义有些抽象，难以一次性接受，那就通过以往问题引出DDD，这时模型、复杂度、开发流程都是自然附带出的概念，再后面就是DDD的知识结构是什么，最后就是讲解一个实例，也有些会把实例穿插到各个篇章中</p>
+<p>在DDD这个系列中，我也打算是这种思路，很平易近人</p>
+<p>经过了之前两篇，对于第一部分的DDD是什么？为什么需要DDD基本都问答清楚了。</p>
+<h1 id="DDD是什么"><a href="#DDD是什么" class="headerlink" title="DDD是什么"></a>DDD是什么</h1><p>DDD根本上是一种软件开发的建模方法论，其中使用了面向对象分析思想，并不是独立于外全新的体系</p>
+<p>模型是对现实世界的抽象，那建模是对现实世界的抽象过程，但模型毕竟是模型，不能代替现实，就像类比不能代替问题本身一样。建模过程与建模者的观察视角和对问题的认知有直接关系,所以我们要带着审视的眼光看待模型</p>
+<p>软件开发的最大问题之一便是业务人员和技术人员需求某种翻译才能交流，那么模型的质量就取决于翻译的还原度</p>
+<p>建模不仅要还原实现世界，更要把重要的东西进行显示化。是一个软件之所以是这个软件的核心</p>
+<p>建模可以通过<strong>建模&#x3D;构造块+语法</strong>范式表达，各类语言都可以通过这种范式表达出来</p>
+<p><img src="http://images.zhuxingsheng.com/20201018163201_1603009921.jpg"></p>
+<p>(1) 自然语言建模 </p>
+<p>构造块：常用的那几千个汉字（或者英语的10万单词）</p>
+<p>语法规则：主谓宾定状补</p>
+<p>(2)计算机语言建模 </p>
+<p>构造块：加&#x2F;减&#x2F;乘&#x2F;除，if-else, for, while.. </p>
+<p>语法规则：程序员最熟悉，此处就不说了</p>
+<p>(3)过程建模 </p>
+<p>构造块：函数 </p>
+<p>语法规则：整个系统描述成一个个过程，每个过程通过函数的层层调用组成</p>
+<p>(4)对象建模 </p>
+<p>构造块：对象 </p>
+<p>语法规则: 整个系统描述成对象与对象之间的关系</p>
+<p>(5) DDD领域建模 </p>
+<p>构造块：实体&#x2F;值对象&#x2F;领域服务&#x2F;领域事件&#x2F;聚合根&#x2F;工厂&#x2F;仓库&#x2F;限界上下文 </p>
+<p>语法规则：就是“构造块”之间的联系（不是很明显，这个需要深入研究。也正是DDD难掌握的地方）</p>
+<h1 id="为什么需要DDD"><a href="#为什么需要DDD" class="headerlink" title="为什么需要DDD"></a>为什么需要DDD</h1><p>之前介绍过软件复杂度以及应对复杂度之道，DDD是其中一种术</p>
+<ol>
+<li>使领域专家和开发者在一起工作，这样开发出来的软件能够准确地传送业务规则</li>
+<li>“准确传达业务规则”意思是说此时的软件就像如果领域专家是编码人员时所开发出来的一样</li>
+<li>帮助业务人员自我提高。没有任何一个领域专家或管理者敢说他对业务已经了如指掌，业务知识需要长期学习过程，在<br>DDD中，每个人都在学习，同时每个人又是知识贡献者</li>
+<li>关键在于对知识的集中，因为这样可以确保软件知识并不只是掌握在少数人手中</li>
+<li>在领域专家、开发者和软件本身之间不存在“翻译”，意思是当大家都使用相同的语言进行交流时，每个人都能听懂他人所说</li>
+<li>设计就是代码，代码就是设计。设计是关于软件如何工作的，最好的编码设计来自多次试验，这得益于敏捷的发现过程</li>
+<li>DDD同时提供了战略设计和战术设计两种方式,战略设计帮助我们理解哪些投入是最重要的，哪些既有软件资产是可以重新拿来使用的，哪些人应该被加到团队中？战术设计帮助我们创建DDD模型中各个部件</li>
+</ol>
+<p>上面的比较学术，简单讲：理解DDD的本质是统一语言、边界划分和面向对象分析的方法</p>
+<ol>
+<li>统一语言，主要思想是让应用能和业务相匹配，这是通过在业务与代码中的技术之间采用共同的语言达成的。也就是设计及代码，代码及设计</li>
+<li>面向对象，DDD核心是领域模型，先找到业务中的领域模型，以领域模型为中心，驱动项目开发，指引我们如何实现面向服务架构或业务驱动架构。领域模型设计精髓在于面向对象分析，对事物的抽象能力，一个领域驱动架构师必然是一个面向对象分析大师</li>
+<li>业务语义显示化，统一语言也好，面向对象也好，最终目标都是为代码可读性和可维护性服务，统一语言使得核心领域概念无损地在代码中呈现，从而提升代码的可理解性</li>
+<li>分离业务逻辑和技术细节，让两个维度的复杂度被解开和分治，比如整洁架构</li>
+</ol>
+<p><strong>对于最终目标来讲，在软件项目中，任何方法论如果最终不能落在“减少代码复杂度”，都是有待商榷的</strong></p>
+<h1 id="DDD挑战"><a href="#DDD挑战" class="headerlink" title="DDD挑战"></a>DDD挑战</h1><p>DDD在实践中有很高的门槛</p>
+<p><img src="http://images.zhuxingsheng.com/20201018175643_1603015003.jpg"></p>
+<ol>
+<li>持续地将领域专家引入项目</li>
+<li>为创建通用语言腾出时间和精力</li>
+<li>改变开发者对领域的思考方式</li>
+</ol>
+<p>最大挑战之一便是：需要花费大量的时间和精力来思考业务领域，研究概念和术语，并且和领域专家交流，以发现、捕捉和改进通用语言</p>
+<p>在开发过程中，最大的鸿沟之一便是在于领域专家和开发者之间，通常领域专家关注放在交付业务价值上，而开发者则将注意力放在技术实现上。并不是说开发者动机是错误的，面是说开发者的眼光被自然而然地吸引到实现层面。即使让领域专家与开发者一同工作也只是表面协作，这样在开发的软件中产生了一种映射：业务人员所想的映射到开发者所理解的，软件便不能完全反映领域专家的思维模型，随着时间推移，这种鸿沟将增加软件开发成本</p>
+<p>DDD将领域专家与开发人员聚焦在一起，这样所开发的软件能够反映出领域专家的思维模型，这并不意味着我们将精力都花在对“真实世界”的建模上，而是交付最具业务价值的软件，在实用和理想之间存在冲突时，根据它们的互异程序，在DDD中选择实用性</p>
+<p>领域专家与开发人员一起创建一套适用于领域建模的通用语言。通用语言必须在全队范围之内达成一致；所有成员都使用通用语言进行交流，通用语言是对软件模型的直接反映</p>
+<p>作为开发者，我们都是技术思想者，技术实现对于我们来说并不是什么难事。并不是说技术地思考不好，只是说有时少从技术层面去思考会更好。这么多年来，我们习惯了单从技术层面完成软件开发，那现在是时候考虑一种新的思考方式了。为你的业务领域开发一门通用语言便是一个好的出发点</p>
+<h1 id="技术负债"><a href="#技术负债" class="headerlink" title="技术负债"></a>技术负债</h1><p>程序员工作时间大部分在新增新功能，996式加班大多为了赶工上线，而对赶工出来的软件质量是在打个问题，而技术负债在软件质量领域是一个很能重要概念，对于软件工程来讲，这真是个特别的东西</p>
+<p><strong>Martin Fowler定义技术负债就是增加新功能所需要的额外成本</strong></p>
+<p>软件质量不同于其他商品质量。购买一个商品，在使用过程中会直接发现该商品质量问题，而软件质量不是直接被软件系统的使用者所感知的，也就是说客户如果同时使用两种质量不同的系统，用户是无法发现两者的区别，不过随着时间推移，自己的产品交付过程越来越长了</p>
+<p>软件质量问题不是直接面向用户，而是面向软件的开发团队。因为软件质量差，新程序员很难快速上手，无法形成生产力；修改别人的代码时可能一走在不得要领；bug丛生，修复一个可能使得系统崩溃，一个都不修复系统反而正常工作；修复bug时牵一动百，修改一处却引起其他连锁故障反应。。。，这些都是软件质量低下的外在表现</p>
+<p>正是由于软件质量不是最终用户所能感知的，导致行业内对软件质量没有过多重视–客户都没有提出改进要求，那么一切为客户服务的软件公司自然没有动力去提升软件质量，而且行业内对软件质量存在认知误区：便宜确实没好货，但是质量高必然导致成本 上升，而客户又不会察觉质量好坏，那么产品如何卖出好价格</p>
+<p>软件并不是质量越高，成本就越高。这似乎违反常识，背后其实也与技术负债有关。如果将技术负债看成是一种前进中的累赘，累赘遍布于代码各处，那么提高软件质量就是通过良好设计或重构来减轻这种累赘，从而能轻装上阵，新增功能就能更加快捷，交付效率也会大大提升。</p>
+<p>降低技术负债意味着软件质量提高，软件质量越高，修改拓展起来就越方便。</p>
+<p>如何降低技术负债？这存在一个适度问题，代码越多，复杂性越高，技术负债肯定越高，那么就需要惜墨如金。有时为了写正确可运行的简洁代码，可能要删除数十倍的代码，但也不是代码越少越好。有的代码只是考虑功能实现，没有考虑到功能的对接或扩展，那么当需要对功能实现扩展时，就发现难以下手，甚至需要采取黑客破解方式强行入侵系统，这此都是原来代码过于简单僵化的表现</p>
+<p>适度是在过度和不足中探索平衡的结果。代码适度的一个衡量标准是<a href="http://www.zhuxingsheng.com/blog/srp-of-solid.html">单一职责原则</a>，即每个函数或类只能有一个职责。</p>
+<p>面向对象编程中还有另一个原则：DRY原则。对这个原则的共同理解是代码不应该重复，如果两段代码表示的是同一个职责，那么合并它们。但这种抽象合并导致共享内核或共享库，最张造成代码各处对共享库或内核的依赖，这就很自然地引入了不必要的、偶然的复杂性–一旦共享库发生修改，牵一动百的事情就可能发生。很多时候重复的代码可能会带来相当大的优势，重复能拖延决策，这是软件开发的黄金。这样，延迟到适当时机从多个专业化角度重构，这比从单个方法层面进行抽象的重构要容易数倍。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/DDD/" rel="tag"># DDD</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/ddd-coping-with-complex.html" rel="prev" title="DDD应对复杂">
+      <i class="fa fa-chevron-left"></i> DDD应对复杂
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/blog/ddd-strategy-and-tactics.html" rel="next" title="DDD战略战术">
+      DDD战略战术 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#DDD%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.</span> <span class="nav-text">DDD是什么</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81DDD"><span class="nav-number">2.</span> <span class="nav-text">为什么需要DDD</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#DDD%E6%8C%91%E6%88%98"><span class="nav-number">3.</span> <span class="nav-text">DDD挑战</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E8%B4%9F%E5%80%BA"><span class="nav-number">4.</span> <span class="nav-text">技术负债</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
