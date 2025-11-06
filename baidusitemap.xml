@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://www.zhuxingsheng.com/blog/summary-of-memory-leakage-investigation.html</loc>
+    <lastmod>2025-11-06</lastmod>
+  </url>
+  <url>
     <loc>http://www.zhuxingsheng.com/blog/algorithmic-slag-sorting-fast.html</loc>
     <lastmod>2025-02-24</lastmod>
   </url>
@@ -173,11 +177,11 @@
     <lastmod>2022-11-08</lastmod>
   </url>
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/the-way-to-become-the-chief-architect.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/how-to-make-software-design-beautiful.html</loc>
     <lastmod>2022-11-08</lastmod>
   </url>
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/how-to-make-software-design-beautiful.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/the-way-to-become-the-chief-architect.html</loc>
     <lastmod>2022-11-08</lastmod>
   </url>
   <url>
@@ -337,11 +341,11 @@
     <lastmod>2021-11-07</lastmod>
   </url>
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/algorithm---sort---select.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/algorithm---recursive-algorithm.html</loc>
     <lastmod>2021-11-07</lastmod>
   </url>
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/algorithm---recursive-algorithm.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/algorithm---sort---select.html</loc>
     <lastmod>2021-11-07</lastmod>
   </url>
   <url>
@@ -461,11 +465,11 @@
     <lastmod>2021-11-07</lastmod>
   </url>
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/algorithm---sort---insert.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/algorithm---sorting---summary.html</loc>
     <lastmod>2021-11-07</lastmod>
   </url>
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/algorithm---sorting---summary.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/algorithm---sort---insert.html</loc>
     <lastmod>2021-11-07</lastmod>
   </url>
   <url>
@@ -493,11 +497,11 @@
     <lastmod>2021-11-07</lastmod>
   </url>
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/ocp-of-solid.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/solid-summary.html</loc>
     <lastmod>2021-11-07</lastmod>
   </url>
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/solid-summary.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/ocp-of-solid.html</loc>
     <lastmod>2021-11-07</lastmod>
   </url>
   <url>
@@ -521,11 +525,11 @@
     <lastmod>2021-11-07</lastmod>
   </url>
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/algorithm-slag-sort-heap-sort.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/algorithm---sort---merge-sort.html</loc>
     <lastmod>2021-11-07</lastmod>
   </url>
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/algorithm---sort---merge-sort.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/algorithm-slag-sort-heap-sort.html</loc>
     <lastmod>2021-11-07</lastmod>
   </url>
   <url>
@@ -593,11 +597,11 @@
     <lastmod>2021-09-29</lastmod>
   </url>
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/motan-client.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/motan-server.html</loc>
     <lastmod>2021-09-29</lastmod>
   </url>
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/motan-server.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/motan-client.html</loc>
     <lastmod>2021-09-29</lastmod>
   </url>
   <url>

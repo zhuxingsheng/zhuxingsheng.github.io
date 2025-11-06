@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.zhuxingsheng.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.json"};
+  </script>
+
+  <meta name="description" content="服务通过 - Xmx&#x3D;6G 指定最大堆分配为 6G，但实际 RSS 已达到 11G，开始怀疑堆外内存是否有内存泄露。 RSS从启动之后，就是一路增长，由于是测试机，业务量小，以53M&#x2F;小时的增量增长。  JVM 的进程总内存 ≈  Java Heap + Metaspace + CodeCache + Thread Stack + JNI&#x2F;Direct Buffer">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内存泄漏排查总结">
+<meta property="og:url" content="http://www.zhuxingsheng.com/blog/summary-of-memory-leakage-investigation.html">
+<meta property="og:site_name" content="码农戏码">
+<meta property="og:description" content="服务通过 - Xmx&#x3D;6G 指定最大堆分配为 6G，但实际 RSS 已达到 11G，开始怀疑堆外内存是否有内存泄露。 RSS从启动之后，就是一路增长，由于是测试机，业务量小，以53M&#x2F;小时的增量增长。  JVM 的进程总内存 ≈  Java Heap + Metaspace + CodeCache + Thread Stack + JNI&#x2F;Direct Buffer">
+<meta property="og:locale">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20251105150752_1762326472.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20251029102120_1761704480.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20251028181801_1761646681.jpg">
+<meta property="og:image" content="http://images.zhuxingsheng.com/20251106113909_1762400349.jpg">
+<meta property="article:published_time" content="2025-11-06T03:55:00.000Z">
+<meta property="article:modified_time" content="2025-11-06T05:39:16.279Z">
+<meta property="article:author" content="朱兴生">
+<meta property="article:tag" content="JVM">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://images.zhuxingsheng.com/20251105150752_1762326472.jpg">
+
+<link rel="canonical" href="http://www.zhuxingsheng.com/blog/summary-of-memory-leakage-investigation.html">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-Hans'
+  };
+</script>
+
+  <title>内存泄漏排查总结 | 码农戏码</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">码农戏码</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">新生代农民工的自我修养</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="user fa-fw"></i>About</a>
+
+  </li>
+        <li class="menu-item menu-item-在线工具">
+
+    <a href="/tools" rel="section"><i class="gavel fa-fw"></i>在线工具</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/summary-of-memory-leakage-investigation.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          内存泄漏排查总结
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2025-11-06 11:55:00 / Modified: 13:39:16" itemprop="dateCreated datePublished" datetime="2025-11-06T11:55:00+08:00">2025-11-06</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>服务通过 - Xmx&#x3D;6G 指定最大堆分配为 6G，但实际 RSS 已达到 11G，开始怀疑堆外内存是否有内存泄露。</p>
+<p>RSS从启动之后，就是一路增长，由于是测试机，业务量小，以53M&#x2F;小时的增量增长。</p>
+<p><img src="http://images.zhuxingsheng.com/20251105150752_1762326472.jpg"></p>
+<p>JVM 的进程总内存 ≈</p>
+<blockquote>
+<p>Java Heap + Metaspace + CodeCache + Thread Stack + JNI&#x2F;Direct Buffer + GC 结构 + 内部 allocator fragment + C 库分配 + mmap 区域 + …</p>
+</blockquote>
+<p>由于现象是RES比较高，先看一下java堆是否有异常。把java堆dump下来仔细排查一下，jmap -histo:live pid，发现整个堆回收完也才几百兆，远不到8G的Xmx的上限值，GC日志看着也没啥异常。基本排查java堆内存泄露的可能性。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">jcmd 1 VM.native_memory detail scale=MB &gt; nmt-`date +%F-%H-%M-%S`.log &amp; pmap -x 1 &gt; pmap-`date +%F-%H-%M-%S`.log</span><br></pre></td></tr></table></figure>
+
+<p><strong>整体思路是：通过多次收集，进行比较，查看明显的差异</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">icdiff pmap-2023-07-27-09-46-36.log pmap-2023-07-28-09-29-55.log | less -SR</span><br></pre></td></tr></table></figure>
+
+<p><img src="http://images.zhuxingsheng.com/20251029102120_1761704480.jpg"></p>
+<p><img src="http://images.zhuxingsheng.com/20251028181801_1761646681.jpg"></p>
+<h2 id="排查顺序"><a href="#排查顺序" class="headerlink" title="排查顺序"></a>排查顺序</h2><p><img src="http://images.zhuxingsheng.com/20251106113909_1762400349.jpg"></p>
+<p>1️⃣ 先开 <code>-XX:NativeMemoryTracking=detail</code></p>
+<p>2️⃣ <code>jcmd VM.native_memory summary</code> 定位哪一类区域增长</p>
+<p>3️⃣ 如果是 <strong>Internal</strong> &#x2F; <strong>Arena Chunk</strong> → JNI &#x2F; DirectBuffer 泄漏</p>
+<p>4️⃣ 用 <code>heaptrack</code> &#x2F; <code>tcmalloc</code> 进一步追踪分配源</p>
+<p>5️⃣ 如果是 <strong>Thread</strong> 区域 → 检查线程数</p>
+<p>6️⃣ 若都是正常，考虑 libc allocator fragment，可尝试使用 <code>-XX:+UseG1GC</code>、<code>-XX:MaxDirectMemorySize</code> 或更换 allocator（jemalloc）</p>
+<p>这一次排查，先通过NMT，发现Java能追踪到的内存区域一切正常</p>
+<p>再通过pmap工具，发现了JNI调用C++有内存泄漏</p>
+<p>C++修复后，内存增长大幅降低，但RSS依然会增长</p>
+<p>最后，只能使用jemalloc替换原生的glibc来排查一下</p>
+<p>替换后，内存还真的不再增长。</p>
+<p>cat &#x2F;etc&#x2F;os-release</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">PRETTY_NAME=&quot;Ubuntu 22.04.4 LTS&quot;</span><br><span class="line">NAME=&quot;Ubuntu&quot;</span><br><span class="line">VERSION_ID=&quot;22.04&quot;</span><br><span class="line">VERSION=&quot;22.04.4 LTS (Jammy Jellyfish)&quot;</span><br><span class="line">VERSION_CODENAME=jammy</span><br><span class="line">ID=ubuntu</span><br><span class="line">ID_LIKE=debian</span><br><span class="line">HOME_URL=&quot;https://www.ubuntu.com/&quot;</span><br><span class="line">SUPPORT_URL=&quot;https://help.ubuntu.com/&quot;</span><br><span class="line">BUG_REPORT_URL=&quot;https://bugs.launchpad.net/ubuntu/&quot;</span><br><span class="line">PRIVACY_POLICY_URL=&quot;https://www.ubuntu.com/legal/terms-and-policies/privacy-policy&quot;</span><br><span class="line">UBUNTU_CODENAME=jammy</span><br></pre></td></tr></table></figure>
+
+
+<p>ldd –version</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ldd (Ubuntu GLIBC 2.35-0ubuntu3.6) 2.35</span><br><span class="line">Copyright (C) 2022 Free Software Foundation, Inc.</span><br><span class="line">This is free software; see the source for copying conditions.  There is NO</span><br><span class="line">warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</span><br><span class="line">Written by Roland McGrath and Ulrich Drepper.</span><br></pre></td></tr></table></figure>
+
+<p><strong>RSS 持续增长的几种可能情况：</strong></p>
+<ol>
+<li><strong>正常情况（常见）</strong>：你的程序频繁地分配和释放大小不一的内存。这会导致堆内存出现“空洞”（外部碎片），即使有大量空闲内存，也因为不连续而无法从堆顶归还给 OS。RSS 会稳定在一个较高的水平，这是 ptmalloc2 的设计特点，目的是提高分配效率。</li>
+<li><strong>内存泄漏（需要警惕）</strong>：你的程序持续分配内存，但忘记释放。这会导致堆不断增长，即使通过 <code>brk</code> 或 <code>mmap</code> 向 OS 索要更多内存，RSS 会无限制地增长，直到被系统 OOM Killer 杀死。</li>
+<li><strong>峰值使用后的稳定期</strong>：程序在某个阶段需要大量内存，之后虽然释放了，但 glibc 没有立即归还给 OS（堆未收缩）。这部分内存成为了进程的“缓存”，如果程序后续再次需要分配内存，就可以快速重用，避免了系统调用的开销。</li>
+</ol>
+<ul>
+<li><strong>RSS 增长不一定是内存泄漏</strong>，很可能是 glibc 的内存池策略。</li>
+<li><strong>glibc 不会因系统内存紧张而主动释放内存</strong>，它的行为是预定义的。</li>
+<li><strong>真正的回收保障来自 Linux 内核</strong>，当系统内存不足时，它会强制回收，可能包括将你的进程内存换出（Swap）。</li>
+<li>如果 RSS 增长是<strong>无界的、持续的</strong>，并且与你的业务逻辑预期不符，那么首先应该怀疑和排查<strong>内存泄漏</strong>。</li>
+</ul>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><p><a href="https://www.cnblogs.com/yubo-guan/p/19150502">Jemalloc简介及使用方法</a></p>
+<p><a href="https://bbs.huaweicloud.com/forum/thread-169523-1-1.html">使用jemalloc解决JVM内存泄露问题</a></p>
+<p><a href="https://www.pengzna.top/article/Java-Memory/">Java 进程内存占用及可观测性调研&amp;内存异常排查最佳实践</a></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/JVM/" rel="tag"># JVM</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/blog/5-steps-to-solve-technical-debt.html" rel="prev" title="解决技术债的5个步骤">
+      <i class="fa fa-chevron-left"></i> 解决技术债的5个步骤
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E6%9F%A5%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.</span> <span class="nav-text">排查顺序</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">2.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">朱兴生</p>
+  <div class="site-description" itemprop="description">彪悍的人生需要书写</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">161</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">55</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">朱兴生</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a>
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

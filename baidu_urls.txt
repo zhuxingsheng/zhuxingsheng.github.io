@@ -1,3 +1,4 @@
+http://www.zhuxingsheng.com/blog/summary-of-memory-leakage-investigation.html
 http://www.zhuxingsheng.com/blog/5-steps-to-solve-technical-debt.html
 http://www.zhuxingsheng.com/blog/tips-for-project-management.html
 http://www.zhuxingsheng.com/blog/programmers-dont-like-to-do-project-management.html
@@ -97,4 +98,3 @@ http://www.zhuxingsheng.com/blog/solid-isp.html
 http://www.zhuxingsheng.com/blog/layered-architecture.html
 http://www.zhuxingsheng.com/blog/lsp-of-solid.html
 http://www.zhuxingsheng.com/blog/ocp-of-solid.html
-http://www.zhuxingsheng.com/blog/srp-of-solid.html

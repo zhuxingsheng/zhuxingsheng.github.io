@@ -164,6 +164,151 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/counter-algorithm.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/counter-algorithm.html" class="post-title-link" itemprop="url">计数器算法</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2017-05-29 17:12:00" itemprop="dateCreated datePublished" datetime="2017-05-29T17:12:00+08:00">2017-05-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p><a href="http://www.zhuxingsheng.com/blog/micro-service-fuse-mechanism.html">《微服务-熔断机制》</a>中提到了计数器，这篇详细学习一下计数器算法</p>
+<p>之前的有次面试，碰到了计数器的的题目</p>
+<p>Q：线上服务，设计一个拦截器，一个IP如果短时间内请求次数过多，就屏蔽</p>
+<p>A：使用map，key为ip，值为次数与时间</p>
+<p>Q：请求相当大，会直接冲垮内存,怎么办？</p>
+<p>A：使用redis，像redis cluster，绝对可以满足</p>
+<p>Q: 写下伪代码</p>
+<p>A：bbbbbbb</p>
+<p>其实计数器在互联网开发中很常见，当时刚转互联网比较无知，面试得很烂。</p>
+<h3 id="计数器法"><a href="#计数器法" class="headerlink" title="计数器法"></a>计数器法</h3><p>计数器法是限流算法里最简单也是最容易实现的一种算法。比如我们规定，对于A接口来说，我们1分钟的访问次数不能超过100个。那么我们可以这么做：在一开 始的时候，我们可以设置一个计数器counter，每当一个请求过来的时候，counter就加1，如果counter的值大于100并且该请求与第一个 请求的间隔时间还在1分钟之内，那么说明请求数过多；如果该请求与第一个请求的间隔时间大于1分钟，且counter的值还在限流范围内，那么就重置 counter，具体算法的示意图如下：</p>
+<p><img src="http://images.zhuxingsheng.com/201805301332_414.png"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class Counter &#123;</span><br><span class="line">    public long timeStamp = getNowTime();</span><br><span class="line">    public int reqCount = 0;</span><br><span class="line">    public final int limit = 100; // 时间窗口内最大请求数</span><br><span class="line">    public final long interval = 1000; // 时间窗口ms</span><br><span class="line">    public boolean grant() &#123;</span><br><span class="line">        long now = getNowTime();</span><br><span class="line">        if (now &lt; timeStamp + interval) &#123;</span><br><span class="line">            // 在时间窗口内</span><br><span class="line">            reqCount++;</span><br><span class="line">            // 判断当前时间窗口内是否超过最大请求控制数</span><br><span class="line">            return reqCount &lt;= limit;</span><br><span class="line">        &#125;</span><br><span class="line">        else &#123;</span><br><span class="line">            timeStamp = now;</span><br><span class="line">            // 超时后重置</span><br><span class="line">            reqCount = 1;</span><br><span class="line">            return true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>以上是示意代码，先忽视其中的并发问题，最大的问题是临界问题</p>
+<p><img src="http://images.zhuxingsheng.com/201805301631_462.png"></p>
+<p>从上图中我们可以看到，假设有一个恶意用户，他在0:59时，瞬间发送了100个请求，并且1:00又瞬间发送了100个请求，那么其实这个用户在 1秒里面，瞬间发送了200个请求。我们刚才规定的是1分钟最多100个请求，也就是每秒钟最多1.7个请求，用户通过在时间窗口的重置节点处突发请求， 可以瞬间超过我们的速率限制。用户有可能通过算法的这个漏洞，瞬间压垮我们的应用。</p>
+<h3 id="滑动窗口"><a href="#滑动窗口" class="headerlink" title="滑动窗口"></a>滑动窗口</h3><p>滑动窗口，又称rolling window</p>
+<p><img src="http://images.zhuxingsheng.com/201805301626_844.png"></p>
+<p>在上图中，整个红色的矩形框表示一个时间窗口，在我们的例子中，一个时间窗口就是一分钟。然后我们将时间窗口进行划分，比如图中，我们就将滑动窗口 划成了6格，所以每格代表的是10秒钟。每过10秒钟，我们的时间窗口就会往右滑动一格。每一个格子都有自己独立的计数器counter，比如当一个请求 在0:35秒的时候到达，那么0:30~0:39对应的counter就会加1。</p>
+<p>那么滑动窗口怎么解决刚才的临界问题的呢？我们可以看上图，0:59到达的100个请求会落在灰色的格子中，而1:00到达的请求会落在橘黄色的格 子中。当时间到达1:00时，我们的窗口会往右移动一格，那么此时时间窗口内的总请求数量一共是200个，超过了限定的100个，所以此时能够检测出来触 发了限流。</p>
+<p>我再来回顾一下刚才的计数器算法，我们可以发现，计数器算法其实就是滑动窗口算法。只是它没有对时间窗口做进一步地划分，所以只有1格。</p>
+<p>由此可见，当滑动窗口的格子划分的越多，那么滑动窗口的滚动就越平滑，限流的统计就会越精确。</p>
+<h4 id="实现一"><a href="#实现一" class="headerlink" title="实现一"></a>实现一</h4><p>根据上面滑动窗口的定义，实现很简单了</p>
+<ol>
+<li>需要一个map,当然是并发安全的，key为时间</li>
+<li>统计窗口内的请求总数</li>
+</ol>
+<p>这儿有个以这种方式实现的<br><a href="https://github.com/zhuxingsheng/yammer-metrics/blob/master/metrics-core/src/main/java/com/codahale/metrics/SlidingTimeWindowReservoir.java">https://github.com/zhuxingsheng/yammer-metrics/blob/master/metrics-core/src/main/java/com/codahale/metrics/SlidingTimeWindowReservoir.java</a></p>
+<p>摘点核心的片段：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">//一个并发安全map,skip list有序</span><br><span class="line">this.measurements = new ConcurrentSkipListMap&lt;Long, Long&gt;();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 获取map的key,以时间纳秒值为key</span><br><span class="line"> * @return</span><br><span class="line"> */</span><br><span class="line">private long getTick() &#123;</span><br><span class="line">    for (; ; ) &#123;</span><br><span class="line">        final long oldTick = lastTick.get();</span><br><span class="line">        //每纳秒处理的请求很多，减少compareAndSet的失败次数，这儿*COLLISION_BUFFER</span><br><span class="line">        final long tick = clock.getTick() * COLLISION_BUFFER;</span><br><span class="line">        // ensure the tick is strictly incrementing even if there are duplicate ticks</span><br><span class="line">        final long newTick = tick &gt; oldTick ? tick : oldTick + 1;</span><br><span class="line">        if (lastTick.compareAndSet(oldTick, newTick)) &#123;</span><br><span class="line">            return newTick;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">private void trim() &#123;</span><br><span class="line">        //清除window之前的计数</span><br><span class="line">        measurements.headMap(getTick() - window).clear();</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h5><p>实现简单，但有个问题，map的key是在不停的增加，删除，给GC带来了压力</p>
+<h4 id="实现二"><a href="#实现二" class="headerlink" title="实现二"></a>实现二</h4><p>考虑key的复用，使用环形结构</p>
+<p><img src="http://images.zhuxingsheng.com/201806051739_63.png" alt="环形结构"></p>
+<p>通过取模来达到这个效果</p>
+<p>初始化：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">private int window; //计算窗口</span><br><span class="line">//整个循环数组窗口</span><br><span class="line">private int ringWindow=window+30; </span><br><span class="line"></span><br><span class="line"></span><br><span class="line">requestCounter = new AtomicInteger[ringWindow];</span><br><span class="line">failedCounter = new AtomicInteger[ringWindow];</span><br><span class="line">for (int i = 0; i &lt; ringWindow; i++) &#123;</span><br><span class="line">	requestCounter[i] = new AtomicInteger(0);</span><br><span class="line">	failedCounter[i] = new AtomicInteger(0);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">initCounterTimeInSecond =</span><br><span class="line">TimeUnit.NANOSECONDS.toSeconds(System.nanoTime());</span><br></pre></td></tr></table></figure>
+
+<p>计算窗口内的次数</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">private long countTotal(AtomicInteger[] caculateCounter)&#123;</span><br><span class="line">		int currentIndex = getIndex();</span><br><span class="line">		</span><br><span class="line">		long sum = 0;</span><br><span class="line">		</span><br><span class="line">		for (int i = 0; i &lt; window; i++) &#123;</span><br><span class="line">			//这儿并不是直接计算window中的所有counter，</span><br><span class="line">			//而是从currentIndex向前倒取window个</span><br><span class="line">			int index = ((currentIndex + ringWindow) -i) </span><br><span class="line">			% this.ringWindow;</span><br><span class="line">			sum += caculateCounter[index].get();</span><br><span class="line">		&#125;</span><br><span class="line">		return sum;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为什么需要ringWindow，直接window就可以？这儿有个奇技淫巧。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">CLEAN_UP_BUFFER=10;</span><br><span class="line"></span><br><span class="line">public void cleanupFutureCounter() &#123;</span><br><span class="line">		int currentIndex = getIndex();</span><br><span class="line">		</span><br><span class="line">		for (int i = 1 ; i &lt;= CLEAN_UP_BUFFER; i++) &#123;</span><br><span class="line">			int index = (currentIndex + i) % this.ringWindow;</span><br><span class="line">			requestCounter[index].set(0);</span><br><span class="line">			failedCounter[index].set(0);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>这儿会有个定时任务，每5秒会去清空未来10秒的数据</p>
+<p>因为在一环数组全部填充完成后，下一轮开始时，需要清空，哪个地方是起点，无法区分，所以ringwindow预留点位置用来清空</p>
+<h4 id="实现三"><a href="#实现三" class="headerlink" title="实现三"></a>实现三</h4><p>还有一些是加锁，当然会是轻量的CAS；每一个轮回完成后，都需要标记开始位置，并清空环。</p>
+<h3 id="漏桶算法"><a href="#漏桶算法" class="headerlink" title="漏桶算法"></a>漏桶算法</h3><p>漏桶(Leaky Bucket)算法思路很简单,水(请求)先进入到漏桶里,漏桶以一定的速度出水(接口有响应速率),当水流入速度过大会直接溢出(访问频率超过接口响应速率),然后就拒绝请求,可以看出漏桶算法能强行限制数据的传输速率.示意图如下:</p>
+<p><img src="http://images.zhuxingsheng.com/201806071032_732.png"></p>
+<p>我们将算法中的水换成实际应用中的请求，我们可以看到漏桶算法天生就限制了请求的速度。当使用了漏桶算法，我们可以保证接口会以一个常速速率来处理请求。所以漏桶算法天生不会出现临界问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public class LeakyDemo &#123;</span><br><span class="line">public long timeStamp = getNowTime();</span><br><span class="line">public int capacity; // 桶的容量</span><br><span class="line">public int rate; // 水漏出的速度</span><br><span class="line">public int water; // 当前水量(当前累积请求数)</span><br><span class="line">public boolean grant() &#123;</span><br><span class="line">    long now = getNowTime();</span><br><span class="line">    water = max(0, water - (now - timeStamp) * rate); // 先执行漏水，计算剩余水量</span><br><span class="line">    timeStamp = now;</span><br><span class="line">    if ((water + 1) &lt; capacity) &#123;</span><br><span class="line">    // 尝试加水,并且水还未满</span><br><span class="line">    water += 1;</span><br><span class="line">    return true;</span><br><span class="line">    &#125;</span><br><span class="line">    else &#123;</span><br><span class="line">    // 水满，拒绝加水</span><br><span class="line">    return false;</span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="令牌桶算法（Token-Bucket）"><a href="#令牌桶算法（Token-Bucket）" class="headerlink" title="令牌桶算法（Token Bucket）"></a>令牌桶算法（Token Bucket）</h3><p>令牌桶算法(Token Bucket)和 Leaky Bucket 效果一样但方向相反的算法,更加容易理解.随着时间流逝,系统会按恒定1&#x2F;QPS时间间隔(如果QPS&#x3D;100,则间隔是10ms)往桶里加入Token(想象和漏洞漏水相反,有个水龙头在不断的加水),如果桶已经满了就不再加了.新请求来临时,会各自拿走一个Token,如果没有Token可拿了就阻塞或者拒绝服务</p>
+<p><img src="http://images.zhuxingsheng.com/201806071130_466.png" alt="令牌桶算法"></p>
+<p>令牌桶的另外一个好处是可以方便的改变速度. 一旦需要提高速率,则按需提高放入桶中的令牌的速率. 一般会定时(比如100毫秒)往桶中增加一定数量的令牌, 有些变种算法则实时的计算应该增加的令牌的数量.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">public class TokenBucketDemo &#123;</span><br><span class="line">public long timeStamp = getNowTime();</span><br><span class="line">public int capacity; // 桶的容量</span><br><span class="line">public int rate; // 令牌放入速度</span><br><span class="line">public int tokens; // 当前令牌数量</span><br><span class="line">public boolean grant() &#123;</span><br><span class="line">    long now = getNowTime();</span><br><span class="line">    // 先添加令牌</span><br><span class="line">    tokens = min(capacity, tokens + (now - timeStamp) * rate);</span><br><span class="line">    timeStamp = now;</span><br><span class="line">    if (tokens &lt; 1) &#123;</span><br><span class="line">    // 若不到1个令牌,则拒绝</span><br><span class="line">    return false;</span><br><span class="line">    &#125;</span><br><span class="line">    else &#123;</span><br><span class="line">    // 还有令牌，领取令牌</span><br><span class="line">    tokens -= 1;</span><br><span class="line">    return true;</span><br><span class="line">    &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="临界问题"><a href="#临界问题" class="headerlink" title="临界问题"></a>临界问题</h4><p>我 们再来考虑一下临界问题的场景。在0:59秒的时候，由于桶内积满了100个token，所以这100个请求可以瞬间通过。但是由于token是以较低的 速率填充的，所以在1:00的时候，桶内的token数量不可能达到100个，那么此时不可能再有100个请求通过。所以令牌桶算法可以很好地解决临界问 题。</p>
+<p>下图比较了计数器（左）和令牌桶算法（右）在临界点的速率变化。我们可以看到虽然令牌桶算法允许突发速率，但是下一个突发速率必须要等桶内有足够的 token后才能发生：</p>
+<p><img src="http://images.zhuxingsheng.com/201806071301_516.png"></p>
+<h4 id="Guava-RateLimiter"><a href="#Guava-RateLimiter" class="headerlink" title="Guava RateLimiter"></a>Guava RateLimiter</h4><p>在guava中，有现成的实现</p>
+<p>RateLimiter使用的是一种叫令牌桶的流控算法，RateLimiter会按照一定的频率往桶里扔令牌，线程拿到令牌才能执行，比如你希望自己的应用程序QPS不要超过1000，那么RateLimiter设置1000的速率后，就会每秒往桶里扔1000个令牌。</p>
+<p>有两种方式，SmoothBursty和SmoothWarmingUp</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">create(double permitsPerSecond)</span><br><span class="line">根据指定的稳定吞吐率创建RateLimiter</span><br><span class="line">这里的吞吐率是指每秒多少许可数（通常是指QPS，每秒多少查询）</span><br><span class="line"></span><br><span class="line">create(double permitsPerSecond, long warmupPeriod, TimeUnit unit)</span><br><span class="line">根据指定的稳定吞吐率和预热期来创建RateLimiter</span><br><span class="line">这里的吞吐率是指每秒多少许可数（通常是指QPS，每秒多少个请求量），</span><br><span class="line">在这段预热时间内，</span><br><span class="line">RateLimiter每秒分配的许可数会平稳地增长直到预热期结束时达到其最大速率。（只要存在足够请求数来使其饱和）</span><br></pre></td></tr></table></figure>
+
+<p>SmoothBursty通过平均速率和最后一次新增令牌的时间计算出下次新增令牌的时间的，另外需要一个桶暂存一段时间内没有使用的令牌（即可以突发的令牌数）。另外RateLimiter还提供了tryAcquire方法来进行无阻塞或可超时的令牌消费。</p>
+<p>因为SmoothBursty允许一定程度的突发，会有人担心如果允许这种突发，假设突然间来了很大的流量，那么系统很可能扛不住这种突发。因此需要SmoothWarmingUp一种平滑速率的限流工具，从而系统冷启动后慢慢的趋于平均固定速率（即刚开始速率小一些，然后慢慢趋于我们设置的固定速率）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">public static void testSmoothWarmingUp()&#123;</span><br><span class="line">        //每秒5个，1500ms后达到正常速率</span><br><span class="line">        RateLimiter rateLimiter = RateLimiter.create(5,1500, TimeUnit.MILLISECONDS);</span><br><span class="line"></span><br><span class="line">        List&lt;Runnable&gt; tasks = new ArrayList&lt;Runnable&gt;();</span><br><span class="line">        for (int i = 0; i &lt; 10; i++) &#123;</span><br><span class="line">            tasks.add(new Request(i));</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ExecutorService executorService = Executors.newCachedThreadPool();</span><br><span class="line">        for(Runnable task:tasks) &#123;</span><br><span class="line">            System.out.println(&quot;等待时间：&quot; + rateLimiter.acquire());</span><br><span class="line">            executorService.execute(task);</span><br><span class="line">        &#125;</span><br><span class="line">        executorService.shutdown();</span><br><span class="line"></span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p>运行结果:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">等待时间：0.0</span><br><span class="line">0 handle request 1528693920502</span><br><span class="line">等待时间：0.54311</span><br><span class="line">1 handle request 1528693921052</span><br><span class="line">等待时间：0.433531</span><br><span class="line">2 handle request 1528693921486</span><br><span class="line">等待时间：0.332679</span><br><span class="line">3 handle request 1528693921819</span><br><span class="line">等待时间：0.229785</span><br><span class="line">4 handle request 1528693922049</span><br><span class="line">等待时间：0.199668</span><br><span class="line">5 handle request 1528693922249</span><br><span class="line">等待时间：0.199845</span><br><span class="line">6 handle request 1528693922449</span><br><span class="line">等待时间：0.199757</span><br><span class="line">7 handle request 1528693922649</span><br><span class="line">等待时间：0.19981</span><br><span class="line">8 handle request 1528693922849</span><br><span class="line">等待时间：0.199732</span><br><span class="line">9 handle request 1528693923049</span><br></pre></td></tr></table></figure>
+
+<p>可以看出前面几个等待时间长，速度慢；1500ms后，速率达到正常的每秒5的速度</p>
+<p>其实这算是一种漏桶算法的变异，在令牌桶中控制一个移除令牌的速度就是个漏桶了。</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><h4 id="计数器-VS-滑动窗口"><a href="#计数器-VS-滑动窗口" class="headerlink" title="计数器 VS 滑动窗口"></a>计数器 VS 滑动窗口</h4><p>计数器算法是最简单的算法，可以看成是滑动窗口的低精度实现。滑动窗口由于需要存储多份的计数器（每一个格子存一份），所以滑动窗口在实现上需要更多的存储空间。也就是说，如果滑动窗口的精度越高，需要的存储空间就越大。</p>
+<h4 id="漏桶算法-VS-令牌桶算法"><a href="#漏桶算法-VS-令牌桶算法" class="headerlink" title="漏桶算法 VS 令牌桶算法"></a>漏桶算法 VS 令牌桶算法</h4><p>漏桶算法和令牌桶算法最明显的区别是令牌桶算法允许流量一定程度的突发。因为默认的令牌桶算法，取走token是不需要耗费时间的，也就是说，假设桶内有100个token时，那么可以瞬间允许100个请求通过。</p>
+<p>令牌桶算法由于实现简单，且允许某些流量的突发，对用户友好，所以被业界采用地较多。当然我们需要具体情况具体分析，只有最合适的算法，没有最优的算法</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="https://www.cnblogs.com/clds/p/5850070.html">接口限流算法总结</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/hashmap-source-code-analysis.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1685,208 +1830,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/the-clean-coder-reading-notes.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="朱兴生">
-      <meta itemprop="description" content="彪悍的人生需要书写">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="码农戏码">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/the-clean-coder-reading-notes.html" class="post-title-link" itemprop="url">The clean coder 读书笔记</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2016-12-11 14:24:00" itemprop="dateCreated datePublished" datetime="2016-12-11T14:24:00+08:00">2016-12-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2024-01-21 20:17:46" itemprop="dateModified" datetime="2024-01-21T20:17:46+08:00">2024-01-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">In</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/readbook/" itemprop="url" rel="index"><span itemprop="name">读书</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="http://images.zhuxingsheng.com/201811211420_706.png"></p>
-<p>这本书不厚，但都是干货。</p>
-<p>在前言中，就写了本书的目的：</p>
-<blockquote>
-<ol>
-<li>什么是软件专业人士</li>
-<li>软件专业人士如何行事</li>
-<li>软件专业人士如何处理冲突，应对很紧的工期，如何和不讲道理的管理人员打交道</li>
-<li>软件专业人士何时应该说”不”？怎么说？</li>
-<li>软件专业人士如何应对压力？</li>
-</ol>
-</blockquote>
-<p>这些问题，也正是一名软件开发人员需要去了解的问题。</p>
-<blockquote>
-<p>所谓专业人士：就是能对自己犯下错误负责的人，哪怕那些错误实际上在所难免</p>
-</blockquote>
-<p>专业人士有哪些特性呢？</p>
-<ol>
-<li>不担当，比如代码测试的全覆盖</li>
-<li>不随便承诺</li>
-<li>不会阻止别人修改自己的代码</li>
-<li>满足雇主的需求</li>
-<li>需要专门训练提升自己的技能</li>
-</ol>
-<p>摘录一些干货，再对比一下当下的开发环境，那是相当贴切</p>
-<blockquote>
-<p>为什么大多数开发人员不敢不断修改他的代码呢？因为他们害怕会改坏代码！为什么会有这样的担心呢？因为他们没有做过测试</p>
-</blockquote>
-<p>这个对于现在的开发环境太真实了，在一个项目上线后，其实在开发中后期，就已经出现这样的情况</p>
-<ol>
-<li>一个方法，代码很乱，逻辑看着有点不通，出于对代码整洁的追求，重构起来，结果发布之后，出现了bug，原先功能已经不能正常运作了，而这个bug，得等很多才会被发现，因为这个功不在本期开发版本计划中，过了测试期了</li>
-<li>一个方法里面有行代码，看似无用，删除了吧，结果又出了一个隐形的bug</li>
-</ol>
-<p>正是以上问题，所以项目中的人越来越不敢动代码，不能删，不能改，只能加，有新需求，就只能加点代码，只要能正常工作，就不要管别的代码了，管了就得挂。</p>
-<p>这就是完全没有测试的问题。</p>
-<blockquote>
-<p>要用这些自动化单元测试去测多少代码呢？还要说吗？全部！全部都要测</p>
-</blockquote>
-<p>这一种方法，就是TDD，来规避这个问题。</p>
-<p>作者是TDD的践行者</p>
-<blockquote>
-<p>如果连所有代码是否都可以正常运行都不知道，还算什么专业人士？</p>
-</blockquote>
-<p>如果说多年前，很多人对TDD有疑问，当然现在还是有人有疑问，有疑问的原因，就是你还没有践行TDD。</p>
-<p>对于TDD：</p>
-<blockquote>
-<ol>
-<li>此事已有定论</li>
-<li>争论已经结束</li>
-<li>GOTO是有害的</li>
-<li>TDD确实可行</li>
-</ol>
-</blockquote>
-<p>有此人事先写代码，事后再写测试，这种方法相对于TDD来讲呢？</p>
-<blockquote>
-<p>如果很仔细地来看，也许后写测试还可以达到较高的覆盖率真。但是事后写的测试只是一种防守。而先行编写的测试则是进攻，事后编写测试的作者已经受制于已有代码，他已经知道问题是如何解决的。与采用测试先行的方式编写的测试代码比起来，后写的测试在深度和捕获错误的灵敏度方面要逊色很多</p>
-</blockquote>
-<p>一个开发方法，业界已经得到普遍认可，但国内有多少公司实施了？至少我所经历的公司都没有。<br>聪明的开发者们宁可在出了问题花大量的精力去一步步调试，也不愿花一点点的时间去写单元测试，执行TDD。</p>
-<p>曾经在读云风博客时，发现一段有共鸣的话</p>
-<blockquote>
-<p>反感围绕着调试的开发方式，也是不断的在测试，试错，纠正的循环中奔波，好的程序员应该努力的在编写的过程中，在头脑中排错，在预感到坏味道时，就赶紧重写，而坏味道就是代码陷入了复杂度太高的境地，无法一眼看潜在的问题。对付复杂度最好的武器是简化代码</p>
-</blockquote>
-<blockquote>
-<p>在遇到bug时，应该仔细浏览代码，设想各种出错的可能。而不是将错误代码运行起来，查看运行中的状态变化</p>
-</blockquote>
-<p>这段话中不赞成的解决问题方式，其实是很多开发人员普遍具备的。</p>
-<p>作者在对编码也有相似的体会</p>
-<blockquote>
-<p>我发现，要精熟掌握每项技艺，关键都是要具备“信心”和“出错感知”能力。</p>
-</blockquote>
-<p>我想作者的“出错感知” 与 云风的“预感到坏味道” 是一样的</p>
-<p>作者给了一套了编码规则与原则</p>
-<ul>
-<li><p>做好准备</p>
-<ol>
-<li>快速响应，做出第一版本</li>
-<li>深入需求分析</li>
-<li>插件式，低耦合</li>
-<li>可读性，可维护性</li>
-</ol>
-<p><strong>当感到疲劳，焦虑的时候，千万不要写代码</strong></p>
-</li>
-<li><p>流态区</p>
-<p><strong>避免进入流态区</strong></p>
-</li>
-</ul>
-<blockquote>
-<p>这种意识状态并非真的极为高效，也绝非毫无错误。这其实只是一种“浅层冥想”状态，在这种状态下，为了追求所谓的速度，理性思考的能力会下降</p>
-</blockquote>
-<p>其实这不是我第一次听到的建议，不要进入流态区，只是一种精神酸爽，对于实质工作没有意义，因为进入了这种状态会出现只见树木不见森林，当时流线性的写出代码，事后经常会发现偏离了方向，不得不重写。</p>
-<ul>
-<li><p>中断</p>
-<p>作者给出了两种方法</p>
-</li>
-</ul>
-<blockquote>
-<ol>
-<li>结对编程，让搭档维护住中断的上下文</li>
-<li>TDD，失败的测试能帮你维护住编码进度的上下文</li>
-</ol>
-</blockquote>
-<ul>
-<li><p>阻塞</p>
-<p>当情绪低落，焦虑，恐惧时，最好的方法：找一个搭档结对编程</p>
-</li>
-</ul>
-<p>作者是一个TDD以及结对编程的提倡与践行人，在书可你可以看到很多次作者对这两种方法的推荐，可惜国内很少！</p>
-<p>书中有两个章节与近期订阅的李笑来老师文章有重合</p>
-<ol>
-<li>练习</li>
-</ol>
-<blockquote>
-<p>任何事情，只要想做得快，都离不开练习。<br>两个武者搏斗，每个人都必须能够迅速识别出对方的意图，并且百分之一秒内正确应对。在搏斗中，你不可能有充足的时间来研究架势，思考如何应对，这时候你只能依靠身体的反应。实际上，真正做出反应的是你的身体，大脑是在更高级的层面上思考</p>
-</blockquote>
-<p>也就是李笑来老师提的刻意练习，如果程序员不去刻意练习，写各种demo,那么我想水平永远是hello world的水平了</p>
-<ol start="2">
-<li>注意力<blockquote>
-<p>注意力是稀缺的资源，它类似魔力点数，如果你用光了自己的注意力点数，必须花一个小时或更多的时间都不需要注意的事情，来补充它。</p>
-</blockquote>
-</li>
-</ol>
-<p> 这是时间管理时提到的，李笑来也讲，注意力是你最宝贵的财富</p>
-<blockquote>
-<p>时间在本质上不属于你，你只能试着与它做朋友，让它为你所用。你的注意力才是你所拥有最重要、最宝贵的资源。你可以自己作主，要把它放在“成长”上。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/blog/page/15/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/15/">15</a><span class="page-number current">16</span>
+    <a class="extend prev" rel="prev" href="/blog/page/15/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/15/">15</a><span class="page-number current">16</span><a class="page-number" href="/blog/page/17/">17</a><a class="extend next" rel="next" href="/blog/page/17/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -1952,7 +1899,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1964,7 +1911,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-count">55</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

@@ -164,6 +164,83 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/cqrs-is-called-a-cult.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/cqrs-is-called-a-cult.html" class="post-title-link" itemprop="url">CQRS被称为邪教</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-04-16 20:11:31" itemprop="dateCreated datePublished" datetime="2022-04-16T20:11:31+08:00">2022-04-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>CQRS全称Command Query Responsibility Segregation</p>
+<p><img src="http://images.zhuxingsheng.com/20220414233044_1649950244.jpg"></p>
+<p>在CQRS中，来自客户端的命令通过单独的路径抵达命令模型，而查询操作则采用不同的数据源，这样的好处在于可以优化对查询数据的获取，比如用于展现、用于接口或报告的数据。</p>
+<p>CQRS这些年火起来了，常被人挂在嘴边提起。为什么？因为DDD提倡富模型，但从资源库查找所有需要显示的数据是困难的，特别是在需要显示来自不同聚合类型与实例的数据时。领域越复杂，这种困难程度越大。</p>
+<p>有没有一种完全不同的方法可以将领域数据映射到界面显示中呢？答案正是CQRS。</p>
+<p>在<a href="https://antonnalivayko1.medium.com/from-crud-to-cqrs-part1-cqrs-cbeac0350043">From CRUD to CQRS</a>文章中，作者比对了CRUD模式与CQRS模式</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/blog/cqrs-is-called-a-cult.html#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/lod-of-solid.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -918,121 +995,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/how-much-is-my-line-of-code-worth.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="朱兴生">
-      <meta itemprop="description" content="彪悍的人生需要书写">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="码农戏码">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/how-much-is-my-line-of-code-worth.html" class="post-title-link" itemprop="url">我的一行代码值多少钱</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2022-02-20 20:22:00" itemprop="dateCreated datePublished" datetime="2022-02-20T20:22:00+08:00">2022-02-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>在<a href="http://www.zhuxingsheng.com/blog/career-and-learning-of-soft-skills-notes.html">《程序员软技能》</a>中，提到过一种思维，要把自己当成一家企业，而就职公司是我们的客户。</p>
-<p>既然如此，我想需要考虑的最重要的事情应该是我给客户提供了什么产品，产品是什么价格？</p>
-<p>对于程序员来讲，提供的最根本产品自然是代码，我们现在需要考虑的事就是代码的价格，平均到基本单位，就是每一行代码值多少钱？</p>
-<p>当下市场，先考虑一下代码语言种类：</p>
-<p>使用java语言写的一行代码</p>
-<p>使用go语言写的一行代码</p>
-<p>使用python语言写一行代码</p>
-<p>亦或写一行sql</p>
-<p>甚至调试一个AI模型参数</p>
-<p>这些代码它们的价格肯定是不一样的。想到的第一个因素估计是写的人不一样。都写相同的语言代码，什么在决定价格？自然是写代码程序员的水平了。如同时期研究生相对本科生自然值钱些。</p>
-<p>即使都是出于同一人之手。那么是什么决定了价格？是因为牛逼吗？</p>
-<p>PHP是最好的语言？从高维度讲sql man与AI调试师没什么不同，那决定价格的最根本因素是什么？</p>
-<blockquote>
-<p>在市场上，决定价格的最重要因素是需求</p>
-</blockquote>
-<p>现在写一行VB语言会比java语言值钱吗？不是VB语言不好，终究是因为市场需求。当更先进更高阶的技术出现，更能满足市场需求时，价格自然上涨。这也是为什么苦逼程序员必须随着技术更迭不停地学习。甚至要预判技术趋势，提前投入精力学习。才能保障自己写的代码价值不被贬值。</p>
-<p>除了市场需求因素，程序员水平，还有什么因素呢？我们还需要考虑哪些问题？</p>
-<p>把需求换种说法，就是写的代码是否有用？</p>
-<p>从关注程序员自身来讲，可以考虑再深入点：</p>
-<p>1、我写的代码对别人有没有用呢？</p>
-<blockquote>
-<p>写个hello world，或者写了个微信，似乎都有用</p>
-</blockquote>
-<p>2、我写的代码对别人有用的话，有多大用处呢？如何做到最有用？</p>
-<blockquote>
-<p>hello world作用可以作教程，对小白编程基础培训，微信可以通讯、支付、摇一摇，似乎用处都不小。因此它们的作用不能从程序员侧考虑，而得从客户侧考虑。</p>
-</blockquote>
-<p>3、我写的代码对别人有用的话，对多少人有用？如何做到对更多人有用？</p>
-<blockquote>
-<p>hello world面对的人群是刚要入门编程人员，而微信是全民应用；要想对更多人有用，全民编程似乎不太可能</p>
-</blockquote>
-<p>4、我写的代码对别人有用的话，在多长时间段对别人有用呢？如何做到让这个时段更长些</p>
-<p>…</p>
-<p>除了上面的问题，还需要从客户侧考虑，不能只是埋头写一行行的代码，还得考虑客户的需求，这样又需要考虑一些问题：</p>
-<p>1、他们真正的需求是什么？最需要的是什么？</p>
-<p>需要程序员？需要35岁以下的程序员？</p>
-<p>2、我是那个能满足他们需求的人吗？</p>
-<p>在优化人员时，优化名单上会出现你的名字吗？</p>
-<p>3、如果我能，我有没有可能成为必需？</p>
-<p>4、如果我不能，我怎样才能？</p>
-<p>5、有必要一定由我去满足他们的需求吗？</p>
-<p>…</p>
-<p>这么多的问题，总结成一句话，行动指南：<strong>挑最需要的事情做</strong>，自然就成了最被需要的人。</p>
-<hr>
-<p>常听些大佬讲，要有商业sense，而一切商业模式的根本，怎么赚钱，赚什么钱，赚多少钱。</p>
-<p>在现如今充满物质喧嚣的大环境中，总包、副业刚需、内卷这些词时时充斥我们时，更应该考虑下商业底层逻辑。</p>
-<p>我想作为程序员，“我的一行代码值多少钱？”，这个问题是最基本的商业sense。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/blog/page/4/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/blog/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/16/">16</a><a class="extend next" rel="next" href="/blog/page/6/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/blog/page/4/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/blog/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/17/">17</a><a class="extend next" rel="next" href="/blog/page/6/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -1098,7 +1064,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1110,7 +1076,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-count">55</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

@@ -164,6 +164,90 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/code-analysis---asynchronous-callback.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/code-analysis---asynchronous-callback.html" class="post-title-link" itemprop="url">代码小析 - 异步回调</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2018-11-18 11:04:36" itemprop="dateCreated datePublished" datetime="2018-11-18T11:04:36+08:00">2018-11-18</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-11-07 21:29:17" itemprop="dateModified" datetime="2021-11-07T21:29:17+08:00">2021-11-07</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <blockquote>
+<p>天下皆知美之为美，斯恶已;此专栏本想取名代码之美，但有傍名之嫌，也给别误解，所以就叫代码小析吧，看到一段好代码，思路清奇，奇巧淫技，拿出来鉴赏一番</p>
+</blockquote>
+<p>之前是计划one week one  alogrithm,结果算法是个短板，不仅要理解，还得再写出代码，特别烧脑，所以中间穿插一下，换换脑子</p>
+<p>之前有类似一篇<a href="https://mp.weixin.qq.com/s/pZafR1O3fzMsepx731U6QQ">《仅且仅创建一次对象》</a></p>
+<p>最近看到一个段子：</p>
+<p>老板有毛病吧，写完排序就叫我走人，我还嫌你这9K工资低了呢<br><img src="http://images.zhuxingsheng.com/201811151323_83.png"></p>
+<p>感觉能想到这思路的也算清奇，哈哈！</p>
+<h1 id="回调"><a href="#回调" class="headerlink" title="回调"></a>回调</h1><p>if you call me, i will call back</p>
+<p>回调分类：同步回调，异步回调</p>
+<h1 id="场景"><a href="#场景" class="headerlink" title="场景"></a>场景</h1><p>建立TCP连接是很耗时的，所以在创建Socket Channel时，可以通过异步回调方式解决</p>
+<h1 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 异步取得channel</span><br><span class="line"> * @param index</span><br><span class="line"> * @param callback</span><br><span class="line"> */</span><br><span class="line">public void asynGetChannel(int index,final Callback callback) &#123;</span><br><span class="line">    // 1. 随机获取一条channel</span><br><span class="line">    final int pos = ThreadLocalRandom.current().nextInt(MAX_CONNECTIONS);</span><br><span class="line">    Channel target = channels[pos];</span><br><span class="line"></span><br><span class="line">    // 2. 如果获取到了连接，直接返回</span><br><span class="line">    if (target != null &amp;&amp; target.isActive()) &#123;</span><br><span class="line">        logger.info(&quot;direct success &quot;+index);</span><br><span class="line">        callback.onSuccess(target);</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    synchronized (locks[pos]) &#123;</span><br><span class="line">        target = channels[pos];</span><br><span class="line">        // 2. 如果获取到了连接，直接返回</span><br><span class="line">        if (target != null &amp;&amp; target.isActive()) &#123;</span><br><span class="line">            callback.onSuccess(target);</span><br><span class="line">            return;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 3.如果连接正在创建中，则加入queue</span><br><span class="line">        if (target instanceof EmptyChannel) &#123;</span><br><span class="line">            boolean result = jobs.offer(callback);</span><br><span class="line">            if (result) &#123;</span><br><span class="line">                return;</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                throw new RuntimeException(&quot;Can&#x27;t connet to target server and the waiting queue is full&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        // 4. 连接尚未创建</span><br><span class="line">        channels[pos] = new EmptyChannel();</span><br><span class="line"></span><br><span class="line">       Connector.connect(host, port, new Callback() &#123;</span><br><span class="line">           @Override</span><br><span class="line">           public void onSuccess(Channel channel) &#123;</span><br><span class="line">               logger.info(index + &quot; ------------connect success---------&quot;+pos + &quot; channel:&quot; +channels[pos].getClass().getName());</span><br><span class="line">               List&lt;Callback&gt; tmpJobs;//建立一个tempJobs，快速释放锁</span><br><span class="line">               synchronized (locks[pos]) &#123;</span><br><span class="line">                   // 设置channels，拷贝jobs队列，释放锁</span><br><span class="line">                   channels[pos] = channel;</span><br><span class="line">                   tmpJobs = drainJobs();</span><br><span class="line">               &#125;</span><br><span class="line">               for(Callback pendingCallback : tmpJobs) &#123;</span><br><span class="line">                   try &#123;</span><br><span class="line">                       if(pendingCallback != callback) &#123;</span><br><span class="line">                           pendingCallback.onSuccess(channel);</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125; catch (Exception e) &#123;</span><br><span class="line">                       logger.error(&quot;call connectionCallback fail&quot;, e);</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line"></span><br><span class="line">           @Override</span><br><span class="line">           public void onError(Throwable e) &#123;</span><br><span class="line">               List&lt;Callback&gt; tmpJobs;//建立一个tempJobs，快速释放锁</span><br><span class="line">               synchronized (locks[pos]) &#123;</span><br><span class="line">                   // 设置channels，拷贝jobs队列，释放锁</span><br><span class="line">                   channels[pos] = null;</span><br><span class="line">                   tmpJobs = drainJobs();</span><br><span class="line">               &#125;</span><br><span class="line">               for(Callback pendingCallback : tmpJobs) &#123;</span><br><span class="line">                   try &#123;</span><br><span class="line">                       if(pendingCallback != callback) &#123;</span><br><span class="line">                           pendingCallback.onError(e);</span><br><span class="line">                       &#125;</span><br><span class="line">                   &#125; catch (Exception x) &#123;</span><br><span class="line">                       logger.error(&quot;call connectionCallback fail&quot;, x);</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>完整的代码:<a href="https://github.com/zhuxingsheng/javastudy">https://github.com/zhuxingsheng/javastudy</a></p>
+<h1 id="亮点"><a href="#亮点" class="headerlink" title="亮点"></a>亮点</h1><p>思路很简单，亮点就在于job队列，连接在没有建立成功时，会先建立一个EmptyChannel，有些类似lazy load中的影子对象放到队列中，不造成阻塞，当channel建立完成后，回调</p>
+<h1 id="VS-Future模式"><a href="#VS-Future模式" class="headerlink" title="VS Future模式"></a>VS Future模式</h1><p>异步回调的套路与Future模式特别类似</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Future future = doTask1();</span><br><span class="line">doTask2();</span><br><span class="line">doTask3();</span><br><span class="line">Result result = future.get();</span><br></pre></td></tr></table></figure>
+<p>Future 模式中，一个任务的启动和获取结果分成了两部分，启动执行是异步的，调用后立马返回，调用者可以继续做其他的任务，而等到其他任务做完，再获取Future的结果，此时调用 get 时是同步的，也就是说如果 doTask1 如果还没有做完，等它做完。</p>
+<p>看出最大区别，异步回调不需要返回值，准确说调用者不用太关心返回值，甚至不需要关心真正执行情况，而future模式就不一样了，调用者是一定要拿到返回值的</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a href="http://blog.51cto.com/13616847/2073737">同步调用，异步回调和 Future 模式</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/algorithm-overview.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1591,149 +1675,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/the-distant-savior.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="朱兴生">
-      <meta itemprop="description" content="彪悍的人生需要书写">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="码农戏码">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/the-distant-savior.html" class="post-title-link" itemprop="url">遥远的救世主</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2018-07-13 21:48:00" itemprop="dateCreated datePublished" datetime="2018-07-13T21:48:00+08:00">2018-07-13</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-08-13 21:49:26" itemprop="dateModified" datetime="2022-08-13T21:49:26+08:00">2022-08-13</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p><img src="http://images.zhuxingsheng.com/201806101715_369.png" alt="遥远的救世主"></p>
-<p>这本小说有改编的电视剧《天道》，不论是电视剧还是原著小说都看过多次，已经不记得是何缘起结识了这部书籍。</p>
-<p>最近有个朋友又提到这部影剧，说影响了他的人生轨迹；使他看到并大概率得到波动命运琴弦的关键及能力</p>
-<p>实在是惭愧，读了那么多次，尽然没有如此感悟，收获。再次翻书阅读</p>
-<p>以我的学识、阅历，要读懂可能很难，甚至短时间没有可能性。但想想，那又怎么样呢？</p>
-<p>如肖亚文所说</p>
-<blockquote>
-<p>认识这个人就是开了一扇窗户，就能看到不一样的东西，听到不一样的声音，能让你思考，觉悟，这已经够了</p>
-</blockquote>
-<p>能有这样一本，让你时时回味，时时思考，有所悟，或有所得的书籍，这已经很好了</p>
-<h3 id="文化属性"><a href="#文化属性" class="headerlink" title="文化属性"></a>文化属性</h3><p>此书中的故事 皆有“文化属性”而来，那么吸引人的也大体是这个词了。</p>
-<blockquote>
-<p>透视社会依次有三个层面：技术、制度和文化。小到一个人，大到一个国家一个民族，任何一种命运归根到底都是那种文化属性的产物。强势文化造就强者，弱势文化造就弱者，这是规律，也可以理解为天道，不以人的意志为转移</p>
-</blockquote>
-<blockquote>
-<p>强势文化就是遵循事物规律的文化，弱势文化就是依赖强者的道德期望破格获取的文化，也是期望救主的文化。强势文化在武学上被称为“秘笈”，而弱势文化由于易学、易懂、易用，成了流行品种。</p>
-</blockquote>
-<p>知道又如何？怎么用呢？</p>
-<blockquote>
-<p>无所用，无所不用；比如文化产业，文学、影视是扒拉灵魂的艺术，如果文学、影视的创作能破解更高思维空间的文化密码，那么它的功效就是启迪人的觉悟，震撼人的灵魂，这就是众生所需，就是功德、市场、名利，精神拯救的暴利与毒品麻醉的暴利完全等值，而且不必像贩毒那样耍花招，没有心理成本和法律风险</p>
-</blockquote>
-<blockquote>
-<p>中国的传统文化是皇恩浩大的文化，它的实用是以皇天在上为先决条件。中国为什么穷？穷就穷在幼稚的思维，穷在期望救主、期望救恩的文化上，这是渗透到民族骨子里的价值判断体系</p>
-</blockquote>
-<h3 id="神话"><a href="#神话" class="headerlink" title="神话"></a>神话</h3><p>芮小丹让丁元英在王庙村写个神话</p>
-<blockquote>
-<p>这个世上原本就没有什么神话，神话不过是常人的思维所不易理解的平常事</p>
-</blockquote>
-<blockquote>
-<p>无论做什么，市场都不是一块无限大的蛋糕。神话的实质就是强力作用的杀富济贫，这就可能产生两个问题，一是杀富是不是破坏性开采市场资源？ 二是让井底的人扒着井沿看了一眼再掉下去是不是让他患上精神绝症？</p>
-</blockquote>
-<p>后面的故事，的确如丁所说，乐圣林雨峰自杀了，三个股东之一的刘冰也自杀了。仁人志士一片讨伐之声。</p>
-<p>但这事真的神了吗？</p>
-<blockquote>
-<p>从整个事件里，她没有看到丁元英有任何能让人感到“神”的招式，每一件具体的事都是普通人都能做到的普通事</p>
-</blockquote>
-<blockquote>
-<p>他的确是在公开，公平的条件下合理合法的竞争，一切都是公开的，没有任何秘密和违法可言，所谓的“神话”竟是这么平淡，简单。实事求是就是神话，说老实话，办老实事的人就是神！</p>
-</blockquote>
-<blockquote>
-<p>神就是道，道就是规律，规律如来，容不得你思议，按规律办事的人就是神</p>
-</blockquote>
-<p>在小说开篇，其实就有实事求是，客观规律的论述</p>
-<blockquote>
-<p>马克思主义的道理归根到底就是一句话：客观规律不以人的意志为转移。什么是客观规律？归根到底也是一句话：一切以时间，地点和条件为转移</p>
-</blockquote>
-<h3 id="造血功能"><a href="#造血功能" class="headerlink" title="造血功能"></a>造血功能</h3><p>整本书貌似都在讲述文化属性，以及各种人潜意识里的文化属性结成了整个故事该有的结局</p>
-<blockquote>
-<p>不是说谁本该成为哪种人是规律，而是说谁本该成为哪种人的条件的可能，因果不虚，因果是规、是律，不可思议</p>
-</blockquote>
-<p>但如何解决造血功能呢？这可能是作者留给读者思考的内容，也就是人人都和各自的条件可能。</p>
-<p>但如何才能做到事实求是呢？</p>
-<p>本质的道作者已经说了很多很次，就是要事实求是，遵循规律，<strong>有道无术，术尚可求也，有术无道，止于术</strong></p>
-<blockquote>
-<p>不可思议一词不是众生道里的对神秘事物的描述，而是如是、本来、就是如此，容不得你思议。也是一种告诫、提示，是告诉你不可以思议，由不得你思议。从数学逻辑上说，一加一等于二，容得了你思议吗？不容，这就是告诉你了，一加一等于二是规律，规律是不以人的意志为转移，你只能认识、遵循，不可思议</p>
-</blockquote>
-<p>如果你生活在一个虚妄的世界里，事实求是就很难，就如三个股东一样</p>
-<blockquote>
-<p>观念，传统观念。一是传统的“事实胜于雄辩”的观念，二是传统的疑罪从有的观念，三是传统的青天大老爷的观念。中国人一直接受简单的文化思维教育，他们相信法律是神圣的，决不冤枉一个好人，也决不放过一个坏人</p>
-</blockquote>
-<p>也如芮小丹说讲</p>
-<blockquote>
-<p>只要不是我觉到，悟到的，你给不了我，给了我也拿不住。只有我自己觉到，悟到的我才有可能做到，我能做到的才是我的。</p>
-</blockquote>
-<blockquote>
-<p>你的知道是自觉，现在是让你觉他。知道这个道理的人很多，但多是呈道理和知识存在。不是自觉。道理和知识是没用的，只是有用的一个条件。用才有用。让你觉他什么？觉他的无明，觉他的道理和知识的没用</p>
-</blockquote>
-<p>通过否定法，至少要去掉两种思维，才可能性拥有造血功能</p>
-<p><strong>靠</strong>   <strong>等</strong></p>
-<blockquote>
-<p>传统观念的死结就在一个“靠”字上，在家靠父母，出门靠朋友，靠上帝、靠菩萨、靠皇恩… 总之靠什么都行，就是别靠自己。这是一个沉积了几千年的文化属性问题，非几次新文化运动就能开悟。</p>
-</blockquote>
-<blockquote>
-<p>咱们翻开历史看看，你从哪一行哪一页能找到救世主救世的记录？没有，从来就没有，从来都是救人的被救了，被救的救了人。如果一定要讲救世主的话，那么符合和代表客观规律的文化就是救世主。扶贫的本质在一个扶字，如果你根本就没打算自己站起来，老天爷来了都没用。</p>
-</blockquote>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/blog/page/13/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/blog/page/15/">15</a><a class="page-number" href="/blog/page/16/">16</a><a class="extend next" rel="next" href="/blog/page/15/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/blog/page/13/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/blog/page/15/">15</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/17/">17</a><a class="extend next" rel="next" href="/blog/page/15/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -1799,7 +1744,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1811,7 +1756,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-count">55</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>

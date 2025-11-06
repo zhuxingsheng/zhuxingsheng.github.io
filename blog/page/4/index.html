@@ -164,6 +164,152 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
+    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/classloader-of-springboot.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="朱兴生">
+      <meta itemprop="description" content="彪悍的人生需要书写">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="码农戏码">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/blog/classloader-of-springboot.html" class="post-title-link" itemprop="url">springboot之ClassLoader</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2022-07-23 13:06:00" itemprop="dateCreated datePublished" datetime="2022-07-23T13:06:00+08:00">2022-07-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>上篇<a href="http://www.zhuxingsheng.com/blog/ways-and-differences-for-jvm-to-obtain-resources.html">《ClassLoader#getResource与Class#getResource的差别》</a>了解原生java获取资源方式以及方式之间的区别。</p>
+<p>这篇介绍一下springboot的加载方式。</p>
+<p>要想调试springboot加载方式，不能直接在idea中运行主程序，要使用真实场景下的java -jar方式运行，需要做两件事：</p>
+<p>1、需要打包springboot应用程序</p>
+<p>2、在IDEA中用java -jar springboot.jar来运行才能debug</p>
+<p>springboot使用maven plugin打包成可运行的jar文件</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;plugin&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-maven-plugin&lt;/artifactId&gt;</span><br><span class="line">&lt;/plugin&gt;</span><br></pre></td></tr></table></figure>
+
+<p>SpringBoot打出的jar包，可以直接通过解压的方式查看内部的构造。一般情况下有三个目录。</p>
+<ol>
+<li>BOOT-INF：这个文件夹下有两个文件夹classes用来存放用户类，也就是原始jar.original里的类；还有一个是lib，就是这个原始jar.original引用的依赖。</li>
+<li>META-INF：这里是通过java -jar启动的入口信息，记录了入口类的位置等信息。</li>
+<li>org:Springboot loader的代码，通过它来启动。</li>
+</ol>
+<p><img src="http://images.zhuxingsheng.com/20220618233756_1655566676.jpg"></p>
+<p>MANIFEST.MF文件的内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Manifest-Version: 1.0</span><br><span class="line">Implementation-Title: springboot-test</span><br><span class="line">Implementation-Version: 1.0-SNAPSHOT</span><br><span class="line">Start-Class: com.zhuxingsheng.App</span><br><span class="line">Spring-Boot-Classes: BOOT-INF/classes/</span><br><span class="line">Spring-Boot-Lib: BOOT-INF/lib/</span><br><span class="line">Build-Jdk-Spec: 1.8</span><br><span class="line">Spring-Boot-Version: 2.2.1.RELEASE</span><br><span class="line">Created-By: Maven Jar Plugin 3.2.0</span><br><span class="line">Main-Class: org.springframework.boot.loader.JarLauncher</span><br></pre></td></tr></table></figure>
+
+<p>里面有两个重要的参数:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Main-Class: org.springframework.boot.loader.JarLauncher</span><br><span class="line">Start-Class: com.zhuxingsheng.App</span><br></pre></td></tr></table></figure>
+
+<p>Main-Class：记录了java -jar的启动入口，当使用该命令启动时就会调用这个入口类的main方法，显然可以看出，Springboot转移了启动的入口，不是应用自身的com.zhuxingsheng.App入口类。</p>
+<p>Start-Class：应用自身的com.zhuxingsheng.App入口类，当内嵌的jar包加载完成之后，会使用LaunchedURLClassLoader线程加载类来加载这个用户编写的入口类。</p>
+<p>在IDEA中正常启动应用程序，整个类加载体系与直接使用java -jar springboot.jar是不一样的，想<br>要在IDEA里面debug springboot应用程序</p>
+<p>先引入loader依赖：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.springframework.boot&lt;/groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;spring-boot-loader&lt;/artifactId&gt;</span><br><span class="line">    &lt;version&gt;2.1.0.RELEASE&lt;/version&gt;</span><br><span class="line">&lt;/dependency&gt;</span><br></pre></td></tr></table></figure>
+
+<p>再对应用程序通过maven package打包成jar</p>
+<p>再在IDEA中设置：</p>
+<p><img src="http://images.zhuxingsheng.com/20220618235031_1655567431.jpg"></p>
+<p>并指定Path to JAR.</p>
+<p>启动之后，先进入JarLauncher：</p>
+<p><img src="http://images.zhuxingsheng.com/20220618235239_1655567559.jpg"></p>
+<p>debug进入后，会使用springboot自定义的LaunchedURLClassLoader加载应用程序，LaunchedURLClassLoader类体系：</p>
+<p><img src="http://images.zhuxingsheng.com/20220614114138_1655178098.jpg"></p>
+<p>加载资源的过程如在<a href="http://www.zhuxingsheng.com/blog/ways-and-differences-for-jvm-to-obtain-resources.html">《Classloader加载资源的方式》</a>中提到的一样。</p>
+<p>与之前的做个小实验，但这次做点小变动，在依赖的jar中也放一个META-INF&#x2F;app.properties文件。</p>
+<p>并在工程本身的resources里面也放一个META-INF&#x2F;app.properties</p>
+<p>此时系统中有两个META-INF&#x2F;app.properties，通过下面的四种情况来加载资源文件，会获取到哪一个文件？</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">//第一种场景</span><br><span class="line"> final URL resource = Thread.currentThread().getContextClassLoader().getResource(&quot;/META-INF/app.properties&quot;);</span><br><span class="line"></span><br><span class="line">//第二种场景</span><br><span class="line"> final URL resource = Thread.currentThread().getContextClassLoader().getResource(&quot;META-INF/app.properties&quot;);</span><br><span class="line"> </span><br><span class="line">//第三种场景</span><br><span class="line">final URL resource1 = App.class.getResource(&quot;/META-INF/app.properties&quot;);</span><br><span class="line">        </span><br><span class="line">//第四种场景</span><br><span class="line">final URL resource1 = App.class.getResource(&quot;META-INF/app.properties&quot;);</span><br></pre></td></tr></table></figure>
+
+<h1 id="第一种-ClassLoader绝对路径"><a href="#第一种-ClassLoader绝对路径" class="headerlink" title="第一种 ClassLoader绝对路径"></a>第一种 ClassLoader绝对路径</h1><p>按《Classloader加载资源的方式》结论，应该会返回null。</p>
+<p>然而实事并非无此：</p>
+<p>这不得不提到在URLClassPath里面有两个内部Loader：</p>
+<p><img src="http://images.zhuxingsheng.com/20220619094742_1655603262.jpg"></p>
+<p>FileLoader 是加载文件夹中的文件</p>
+<p>JarLoader 是加载jar中的文件</p>
+<p>在《Classloader加载资源的方式》中的结论是基于FileLoader加载的，而现在的方式是使用JarLoader。</p>
+<p>使用ClassLoader.getResource时，都是基于根节点查找，这点是没错的，只是根节点是BOOT-INF下的lib和classes：</p>
+<p><img src="http://images.zhuxingsheng.com/20220619004216_1655570536.jpg"></p>
+<p>去加载每一个jar中的文件，判断是不是存在：</p>
+<p><img src="http://images.zhuxingsheng.com/20220619003540_1655570140.jpg"></p>
+<p>可以看出，因为根节点不同，所以文件没有加载到，项目根目录里面的META-INF&#x2F;app.properties，是在整体工程根目录的META-INF&#x2F;app.properties中。</p>
+<p>此时，找到的文件目录是在：</p>
+<blockquote>
+<p>jar:file:&#x2F;Users&#x2F;zhuxingsheng&#x2F;workspace&#x2F;springboot-demo&#x2F;springboot-test&#x2F;target&#x2F;app.jar!&#x2F;BOOT-INF&#x2F;lib&#x2F;general-tool-utils-1.1.0-SNAPSHOT.jar!&#x2F;META-INF&#x2F;app.properties</p>
+</blockquote>
+<p><img src="http://images.zhuxingsheng.com/20220619004446_1655570686.jpg"></p>
+<h1 id="第二种-ClassLoader-相对路径"><a href="#第二种-ClassLoader-相对路径" class="headerlink" title="第二种 ClassLoader 相对路径"></a>第二种 ClassLoader 相对路径</h1><p><img src="http://images.zhuxingsheng.com/20220619005140_1655571100.jpg"></p>
+<p><img src="http://images.zhuxingsheng.com/20220619101333_1655604813.jpg"></p>
+<p>可以看出使用的是AppClassLoader，加载的路径为</p>
+<blockquote>
+<p>jar:file:&#x2F;Users&#x2F;zhuxingsheng&#x2F;workspace&#x2F;springboot-demo&#x2F;springboot-test&#x2F;target&#x2F;app.jar!&#x2F;META-INF&#x2F;app.properties</p>
+</blockquote>
+<p>可以看出 相对路径 与绝对路径的区别，以及与FileLoader的区别：</p>
+<p>1、绝对路径是LaunchedURLClassLoader从classpath根节点查找；相对路径是AppClassLoader从当前jar为根目录查找</p>
+<p>2、FileLoader绝对路径是:file:&#x2F;META-INF&#x2F;app.properties,而JarLoader的绝对路径则不同了，会带上整个classpath</p>
+<h1 id="第三种-Class-绝对路径"><a href="#第三种-Class-绝对路径" class="headerlink" title="第三种 Class 绝对路径"></a>第三种 Class 绝对路径</h1><p>由<a href="http://www.zhuxingsheng.com/blog/ways-and-differences-for-jvm-to-obtain-resources.html">《Classloader加载资源的方式》</a>知道，这种方式与第二种场景效果一致：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//第二种场景</span><br><span class="line"> final URL resource = Thread.currentThread().getContextClassLoader().getResource(&quot;META-INF/app.properties&quot;);</span><br></pre></td></tr></table></figure>
+
+<p>路径地址在：</p>
+<blockquote>
+<p>jar:file:&#x2F;Users&#x2F;zhuxingsheng&#x2F;workspace&#x2F;springboot-demo&#x2F;springboot-test&#x2F;target&#x2F;app.jar!&#x2F;META-INF&#x2F;app.properties</p>
+</blockquote>
+<h1 id="第三种-Class-相对路径"><a href="#第三种-Class-相对路径" class="headerlink" title="第三种 Class 相对路径"></a>第三种 Class 相对路径</h1><p>类似于：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">final URL resource = Thread.currentThread().getContextClassLoader().getResource(&quot;com/zhuxingsheng/META-INF/app.properties&quot;);</span><br></pre></td></tr></table></figure>
+
+<h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><p>此篇一是介绍了怎么在IDEA中debug出运行java -jar springboot.jar的效果。二是介绍springboot类加载机制，以及绝对路径与相对路径的区别。</p>
+<p>当依赖jar包中有与工程目录下有同路径同名资源文件时，为了不必要的冲突，在classloader#getResource时，不要使用绝对路径。</p>
+<p>如在apollo的源码中：</p>
+<p><img src="http://images.zhuxingsheng.com/20220619111234_1655608354.jpg"></p>
+<p>也会特意使用substring处理掉绝对路径。保证加载资源的正确性。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
     <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/whether-traceid-is-processed-in-filter-or-interceptor.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -993,87 +1139,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-Hans">
-    <link itemprop="mainEntityOfPage" href="http://www.zhuxingsheng.com/blog/cqrs-is-called-a-cult.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="朱兴生">
-      <meta itemprop="description" content="彪悍的人生需要书写">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="码农戏码">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/blog/cqrs-is-called-a-cult.html" class="post-title-link" itemprop="url">CQRS被称为邪教</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">Posted on</span>
-
-              <time title="Created: 2022-04-16 20:11:31" itemprop="dateCreated datePublished" datetime="2022-04-16T20:11:31+08:00">2022-04-16</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2022-11-08 15:15:29" itemprop="dateModified" datetime="2022-11-08T15:15:29+08:00">2022-11-08</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>CQRS全称Command Query Responsibility Segregation</p>
-<p><img src="http://images.zhuxingsheng.com/20220414233044_1649950244.jpg"></p>
-<p>在CQRS中，来自客户端的命令通过单独的路径抵达命令模型，而查询操作则采用不同的数据源，这样的好处在于可以优化对查询数据的获取，比如用于展现、用于接口或报告的数据。</p>
-<p>CQRS这些年火起来了，常被人挂在嘴边提起。为什么？因为DDD提倡富模型，但从资源库查找所有需要显示的数据是困难的，特别是在需要显示来自不同聚合类型与实例的数据时。领域越复杂，这种困难程度越大。</p>
-<p>有没有一种完全不同的方法可以将领域数据映射到界面显示中呢？答案正是CQRS。</p>
-<p>在<a href="https://antonnalivayko1.medium.com/from-crud-to-cqrs-part1-cqrs-cbeac0350043">From CRUD to CQRS</a>文章中，作者比对了CRUD模式与CQRS模式</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/blog/cqrs-is-called-a-cult.html#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/blog/page/3/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/blog/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/16/">16</a><a class="extend next" rel="next" href="/blog/page/5/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
+    <a class="extend prev" rel="prev" href="/blog/page/3/"><i class="fa fa-angle-left" aria-label="Previous page"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/blog/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/17/">17</a><a class="extend next" rel="next" href="/blog/page/5/"><i class="fa fa-angle-right" aria-label="Next page"></i></a>
   </nav>
 
 
@@ -1139,7 +1208,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">160</span>
+          <span class="site-state-item-count">161</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1151,7 +1220,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">54</span>
+        <span class="site-state-item-count">55</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
