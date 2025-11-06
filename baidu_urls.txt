@@ -48,8 +48,8 @@ http://www.zhuxingsheng.com/blog/three-underlying-cognition-of-code-and-excellen
 http://www.zhuxingsheng.com/blog/caching-is-a-face-project.html
 http://www.zhuxingsheng.com/blog/12-elements-of-transforming-monomer-architecture-into-micro-service-architecture.html
 http://www.zhuxingsheng.com/blog/how-does-the-architecture-evolve-iteratively.html
-http://www.zhuxingsheng.com/blog/remove-the-micro-service-after-removing-the-middle-console.html
 http://www.zhuxingsheng.com/blog/how-much-is-my-line-of-code-worth.html
+http://www.zhuxingsheng.com/blog/remove-the-micro-service-after-removing-the-middle-console.html
 http://www.zhuxingsheng.com/blog/io-multiplexing-past-and-present-life.html
 http://www.zhuxingsheng.com/blog/domain-model-of-daming-lake.html
 http://www.zhuxingsheng.com/blog/do-not-study-inefficiently-all-your-life.html
