@@ -1,8 +1,5 @@
 使用时，你得把默认的 Markdown 内容换成你自己的内容。
 
-关于本工具的介绍请看[这篇公众号文章](https://mp.weixin.qq.com/s/pn0LzyfgUj6rGUfVHUksjg)。
-
-
 ## 一级标题
 
 这是一级标题
@@ -82,8 +79,6 @@
 ## 代码块、表格、图片
 
 接下来是一张图片。你可以用自己图床，也可以上传到微信媒体库再把图片 URL 粘贴回来，或者编辑好以后，在公众号里插入图片。
-
-![](https://res.wx.qq.com/mpres/zh_CN/htmledition/pages/login/loginpage/images/bg_banner4273fb.png)
 
 代码块，使用微信官方的高亮配色，在代码块标示语言即可。粘贴到公众号后，需要用鼠标点一下代码块，完成高亮。
 
