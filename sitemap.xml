@@ -677,7 +677,7 @@
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/ddd-repository.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/how-are-apis-designed.html</loc>
     
     <lastmod>2021-11-07</lastmod>
     
@@ -686,7 +686,7 @@
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/how-are-apis-designed.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/ddd-repository.html</loc>
     
     <lastmod>2021-11-07</lastmod>
     
@@ -803,6 +803,15 @@
   </url>
   
   <url>
+    <loc>http://www.zhuxingsheng.com/blog/algorithm---recursive-algorithm.html</loc>
+    
+    <lastmod>2021-11-07</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>http://www.zhuxingsheng.com/blog/class-loader.html</loc>
     
     <lastmod>2021-11-07</lastmod>
@@ -813,15 +822,6 @@
   
   <url>
     <loc>http://www.zhuxingsheng.com/blog/self-management.html</loc>
-    
-    <lastmod>2021-11-07</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.zhuxingsheng.com/blog/algorithm---recursive-algorithm.html</loc>
     
     <lastmod>2021-11-07</lastmod>
     
@@ -974,15 +974,6 @@
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/ddd-opening-summary.html</loc>
-    
-    <lastmod>2021-11-07</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>http://www.zhuxingsheng.com/blog/ddd-tactical-practice-guide.html</loc>
     
     <lastmod>2021-11-07</lastmod>
@@ -993,6 +984,15 @@
   
   <url>
     <loc>http://www.zhuxingsheng.com/blog/ddd-strategy-and-tactics.html</loc>
+    
+    <lastmod>2021-11-07</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.zhuxingsheng.com/blog/ddd-opening-summary.html</loc>
     
     <lastmod>2021-11-07</lastmod>
     
@@ -1037,7 +1037,7 @@
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/modeling-is-not-necessary.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/dealing-with-complexity.html</loc>
     
     <lastmod>2021-11-07</lastmod>
     
@@ -1046,7 +1046,7 @@
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/blog/dealing-with-complexity.html</loc>
+    <loc>http://www.zhuxingsheng.com/blog/modeling-is-not-necessary.html</loc>
     
     <lastmod>2021-11-07</lastmod>
     
@@ -1505,6 +1505,13 @@
 
   
   <url>
+    <loc>http://www.zhuxingsheng.com/tags/SOLID/</loc>
+    <lastmod>2026-01-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://www.zhuxingsheng.com/tags/%E7%AE%A1%E7%90%86/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -1526,13 +1533,6 @@
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/tags/SOLID/</loc>
-    <lastmod>2026-01-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://www.zhuxingsheng.com/tags/ThreadLocal/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -1540,7 +1540,28 @@
   </url>
   
   <url>
+    <loc>http://www.zhuxingsheng.com/tags/hash/</loc>
+    <lastmod>2026-01-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>http://www.zhuxingsheng.com/tags/IOC/</loc>
+    <lastmod>2026-01-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.zhuxingsheng.com/tags/gc/</loc>
+    <lastmod>2026-01-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.zhuxingsheng.com/tags/jvm/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1568,14 +1589,7 @@
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/tags/jit/</loc>
-    <lastmod>2026-01-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.zhuxingsheng.com/tags/jvm/</loc>
+    <loc>http://www.zhuxingsheng.com/tags/%E5%B9%B6%E5%8F%91/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1589,21 +1603,7 @@
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/tags/%E5%B9%B6%E5%8F%91/</loc>
-    <lastmod>2026-01-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.zhuxingsheng.com/tags/hash/</loc>
-    <lastmod>2026-01-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.zhuxingsheng.com/tags/%E8%AF%BB%E4%B9%A6/</loc>
+    <loc>http://www.zhuxingsheng.com/tags/jit/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1611,6 +1611,13 @@
   
   <url>
     <loc>http://www.zhuxingsheng.com/tags/kafka/</loc>
+    <lastmod>2026-01-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.zhuxingsheng.com/tags/%E8%AF%BB%E4%B9%A6/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1645,20 +1652,6 @@
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/tags/gc/</loc>
-    <lastmod>2026-01-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>http://www.zhuxingsheng.com/tags/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA/</loc>
-    <lastmod>2026-01-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://www.zhuxingsheng.com/tags/springboot/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -1666,7 +1659,7 @@
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/tags/zookeeper/</loc>
+    <loc>http://www.zhuxingsheng.com/tags/%E9%93%BE%E8%B7%AF%E8%BF%BD%E8%B8%AA/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1681,6 +1674,13 @@
   
   <url>
     <loc>http://www.zhuxingsheng.com/tags/cas/</loc>
+    <lastmod>2026-01-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.zhuxingsheng.com/tags/zookeeper/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1729,13 +1729,6 @@
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/tags/distributed/</loc>
-    <lastmod>2026-01-23</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>http://www.zhuxingsheng.com/tags/rpc/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
@@ -1744,6 +1737,13 @@
   
   <url>
     <loc>http://www.zhuxingsheng.com/tags/thrift/</loc>
+    <lastmod>2026-01-23</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>http://www.zhuxingsheng.com/tags/distributed/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1778,14 +1778,14 @@
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/tags/%E8%A7%84%E8%8C%83/</loc>
+    <loc>http://www.zhuxingsheng.com/tags/cache/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/tags/cache/</loc>
+    <loc>http://www.zhuxingsheng.com/tags/%E8%A7%84%E8%8C%83/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -1834,14 +1834,14 @@
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/tags/db/</loc>
+    <loc>http://www.zhuxingsheng.com/tags/%E6%B8%B8%E6%88%8F%E5%B0%8F%E4%BC%A0/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>http://www.zhuxingsheng.com/tags/%E6%B8%B8%E6%88%8F%E5%B0%8F%E4%BC%A0/</loc>
+    <loc>http://www.zhuxingsheng.com/tags/db/</loc>
     <lastmod>2026-01-23</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
