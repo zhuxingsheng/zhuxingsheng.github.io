@@ -1,0 +1,23 @@
+name: Sync Static Files to Server
+on:
+  push:
+    branches: [ public ] # 当向main分支推送时触发
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    # 1. 检出代码（你的静态文件）
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2. 使用rsync同步文件到服务器
+    - name: Deploy to Server via rsync
+      uses: burnett01/rsync-deployments@6.0.0
+      with:
+        switches: -avzr --delete # 重要参数：--delete会删除服务器上多余文件
+        path: ./ # 同步当前仓库的所有文件
+        remote_path: /var/www/myblog/ # 服务器上的目标目录
+        remote_host: ${{ secrets.HOST }}
+        remote_user: ${{ secrets.USERNAME }}
+        remote_key: ${{ secrets.SSH_PRIVATE_KEY }}
